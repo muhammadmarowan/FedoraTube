@@ -79,10 +79,10 @@ internal object HomeIndex {
             key = "home.focus_mode",
             title = R.string.focus_mode_title,
             summary = R.string.focus_mode_subtitle,
-            section = R.string.settings_group_look,
+            section = R.string.settings_flow_engine_header,
             destination = home,
         )
 
     /** The persona card is found through Your taste's own destination entry, not listed twice. */
-    val all = listOf(focusMode, deepFlow, deepFlowDuration, deepFlowHistory, deepFlowScrobble, deepFlowOnSearch, checkForUpdates)
+    val all = listOf(focusMode, checkForUpdates)
 }

@@ -62,9 +62,6 @@ internal fun SettingsListScope.homeContent(
 
     group(key = "home.engine", header = R.string.settings_flow_engine_header) {
         page(SettingsDestination.TASTE)
-        page(SettingsDestination.TOPICS)
-    }
-    group(key = "home.look", header = R.string.settings_group_look) {
         row(HomeIndex.focusMode.key) { shape ->
             FlowSwitchRow(
                 title = stringResource(HomeIndex.focusMode.title),
@@ -75,6 +72,7 @@ internal fun SettingsListScope.homeContent(
                 shape = shape,
             )
         }
+        page(SettingsDestination.TOPICS)
     }
     group(key = "home.watching", header = R.string.settings_group_watching) {
         page(SettingsDestination.QUALITY)

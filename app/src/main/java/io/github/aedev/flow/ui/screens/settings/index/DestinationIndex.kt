@@ -40,6 +40,14 @@ internal object DestinationIndex {
         SettingsDestination.NETWORK,
         SettingsDestination.ABOUT,
         SettingsDestination.DIAGNOSTICS,
+        SettingsDestination.PLAYBACK,
+        SettingsDestination.BUFFER,
+        SettingsDestination.EQUALIZER,
+        SettingsDestination.INTEGRATIONS,
+        SettingsDestination.SCROBBLING,
+        SettingsDestination.SYNC,
+        SettingsDestination.FAVOURITE_ARTISTS,
+        SettingsDestination.DISCOVER_CHANNELS,
     )
 
     /** The editor is left out: it opens one theme, so it has no page of its own to find. */

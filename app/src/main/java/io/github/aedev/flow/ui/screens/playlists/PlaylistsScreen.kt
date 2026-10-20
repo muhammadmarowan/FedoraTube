@@ -166,13 +166,6 @@ fun PlaylistsScreen(
                                 Icon(Icons.Rounded.SwapVert, contentDescription = stringResource(R.string.playlists_reorder))
                             }
                         }
-                        IconButton(onClick = { viewModel.setCompactLayout(!compact) }) {
-                            Icon(
-                                imageVector = if (compact) Icons.Rounded.GridView else Icons.Rounded.ViewAgenda,
-                                contentDescription =
-                                    stringResource(if (compact) R.string.playlists_show_grid else R.string.playlists_show_list),
-                            )
-                        }
                     }
                 },
             )

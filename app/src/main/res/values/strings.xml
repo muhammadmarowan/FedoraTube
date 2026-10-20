@@ -673,7 +673,7 @@
     <string name="notifications_empty_body">You\'re all caught up! New updates from your subscriptions will appear here.</string>
     <!-- Settings Screen -->
     <string name="settings_title">Settings</string>
-    <string name="settings_flow_engine_header">Flow Engine</string>
+    <string name="settings_flow_engine_header">Fedora Engine</string>
     <string name="settings_active_learning">ACTIVE LEARNING</string>
     <string name="settings_reset_brain_title">Reset Flow Personality?</string>
     <string name="settings_reset_brain_body">This erases your Flow Brain profile.\n\n• Learned topics are forgotten.\n• Personality traits reset.\n• Recommendations go back to default.\n\nThis cannot be undone.</string>
@@ -2524,12 +2524,12 @@
     <string name="checking_for_updates">Checking for updates…</string>
     <string name="flow_is_up_to_date">Flow is up to date!</string>
     <string name="update_check_failed">Couldn\'t check for updates. Check your connection.</string>
-    <!-- Export / Import Flow Engine data (Settings + ImportDataScreen) -->
+    <!-- Export / Import Fedora Engine data (Settings + ImportDataScreen) -->
     <string name="export_engine_data">Export Engine Profile</string>
     <string name="export_engine_data_subtitle">Back up your AI personality &amp; learning data</string>
     <string name="export_engine_success">Engine profile exported successfully</string>
     <string name="export_engine_failed">Failed to export engine profile</string>
-    <string name="import_engine_data">Import Flow Engine Data</string>
+    <string name="import_engine_data">Import Fedora Engine Data</string>
     <string name="import_engine_data_desc">Restore your AI personality profile from a backup file</string>
     <string name="import_engine_success">Engine profile restored successfully</string>
     <string name="import_engine_failed">Failed to import engine profile</string>
@@ -3088,7 +3088,7 @@
     <string name="tv_music_no_lyrics">No lyrics found</string>
     <string name="tv_music_radio">Radio</string>
     <string name="tv_settings_appearance">Appearance</string>
-    <string name="tv_settings_flow_engine">Flow Engine</string>
+    <string name="tv_settings_flow_engine">Fedora Engine</string>
     <string name="tv_settings_sync">Sync devices</string>
     <string name="tv_sync_qr_session_active">This code stays active while this screen is open.</string>
     <string name="tv_remote_guide_title">Remote &amp; keypad guide</string>

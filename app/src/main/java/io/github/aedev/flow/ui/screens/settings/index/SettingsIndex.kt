@@ -9,12 +9,8 @@ internal object SettingsIndex {
             TasteIndex.all +
             DestinationIndex.all +
             LanguageRegionIndex.all +
-            PlaybackIndex.all +
-            BufferIndex.all +
             QualityIndex.all +
             TopicsIndex.all +
-            IntegrationsIndex.all +
-            ScrobblingIndex.all +
             BackupIndex.all +
             NotificationsIndex.all +
             HistoryIndex.all +

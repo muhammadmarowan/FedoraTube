@@ -230,6 +230,7 @@ fun LocalMediaScreen(
                     }
                 },
                 selectionMode = selectionMode,
+                selectedCount = selectedIds.size,
                 canSelect = state.items.isNotEmpty() && access != MediaAccess.NONE,
                 showGridToggle = isVideos && access != MediaAccess.NONE,
                 asGrid = asGrid,
@@ -237,6 +238,9 @@ fun LocalMediaScreen(
                 onSelectAll = {
                     val shown = state.items.mapTo(HashSet()) { it.mediaId }
                     selectedIds = if (selectedIds.containsAll(shown)) emptySet() else shown
+                },
+                onDelete = {
+                    deleteFiles(state.items.filter { it.mediaId in selectedIds })
                 },
                 onToggleGrid = { viewModel.setVideosAsGrid(!asGrid) },
                 onOpenSettings = onOpenSettings,
@@ -325,24 +329,6 @@ fun LocalMediaScreen(
                     }
                 }
             }
-            FlowSelectionToolbar(
-                visible = selectionMode && selectedIds.isNotEmpty(),
-                summary = pluralStringResource(R.plurals.selected_count_template, selectedIds.size, selectedIds.size),
-                actions =
-                    listOf(
-                        FlowSelectionAction(Icons.Outlined.QueuePlayNext, stringResource(R.string.add_to_queue)) {
-                            state.items.filter { it.mediaId in selectedIds }.forEach(fileActions.onAddToQueue)
-                            exitSelection()
-                        },
-                        FlowSelectionAction(Icons.Outlined.Share, stringResource(R.string.share)) {
-                            shareFiles(state.items.filter { it.mediaId in selectedIds })
-                        },
-                        FlowSelectionAction(Icons.Outlined.Delete, stringResource(R.string.action_delete)) {
-                            deleteFiles(state.items.filter { it.mediaId in selectedIds })
-                        },
-                    ),
-                modifier = Modifier.align(Alignment.BottomCenter),
-            )
         }
     }
 
@@ -354,11 +340,13 @@ private fun LocalMediaTopBar(
     title: String,
     onBack: () -> Unit,
     selectionMode: Boolean,
+    selectedCount: Int,
     canSelect: Boolean,
     showGridToggle: Boolean,
     asGrid: Boolean,
     onSelect: () -> Unit,
     onSelectAll: () -> Unit,
+    onDelete: () -> Unit,
     onToggleGrid: () -> Unit,
     onOpenSettings: () -> Unit,
 ) {
@@ -367,6 +355,11 @@ private fun LocalMediaTopBar(
         onBack = onBack,
         actions = {
             if (selectionMode) {
+                if (selectedCount > 0) {
+                    IconButton(onClick = onDelete) {
+                        Icon(Icons.Outlined.Delete, contentDescription = stringResource(R.string.action_delete))
+                    }
+                }
                 IconButton(
                     onClick = onSelectAll,
                 ) { Icon(Icons.Default.SelectAll, contentDescription = stringResource(R.string.select_all)) }

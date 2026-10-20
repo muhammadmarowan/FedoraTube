@@ -47,28 +47,10 @@ internal object TasteIndex {
 
     val all =
         listOf(
-            recap,
             shape,
             interests,
             channels,
             remembered,
-            clearRemembered,
-            music,
-            appetite,
-            exportVideo,
-            importVideo,
-            resetVideo,
-            exportMusic,
-            importMusic,
-            resetMusic,
-            engineInteractions,
-            engineTopics,
-            engineChannels,
-            engineHistory,
-            engineFeedMemory,
-            engineSuppressed,
-            engineShortsSeen,
-            engineQueries,
-            engineStarters,
+            hidden,
         )
 }

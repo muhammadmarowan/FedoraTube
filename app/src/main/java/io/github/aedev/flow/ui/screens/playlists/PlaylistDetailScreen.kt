@@ -198,6 +198,7 @@ fun PlaylistDetailScreen(
                     val shownIds = shownVideos.mapTo(HashSet()) { it.id }
                     selectedIds = if (selectedIds.containsAll(shownIds)) selectedIds - shownIds else selectedIds + shownIds
                 },
+                onDelete = { dialog = PlaylistDialog.RemoveSelected(selectedIds) },
             )
         },
         containerColor = MaterialTheme.colorScheme.background,
@@ -270,17 +271,6 @@ fun PlaylistDetailScreen(
                     )
                 }
             }
-            FlowSelectionToolbar(
-                visible = selectionMode && selectedIds.isNotEmpty(),
-                summary = pluralStringResource(R.plurals.selected_count_template, selectedIds.size, selectedIds.size),
-                actions =
-                    listOf(
-                        FlowSelectionAction(Icons.Outlined.Delete, stringResource(R.string.remove)) {
-                            dialog = PlaylistDialog.RemoveSelected(selectedIds)
-                        },
-                    ),
-                modifier = Modifier.align(Alignment.BottomCenter),
-            )
         }
     }
 

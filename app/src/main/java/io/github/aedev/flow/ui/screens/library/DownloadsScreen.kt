@@ -147,7 +147,6 @@ fun DownloadsScreen(
     val sortInHeader = libraryHeaderIsOneRow()
     val listHeader: @Composable () -> Unit = {
         Column {
-            DownloadsStorageCard(uiState.storage.videoBytes, uiState.storage.musicBytes, uiState.storage.freeBytes)
             if (!sortInHeader) {
                 Row(Modifier.fillMaxWidth().padding(top = 8.dp), verticalAlignment = Alignment.CenterVertically) {
                     Spacer(Modifier.weight(1f))
@@ -171,6 +170,11 @@ fun DownloadsScreen(
                 onBack = if (selectionMode) exitSelection else onBackClick,
                 actions = {
                     if (selectionMode) {
+                        if (selectedIds.isNotEmpty()) {
+                            IconButton(onClick = { pendingDeletion = PendingDeletion(selectedIds, title = null) }) {
+                                Icon(Icons.Outlined.Delete, contentDescription = stringResource(R.string.action_delete))
+                            }
+                        }
                         IconButton(onClick = { selectedIds = if (selectedIds.size == shownIds.size) emptySet() else shownIds.toSet() }) {
                             Icon(Icons.Default.SelectAll, contentDescription = stringResource(R.string.select_all))
                         }
@@ -257,17 +261,6 @@ fun DownloadsScreen(
                     }
                 }
             }
-            FlowSelectionToolbar(
-                visible = selectionMode && selectedIds.isNotEmpty(),
-                summary = pluralStringResource(R.plurals.selected_count_template, selectedIds.size, selectedIds.size),
-                actions =
-                    listOf(
-                        FlowSelectionAction(Icons.Outlined.Delete, stringResource(R.string.action_delete)) {
-                            pendingDeletion = PendingDeletion(selectedIds, title = null)
-                        },
-                    ),
-                modifier = Modifier.align(Alignment.BottomCenter),
-            )
         }
     }
 

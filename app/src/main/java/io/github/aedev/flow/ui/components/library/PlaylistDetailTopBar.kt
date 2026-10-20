@@ -4,6 +4,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Checklist
 import androidx.compose.material.icons.filled.SelectAll
 import androidx.compose.material.icons.outlined.CheckBox
+import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -40,6 +41,7 @@ internal fun PlaylistDetailTopBar(
     onEnterSelection: () -> Unit,
     onClearSelection: () -> Unit,
     onSelectAll: () -> Unit,
+    onDelete: () -> Unit = {},
 ) {
     if (search.query != null && !inSelectionMode) {
         FlowSearchTopBar(
@@ -61,6 +63,11 @@ internal fun PlaylistDetailTopBar(
         onBack = if (inSelectionMode) onClearSelection else onNavigateBack,
         actions = {
             if (inSelectionMode) {
+                if (selectedCount > 0) {
+                    IconButton(onClick = onDelete) {
+                        Icon(imageVector = Icons.Outlined.Delete, contentDescription = stringResource(R.string.remove))
+                    }
+                }
                 IconButton(onClick = onSelectAll) {
                     Icon(
                         imageVector = if (allSelected) Icons.Outlined.CheckBox else Icons.Default.SelectAll,

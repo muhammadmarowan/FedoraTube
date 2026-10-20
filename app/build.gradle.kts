@@ -57,8 +57,8 @@ android {
         applicationId = "com.fedoratube.org"
         minSdk = 26
         targetSdk = 36
-        versionCode = 3
-        versionName = "1.1.0"
+        versionCode = 4
+        versionName = "1.2.0"
 
         buildConfigField("int", "NIGHTLY_RUN", "0")
         buildConfigField("String", "APP_LANGUAGE_TAGS", "\"${(listOf("en") + translatedLocaleTags()).joinToString(",")}\"")
