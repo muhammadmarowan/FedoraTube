@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="ic_launcher_background">#000000</color>
+    <color name="flow_primary">#3C98D4</color>
+    <color name="flow_primary_variant">#2B7AA8</color>
+    <color name="flow_secondary">#56AFE9</color>
+    <color name="flow_red">#3C98D4</color>
+
+    <!-- App icon variant backgrounds -->
+    <color name="icon_bg_amoled">#000000</color>
+    <color name="icon_bg_monochrome">#000000</color>
+    <color name="icon_bg_ghost">#000000</color>
+    <color name="icon_bg_dynamic">#000000</color>
+    <color name="icon_bg_flow_light">#000000</color>
+    <color name="icon_bg_flow_play">#000000</color>
+    <color name="icon_bg_material_sky">#000000</color>
+    <color name="icon_bg_material_mint">#000000</color>
+    <color name="icon_bg_expressive_scallop">#000000</color>
+    <color name="icon_bg_expressive_segmented">#000000</color>
+    <color name="icon_bg_expressive_play">#000000</color>
+    <color name="icon_bg_expressive_sky">#000000</color>
+    <color name="icon_bg_expressive_mint">#000000</color>
+    <color name="icon_bg_expressive_cookie">#000000</color>
+    <color name="icon_bg_expressive_oval">#000000</color>
+    <color name="icon_bg_expressive_pill">#000000</color>
+    <color name="splash_background">#000000</color>
+    <color name="splash_background_light">#000000</color>
+    <color name="splash_background_dark">#000000</color>
+    <color name="splash_background_black">#000000</color>
+</resources>
+
