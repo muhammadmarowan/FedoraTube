@@ -61,11 +61,9 @@ import io.github.aedev.flow.ui.components.library.LibrarySelection
 import io.github.aedev.flow.ui.components.library.MusicDownloadsList
 import io.github.aedev.flow.ui.components.library.RemoveDownloadCollectionDialog
 import io.github.aedev.flow.ui.components.library.VideosDownloadsList
-import io.github.aedev.flow.ui.components.library.libraryHeaderIsOneRow
 import io.github.aedev.flow.ui.components.shared.FlowAlertDialog
 import io.github.aedev.flow.ui.components.shared.FlowSelectionAction
 import io.github.aedev.flow.ui.components.shared.FlowSelectionToolbar
-import io.github.aedev.flow.ui.components.shared.FlowSortChip
 import io.github.aedev.flow.ui.components.shared.MediaKind
 import io.github.aedev.flow.ui.components.shared.dismissKeyboardOnPress
 import io.github.aedev.flow.ui.components.shared.flowGridColumns
@@ -134,27 +132,7 @@ fun DownloadsScreen(
             onCancel = { id, title -> pendingDeletion = PendingDeletion(setOf(id), title) },
             onCancelAll = { removeIncompleteOf = selectedKind },
         )
-    val sortChip: @Composable () -> Unit = {
-        FlowSortChip(
-            options = DownloadSort.entries,
-            selected = uiState.sort,
-            default = DownloadSort.NEWEST,
-            label = { stringResource(it.labelRes) },
-            onSelected = viewModel::setSort,
-        )
-    }
     val onRemoveCollection: (DownloadCollectionSummary) -> Unit = { removingCollection = it }
-    val sortInHeader = libraryHeaderIsOneRow()
-    val listHeader: @Composable () -> Unit = {
-        Column {
-            if (!sortInHeader) {
-                Row(Modifier.fillMaxWidth().padding(top = 8.dp), verticalAlignment = Alignment.CenterVertically) {
-                    Spacer(Modifier.weight(1f))
-                    sortChip()
-                }
-            }
-        }
-    }
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -200,7 +178,7 @@ fun DownloadsScreen(
                         exitSelection()
                         selectedKind = it
                     },
-                    trailing = if (sortInHeader) sortChip else null,
+                    trailing = null,
                 )
                 val hasNothing =
                     uiState.totalVideoCount == 0 &&
@@ -218,7 +196,6 @@ fun DownloadsScreen(
                     when (kind) {
                         MediaKind.Videos -> {
                             VideosDownloadsList(
-                                header = listHeader,
                                 shelf = { inset ->
                                     DownloadCollectionsShelf(uiState.videoCollections, onOpenCollection, onRemoveCollection, inset)
                                 },
@@ -240,7 +217,6 @@ fun DownloadsScreen(
 
                         MediaKind.Music -> {
                             MusicDownloadsList(
-                                header = listHeader,
                                 shelf = { inset ->
                                     DownloadCollectionsShelf(uiState.musicCollections, onOpenCollection, onRemoveCollection, inset)
                                 },

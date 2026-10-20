@@ -19,9 +19,9 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
 
-private const val STABLE_RELEASE_API = "https://api.github.com/repos/muhammadmarowan/Flow/releases/latest"
-private const val ALL_RELEASES_API = "https://api.github.com/repos/muhammadmarowan/Flow/releases"
-private const val NIGHTLY_RELEASE_API = "https://api.github.com/repos/muhammadmarowan/Flow/releases/tags/nightly"
+private const val STABLE_RELEASE_API = "https://api.github.com/repos/muhammadmarowan/FedoraTube/releases/latest"
+private const val ALL_RELEASES_API = "https://api.github.com/repos/muhammadmarowan/FedoraTube/releases"
+private const val NIGHTLY_RELEASE_API = "https://api.github.com/repos/muhammadmarowan/FedoraTube/releases/tags/nightly"
 private const val NIGHTLY_CHANNEL = "nightly"
 private const val GITHUB_JSON = "application/vnd.github+json"
 
@@ -30,7 +30,7 @@ enum class UpdateAnnouncement { LAUNCH_PAGE, NOTIFICATION }
 
 /** How the automatic checks space themselves out and which releases they may show. */
 internal object UpdateSchedule {
-    val COOLDOWN_MS: Long = TimeUnit.HOURS.toMillis(12)
+    val COOLDOWN_MS: Long = TimeUnit.MINUTES.toMillis(5)
 
     fun isDue(
         lastCheckMs: Long,
@@ -59,9 +59,13 @@ class UpdateRepository
         private val mutex = Mutex()
         private val isNightly = BuildConfig.UPDATE_CHANNEL == NIGHTLY_CHANNEL
         private val _latest = MutableStateFlow<AppRelease?>(null)
+        private val _allReleases = MutableStateFlow<List<GitHubRelease>>(emptyList())
 
         /** The newest release found this process, or null when none is known or this build is current. */
         val latest: StateFlow<AppRelease?> = _latest.asStateFlow()
+
+        /** All releases fetched from GitHub. */
+        val allReleases: StateFlow<List<GitHubRelease>> = _allReleases.asStateFlow()
 
         /** Asks GitHub now. Throws when the request fails, so a check the user started can say so. */
         suspend fun fetch(): AppRelease? = mutex.withLock { fetchLocked() }
@@ -97,6 +101,28 @@ class UpdateRepository
         private suspend fun fetchLocked(): AppRelease? {
             val parsed =
                 withContext(Dispatchers.IO) {
+                    if (!isNightly) {
+                        val allReleasesRequest =
+                            Request
+                                .Builder()
+                                .url(ALL_RELEASES_API)
+                                .header("Accept", GITHUB_JSON)
+                                .cacheControl(CacheControl.FORCE_NETWORK)
+                                .build()
+                        val allResponse = runCatching { client.newCall(allReleasesRequest).execute() }.getOrNull()
+                        if (allResponse != null && allResponse.isSuccessful) {
+                            val body = allResponse.body.string()
+                            allResponse.close()
+                            val releases = parseGitHubReleases(body)
+                            if (releases.isNotEmpty()) {
+                                _allReleases.value = releases
+                                return@withContext releases.first()
+                            }
+                        } else {
+                            allResponse?.close()
+                        }
+                    }
+
                     val primaryUrl = if (isNightly) NIGHTLY_RELEASE_API else STABLE_RELEASE_API
                     val request =
                         Request
@@ -109,26 +135,9 @@ class UpdateRepository
                     if (response != null && response.isSuccessful) {
                         response.use { parseGitHubRelease(it.body.string()) }
                     } else {
+                        val code = response?.code ?: "Unknown"
                         response?.close()
-                        // If /releases/latest returns 404 on the user's repo, query the releases list as fallback
-                        if (!isNightly) {
-                            val allReleasesRequest =
-                                Request
-                                    .Builder()
-                                    .url(ALL_RELEASES_API)
-                                    .header("Accept", GITHUB_JSON)
-                                    .cacheControl(CacheControl.FORCE_NETWORK)
-                                    .build()
-                            client.newCall(allReleasesRequest).execute().use { allResponse ->
-                                if (!allResponse.isSuccessful) {
-                                    throw IOException("Update check failed: HTTP ${allResponse.code}")
-                                }
-                                val releases = parseGitHubReleases(allResponse.body.string())
-                                releases.firstOrNull() ?: throw IOException("No releases found on GitHub repository")
-                            }
-                        } else {
-                            throw IOException("Update check failed: HTTP ${response?.code ?: "Unknown"}")
-                        }
+                        throw IOException("Update check failed: HTTP $code")
                     }
                 }
             val release =

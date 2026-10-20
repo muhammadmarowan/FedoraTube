@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.OpenInNew
 import androidx.compose.material.icons.outlined.CalendarToday
@@ -47,6 +48,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.platform.UriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -57,6 +59,7 @@ import io.github.aedev.flow.BuildConfig
 import io.github.aedev.flow.R
 import io.github.aedev.flow.data.update.AppRelease
 import io.github.aedev.flow.data.update.AppVersions
+import io.github.aedev.flow.data.update.GitHubRelease
 import io.github.aedev.flow.data.update.UpdateFailure
 import io.github.aedev.flow.ui.components.layout.topbar.FlowTopBar
 import io.github.aedev.flow.ui.components.shared.FlowEmptyState
@@ -64,6 +67,7 @@ import io.github.aedev.flow.ui.components.shared.FlowErrorState
 import io.github.aedev.flow.ui.components.shared.FlowLoadingIndicator
 import io.github.aedev.flow.ui.components.shared.FlowLogo
 import io.github.aedev.flow.ui.components.shared.FlowMaxContentWidth
+import io.github.aedev.flow.ui.components.shared.FlowSectionHeader
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
@@ -106,6 +110,10 @@ fun UpdateScreen(
                             },
                             onOpenGitHub = { uriHandler.openUri(release.pageUrl) },
                         )
+                    } else {
+                        IconButton(onClick = { uriHandler.openUri("https://github.com/muhammadmarowan/FedoraTube/releases") }) {
+                            Icon(Icons.AutoMirrored.Outlined.OpenInNew, contentDescription = stringResource(R.string.update_open_github))
+                        }
                     }
                 },
             )
@@ -132,15 +140,11 @@ fun UpdateScreen(
                     FlowLoadingIndicator()
                 }
 
-                state.fetchFailed -> {
+                state.fetchFailed && state.allReleases.isEmpty() && release == null -> {
                     FlowErrorState(
                         error = stringResource(R.string.update_check_failed),
                         onRetry = viewModel::retryFetch,
                     )
-                }
-
-                release == null -> {
-                    FlowEmptyState(title = stringResource(R.string.flow_is_up_to_date), icon = Icons.Outlined.Verified)
                 }
 
                 else -> {
@@ -148,11 +152,113 @@ fun UpdateScreen(
                         modifier = Modifier.widthIn(max = FlowMaxContentWidth).fillMaxWidth(),
                         contentPadding = ContentPadding,
                     ) {
-                        item(key = "header") { ReleaseHeader(release) }
-                        item(key = "notice") { StageNotice(state.stage) }
-                        state.notes?.let { releaseNotes(it) }
+                        if (release != null) {
+                            item(key = "header") { ReleaseHeader(release) }
+                            item(key = "notice") { StageNotice(state.stage) }
+                            state.notes?.let { releaseNotes(it) }
+                        } else {
+                            item(key = "header") { UpToDateHeader(state.currentVersion) }
+                        }
+
+                        if (state.allReleases.isNotEmpty()) {
+                            item(key = "all_releases_header") {
+                                FlowSectionHeader(
+                                    text = "All Releases",
+                                    modifier = Modifier.padding(top = 16.dp, bottom = 8.dp),
+                                )
+                            }
+                            items(
+                                items = state.allReleases,
+                                key = { "rel-${it.tagName}" },
+                            ) { rel ->
+                                ReleaseHistoryCard(rel, state.currentVersion, uriHandler)
+                            }
+                        }
                     }
                 }
+            }
+        }
+    }
+}
+
+@Composable
+private fun UpToDateHeader(currentVersion: String) {
+    Column(verticalArrangement = Arrangement.spacedBy(HeaderSpacing), modifier = Modifier.padding(bottom = HeaderSpacing)) {
+        Surface(
+            shape = MaterialShapes.SoftBurst.toShape(),
+            color = MaterialTheme.colorScheme.primaryContainer,
+            modifier = Modifier.size(HeroSize),
+        ) {
+            Box(contentAlignment = Alignment.Center) { FlowLogo(Modifier.width(HeroLogoWidth)) }
+        }
+        Text(
+            text = stringResource(R.string.flow_is_up_to_date),
+            style = MaterialTheme.typography.headlineMediumEmphasized,
+            color = MaterialTheme.colorScheme.onBackground,
+        )
+        FlowRow(horizontalArrangement = Arrangement.spacedBy(FactSpacing), verticalArrangement = Arrangement.spacedBy(FactSpacing)) {
+            ReleaseFact(
+                Icons.Outlined.Verified,
+                "Current version: v$currentVersion",
+            )
+        }
+    }
+}
+
+@Composable
+private fun ReleaseHistoryCard(
+    release: GitHubRelease,
+    currentVersion: String,
+    uriHandler: UriHandler,
+) {
+    val isCurrent = AppVersions.normalize(release.tagName) == AppVersions.normalize(currentVersion)
+    Surface(
+        shape = MaterialTheme.shapes.large,
+        color = MaterialTheme.colorScheme.surfaceContainerHigh,
+        modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
+    ) {
+        Column(Modifier.padding(16.dp)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = release.tagName,
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onSurface,
+                    )
+                    if (isCurrent) {
+                        Surface(
+                            shape = MaterialTheme.shapes.small,
+                            color = MaterialTheme.colorScheme.primaryContainer,
+                            modifier = Modifier.padding(start = 8.dp),
+                        ) {
+                            Text(
+                                text = "Current",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.onPrimaryContainer,
+                                modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+                            )
+                        }
+                    }
+                }
+                release.publishedAt?.take(10)?.let { dateStr ->
+                    Text(
+                        text = dateStr,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            }
+            if (!release.body.isNullOrBlank()) {
+                Text(
+                    text = release.body.trim(),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(top = 8.dp),
+                )
             }
         }
     }

@@ -83,7 +83,10 @@ internal fun SettingsHomeScreen(
         val page = DestinationIndex.destinationOf(entry)
         when {
             entry.key == HomeIndex.support.key -> onOpenDonations()
-            entry.key == HomeIndex.checkForUpdates.key -> viewModel.checkForUpdates()
+            entry.key == HomeIndex.checkForUpdates.key -> {
+                viewModel.checkForUpdates()
+                onOpenUpdate()
+            }
             page != null -> onOpen(SettingsTarget(page))
             entry.destination == SettingsDestination.HOME -> highlight = entry.key
             else -> onOpen(entry.target)
@@ -131,7 +134,10 @@ internal fun SettingsHomeScreen(
                         onSaveHistoryChange = viewModel::setDeepFlowSaveToHistory,
                         onScrobbleChange = viewModel::setDeepFlowScrobble,
                         onShowOnSearchChange = viewModel::setDeepFlowOnSearch,
-                        onCheckForUpdates = viewModel::checkForUpdates,
+                        onCheckForUpdates = {
+                            viewModel.checkForUpdates()
+                            onOpenUpdate()
+                        },
                         onFocusModeChange = { enabled ->
                             coroutineScope.launch { preferences.setFocusModeEnabled(enabled) }
                         },

@@ -13,7 +13,7 @@ private const val APK_SUFFIX = ".apk"
 private val NightlyApk = Regex("""flow-nightly-(\d+)\.apk""", RegexOption.IGNORE_CASE)
 
 @Serializable
-internal data class GitHubRelease(
+data class GitHubRelease(
     @SerialName("tag_name") val tagName: String = "",
     val body: String? = null,
     @SerialName("html_url") val htmlUrl: String = "",
@@ -22,7 +22,7 @@ internal data class GitHubRelease(
 )
 
 @Serializable
-internal data class GitHubAsset(
+data class GitHubAsset(
     val name: String = "",
     @SerialName("browser_download_url") val downloadUrl: String = "",
     val size: Long = 0,
@@ -89,13 +89,23 @@ internal fun selectApk(
         assets.filter {
             it.name.endsWith(APK_SUFFIX, ignoreCase = true) && !it.name.startsWith(FOSS_PREFIX, ignoreCase = true)
         }
-    val splits = github.filter { asset -> supportedAbis.any { asset.name.equals("flow-$it.apk", ignoreCase = true) } }
-    if (splits.isNotEmpty()) {
-        return supportedAbis.firstNotNullOfOrNull { abi -> splits.firstOrNull { it.name.equals("flow-$abi.apk", ignoreCase = true) } }
+    val matchesAbi = { asset: GitHubAsset, abi: String ->
+        asset.name.equals("flow-$abi.apk", ignoreCase = true) ||
+            asset.name.contains("-$abi.apk", ignoreCase = true) ||
+            asset.name.contains("_$abi.apk", ignoreCase = true)
     }
-    val publishesSplits = github.any { it.name.startsWith("flow-", ignoreCase = true) }
-    if (publishesSplits && github.none { it.name.equals(UNIVERSAL_APK, ignoreCase = true) }) return null
-    return github.firstOrNull { it.name.equals(UNIVERSAL_APK, ignoreCase = true) } ?: github.firstOrNull()
+    val splits = github.filter { asset -> supportedAbis.any { abi -> matchesAbi(asset, abi) } }
+    if (splits.isNotEmpty()) {
+        return supportedAbis.firstNotNullOfOrNull { abi -> splits.firstOrNull { matchesAbi(it, abi) } }
+    }
+    val publishesSplits = github.any {
+        it.name.startsWith("flow-", ignoreCase = true) ||
+            it.name.contains("-arm", ignoreCase = true) ||
+            it.name.contains("-x86", ignoreCase = true)
+    }
+    val isUniversal = { name: String -> name.equals(UNIVERSAL_APK, ignoreCase = true) || name.contains("universal", ignoreCase = true) }
+    if (publishesSplits && github.none { isUniversal(it.name) }) return null
+    return github.firstOrNull { isUniversal(it.name) } ?: github.firstOrNull()
 }
 
 private fun GitHubAsset.toReleaseApk(): ReleaseApk =

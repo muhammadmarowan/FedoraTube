@@ -80,7 +80,6 @@ internal class ActiveDownloadActions(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun VideosDownloadsList(
-    header: @Composable () -> Unit,
     shelf: @Composable (horizontalInset: Dp) -> Unit,
     videos: List<DownloadedVideo>,
     totalCount: Int,
@@ -96,6 +95,7 @@ internal fun VideosDownloadsList(
     onDelete: (id: String, title: String) -> Unit,
     onHomeClick: () -> Unit,
     modifier: Modifier = Modifier,
+    header: (@Composable () -> Unit)? = null,
 ) {
     FlowPullToRefreshBox(
         isRefreshing = isRefreshing,
@@ -117,7 +117,9 @@ internal fun VideosDownloadsList(
                 horizontalArrangement = Arrangement.spacedBy(grid.spacing),
                 modifier = Modifier.fillMaxSize(),
             ) {
-                fullWidth("header") { Box(Modifier.padding(horizontal = rowInset(columns))) { header() } }
+                if (header != null) {
+                    fullWidth("header") { Box(Modifier.padding(horizontal = rowInset(columns))) { header() } }
+                }
                 fullWidth("collections") { shelf(rowInset(columns)) }
                 activeSection(incomplete, progress, mergingIds, activeActions, rowInset(columns))
                 if (videos.isNotEmpty()) {
@@ -154,7 +156,6 @@ internal fun VideosDownloadsList(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun MusicDownloadsList(
-    header: @Composable () -> Unit,
     shelf: @Composable (horizontalInset: Dp) -> Unit,
     tracks: List<DownloadedTrack>,
     totalCount: Int,
@@ -169,6 +170,7 @@ internal fun MusicDownloadsList(
     onMusicClick: (List<DownloadedTrack>, Int) -> Unit,
     onHomeClick: () -> Unit,
     modifier: Modifier = Modifier,
+    header: (@Composable () -> Unit)? = null,
 ) {
     FlowPullToRefreshBox(
         isRefreshing = isRefreshing,
@@ -186,7 +188,9 @@ internal fun MusicDownloadsList(
             horizontalArrangement = Arrangement.spacedBy(GridSpacing),
             modifier = Modifier.fillMaxSize(),
         ) {
-            fullWidth("header") { Box(Modifier.padding(horizontal = rowInset(columns))) { header() } }
+            if (header != null) {
+                fullWidth("header") { Box(Modifier.padding(horizontal = rowInset(columns))) { header() } }
+            }
             fullWidth("collections") { shelf(rowInset(columns)) }
             activeSection(incomplete, progress, emptySet(), activeActions, rowInset(columns))
             if (tracks.isNotEmpty()) {

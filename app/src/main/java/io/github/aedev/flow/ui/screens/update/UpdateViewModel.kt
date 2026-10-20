@@ -5,7 +5,9 @@ import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.github.aedev.flow.BuildConfig
 import io.github.aedev.flow.data.update.AppRelease
+import io.github.aedev.flow.data.update.GitHubRelease
 import io.github.aedev.flow.data.update.ReleaseNotes
 import io.github.aedev.flow.data.update.UpdateFailure
 import io.github.aedev.flow.data.update.UpdateRepository
@@ -31,6 +33,8 @@ data class UpdateUiState(
     val stage: UpdateStage = UpdateStage.Available,
     val loading: Boolean = false,
     val fetchFailed: Boolean = false,
+    val allReleases: List<GitHubRelease> = emptyList(),
+    val currentVersion: String = BuildConfig.VERSION_NAME,
 )
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -50,7 +54,7 @@ class UpdateViewModel
             combine(
                 updates.latest.flatMapLatest { release ->
                     if (release == null) {
-                        flowOf(UpdateUiState())
+                        flowOf(Pair(null, UpdateStage.Available))
                     } else {
                         val notes = parseReleaseNotes(release.notes)
                         combine(
@@ -59,16 +63,23 @@ class UpdateViewModel
                             installing,
                             installer.installFailed,
                         ) { download, allowed, busy, failed ->
-                            UpdateUiState(release, notes, updateStage(download, allowed, busy, failed))
+                            Pair(notes, updateStage(download, allowed, busy, failed))
                         }
                     }
                 },
+                updates.latest,
+                updates.allReleases,
                 loading,
                 fetchFailed,
-            ) { state, isLoading, isFailed ->
-                state.copy(
-                    loading = isLoading && state.release == null,
-                    fetchFailed = isFailed && state.release == null,
+            ) { (notes, stage), release, allReleases, isLoading, isFailed ->
+                UpdateUiState(
+                    release = release,
+                    notes = notes,
+                    stage = stage,
+                    loading = isLoading && release == null && allReleases.isEmpty(),
+                    fetchFailed = isFailed && release == null && allReleases.isEmpty(),
+                    allReleases = allReleases,
+                    currentVersion = BuildConfig.VERSION_NAME,
                 )
             }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(STOP_TIMEOUT_MS), UpdateUiState(loading = loading.value))
 
