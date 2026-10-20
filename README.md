@@ -4,8 +4,6 @@
 
 # Fedora Tube
 
-**A sleek, privacy-first, distraction-free YouTube & Music client for Android with a pure AMOLED black design and on-device recommendation engine.**
-
 <br>
 
 [![Latest Release](https://img.shields.io/github/v/release/muhammadmarowan/FedoraTube?style=for-the-badge&color=0072EF&logo=github&label=Release)](https://github.com/muhammadmarowan/FedoraTube/releases/latest)
@@ -18,6 +16,21 @@
 </div>
 
 ---
+
+## ⚡ Highlights & Features
+
+### 🎬 Ad-Free Video Streaming
+* **Zero Commercials & Trackers:** Watch videos without pre-roll, mid-roll, or banner ads.
+* **Integrated SponsorBlock:** Automatically skip sponsored segments, intros, outros, and subscribe reminders.
+* **Background & PiP:** Keep playing audio in the background with the screen turned off or in Picture-in-Picture window mode.
+
+### 🎵 Dedicated Music Experience
+* **YouTube Music Engine:** Explore trending tracks, global top charts, artist discographies, and mood radios.
+* **Rich Audio Player:** Enjoy background audio, lock screen controls, and synchronized real-time lyrics.
+
+### 🔒 100% Private & Offline First
+* **Local Taste Engine:** Personal recommendations are computed entirely on your device. Your watch habits never get uploaded to any cloud.
+* **No Account Required:** No Google login needed. Import/export your subscriptions and watch history anytime.
 
 ## 📱 Screenshots
 
@@ -43,43 +56,6 @@
     </tr>
   </table>
 </div>
-
----
-
-## ⚡ Highlights & Features
-
-### 🎬 Ad-Free Video Streaming
-* **Zero Commercials & Trackers:** Watch videos without pre-roll, mid-roll, or banner ads.
-* **Integrated SponsorBlock:** Automatically skip sponsored segments, intros, outros, and subscribe reminders.
-* **DeArrow Integration:** Replaces misleading, clickbait thumbnails and titles with clean, community-verified descriptions.
-* **Return YouTube Dislike (RYD):** Restores visible community dislike counts and ratios on all videos.
-* **Background & PiP:** Keep playing audio in the background with the screen turned off or in Picture-in-Picture window mode.
-
-### 🖤 AMOLED Pure-Black Aesthetics
-* **True AMOLED Black (#000000):** Conserves battery life on OLED displays and eliminates eye fatigue.
-* **Fedora Blue Accents:** Refined neon blue accents, glassmorphic headers, and fluid micro-interactions.
-* **Minimal Focus Mode:** Eliminate all feed distractions and focus purely on search and intentional viewing.
-
-### 🎵 Dedicated Music Experience
-* **YouTube Music Engine:** Explore trending tracks, global top charts, artist discographies, and mood radios.
-* **Rich Audio Player:** Enjoy background audio, lock screen controls, and synchronized real-time lyrics.
-
-### 🔒 100% Private & Offline First
-* **Local Taste Engine:** Personal recommendations are computed entirely on your device. Your watch habits never get uploaded to any cloud.
-* **No Account Required:** No Google login needed. Import/export your subscriptions and watch history anytime.
-
----
-
-## 📥 Download & Installation
-
-Get the latest signed APK directly from the [Releases](https://github.com/muhammadmarowan/FedoraTube/releases/latest) page:
-
-| Package | Architecture | Description |
-| :--- | :--- | :--- |
-| **arm64-v8a** | 64-bit ARM | **Recommended** for modern smartphones & tablets (faster & smaller) |
-| **Universal** | All Architectures | Universal installer compatible with all supported Android devices |
-| **armeabi-v7a**| 32-bit ARM | For older 32-bit Android phones |
-| **x86_64** | 64-bit Intel/AMD | For Android emulators and Chromebooks |
 
 ---
 
