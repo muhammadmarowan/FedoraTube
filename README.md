@@ -45,12 +45,12 @@
 
 ## 📥 Downloads
 
-| Architecture | Package | Description | Download |
-| :--- | :--- | :--- | :--- |
-| **ARM64** | `FedoraTube-v*-arm64-v8a.apk` | Recommended for modern Android phones | [Download APK](https://github.com/muhammadmarowan/FedoraTube/releases/latest) |
-| **Universal** | `FedoraTube-v*-universal.apk` | Compatible with all Android devices | [Download APK](https://github.com/muhammadmarowan/FedoraTube/releases/latest) |
-| **ARMv7** | `FedoraTube-v*-armeabi-v7a.apk` | For older 32-bit Android phones | [Download APK](https://github.com/muhammadmarowan/FedoraTube/releases/latest) |
-| **x86_64** | `FedoraTube-v*-x86_64.apk` | For Android emulators & ChromeOS | [Download APK](https://github.com/muhammadmarowan/FedoraTube/releases/latest) |
+| Description | Download |
+| :--- | :--- | 
+| Recommended for modern Android phones | [Download APK](https://github.com/muhammadmarowan/FedoraTube/releases/latest) |
+| Compatible with all Android devices | [Download APK](https://github.com/muhammadmarowan/FedoraTube/releases/latest) |
+| For older 32-bit Android phones | [Download APK](https://github.com/muhammadmarowan/FedoraTube/releases/latest) |
+| For Android emulators & ChromeOS | [Download APK](https://github.com/muhammadmarowan/FedoraTube/releases/latest) |
 
 ---
 
