@@ -48,28 +48,28 @@
 }
 
 ## Keep data models and serialization structures
--keep class io.github.aedev.flow.data.model.** { *; }
--keep class io.github.aedev.flow.data.local.** { *; }
--keep class io.github.aedev.flow.data.lyrics.** { *; }
--keep class io.github.aedev.flow.innertube.models.** { *; }
+-keep class com.fedoratube.org.data.model.** { *; }
+-keep class com.fedoratube.org.data.local.** { *; }
+-keep class com.fedoratube.org.data.lyrics.** { *; }
+-keep class com.fedoratube.org.innertube.models.** { *; }
 
 ## Gson-persisted models that live OUTSIDE the packages above (issue #996): without an
 ## explicit keep, R8 may strip the generic Signature of MusicTrack.artists, and cached
 ## history/queues then deserialize artist entries as LinkedTreeMaps that crash the music
 ## feed with a ClassCastException on first access. Any new Gson-persisted model must be
 ## added here (or live in a kept package), whatever package it renders from.
--keep class io.github.aedev.flow.ui.screens.music.MusicTrack { *; }
--keep class io.github.aedev.flow.ui.screens.music.MusicArtist { *; }
--keep class io.github.aedev.flow.ui.screens.music.MusicItemType { *; }
--keep class io.github.aedev.flow.data.music.Playlist { *; }
--keep class io.github.aedev.flow.data.music.DownloadedTrack { *; }
--keep class io.github.aedev.flow.data.music.DownloadStatus { *; }
+-keep class com.fedoratube.org.ui.screens.music.MusicTrack { *; }
+-keep class com.fedoratube.org.ui.screens.music.MusicArtist { *; }
+-keep class com.fedoratube.org.ui.screens.music.MusicItemType { *; }
+-keep class com.fedoratube.org.data.music.Playlist { *; }
+-keep class com.fedoratube.org.data.music.DownloadedTrack { *; }
+-keep class com.fedoratube.org.data.music.DownloadStatus { *; }
 
 ## Shazam recognition models + kotlinx serializers
--keepclasseswithmembers class io.github.aedev.flow.data.recognition.shazam.** {
+-keepclasseswithmembers class com.fedoratube.org.data.recognition.shazam.** {
     kotlinx.serialization.KSerializer serializer(...);
 }
--keepclassmembers class io.github.aedev.flow.data.recognition.shazam.** {
+-keepclassmembers class com.fedoratube.org.data.recognition.shazam.** {
     *** Companion;
 }
 

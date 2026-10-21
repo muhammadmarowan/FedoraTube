@@ -12,7 +12,7 @@
     android:updatePeriodMillis="0"
     android:initialLayout="@layout/glance_default_loading_layout"
     android:description="@string/widget_playlist_description"
-    android:configure="io.github.aedev.flow.widget.config.WidgetConfigActivity"
+    android:configure="com.fedoratube.org.widget.config.WidgetConfigActivity"
     android:widgetFeatures="reconfigurable"
     android:resizeMode="horizontal|vertical"
     android:widgetCategory="home_screen" />

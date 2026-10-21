@@ -49,7 +49,7 @@ fun translatedLocaleTags(): List<String> =
         .sorted()
 
 android {
-    namespace = "io.github.aedev.flow"
+    namespace = "com.fedoratube.org"
     compileSdk = 37
 
     defaultConfig {
@@ -65,7 +65,7 @@ android {
         buildConfigField("String", "LASTFM_API_KEY", "\"${secretValue("lastfmApiKey", "lastfm.apiKey", "LASTFM_API_KEY")}\"")
         buildConfigField("String", "LASTFM_API_SECRET", "\"${secretValue("lastfmApiSecret", "lastfm.apiSecret", "LASTFM_API_SECRET")}\"")
 
-        testInstrumentationRunner = "io.github.aedev.flow.HiltTestRunner"
+        testInstrumentationRunner = "com.fedoratube.org.HiltTestRunner"
         vectorDrawables {
             useSupportLibrary = true
         }

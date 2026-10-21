@@ -6,12 +6,12 @@
 
     <application>
         <activity
-            android:name="io.github.aedev.flow.discord.DiscordLoginActivity"
+            android:name="com.fedoratube.org.discord.DiscordLoginActivity"
             android:exported="false"
             android:theme="@style/Theme.Flow" />
 
         <receiver
-            android:name="io.github.aedev.flow.updater.UpdateInstallReceiver"
+            android:name="com.fedoratube.org.updater.UpdateInstallReceiver"
             android:exported="false" />
 
         <service
