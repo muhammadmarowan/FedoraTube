@@ -6,8 +6,8 @@
 
 <br>
 
-[![Latest Release](https://img.shields.io/github/v/release/muhammadmarowan/FedoraTube?style=for-the-badge&color=0072EF&logo=github&label=Release)](https://github.com/muhammadmarowan/FedoraTube/releases/latest)
-[![Download APK](https://img.shields.io/badge/⬇️_DOWNLOAD-APK_v1.1.0-00C853?style=for-the-badge&logo=android&logoColor=white)](https://github.com/muhammadmarowan/FedoraTube/releases/tag/v1.1.0)
+[![Latest Release]([https://img.shields.io/github/v/release/muhammadmarowan/FedoraTube?style=for-the-badge&color=0072EF&logo=github&label=Release)](https://github.com/muhammadmarowan/FedoraTube/releases/latest](https://github.com/muhammadmarowan/FedoraTube/releases/tag/v1.4.0))
+[![Download APK]([https://img.shields.io/badge/⬇️_DOWNLOAD-APK_v1.1.0-00C853?style=for-the-badge&logo=android&logoColor=white)](https://github.com/muhammadmarowan/FedoraTube/releases/tag/v1.1.0](https://github.com/muhammadmarowan/FedoraTube/releases/download/v1.4.0/FedoraTube-v1.4.0-universal.apk))
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg?style=for-the-badge)](LICENSE)
 [![Platform](https://img.shields.io/badge/Platform-Android_8.0+-lightgrey?style=for-the-badge&logo=android)](https://developer.android.com)
 
