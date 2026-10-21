@@ -793,24 +793,14 @@ object EnhancedMusicPlayerManager {
             _shuffleEnabled.value = restored.shuffleEnabled
             _automixItems.value = restored.automix
 
-            if (controller != null && loadedItem != null) {
+            if (controller != null && loadedItem != null && controller.isPlaying) {
                 syncCurrentTrackFromMediaItem(controller, loadedItem)
-                // Already playing when this controller connected, so no change callback reports it.
                 updatePlayerState()
-                if (controller.isPlaying) startPositionUpdates()
+                startPositionUpdates()
                 return
             }
-            restored.track?.let {
-                _currentTrack.value = it
-                _currentPosition.value = restored.resumePositionMs
-                resumePosition = it.videoId to restored.resumePositionMs
-                val state = _playerState.value
-                _playerState.value =
-                    state.copy(
-                        position = restored.resumePositionMs,
-                        duration = if (it.duration > 0) it.duration * 1000L else state.duration,
-                    )
-            }
+            // Do not restore _currentTrack if the player is not actively running/playing.
+            // This prevents old songs from popping up minimized when opening the app and navigating.
         } catch (e: Exception) {
             Log.e("EnhancedMusicPlayer", "Failed to restore queue", e)
         }
@@ -1110,8 +1100,11 @@ object EnhancedMusicPlayerManager {
         _currentQueueIndex.value = 0
         clearPendingPlayNext()
         _currentPosition.value = 0L
-        _playingFrom.value = "Flow Music"
+        _playingFrom.value = "FedoraTube Music"
         _playerState.value = MusicPlayerState()
+        scope.launch(Dispatchers.IO) {
+            queuePersistence?.clearQueue()
+        }
     }
 
     fun removeFromQueue(index: Int) {

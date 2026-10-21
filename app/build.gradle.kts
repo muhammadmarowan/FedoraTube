@@ -8,7 +8,6 @@ plugins {
     id("com.google.devtools.ksp")
     id("com.google.dagger.hilt.android")
     id("org.jetbrains.kotlin.plugin.serialization")
-    id("androidx.baselineprofile")
     alias(libs.plugins.room)
 }
 
@@ -57,8 +56,8 @@ android {
         applicationId = "com.fedoratube.org"
         minSdk = 26
         targetSdk = 36
-        versionCode = 5
-        versionName = "1.3.0"
+        versionCode = 6
+        versionName = "1.4.0"
 
         buildConfigField("int", "NIGHTLY_RUN", "0")
         buildConfigField("String", "APP_LANGUAGE_TAGS", "\"${(listOf("en") + translatedLocaleTags()).joinToString(",")}\"")
@@ -225,11 +224,6 @@ android {
     }
 }
 
-// One profile for every shipped variant: foss, nightly and github run the same startup code, and
-// a per-variant profile left foss and nightly with library profiles only (#1301).
-baselineProfile {
-    mergeIntoMain = true
-}
 
 // CI nightlies are numbered by workflow run: versionCode = run, versionName = <next>-nightly.<run>+<sha>.
 // Local nightly builds keep defaultConfig's version, so they never replace a CI nightly.
@@ -392,8 +386,6 @@ dependencies {
     implementation(libs.androidx.profileinstaller)
     // Trace sections the startup and Home benchmarks measure (#1301); already on the classpath through Compose.
     implementation(libs.androidx.tracing)
-    baselineProfile(project(":benchmark"))
-
     // Desugaring for older Android versions
     coreLibraryDesugaring(libs.desugar.jdk.libs.nio)
 

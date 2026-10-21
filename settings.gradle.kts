@@ -15,6 +15,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Flow"
+rootProject.name = "FedoraTube"
 include(":app")
-include(":benchmark")

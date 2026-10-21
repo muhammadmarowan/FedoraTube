@@ -40,15 +40,7 @@ internal class PlaybackPresenceController(
 
     /** Brings the last unfinished video back as a mini player, unless music already owns it. */
     fun restoreLastWatchedSession() {
-        scope.launch {
-            if (!playerPreferences.miniPlayerContinueWatchingEnabled.first()) return@launch
-            if (EnhancedMusicPlayerManager.currentTrack.value != null || MusicServiceState.isRunning) return@launch
-            val lastVideo = withContext(ioDispatcher) { viewHistory.getLatestUnfinishedVideo() } ?: return@launch
-            if (uiState.value.cachedVideo != null) return@launch
-            uiState.update { it.copy(cachedVideo = lastVideo.toVideo(), isRestoredSession = true) }
-            restoredQueue =
-                withContext(ioDispatcher) { savedQueue() }?.takeIf { it.videos.getOrNull(it.index)?.id == lastVideo.videoId }
-        }
+        // Do not auto-restore previous video on launch; user must explicitly select media.
     }
 
     /** The media notification every playback start arms, with the one title fallback it uses. */

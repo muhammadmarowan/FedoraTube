@@ -199,6 +199,19 @@ class QueuePersistence private constructor(
     }
 
     /**
+     * Clear the saved queue from persistent storage
+     */
+    suspend fun clearQueue() {
+        try {
+            saveMutex.withLock {
+                context.queueDataStore.edit { it.clear() }
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to clear queue", e)
+        }
+    }
+
+    /**
      * Stop automatic saving (call when service/player is stopped)
      */
     fun stopAutoSave() {

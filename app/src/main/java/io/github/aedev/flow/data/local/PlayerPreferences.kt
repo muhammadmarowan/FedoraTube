@@ -3565,7 +3565,7 @@ class PlayerPreferences(
     val showRestoredMusicMiniPlayer: Flow<Boolean> =
         context.playerPreferencesDataStore.data
             .map { preferences ->
-                preferences[Keys.SHOW_RESTORED_MUSIC_MINI_PLAYER] ?: true
+                preferences[Keys.SHOW_RESTORED_MUSIC_MINI_PLAYER] ?: false
             }
 
     suspend fun setShowRestoredMusicMiniPlayer(enabled: Boolean) {
