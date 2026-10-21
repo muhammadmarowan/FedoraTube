@@ -4,11 +4,13 @@
 
 # Fedora Tube
 
+**An elegant, privacy-respecting YouTube & YouTube Music client designed for Android.**
+
 <br>
 
-[![Latest Release]([https://img.shields.io/github/v/release/muhammadmarowan/FedoraTube?style=for-the-badge&color=0072EF&logo=github&label=Release)](https://github.com/muhammadmarowan/FedoraTube/releases/latest](https://github.com/muhammadmarowan/FedoraTube/releases/tag/v1.4.0))
-[![Download APK]([https://img.shields.io/badge/⬇️_DOWNLOAD-APK_v1.1.0-00C853?style=for-the-badge&logo=android&logoColor=white)](https://github.com/muhammadmarowan/FedoraTube/releases/tag/v1.1.0](https://github.com/muhammadmarowan/FedoraTube/releases/download/v1.4.0/FedoraTube-v1.4.0-universal.apk))
-[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg?style=for-the-badge)](LICENSE)
+[![Latest Release](https://img.shields.io/github/v/release/muhammadmarowan/FedoraTube?style=for-the-badge&color=0072EF&logo=github&label=Release)](https://github.com/muhammadmarowan/FedoraTube/releases/latest)
+[![Download APK](https://img.shields.io/github/v/release/muhammadmarowan/FedoraTube?style=for-the-badge&color=00C853&logo=android&logoColor=white&label=DOWNLOAD%20APK)](https://github.com/muhammadmarowan/FedoraTube/releases/latest)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg?style=for-the-badge)](License)
 [![Platform](https://img.shields.io/badge/Platform-Android_8.0+-lightgrey?style=for-the-badge&logo=android)](https://developer.android.com)
 
 <br>
@@ -17,20 +19,33 @@
 
 ---
 
-## ⚡ Highlights & Features
+## ⚡ Highlights & Key Features
 
-### 🎬 Ad-Free Video Streaming
+### 🎯 Distraction-Free Focus Mode
+* **Minimalist Canvas:** Eliminate endless algorithmic feeds, recommendation rabbit holes, and distracting notifications.
+* **Direct Search-First Browsing:** Jump straight to the videos, podcasts, and songs you deliberately want to experience.
+* **Respect Your Time:** Take back control over your screen time with a distraction-free user interface designed for productivity and mindful listening.
+
+### 🎬 Ad-Free Streaming & SponsorBlock
 * **Zero Commercials & Trackers:** Watch videos without pre-roll, mid-roll, or banner ads.
-* **Integrated SponsorBlock:** Automatically skip sponsored segments, intros, outros, and subscribe reminders.
-* **Background & PiP:** Keep playing audio in the background with the screen turned off or in Picture-in-Picture window mode.
+* **Built-in SponsorBlock:** Automatically skip sponsored segments, intros, outros, and subscribe reminders.
+* **Background Play & PiP:** Keep audio playing with your phone screen turned off or in Picture-in-Picture popup window mode.
 
-### 🎵 Dedicated Music Experience
-* **YouTube Music Engine:** Explore trending tracks, global top charts, artist discographies, and mood radios.
-* **Rich Audio Player:** Enjoy background audio, lock screen controls, and synchronized real-time lyrics.
+### 🎵 Dedicated YouTube Music Engine
+* **Full Music Hub:** Browse trending hits, top charts, artist discographies, and personalized mood stations.
+* **Synchronized Real-Time Lyrics:** Sing along with live-scrolling, time-synced lyrics (LRC support).
+* **Rich Audio Controls:** Sleek mini-player, full lock screen controls, and background playback.
 
 ### 🔒 100% Private & Offline First
-* **Local Taste Engine:** Personal recommendations are computed entirely on your device. Your watch habits never get uploaded to any cloud.
-* **No Account Required:** No Google login needed. Import/export your subscriptions and watch history anytime.
+* **On-Device Recommendation Engine:** Recommendations are computed privately on your device. Your watch habits never leave your phone.
+* **No Google Account Needed:** Full access to subscriptions, playlists, and history without any login.
+* **Backup & Restore:** Easily export and import your subscriptions and history anytime.
+
+### 🚀 Seamless In-App Updates
+* **Instant Update Notifications:** Automatically detects new releases on launch.
+* **One-Click In-App Install:** Download and install updates directly within the app without manually browsing the web.
+
+---
 
 ## 📱 Screenshots
 
@@ -57,21 +72,27 @@
   </table>
 </div>
 
+<br>
+
+<div align="center">
+
+### 📥 Download Latest Release
+
+Get the latest APK directly from the [GitHub Releases](https://github.com/muhammadmarowan/FedoraTube/releases/latest) page:
+
+| Architecture | Device Type | Download Link |
+| :--- | :--- | :--- |
+| **ARM64-v8a** | Modern Android Devices *(Recommended)* | [Download APK](https://github.com/muhammadmarowan/FedoraTube/releases/latest) |
+| **Universal** | All Devices & Emulators | [Download APK](https://github.com/muhammadmarowan/FedoraTube/releases/latest) |
+| **ARMeabi-v7a** | Older 32-bit Android Devices | [Download APK](https://github.com/muhammadmarowan/FedoraTube/releases/latest) |
+
+</div>
+
 ---
 
-## 🙏 Acknowledgments & Credits
+## 📄 License
 
-**Fedora Tube** is based on and built upon the wonderful work of the **[Flow-Tube/Flow](https://github.com/Flow-Tube/Flow)** project created by **[A-EDev](https://github.com/A-EDev)** and its open-source contributors. 
-
-We extend our sincere thanks and heartfelt gratitude to the Flow development team for creating such an innovative, privacy-first video streaming platform and on-device recommendation algorithm. 
-
----
-
-## 📄 License & Open Source
-
-This project is Free Software distributed under the **GNU General Public License v3 (GPLv3)**.  
+This project is Free and Open Source Software distributed under the **GNU General Public License v3 (GPLv3)**.  
 In accordance with GPLv3, all source code and derivative modifications remain completely open and freely accessible.
 
-Copyright © 2026 **Fedora Tube**  
-Original Flow-Tube codebase Copyright © 2025–2026 **A-EDev**
-
+Copyright © 2026 **Fedora Tube Contributors**

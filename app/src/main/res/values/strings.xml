@@ -1822,11 +1822,11 @@
     <string name="donation_prompt_never">Don\'t show again</string>
     <!-- About Screen -->
     <string name="about_creator">Creator</string>
-    <string name="about_creator_name">A-EDev</string>
+    <string name="about_creator_name">muhammadmarowan</string>
     <string name="about_website">Website</string>
-    <string name="about_website_address">flow-tube.org</string>
-    <string name="about_reddit">Reddit</string>
-    <string name="about_reddit_subtitle">r/Fedora Tube_Official</string>
+    <string name="about_website_address">github.com/muhammadmarowan/FedoraTube</string>
+    <string name="about_reddit">Community</string>
+    <string name="about_reddit_subtitle">GitHub Discussions</string>
     <string name="github_subtitle">Source code &amp; Issues</string>
     <string name="newpipe_extractor_title">NewPipe Extractor</string>
     <string name="newpipe_extractor_subtitle">Core extraction library</string>

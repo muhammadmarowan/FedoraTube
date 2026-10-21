@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2025-2026 Flow | A-EDev
  *
- * This file is part of Flow (https://github.com/Flow-Tube/Flow).
+ * This file is part of Fedora Tube (https://github.com/muhammadmarowan/FedoraTube).
  *
  * This recommendation algorithm (FlowNeuroEngine) is the intellectual property
  * of the Flow project. Any use of this code in other projects must

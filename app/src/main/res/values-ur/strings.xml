@@ -66,7 +66,7 @@
     <string name="local_media_empty_title">کوئی %1$s نہیں ملا</string>
     <string name="local_media_empty_body">اس ڈیوائس پر محفوظ ویڈیوز اور موسیقی یہاں دکھائی دیں گی۔</string>
     <string name="local_media_permission_title">اجازت درکار ہے</string>
-    <string name="local_media_permission_body">Flow کو مقامی ویڈیوز اور موسیقی تلاش کرنے اور چلانے کے لیے اپنی میڈیا فائلوں تک رسائی کی اجازت دیں۔</string>
+    <string name="local_media_permission_body">Fedora Tube کو مقامی ویڈیوز اور موسیقی تلاش کرنے اور چلانے کے لیے اپنی میڈیا فائلوں تک رسائی کی اجازت دیں۔</string>
     <string name="local_media_grant">رسائی کی اجازت دیں</string>
     <string name="library_settings_data_header"><![CDATA[ترتیبات اور ڈیٹا]]></string>
     <string name="library_manage_data_label">ڈیٹا کا نظم کریں</string>

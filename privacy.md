@@ -1,6 +1,6 @@
 # Privacy and Permissions
 
-Flow has no account system, no analytics or telemetry SDK, no crash reporting service, and no
+Fedora Tube has no account system, no analytics or telemetry SDK, no crash reporting service, and no
 advertising identifier. Nothing is uploaded to a server operated by the project. Watch history,
 subscriptions, playlists, downloads, and recommendation data are stored in a local Room database
 and in local DataStore preferences on the device. They leave the device only if the user explicitly
@@ -43,7 +43,7 @@ refusing to start, and none of these are requested at launch.
 
 ### `CAMERA`
 
-Used by one screen: Settings > Device Sync. Flow can copy a library between two of the user's own
+Used by one screen: Settings > Device Sync. Fedora Tube can copy a library between two of the user's own
 devices over the local network. The session key is passed out of band by showing a QR code on one
 device and scanning it with the other, so the key never travels over the wire. The camera preview
 is bound only while that screen is open, frames are decoded locally by ZXing, and no image is
@@ -72,7 +72,7 @@ Two uses, both local:
 
 1. The local media browser (Library > Local media) plays music files already on the device, so the
    app works as an offline player with no network.
-2. Recovering downloads. Flow can save downloads to a public folder that survives an uninstall. On
+2. Recovering downloads. Fedora Tube can save downloads to a public folder that survives an uninstall. On
    reinstall, the download library is rebuilt by reading those files back. Audio-only downloads are
    audio files, so recovering them needs `READ_MEDIA_AUDIO` alongside `READ_MEDIA_VIDEO`.
 
@@ -84,7 +84,7 @@ Requested at: `LocalMediaScreen.kt`, `DownloadsScreen.kt`, `DownloadSettingsScre
 ### `SYSTEM_ALERT_WINDOW`
 
 Used for the fallback popup player. Android's native picture-in-picture is the default path and
-needs no permission. On ROMs where PiP is missing, disabled by the vendor, or broken, Flow can draw
+needs no permission. On ROMs where PiP is missing, disabled by the vendor, or broken, Fedora Tube can draw
 the small floating video window itself with a `TYPE_APPLICATION_OVERLAY` window instead. The
 permission is checked before that path is taken, and if it has not been granted the app stays with
 native PiP or with no popup at all. It is never used to draw over other apps for any other purpose,
@@ -108,7 +108,7 @@ the "download on Wi-Fi only" constraint.
 DLNA casting, where the app runs a small local HTTP proxy and has to tell the TV which address to
 pull the stream from, and Device Sync, which puts the host's LAN address into the QR code. It does
 not scan for or list nearby networks, which on modern Android would require the location permission
-that Flow does not declare.
+that Fedora Tube does not declare.
 
 `CHANGE_WIFI_MULTICAST_STATE` holds a multicast lock while searching for DLNA and UPnP renderers.
 SSDP discovery is multicast, and Android drops multicast packets without this lock. The lock is
@@ -142,7 +142,7 @@ pre-Android-13 equivalents. The `maxSdkVersion` caps in the manifest mean they a
 newer releases.
 
 `MANAGE_EXTERNAL_STORAGE` is optional and off by default. Downloads go to app-private storage
-unless the user opts into a custom location in Download settings, at which point Flow can write to
+unless the user opts into a custom location in Download settings, at which point Fedora Tube can write to
 the public `Movies` and `Music` folders so the files survive an uninstall and are visible to other
 apps. The app checks `Environment.isExternalStorageManager()` and sends the user to the system
 settings page rather than assuming the grant. Users who keep the default never see the prompt.
@@ -159,17 +159,17 @@ Used at: `app/src/main/java/io/github/aedev/flow/notification/BackgroundWorkPoli
 
 ### Legacy
 
-`DOWNLOAD_WITHOUT_NOTIFICATION` is a leftover. Flow downloads through its own service and does not
+`DOWNLOAD_WITHOUT_NOTIFICATION` is a leftover. Fedora Tube downloads through its own service and does not
 enqueue anything into Android's system `DownloadManager`, so this permission has no effect. It will
 be removed from the manifest.
 
 ## Permissions added by libraries
 
-These are not declared in Flow's own manifest. They are merged in from dependencies.
+These are not declared in Fedora Tube's own manifest. They are merged in from dependencies.
 
 `RECEIVE_BOOT_COMPLETED` comes from `androidx.work:work-runtime`. WorkManager uses it to restore
-scheduled jobs after a reboot. Flow's jobs are the subscription check, the upcoming-video reminder,
-the optional auto-backup, and, on the `github` flavor, the update check. Flow registers no boot
+scheduled jobs after a reboot. Fedora Tube's jobs are the subscription check, the upcoming-video reminder,
+the optional auto-backup, and, on the `github` flavor, the update check. Fedora Tube registers no boot
 receiver of its own.
 
 `<package>.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION` comes from `androidx.core`. It is a
@@ -183,7 +183,7 @@ the `github` flavor only, for the in-app updater that offers to install a new re
 
 ## Build flavors
 
-Flow ships two flavors. The permission difference between them is the one above.
+Fedora Tube ships two flavors. The permission difference between them is the one above.
 
 - `foss`: no in-app updater, no `REQUEST_INSTALL_PACKAGES`. This is the build intended for F-Droid
   style distribution.
@@ -212,11 +212,11 @@ project-operated proxy or relay in between.
 - `discord.com`: rich presence, `github` flavor only, and only after the user links an account.
 - Local network addresses: DLNA renderers on the LAN, and the peer device during Device Sync.
 
-## What Flow does not do
+## What Fedora Tube does not do
 
 - No account, login, or user identifier of any kind.
 - No analytics, telemetry, crash reporting, or advertising SDK.
-- No background microphone, camera, or location access. Flow declares no location permission.
+- No background microphone, camera, or location access. Fedora Tube declares no location permission.
 - No reading or uploading of contacts, call logs, SMS, or the installed app list.
 - No sending of watch history, search history, or recommendation data anywhere. The recommendation
   engine runs entirely on device.

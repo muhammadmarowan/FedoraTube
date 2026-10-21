@@ -19,7 +19,7 @@ permissions:
   contents: read
 
 env:
-  # Certificate of the official Flow release key. IzzyOnDroid and every
+  # Certificate of the official Fedora Tube release key. IzzyOnDroid and every
   # installed client pin this value; an APK signed with anything else cannot
   # be installed as an update. Changing it forces every user to reinstall.
   EXPECTED_SIGNER_SHA256: 4322294ed4caa2d4294140095818080ffe8acc1fbe3cdc76107df45c5286be40
@@ -215,8 +215,8 @@ jobs:
             echo "OK nightly -> $actual"
           fi
           mkdir -p dist-nightly
-          cp "$src" "dist-nightly/flow-nightly-${GITHUB_RUN_NUMBER}.apk"
-          (cd dist-nightly && sha256sum flow-nightly-*.apk | tee checksums.txt)
+          cp "$src" "dist-nightly/fedoratube-nightly-${GITHUB_RUN_NUMBER}.apk"
+          (cd dist-nightly && sha256sum fedoratube-nightly-*.apk | tee checksums.txt)
 
       - name: Report individual APK sizes
         shell: bash
@@ -251,7 +251,7 @@ jobs:
       - name: Upload GitHub universal APK
         uses: actions/upload-artifact@v7
         with:
-          name: flow-github-universal-release-apk
+          name: fedoratube-github-universal-release-apk
           path: app/build/outputs/apk/github/release/app-github-universal-release*.apk
           if-no-files-found: error
           retention-days: 14
@@ -260,7 +260,7 @@ jobs:
       - name: Upload GitHub ARM64 APK
         uses: actions/upload-artifact@v7
         with:
-          name: flow-github-arm64-release-apk
+          name: fedoratube-github-arm64-release-apk
           path: app/build/outputs/apk/github/release/app-github-arm64-v8a-release*.apk
           if-no-files-found: error
           retention-days: 14
@@ -270,7 +270,7 @@ jobs:
         if: ${{ !startsWith(github.ref, 'refs/tags/v') }}
         uses: actions/upload-artifact@v7
         with:
-          name: flow-nightly-apk
+          name: fedoratube-nightly-apk
           path: dist-nightly/*
           if-no-files-found: error
           retention-days: 14
@@ -280,7 +280,7 @@ jobs:
       - name: Upload R8 mappings
         uses: actions/upload-artifact@v7
         with:
-          name: flow-r8-mappings
+          name: fedoratube-r8-mappings
           path: app/build/outputs/mapping/*/mapping.txt
           if-no-files-found: warn
           retention-days: 90

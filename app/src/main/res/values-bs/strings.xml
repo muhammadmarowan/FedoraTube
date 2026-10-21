@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Flow</string>
+    <string name="app_name">Fedora Tube</string>
     <string name="subscriptions_search_placeholder">Pretraži pretplate…</string>
     <string name="top_bar_subscriptions_title">Pretplate</string>
     <string name="view_all_button_label">Svi</string>
@@ -165,7 +165,7 @@
     <string name="new_update_available">Novo ažuriranje dostupno</string>
     <string name="update_available_template">%1$s je sada dostupno</string>
     <string name="release_notes">Bilješke o izdanju</string>
-    <string name="update_flow">Ažuriraj Flow</string>
+    <string name="update_flow">Ažuriraj Fedora Tube</string>
     <string name="maybe_later">Možda kasnije</string>
     <string name="nav_home">Početna</string>
     <string name="nav_shorts">Shorts</string>
@@ -268,14 +268,14 @@
     <string name="peace_and_quiet">Mir i tišina</string>
     <string name="notifications_empty_body">Pregledali ste sve! Nova ažuriranja iz vaših pretplata pojavit će se ovdje.</string>
     <string name="settings_title">Postavke</string>
-    <string name="settings_flow_engine_header">Flow Engine</string>
+    <string name="settings_flow_engine_header">Fedora Tube Engine</string>
     <string name="settings_active_learning">AKTIVNO UČENJE</string>
-    <string name="settings_reset_brain_title">Resetiraj osobinu Flow-a?</string>
-    <string name="settings_reset_brain_body">Ovo će potpuno obrisati vaš profil interesa \'Flow Brain\'.\n\n• Sve naučene teme će biti zaboravljene.\n• Osobine ličnosti će biti resetovane na neutralno.\n• Preporuke će se vratiti na zadane vrijednosti.\n\nOva radnja se ne može poništiti.</string>
+    <string name="settings_reset_brain_title">Resetiraj osobinu Fedora Tube-a?</string>
+    <string name="settings_reset_brain_body">Ovo će potpuno obrisati vaš profil interesa \'Fedora Tube Brain\'.\n\n• Sve naučene teme će biti zaboravljene.\n• Osobine ličnosti će biti resetovane na neutralno.\n• Preporuke će se vratiti na zadane vrijednosti.\n\nOva radnja se ne može poništiti.</string>
     <string name="settings_reset_everything">Resetuj sve</string>
     <string name="settings_analyzing_interactions">Analizirajući vaše interakcije...</string>
     <string name="settings_view_analytics">Pregled analitike</string>
-    <string name="deep_flow_mode_title">Deep Flow Modus</string>
+    <string name="deep_flow_mode_title">Deep Fedora Tube Modus</string>
     <string name="deep_flow_mode_subtitle">Pauziraj učenje — pregledaj bez utjecaja na svoj profil</string>
     <string name="deep_flow_learning_paused">Učenje je obustavljeno</string>
     <string name="deep_flow_expires_in">Ističe za %s</string>
@@ -296,7 +296,7 @@
     <string name="settings_header_about">O nama</string>
     <string name="settings_header_notifications">Obavijesti</string>
     <string name="settings_item_notifications">Preferencije obavještenja</string>
-    <string name="settings_item_notifications_subtitle">Kontrolirajte koja obavještenja Flow može slati</string>
+    <string name="settings_item_notifications_subtitle">Kontrolirajte koja obavještenja Fedora Tube može slati</string>
     <string name="notif_settings_title">Preferencije obavještenja</string>
     <string name="notif_type_new_videos">Novi videi</string>
     <string name="notif_type_new_videos_subtitle">Obavijestite kada pretplaćeni kanali postave nove videozapise</string>
@@ -305,7 +305,7 @@
     <string name="notif_type_reminders">Podsjetnici za vrijeme na ekranu</string>
     <string name="notif_type_reminders_subtitle">Podsjetnici za odlazak u krevet i pauze iz Upravljanja vremenom</string>
     <string name="notif_type_updates">Ažuriranja aplikacije</string>
-    <string name="notif_type_updates_subtitle">Obavijestite me kada bude dostupna nova verzija Flow-a</string>
+    <string name="notif_type_updates_subtitle">Obavijestite me kada bude dostupna nova verzija Fedora Tube-a</string>
     <string name="notif_type_general">Opće obavijesti</string>
     <string name="notif_type_general_subtitle">Razne obavijesti i najave aplikacije</string>
     <string name="notif_system_settings">Postavke obavještenja sistema</string>
@@ -314,7 +314,7 @@
     <string name="notif_check_interval">Interval provjere novih videa</string>
     <string name="notif_check_interval_subtitle_template">Provjeri svakih %s</string>
     <string name="notif_check_interval_dialog_title">Interval provjere</string>
-    <string name="notif_check_interval_dialog_body">Koliko često Flow provjerava nove videozapise s kanala na koje ste pretplaćeni.</string>
+    <string name="notif_check_interval_dialog_body">Koliko često Fedora Tube provjerava nove videozapise s kanala na koje ste pretplaćeni.</string>
     <string name="notif_interval_15m">15 minuta</string>
     <string name="notif_interval_30m">30 minuta</string>
     <string name="notif_interval_1h">1 sat</string>
@@ -347,10 +347,10 @@
     <string name="settings_item_export_data_subtitle">Napravite sigurnosnu kopiju svojih podataka</string>
     <string name="settings_item_import_data">Uvoz podataka</string>
     <string name="settings_item_import_data_subtitle">Obnovite iz sigurnosne kopije ili uvezite iz drugih aplikacija</string>
-    <string name="settings_item_about_flow">O Flow-u</string>
+    <string name="settings_item_about_flow">O Fedora Tube-u</string>
     <string name="settings_item_about_flow_subtitle">Verzija, Licenca, Doprinosioci</string>
     <string name="settings_item_support">Podrška i donacije</string>
-    <string name="settings_item_support_subtitle">Podržite razvoj Flow-a</string>
+    <string name="settings_item_support_subtitle">Podržite razvoj Fedora Tube-a</string>
     <string name="settings_region_dialog_title">Odaberite regiju</string>
     <string name="settings_export_success">Podaci uspješno izvezani</string>
     <string name="tap_to_close">Dodirnite da zatvorite</string>
@@ -366,14 +366,14 @@
     <string name="channel_search_open">Pretraži Kanal</string>
     <string name="channel_search_close">Zatvori pretragu</string>
     <string name="channel_search_no_results">Nisu pronađeni rezultati za %1$s</string>
-    <string name="deep_flow_enabled_message">Deep Flow uključen</string>
-    <string name="deep_flow_disabled_message">Deep Flow isključen</string>
-    <string name="deep_flow_expired_message">Deep Flow tajmer je istekao</string>
-    <string name="deep_flow_active_until_disabled">Deep Flow ostaje aktivan dok ga ne isključite</string>
+    <string name="deep_flow_enabled_message">Deep Fedora Tube uključen</string>
+    <string name="deep_flow_disabled_message">Deep Fedora Tube isključen</string>
+    <string name="deep_flow_expired_message">Deep Fedora Tube tajmer je istekao</string>
+    <string name="deep_flow_active_until_disabled">Deep Fedora Tube ostaje aktivan dok ga ne isključite</string>
     <string name="deep_flow_duration_never">Nikad</string>
     <string name="settings_export_failed">Izvoz je propao: %1$s</string>
     <string name="appearance_title">Izgled</string>
-    <string name="appearance_subtitle">Personalizirajte svoje Flow iskustvo</string>
+    <string name="appearance_subtitle">Personalizirajte svoje Fedora Tube iskustvo</string>
     <string name="appearance_current_theme">TRENUTNA TEMA</string>
     <string name="appearance_category_all">Sve</string>
     <string name="appearance_category_light">#Svjetlo</string>
@@ -404,7 +404,7 @@
     <string name="app_icon_picker_subtitle">Odaberite stil ikone pokretača. Promjena stupa na snagu odmah i pokretač će se nakratko osvježiti.</string>
     <string name="app_icon_picker_warning">⚠ Oprez: promjena ikona koristi mehanizam Android sistema koji može nakratko ukloniti prečac aplikacije s početnog ekrana. Dugo pritisnite launcher da ga vratite ako je potrebno.</string>
     <string name="app_icon_apply_toast">Ikona je ažurirana — vaš launcher će se osvježiti</string>
-    <string name="icon_name_flow_red">Flow Crvena</string>
+    <string name="icon_name_flow_red">Fedora Tube Crvena</string>
     <string name="icon_name_amoled">AMOLED Tamna</string>
     <string name="icon_name_monochrome">Monochrome</string>
     <string name="icon_name_ghost">Duh</string>
@@ -415,7 +415,7 @@
     <string name="player_appearance_style_subtitle">Odaberite vizualni stil trake za plejer</string>
     <string name="settings_item_player_appearance">Izgled Plejera</string>
     <string name="settings_item_player_appearance_subtitle">Prilagodite stil trake napretka</string>
-    <string name="style_default">Podrazumijevano (Flow)</string>
+    <string name="style_default">Podrazumijevano (Fedora Tube)</string>
     <string name="style_metrolist">Metrolist(Debela)</string>
     <string name="style_metrolist_slim">Metrolist (Tanka)</string>
     <string name="style_squiggly">Krivudava</string>

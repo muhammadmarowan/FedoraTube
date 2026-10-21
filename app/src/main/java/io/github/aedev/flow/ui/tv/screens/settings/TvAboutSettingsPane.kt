@@ -41,12 +41,12 @@ import io.github.aedev.flow.ui.tv.components.TvNavRow
 import io.github.aedev.flow.ui.tv.components.TvSectionHeader
 import io.github.aedev.flow.ui.tv.focus.ProvideTvColumnPivot
 
-private const val FLOW_WEBSITE_URL = "https://flow-tube.org"
-private const val FLOW_RELEASES_URL = "https://github.com/Flow-Tube/Flow/releases"
-private const val FLOW_GITHUB_URL = "https://github.com/Flow-Tube/Flow"
-private const val FLOW_REDDIT_URL = "https://www.reddit.com/r/Flow_Official/"
-private const val FLOW_CREATOR_URL = "https://github.com/A-EDev"
-private const val FLOW_DONATION_URL = "https://patreon.com/A_EDev"
+private const val FLOW_WEBSITE_URL = "https://github.com/muhammadmarowan/FedoraTube"
+private const val FLOW_RELEASES_URL = "https://github.com/muhammadmarowan/FedoraTube/releases"
+private const val FLOW_GITHUB_URL = "https://github.com/muhammadmarowan/FedoraTube"
+private const val FLOW_REDDIT_URL = "https://github.com/muhammadmarowan/FedoraTube/discussions"
+private const val FLOW_CREATOR_URL = "https://github.com/muhammadmarowan"
+private const val FLOW_DONATION_URL = "https://github.com/muhammadmarowan/FedoraTube"
 private const val FLOW_LICENSE_URL = "https://www.gnu.org/licenses/gpl-3.0.html"
 private const val NEWPIPE_EXTRACTOR_URL = "https://github.com/TeamNewPipe/NewPipeExtractor"
 

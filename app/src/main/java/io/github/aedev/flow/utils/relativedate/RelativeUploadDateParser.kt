@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2025-2026 Flow | A-EDev
  *
- * This file is part of Flow (https://github.com/Flow-Tube/Flow).
+ * This file is part of Fedora Tube (https://github.com/muhammadmarowan/FedoraTube).
  */
 
 package io.github.aedev.flow.utils.relativedate

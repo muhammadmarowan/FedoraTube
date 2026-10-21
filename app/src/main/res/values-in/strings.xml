@@ -71,24 +71,24 @@
     <string name="notification_badge_9_plus">9+</string>
     <string name="new_update_available">Pembaruan Baru Tersedia</string>
     <string name="update_available_template">%1$s kini tersedia</string>
-    <string name="update_flow">Perbarui Flow</string>
+    <string name="update_flow">Perbarui Fedora Tube</string>
     <string name="views_count_short_template">%1$s penayangan</string>
     <string name="library_settings_data_header"><![CDATA[Pengaturan &amp; Data]]></string>
     <string name="settings">Pengaturan</string>
     <string name="settings_title">Pengaturan</string>
-    <string name="settings_flow_engine_header">Mesin Flow</string>
+    <string name="settings_flow_engine_header">Mesin Fedora Tube</string>
     <string name="settings_header_appearance">Tampilan</string>
     <string name="settings_header_about">Tentang</string>
     <string name="settings_header_notifications">Notifikasi</string>
     <string name="settings_item_notifications">Preferensi Notifikasi</string>
     <string name="notif_type_new_videos">Video Baru</string>
     <string name="notif_settings_title">Preferensi Notifikasi</string>
-    <string name="settings_item_notifications_subtitle">Kendalikan notifikasi mana yang dapat dikirim oleh Flow</string>
+    <string name="settings_item_notifications_subtitle">Kendalikan notifikasi mana yang dapat dikirim oleh Fedora Tube</string>
     <string name="notif_type_downloads">Notifikasi Unduhan</string>
     <string name="notif_type_updates">Pembaruan Aplikasi</string>
     <string name="settings_header_data_management">Manajemen Data</string>
     <string name="notif_type_general">Notifikasi Umum</string>
-    <string name="notif_type_updates_subtitle">Dapatkan notifikasi saat versi baru Flow tersedia</string>
+    <string name="notif_type_updates_subtitle">Dapatkan notifikasi saat versi baru Fedora Tube tersedia</string>
     <string name="notif_system_settings">Pengaturan Notifikasi Sistem</string>
     <string name="notif_interval_1h">1 jam</string>
     <string name="notif_interval_15m">15 menit</string>
@@ -109,10 +109,10 @@
     <string name="settings_item_time_management_subtitle">Statistik penggunaan, pengingat waktu tidur</string>
     <string name="settings_item_export_data">Ekspor Data</string>
     <string name="settings_item_import_data">Impor Data</string>
-    <string name="settings_item_about_flow">Tentang Flow</string>
+    <string name="settings_item_about_flow">Tentang Fedora Tube</string>
     <string name="settings_item_about_flow_subtitle">Versi, Lisensi, Kontributor</string>
     <string name="settings_item_support">Dukungan &amp; Donasi</string>
-    <string name="settings_item_support_subtitle">Bantu dukung pengembangan Flow</string>
+    <string name="settings_item_support_subtitle">Bantu dukung pengembangan Fedora Tube</string>
     <string name="settings_export_success">Data berhasil diekspor</string>
     <string name="settings_export_failed">Ekspor gagal: %1$s</string>
     <string name="appearance_title">Tampilan</string>
@@ -122,7 +122,7 @@
     <string name="appearance_category_dark">Gelap</string>
     <string name="appearance_category_special">Spesial</string>
     <string name="app_icon_apply_toast">Ikon diperbarui - launcher Anda akan disegarkan</string>
-    <string name="icon_name_flow_red">Flow Merah</string>
+    <string name="icon_name_flow_red">Fedora Tube Merah</string>
     <string name="icon_name_amoled">AMOLED Gelap</string>
     <string name="icon_name_monochrome">Monokrom</string>
     <string name="icon_name_ghost">Hantu</string>
@@ -135,7 +135,7 @@
     <string name="lyrics_provider_lrclib">LrcLib</string>
     <string name="lyrics_provider_better_lyrics">Better Lyrics</string>
     <string name="lyrics_provider_simpmusic">SimpMusic</string>
-    <string name="app_name">Flow</string>
+    <string name="app_name">Fedora Tube</string>
     <string name="subscriptions_search_placeholder">Mencari langganan...</string>
     <string name="top_bar_subscriptions_title">Langganan</string>
     <string name="view_all_button_label">Semua</string>
@@ -350,12 +350,12 @@
     <string name="peace_and_quiet">Tenang dan damai</string>
     <string name="notifications_empty_body">Anda sudah membaca semuanya! Pembaruan baru dari langganan Anda akan muncul di sini.</string>
     <string name="settings_active_learning">PEMBELAJARAN AKTIF</string>
-    <string name="settings_reset_brain_title">Atur Ulang Kepribadian Flow?</string>
-    <string name="settings_reset_brain_body">"Tindakan ini akan menghapus profil Flow Brain Anda.\n\n-  Topik yang dipelajari akan dilupakan.\n-  Karakteristik kepribadian akan diatur ulang.\n-  Rekomendasi akan kembali ke pengaturan default.\n\nTindakan ini tidak dapat dibatalkan."</string>
+    <string name="settings_reset_brain_title">Atur Ulang Kepribadian Fedora Tube?</string>
+    <string name="settings_reset_brain_body">"Tindakan ini akan menghapus profil Fedora Tube Brain Anda.\n\n-  Topik yang dipelajari akan dilupakan.\n-  Karakteristik kepribadian akan diatur ulang.\n-  Rekomendasi akan kembali ke pengaturan default.\n\nTindakan ini tidak dapat dibatalkan."</string>
     <string name="settings_reset_everything">Atur Ulang Semuanya</string>
     <string name="settings_analyzing_interactions">Menganalisis interaksi Anda...</string>
     <string name="settings_view_analytics">Lihat Analitik</string>
-    <string name="deep_flow_mode_title">Mode Flow Dalam</string>
+    <string name="deep_flow_mode_title">Mode Fedora Tube Dalam</string>
     <string name="deep_flow_mode_subtitle">Jeda pembelajaran saat Anda menjelajah</string>
     <string name="deep_flow_learning_paused">PEMBELAJARAN DIJEDA</string>
     <string name="deep_flow_expires_in">Berakhir dalam %s</string>
@@ -363,10 +363,10 @@
     <string name="deep_flow_expire_duration_subtitle">Pembelajaran dilanjutkan otomatis setelah %s</string>
     <string name="deep_flow_dialog_title">Durasi Jeda</string>
     <string name="deep_flow_dialog_body">Berapa lama pembelajaran harus dijeda?</string>
-    <string name="deep_flow_enabled_message">Flow Dalam diaktifkan</string>
-    <string name="deep_flow_disabled_message">Flow Dalam dinonaktifkan</string>
-    <string name="deep_flow_expired_message">Timer Flow Dalam berakhir</string>
-    <string name="deep_flow_active_until_disabled">Flow Dalam tetap aktif hingga Anda mematikannya</string>
+    <string name="deep_flow_enabled_message">Fedora Tube Dalam diaktifkan</string>
+    <string name="deep_flow_disabled_message">Fedora Tube Dalam dinonaktifkan</string>
+    <string name="deep_flow_expired_message">Timer Fedora Tube Dalam berakhir</string>
+    <string name="deep_flow_active_until_disabled">Fedora Tube Dalam tetap aktif hingga Anda mematikannya</string>
     <string name="deep_flow_duration_never">Tidak pernah</string>
     <string name="deep_flow_duration_1h">1 jam</string>
     <string name="deep_flow_duration_2h">2 jam</string>
@@ -384,12 +384,12 @@
     <string name="notif_system_settings_subtitle">Buka pengaturan Android untuk mengelola izin per saluran</string>
     <string name="notif_check_interval_section_header">Jadwal Pemeriksaan Umpan</string>
     <string name="notif_master_toggle">Aktifkan notifikasi</string>
-    <string name="notif_master_toggle_subtitle">Izinkan Flow memeriksa video baru di latar belakang</string>
+    <string name="notif_master_toggle_subtitle">Izinkan Fedora Tube memeriksa video baru di latar belakang</string>
     <string name="notif_check_interval">Interval Pemeriksaan Video Baru</string>
     <string name="notif_check_interval_subtitle_template">Periksa setiap %s</string>
     <string name="notif_check_interval_disabled">Pemeriksaan notifikasi latar belakang dinonaktifkan</string>
     <string name="notif_check_interval_dialog_title">Interval Pemeriksaan</string>
-    <string name="notif_check_interval_dialog_body">Seberapa sering Flow memeriksa video baru dari langganan Anda.</string>
+    <string name="notif_check_interval_dialog_body">Seberapa sering Fedora Tube memeriksa video baru dari langganan Anda.</string>
     <string name="settings_item_app_icon_subtitle">Sesuaikan ikon peluncur Anda</string>
     <string name="settings_item_content_prefs_subtitle">Blokir topik yang tidak ingin Anda lihat</string>
     <string name="settings_item_player">Pengaturan Pemutar</string>
@@ -410,7 +410,7 @@
     <string name="settings_region_dialog_title">Pilih Wilayah</string>
     <string name="settings_language_dialog_title">Pilih Bahasa Aplikasi</string>
     <string name="settings_language_system_default">Default sistem</string>
-    <string name="appearance_subtitle">Personalisasi pengalaman Flow Anda</string>
+    <string name="appearance_subtitle">Personalisasi pengalaman Fedora Tube Anda</string>
     <string name="appearance_category_custom">Kustom</string>
     <string name="appearance_applied_toast">Diterapkan: %1$s</string>
     <string name="appearance_customize_theme">Sesuaikan Tema</string>
@@ -436,7 +436,7 @@
     <string name="appearance_role_outline">Garis Tepi</string>
     <string name="appearance_role_scrim">Penutup Layar</string>
     <string name="app_icon_picker_subtitle">Pilih gaya ikon peluncur. Perubahan langsung berlaku dan peluncur akan sebentar menyegarkan tampilan.</string>
-    <string name="app_icon_picker_warning">Mengubah ikon mungkin akan menghapus Flow dari layar utama Anda untuk sementara. Tambahkan kembali dari laci aplikasi jika diperlukan.</string>
+    <string name="app_icon_picker_warning">Mengubah ikon mungkin akan menghapus Fedora Tube dari layar utama Anda untuk sementara. Tambahkan kembali dari laci aplikasi jika diperlukan.</string>
     <string name="player_appearance_title">Tampilan Pemutar</string>
     <string name="player_appearance_header">Sesuaikan Kontrol Pemutar</string>
     <string name="player_appearance_style_title">Gaya Bilah Progres Musik</string>
@@ -476,8 +476,8 @@
     <string name="theme_desc_sky_blue">Palet terang dan lapang dengan warna biru langit terbuka.</string>
     <string name="theme_name_cream_paper">Kertas Krem</string>
     <string name="theme_desc_cream_paper">Nuansa kertas hangat untuk membaca nyaman di siang hari.</string>
-    <string name="theme_name_classic_dark">Default Flow</string>
-    <string name="theme_desc_classic_dark">Palet Flow asli dengan aksen merah YouTube.</string>
+    <string name="theme_name_classic_dark">Default Fedora Tube</string>
+    <string name="theme_desc_classic_dark">Palet Fedora Tube asli dengan aksen merah YouTube.</string>
     <string name="theme_name_true_black">Hitam Sejati</string>
     <string name="theme_desc_true_black">OLED Murni</string>
     <string name="theme_name_monochrome">Monokrom</string>
@@ -561,7 +561,7 @@
     <string name="content_settings_video_card_mark_watched_title">Tombol tandai sudah ditonton pada kartu video</string>
     <string name="content_settings_video_card_mark_watched_subtitle">Tombol mata pada kartu untuk menandai video sebagai telah ditonton</string>
     <string name="content_settings_show_app_logo_title">Tampilkan ikon logo aplikasi</string>
-    <string name="content_settings_show_app_logo_subtitle">Tampilkan logo Flow di bilah atas Beranda</string>
+    <string name="content_settings_show_app_logo_subtitle">Tampilkan logo Fedora Tube di bilah atas Beranda</string>
     <string name="content_settings_header_content_components">Komponen Konten</string>
     <string name="content_settings_hide_watched_title">Sembunyikan Video yang Sudah Ditonton</string>
     <string name="content_settings_hide_watched_subtitle">Saring video yang sudah Anda tonton dari umpan beranda dan langganan</string>
@@ -799,7 +799,7 @@
     <string name="desc_unblock_topic">Buka blokir %1$s</string>
     <string name="time_management_title">Manajemen waktu</string>
     <string name="time_management_subtitle">Lacak dan kendalikan waktu layar Anda</string>
-    <string name="stats_disclaimer">Berdasarkan riwayat tontonan Anda di Flow. Penggunaan sebenarnya mungkin berbeda.</string>
+    <string name="stats_disclaimer">Berdasarkan riwayat tontonan Anda di Fedora Tube. Penggunaan sebenarnya mungkin berbeda.</string>
     <string name="tools_to_manage_time">Alat untuk mengatur waktu Anda</string>
     <string name="remind_bedtime">Ingatkan saya saat waktunya tidur</string>
     <string name="start_time">Waktu mulai</string>
@@ -862,12 +862,12 @@
     <string name="period_six_months">6 bulan</string>
     <string name="period_one_year">1 tahun</string>
     <string name="import_data_title">Impor Data</string>
-    <string name="import_flow_backup_success">Cadangan Flow berhasil diimpor</string>
-    <string name="import_flow_backup_failed_template">Gagal mengimpor cadangan Flow: %1$s</string>
+    <string name="import_flow_backup_success">Cadangan Fedora Tube berhasil diimpor</string>
+    <string name="import_flow_backup_failed_template">Gagal mengimpor cadangan Fedora Tube: %1$s</string>
     <string name="import_newpipe_failed_template">Gagal mengimpor cadangan NewPipe: %1$s</string>
     <string name="import_youtube_failed_template">Gagal mengimpor cadangan YouTube: %1$s</string>
-    <string name="import_flow_backup_item_title">Impor Cadangan Flow</string>
-    <string name="import_flow_backup_desc">Pulihkan riwayat, pengaturan, dan langganan Anda dari file cadangan Flow.</string>
+    <string name="import_flow_backup_item_title">Impor Cadangan Fedora Tube</string>
+    <string name="import_flow_backup_desc">Pulihkan riwayat, pengaturan, dan langganan Anda dari file cadangan Fedora Tube.</string>
     <string name="import_from_newpipe">Impor dari NewPipe</string>
     <string name="import_from_newpipe_desc">Impor langganan dari file ekspor NewPipe (JSON).</string>
     <string name="import_from_libretube">Impor dari LibreTube</string>
@@ -933,10 +933,10 @@
     <string name="location_dialog_subtitle">Pilih tempat penyimpanan file yang diunduh di perangkat Anda.</string>
     <string name="location_preset_header">Lokasi Prasetel</string>
     <string name="location_custom_header">Lokasi Kustom</string>
-    <string name="location_downloads_label">Unduhan / Flow</string>
-    <string name="location_movies_label">Film / Flow</string>
+    <string name="location_downloads_label">Unduhan / Fedora Tube</string>
+    <string name="location_movies_label">Film / Fedora Tube</string>
     <string name="location_internal_app_label">Penyimpanan Internal Aplikasi</string>
-    <string name="location_internal_app_desc">Pribadi untuk Flow. Dihapus jika Anda menghapus instalan.</string>
+    <string name="location_internal_app_desc">Pribadi untuk Fedora Tube. Dihapus jika Anda menghapus instalan.</string>
     <string name="location_custom_saf_label">Jelajahi…</string>
     <string name="location_custom_saf_desc">Pilih folder mana saja menggunakan pemilih file sistem</string>
     <string name="location_custom_manual_label">Masukkan jalur secara manual</string>
@@ -948,9 +948,9 @@
     <string name="location_badge_active">Aktif</string>
     <string name="select_threads_count_desc">Pilih jumlah thread (1-8):</string>
     <string name="support_donations_title">Dukungan &amp; Donasi</string>
-    <string name="support_flow_dev_title">Dukung Pengembangan Flow</string>
-    <string name="support_flow_dev_desc">Jika Flow bermanfaat bagi Anda, Anda dapat mendukungnya melalui Patreon atau kripto di bawah ini. Terima kasih!</string>
-    <string name="support_flow_patreon">Dukung Flow di Patreon</string>
+    <string name="support_flow_dev_title">Dukung Pengembangan Fedora Tube</string>
+    <string name="support_flow_dev_desc">Jika Fedora Tube bermanfaat bagi Anda, Anda dapat mendukungnya melalui Patreon atau kripto di bawah ini. Terima kasih!</string>
+    <string name="support_flow_patreon">Dukung Fedora Tube di Patreon</string>
     <string name="thank_you_support_message">Terima kasih atas dukungan Anda! ❤️</string>
     <string name="address_copied_toast">Alamat disalin ke papan klip</string>
     <string name="donation_address_clip_label">Alamat Donasi</string>
@@ -961,7 +961,7 @@
     <string name="newpipe_extractor_subtitle">Pustaka ekstraksi inti</string>
     <string name="about_license">Lisensi</string>
     <string name="about_changelog">Catatan Perubahan</string>
-    <string name="whats_new_in_flow">Yang baru di Flow</string>
+    <string name="whats_new_in_flow">Yang baru di Fedora Tube</string>
     <string name="about_device_info">Info Perangkat</string>
     <string name="gnu_license_full_title">Lisensi Publik Umum GNU</string>
     <string name="loading_ellipsis">Memuat...</string>
@@ -1002,7 +1002,7 @@
     <string name="playlist_empty_desc">Tambahkan video dari pemutar video\nuntuk membangun daftar putar Anda</string>
     <string name="delete_playlist_dialog_title">Hapus daftar putar?</string>
     <string name="delete_playlist_dialog_text">Ini akan menghapus secara permanen \'%1$s\' beserta semua videonya.</string>
-    <string name="welcome_to_flow">Selamat Datang di Flow</string>
+    <string name="welcome_to_flow">Selamat Datang di Fedora Tube</string>
     <string name="onboarding_subtitle">Ceritakan apa yang Anda minati</string>
     <string name="onboarding_instructions">Pilih minimal 3 topik untuk mempersonalisasi pengalaman Anda</string>
     <string name="btn_skip_for_now">Lewati untuk sekarang</string>
@@ -1019,7 +1019,7 @@
     <string name="category_creative">Kreatif</string>
     <string name="category_science_nature">Sains &amp; Alam</string>
     <string name="category_news_current_events">Berita &amp; Peristiwa Terkini</string>
-    <string name="flow_control_center">Pusat Kontrol Flow</string>
+    <string name="flow_control_center">Pusat Kontrol Fedora Tube</string>
     <string name="action_refresh">Segarkan</string>
     <string name="loading_neural_matrix">Memuat Matriks Neural...</string>
     <string name="neural_interest_map_subtitle">Peta minat neural Anda</string>
@@ -1043,7 +1043,7 @@
     <string name="stats_topics">Topik</string>
     <string name="empty_bubble_cloud_message">Tonton beberapa video untuk mengisi nebula minat Anda!</string>
     <string name="export_profile_data">Ekspor Data Profil</string>
-    <string name="flow_neural_profile_export_subject">Ekspor Profil Neural Flow</string>
+    <string name="flow_neural_profile_export_subject">Ekspor Profil Neural Fedora Tube</string>
     <string name="screen_title_music_library">Pustaka Musik</string>
     <string name="header_your_collection">Koleksi Anda</string>
     <string name="subtitle_liked_music">Lagu yang Anda sukai</string>
@@ -1206,13 +1206,13 @@
     <string name="check_for_updates">Periksa Pembaruan</string>
     <string name="check_for_updates_subtitle">Ketuk untuk memeriksa versi terbaru</string>
     <string name="checking_for_updates">Memeriksa pembaruan…</string>
-    <string name="flow_is_up_to_date">Flow sudah terbaru!</string>
+    <string name="flow_is_up_to_date">Fedora Tube sudah terbaru!</string>
     <string name="update_check_failed">Tidak dapat memeriksa pembaruan. Periksa koneksi Anda.</string>
     <string name="export_engine_data">Ekspor Profil Mesin</string>
     <string name="export_engine_data_subtitle">Buat cadangan kepribadian AI &amp; data pembelajaran Anda</string>
     <string name="export_engine_success">Profil mesin berhasil diekspor</string>
     <string name="export_engine_failed">Gagal mengekspor profil mesin</string>
-    <string name="import_engine_data">Impor Data Mesin Flow</string>
+    <string name="import_engine_data">Impor Data Mesin Fedora Tube</string>
     <string name="import_engine_data_desc">Pulihkan profil kepribadian AI Anda dari file cadangan</string>
     <string name="import_engine_success">Profil mesin berhasil dipulihkan</string>
     <string name="import_engine_failed">Gagal mengimpor profil mesin</string>
@@ -1274,7 +1274,7 @@
     <string name="error_not_available">Video tidak tersedia</string>
     <string name="error_not_available_hint">Video ini mungkin telah dihapus, dijadikan pribadi, atau dihapus oleh YouTube.</string>
     <string name="error_not_supported">Jenis konten tidak didukung</string>
-    <string name="error_not_supported_hint">Format atau jenis konten ini tidak dapat diputar di Flow.</string>
+    <string name="error_not_supported_hint">Format atau jenis konten ini tidak dapat diputar di Fedora Tube.</string>
     <string name="error_no_internet">Tidak ada koneksi internet</string>
     <string name="error_no_internet_hint">Periksa Wi-Fi atau data seluler Anda dan coba lagi.</string>
     <string name="error_timeout">Koneksi habis waktu</string>
@@ -1292,7 +1292,7 @@
     <string name="error_playback_failed">Pemutaran gagal</string>
     <string name="error_playback_failed_hint">Terjadi kesalahan pemutar yang tidak terduga. Silakan coba lagi.</string>
     <string name="error_extraction_failed">Gagal mengurai data video</string>
-    <string name="error_extraction_failed_hint">YouTube mungkin telah memperbarui formatnya. Flow akan segera diperbarui — silakan coba lagi nanti.</string>
+    <string name="error_extraction_failed_hint">YouTube mungkin telah memperbarui formatnya. Fedora Tube akan segera diperbarui — silakan coba lagi nanti.</string>
     <string name="error_generic">Gagal memuat video</string>
     <string name="error_generic_hint">Terjadi kesalahan yang tidak diketahui. Silakan coba lagi.</string>
     <string name="player_settings_overlay_controls">Kontrol Hamparan</string>
@@ -1442,7 +1442,7 @@
     <string name="appearance_system_defaults_subtitle">Pilih tema yang digunakan saat perangkat Anda beralih antara mode terang dan gelap.</string>
     <string name="appearance_system_light_theme">Tema mode terang</string>
     <string name="appearance_system_dark_theme">Tema mode gelap</string>
-    <string name="icon_name_flow_light">Flow Light</string>
+    <string name="icon_name_flow_light">Fedora Tube Light</string>
     <string name="icon_name_material_sky">Material Sky</string>
     <string name="icon_name_material_mint">Material Mint</string>
     <string name="player_adaptive_size_title">Ukuran Pemutar Adaptif</string>
@@ -1462,7 +1462,7 @@
     <string name="content_settings_subs_show_live_title">Streaming langsung langganan</string>
     <string name="content_settings_subs_show_live_subtitle">Tampilkan live stream dan stream terbaru di feed</string>
     <string name="content_settings_nav_order_title">Urutan tab dan default</string>
-    <string name="content_settings_nav_order_subtitle">Seret untuk mengurutkan ulang. Pilih tab yang dibuka Flow.</string>
+    <string name="content_settings_nav_order_subtitle">Seret untuk mengurutkan ulang. Pilih tab yang dibuka Fedora Tube.</string>
     <string name="player_settings_shorts_playback_mode_auto_interval">Gulir otomatis setelah waktu kustom</string>
     <string name="playlist_sort_options">Opsi urut playlist</string>
     <string name="playlist_sort_manual">Manual</string>
@@ -1584,7 +1584,7 @@
     <string name="shorts_playback_speed">Kecepatan pemutaran</string>
     <string name="speed_normal">Normal</string>
     <string name="export_watch_history_title">Riwayat tonton</string>
-    <string name="export_watch_history_desc">Ekspor sebagai JSON riwayat YouTube (dapat diimpor ke LibreTube dan Flow)</string>
+    <string name="export_watch_history_desc">Ekspor sebagai JSON riwayat YouTube (dapat diimpor ke LibreTube dan Fedora Tube)</string>
     <string name="history_export_failed">Gagal mengekspor riwayat tonton</string>
     <string name="history_delete_shorts">Hapus Shorts dari riwayat</string>
     <string name="history_delete_shorts_title">Hapus Shorts?</string>
@@ -1603,10 +1603,10 @@
     <string name="content_settings_subs_show_checked_count_subtitle">Tampilkan jumlah video yang diperiksa saat memuat ulang</string>
     <string name="player_settings_video_codec">Codec Video Default</string>
     <string name="player_settings_video_codec_dialog_title">Codec Video Default</string>
-    <string name="player_settings_video_codec_dialog_body">Codec yang dipilih Flow terlebih dahulu. Anda tetap dapat memilih codec apa pun dari menu kualitas. H.264 paling lancar di sebagian besar perangkat. AV1 dan VP9 menggunakan data lebih sedikit, tetapi memerlukan daya lebih besar.</string>
+    <string name="player_settings_video_codec_dialog_body">Codec yang dipilih Fedora Tube terlebih dahulu. Anda tetap dapat memilih codec apa pun dari menu kualitas. H.264 paling lancar di sebagian besar perangkat. AV1 dan VP9 menggunakan data lebih sedikit, tetapi memerlukan daya lebih besar.</string>
     <string name="player_settings_video_codec_auto_desc">Biarkan aplikasi memilih (mengutamakan H.264)</string>
-    <string name="donation_prompt_title">Menikmati Flow?</string>
-    <string name="donation_prompt_message">Flow gratis, open source, dan tanpa iklan. Jika Flow layak mendapat tempat di ponsel Anda, sedikit dukungan akan membantunya tetap berjalan.</string>
+    <string name="donation_prompt_title">Menikmati Fedora Tube?</string>
+    <string name="donation_prompt_message">Fedora Tube gratis, open source, dan tanpa iklan. Jika Fedora Tube layak mendapat tempat di ponsel Anda, sedikit dukungan akan membantunya tetap berjalan.</string>
     <string name="donation_prompt_methods">Patreon · Bitcoin · Ethereum · Solana · USDT · Monero</string>
     <string name="donation_prompt_support">Dukung pengembangan</string>
     <string name="donation_prompt_later">Mungkin nanti</string>
@@ -1619,7 +1619,7 @@
     <string name="local_media_empty_title">Tidak ada %1$s yang ditemukan</string>
     <string name="local_media_empty_body">Video dan musik yang tersimpan di perangkat ini akan muncul di sini.</string>
     <string name="local_media_permission_title">Izin diperlukan</string>
-    <string name="local_media_permission_body">Memungkinkan akses ke media Anda sehingga Flow dapat menemukan dan memutar video dan musik lokal.</string>
+    <string name="local_media_permission_body">Memungkinkan akses ke media Anda sehingga Fedora Tube dapat menemukan dan memutar video dan musik lokal.</string>
     <string name="local_media_grant">Berikan akses</string>
     <string name="history_tab_local_videos">Video bawaan</string>
     <string name="history_tab_local_music">Musik bawaan</string>
@@ -1628,7 +1628,7 @@
     <string name="content_settings_share_without_text_subtitle">Bagikan hanya tautan video, tanpa pesan “Check out this video”</string>
     <string name="deep_flow_save_history_title">Simpan untuk melihat riwayat tontonan</string>
     <string name="deep_flow_save_history_subtitle">Simpan riwayat tontonan tanpa memengaruhi rekomendasi</string>
-    <string name="icon_name_flow_play">Flow mainkan</string>
+    <string name="icon_name_flow_play">Fedora Tube mainkan</string>
     <string name="player_appearance_controls_while_loading_title">Kontrol Saat Memuat</string>
     <string name="player_appearance_controls_while_loading_subtitle">Tampilkan kontrol sebelum video selesai dimuat</string>
     <string name="player_settings_autoplay_countdown_title">Jeda putar otomatis</string>
@@ -1667,7 +1667,7 @@
     <string name="no_match_found">Tidak ada kecocokan ditemukan</string>
     <string name="recognition_error">Pengenalan gagal</string>
     <string name="try_again">Coba lagi</string>
-    <string name="search_in_flow">Cari di Flow</string>
+    <string name="search_in_flow">Cari di Fedora Tube</string>
     <string name="recognition_search_history">Cari lagu yang dikenali</string>
     <string name="recognition_history_empty">Lagu yang dikenali akan muncul di sini</string>
     <string name="recognition_clear_history">Hapus riwayat?</string>
@@ -1730,7 +1730,7 @@
     <string name="sync_error_peer_also_receive">Perangkat lain juga diatur ke mode Terima. Atur ke mode Kirim, lalu coba lagi.</string>
     <string name="sync_error_qr_expired">Sesi pemasangan ini telah kedaluwarsa. Minta perangkat lain membuat sesi baru.</string>
     <string name="sync_error_qr_wrong_version">Versi aplikasi di perangkat lain tidak kompatibel.</string>
-    <string name="sync_error_qr_not_flow">Data koneksi Flow tersebut tampaknya tidak valid.</string>
+    <string name="sync_error_qr_not_flow">Data koneksi Fedora Tube tersebut tampaknya tidak valid.</string>
     <string name="sync_error_qr_bad_address">Data koneksi tidak memiliki alamat jaringan yang valid.</string>
     <string name="subscriptions_sort_label">Urutkan channel</string>
     <string name="subscriptions_sort_default">Default</string>
@@ -1778,7 +1778,7 @@
     <string name="persona_initiate_title">Pemula</string>
     <string name="persona_initiate_description">Baru mulai. Profil Anda masih terbentuk.</string>
     <string name="persona_audiophile_title">Audiophile</string>
-    <string name="persona_audiophile_description">Anda menggunakan Flow terutama untuk Musik. Vibe adalah segalanya.</string>
+    <string name="persona_audiophile_description">Anda menggunakan Fedora Tube terutama untuk Musik. Vibe adalah segalanya.</string>
     <string name="persona_livewire_title">Livewire</string>
     <string name="persona_livewire_description">Anda menyukai energi mentah dari livestream dan premiere.</string>
     <string name="persona_night_owl_title">Night Owl</string>
@@ -1837,7 +1837,7 @@
     <string name="copy_logs">Salin log</string>
     <string name="logs_copied">Log disalin</string>
     <string name="logs_copy_failed">Tidak dapat menyalin log</string>
-    <string name="channel_error_log_clip_label">Log kesalahan kanal Flow</string>
+    <string name="channel_error_log_clip_label">Log kesalahan kanal Fedora Tube</string>
     <string name="playlist_filter_owned">Dimiliki</string>
     <string name="playlist_creation_menu_open">Buat playlist</string>
     <string name="playlist_creation_menu_close">Tutup menu pembuatan playlist</string>
@@ -1873,7 +1873,7 @@
     <string name="about_creator_name">A-EDev</string>
     <string name="about_website_address">flow.aedev.me</string>
     <string name="about_reddit">Reddit</string>
-    <string name="about_reddit_subtitle">r/Flow_Official</string>
+    <string name="about_reddit_subtitle">GitHub Discussions</string>
     <string name="about_license_name">GNU GPL v3</string>
     <string name="equalizer">Ekualiser</string>
     <string name="action_save_preset">Simpan prasetel</string>
@@ -1919,15 +1919,15 @@
     <string name="discord_presence_account">Akun Discord</string>
     <string name="discord_presence_privacy_section">Risiko privasi dan akun</string>
     <string name="discord_presence_privacy_title">Privasi</string>
-    <string name="discord_presence_privacy_body">Flow membagikan judul, kreator, karya seni, dan progres dari konten yang Anda putar. Nonaktif secara default. Token Discord Anda dienkripsi dan tidak pernah dicatat.</string>
+    <string name="discord_presence_privacy_body">Fedora Tube membagikan judul, kreator, karya seni, dan progres dari konten yang Anda putar. Nonaktif secara default. Token Discord Anda dienkripsi dan tidak pernah dicatat.</string>
     <string name="discord_presence_gateway_warning">Tindakan ini masuk menggunakan token Discord Anda, bukan login resmi. Tindakan ini melanggar Ketentuan Layanan Discord dan dapat menyebabkan akun Anda dibatasi atau diblokir.</string>
     <string name="discord_presence_risk_dialog_title">Terima risiko akun Discord?</string>
-    <string name="discord_presence_risk_dialog_body">Menghubungkan memberi Flow token Discord Anda. Token tersebut tetap terenkripsi di perangkat ini dan hanya dikirim ke Discord. Metode ini melanggar Ketentuan Layanan Discord, sehingga akun Anda dapat dibatasi atau diblokir.</string>
+    <string name="discord_presence_risk_dialog_body">Menghubungkan memberi Fedora Tube token Discord Anda. Token tersebut tetap terenkripsi di perangkat ini dan hanya dikirim ke Discord. Metode ini melanggar Ketentuan Layanan Discord, sehingga akun Anda dapat dibatasi atau diblokir.</string>
     <string name="discord_presence_risk_accept">Saya mengerti, hubungkan</string>
     <string name="discord_error_not_initialized">Discord Rich Presence belum diinisialisasi.</string>
     <string name="discord_error_enable_before_connect">Aktifkan Discord Rich Presence sebelum menghubungkan akun.</string>
     <string name="discord_error_unavailable">Discord Rich Presence tidak tersedia dalam build ini.</string>
-    <string name="discord_error_open_flow">Buka Flow sebelum menghubungkan Discord.</string>
+    <string name="discord_error_open_flow">Buka Fedora Tube sebelum menghubungkan Discord.</string>
     <string name="discord_error_connection_in_progress">Koneksi Discord sedang berlangsung.</string>
     <string name="discord_error_login_timeout">Waktu proses masuk Discord habis.</string>
     <string name="discord_error_login_cancelled">Koneksi Discord dibatalkan.</string>
@@ -1941,7 +1941,7 @@
     <string name="discord_error_heartbeat_unacknowledged">Heartbeat Discord Gateway tidak dikonfirmasi.</string>
     <string name="discord_error_heartbeat_failed">Heartbeat Discord Gateway gagal.</string>
     <string name="discord_account_fallback">Pengguna Discord</string>
-    <string name="discord_presence_playing_fallback">Diputar di Flow</string>
+    <string name="discord_presence_playing_fallback">Diputar di Fedora Tube</string>
     <string name="discord_presence_by_creator">oleh %1$s</string>
     <string name="settings_item_interface_mode">Mode antarmuka</string>
     <string name="settings_item_interface_mode_subtitle">Pilih tata letak otomatis, seluler, atau TV</string>
@@ -2002,11 +2002,11 @@
     <string name="tv_music_no_lyrics">Tidak ada lirik yang ditemukan</string>
     <string name="tv_music_radio">Radio</string>
     <string name="tv_settings_appearance">Tampilan</string>
-    <string name="tv_settings_flow_engine">Flow Engine</string>
+    <string name="tv_settings_flow_engine">Fedora Tube Engine</string>
     <string name="tv_settings_sync">Sinkronkan perangkat</string>
     <string name="tv_sync_qr_session_active">Kode ini tetap aktif selama layar ini terbuka.</string>
     <string name="tv_remote_guide_title">Panduan remote &amp; keypad</string>
-    <string name="tv_remote_guide_subtitle">Referensi singkat untuk menavigasi Flow dari sofa</string>
+    <string name="tv_remote_guide_subtitle">Referensi singkat untuk menavigasi Fedora Tube dari sofa</string>
     <string name="tv_remote_guide_back">Kembali ke pengaturan</string>
     <string name="tv_guide_navigation_title">Navigasi</string>
     <string name="tv_guide_search_title">Cari &amp; jelajahi</string>
@@ -2051,9 +2051,9 @@
     <string name="tv_theme_variant_amoled">AMOLED</string>
     <string name="tv_about_version">Versi %1$s</string>
     <string name="widget_now_playing_label">Sedang Diputar</string>
-    <string name="widget_now_playing_description">Kontrol musik yang sedang diputar di Flow</string>
+    <string name="widget_now_playing_description">Kontrol musik yang sedang diputar di Fedora Tube</string>
     <string name="widget_quick_actions_label">Tindakan cepat</string>
-    <string name="widget_quick_actions_description">Cari Flow dan langsung buka unduhan, riwayat, atau pengenalan</string>
+    <string name="widget_quick_actions_description">Cari Fedora Tube dan langsung buka unduhan, riwayat, atau pengenalan</string>
     <string name="widget_recognize_label">Kenali musik</string>
     <string name="widget_recognize_description">Identifikasi lagu yang diputar di sekitar Anda dengan satu ketukan</string>
     <string name="widget_turntable_label">Meja putar</string>
@@ -2086,7 +2086,7 @@
     <string name="ui_navigate">Navigasi</string>
     <string name="ui_options">Opsi</string>
     <string name="ui_selected">Dipilih</string>
-    <string name="ui_flow_logo">Logo Flow</string>
+    <string name="ui_flow_logo">Logo Fedora Tube</string>
     <string name="ui_list_view">Tampilan daftar</string>
     <string name="ui_grid_view">Tampilan kisi</string>
     <string name="ui_back">Kembali</string>
@@ -2109,7 +2109,7 @@
     <string name="ui_no_crash_logs">Tidak ada log crash</string>
     <string name="ui_copy_log">Salin Log</string>
     <string name="ui_clear_and_continue">Kosongkan &amp; Lanjutkan</string>
-    <string name="ui_crashed_last_session">Flow mengalami crash pada sesi terakhir</string>
+    <string name="ui_crashed_last_session">Fedora Tube mengalami crash pada sesi terakhir</string>
     <string name="ui_copy_log_description">Salin log di bawah ini dan tempelkan ke issue GitHub agar dapat diperbaiki.</string>
     <string name="ui_search_settings">Cari pengaturan…</string>
     <string name="ui_custom_interest_title">Tambahkan Minat Khusus</string>
@@ -2117,7 +2117,7 @@
     <string name="ui_custom_interest_hint">Minat khusus (misalnya Jazz, Astrofisika)</string>
     <string name="ui_add_interest">Tambahkan minat</string>
     <string name="ui_version">Versi %1$s</string>
-    <string name="update_download_prompt">Versi baru Flow tersedia (%1$s). Unduh APK terbaru?</string>
+    <string name="update_download_prompt">Versi baru Fedora Tube tersedia (%1$s). Unduh APK terbaru?</string>
     <string name="ui_instrumental">I N S T R U M E N T A L</string>
     <string name="ui_playlist_empty">Playlist kosong</string>
     <string name="ui_playlist_saved_to_library">Playlist disimpan ke koleksi</string>
@@ -2224,9 +2224,9 @@
     <string name="download_failed_audio_length">Gagal mendapatkan panjang konten audio</string>
     <string name="download_workers_failed">Satu atau lebih pekerja gagal</string>
     <string name="download_block_failed">Blok %1$s gagal: %2$s</string>
-    <string name="import_migrate_description">Migrasikan langganan dan riwayat Anda dari platform lain ke Flow dengan mudah.</string>
+    <string name="import_migrate_description">Migrasikan langganan dan riwayat Anda dari platform lain ke Fedora Tube dengan mudah.</string>
     <string name="import_backup_restore">Cadangkan &amp; Pulihkan</string>
-    <string name="import_manage_backups">Kelola cadangan Flow Anda</string>
+    <string name="import_manage_backups">Kelola cadangan Fedora Tube Anda</string>
     <string name="import_external_services">Layanan Eksternal</string>
     <string name="import_other_youtube_clients">Impor dari klien YouTube lain</string>
     <string name="imported_successfully">%1$s berhasil diimpor</string>
@@ -2257,7 +2257,7 @@
     <string name="comment_time_edited_template">%1$s (%2$s)</string>
     <string name="desc_more">...lebih lanjut</string>
     <string name="notif_background_restricted_title">Pemeriksaan latar belakang dibatasi</string>
-    <string name="notif_background_restricted_subtitle">Android memblokir pemeriksaan saat Flow ditutup. Ketuk untuk mengizinkan aktivitas latar belakang.</string>
+    <string name="notif_background_restricted_subtitle">Android memblokir pemeriksaan saat Fedora Tube ditutup. Ketuk untuk mengizinkan aktivitas latar belakang.</string>
     <string name="shorts_showing_more_like_this">Kami akan menampilkan lebih banyak seperti ini</string>
     <string name="shorts_showing_less_like_this">Mengerti, menampilkan lebih sedikit ini</string>
     <string name="player_appearance_seek_gesture_title">Gerakan Geser</string>
@@ -2271,7 +2271,7 @@
     <string name="player_settings_shorts_continue_into_feed_subtitle">Lanjutkan pemutaran Shorts yang direkomendasikan saat antrean berakhir</string>
     <string name="player_settings_subtitle_language">Bahasa Subtitel Preferensi</string>
     <string name="player_settings_subtitle_language_dialog_title">Bahasa Subtitel</string>
-    <string name="player_settings_subtitle_language_dialog_body">Teks akan dibuka dalam bahasa ini jika tersedia. Jika tidak, Flow menerjemahkan trek teks yang ada.</string>
+    <string name="player_settings_subtitle_language_dialog_body">Teks akan dibuka dalam bahasa ini jika tersedia. Jika tidak, Fedora Tube menerjemahkan trek teks yang ada.</string>
     <string name="player_settings_subtitle_language_none">Tidak ada preferensi</string>
     <string name="player_settings_subtitle_language_none_desc">Gunakan trek teks pertama yang ditawarkan video</string>
     <string name="player_settings_auto_enable_subtitles">Aktifkan Teks Secara Otomatis</string>
@@ -2298,7 +2298,7 @@
     <string name="sync_collection_likes_body">Video dan musik yang disukai dan tidak disukai.</string>
     <string name="sync_collection_subscriptions_body">Saluran yang Anda ikuti.</string>
     <string name="sync_collection_settings_body">Preferensi pemutaran, tampilan, dan unduhan.</string>
-    <string name="sync_collection_recommendation_profile_body">Apa yang telah dipelajari Flow tentang apa yang Anda tonton.</string>
+    <string name="sync_collection_recommendation_profile_body">Apa yang telah dipelajari Fedora Tube tentang apa yang Anda tonton.</string>
     <string name="sync_waiting_for_peer">Menunggu perangkat lain terhubung…</string>
     <string name="sync_cancel_session">Batalkan sinkronisasi</string>
     <string name="sync_expires_label">Kode QR kedaluwarsa</string>
@@ -2611,8 +2611,8 @@
     <plurals name="sync_selected_count">
         <item quantity="other">%1$d dari %2$d dipilih</item>
     </plurals>
-    <string name="sync_collection_music_profile_body">Hal yang telah dipelajari Flow tentang apa yang Anda dengarkan.</string>
-    <string name="diagnostics_report_subject">Laporan Diagnostik Flow</string>
+    <string name="sync_collection_music_profile_body">Hal yang telah dipelajari Fedora Tube tentang apa yang Anda dengarkan.</string>
+    <string name="diagnostics_report_subject">Laporan Diagnostik Fedora Tube</string>
     <plurals name="merge_playlist_success">
         <item quantity="other">Menambahkan %1$d lagu ke “%2$s”</item>
     </plurals>
@@ -2633,7 +2633,7 @@
     <plurals name="toast_downloaded_tracks">
         <item quantity="other">Mengunduh %1$d trek</item>
     </plurals>
-    <string name="notification_channel_downloads_name">Unduhan Flow</string>
+    <string name="notification_channel_downloads_name">Unduhan Fedora Tube</string>
     <string name="notification_download_paused">Dijeda - %1$s</string>
     <string name="notification_download_paused_hint">ketuk untuk melanjutkan</string>
     <string name="notification_download_progress">%1$d%% • %2$s / %3$s</string>
@@ -2813,7 +2813,7 @@
     <string name="nav_rail_state_expanded">Diperluas</string>
     <string name="nav_rail_state_collapsed">Diciutkan</string>
     <string name="onboarding_channels_results_header">Channel</string>
-    <string name="onboarding_import_source_flow">Cadangan Flow</string>
+    <string name="onboarding_import_source_flow">Cadangan Fedora Tube</string>
     <string name="onboarding_import_source_youtube">YouTube</string>
     <string name="onboarding_import_footnote">Semua di sini bersifat opsional. Pengaturan memiliki impor yang sama.</string>
     <string name="onboarding_import_done">Diimpor</string>
@@ -2828,7 +2828,7 @@
     <plurals name="onboarding_pick_more">
         <item quantity="other">Pilih %d lagi</item>
     </plurals>
-    <string name="onboarding_welcome_title">Jadikan Flow milik Anda</string>
+    <string name="onboarding_welcome_title">Jadikan Fedora Tube milik Anda</string>
     <string name="onboarding_welcome_subtitle">Video dan musik seputar yang Anda sukai. Penyiapan hanya memerlukan satu menit.</string>
     <string name="onboarding_alerts_title">Jangan pernah melewatkan unggahan</string>
     <string name="onboarding_alerts_subtitle">Dapatkan pemberitahuan saat channel Anda mengunggah konten.</string>
@@ -2857,10 +2857,10 @@
     <string name="content_settings_library_previews_subtitle">Tampilkan satu baris item di bawah setiap bagian Koleksi</string>
     <string name="diagnostics_reset_session">Atur ulang sesi YouTube</string>
     <string name="diagnostics_reset_session_confirm_title">Atur ulang sesi YouTube?</string>
-    <string name="diagnostics_reset_session_confirm_body">Flow akan membuat identitas pemutaran baru. Coba ini jika video berhenti setelah satu menit atau tidak dapat diputar.\n\nPemutaran mungkin tidak lancar selama satu atau dua menit. Data tersimpan Anda tidak terpengaruh.</string>
+    <string name="diagnostics_reset_session_confirm_body">Fedora Tube akan membuat identitas pemutaran baru. Coba ini jika video berhenti setelah satu menit atau tidak dapat diputar.\n\nPemutaran mungkin tidak lancar selama satu atau dua menit. Data tersimpan Anda tidak terpengaruh.</string>
     <string name="diagnostics_reset_session_done">Sesi YouTube telah diatur ulang. Buka kembali video untuk mencoba lagi.</string>
     <string name="reset">Atur ulang</string>
-    <string name="crash_title">Flow tertutup secara tidak terduga</string>
+    <string name="crash_title">Fedora Tube tertutup secara tidak terduga</string>
     <string name="crash_subtitle">Laporan ini tetap berada di perangkat Anda hingga Anda membagikannya.</string>
     <string name="crash_summary_error">Kesalahan</string>
     <string name="crash_summary_message">Pesan</string>
@@ -2873,10 +2873,10 @@
     <string name="crash_report">Laporan</string>
     <string name="crash_continue">Lanjutkan</string>
     <string name="crash_report_copied">Laporan lengkap telah disalin. Tempelkan ke kolom Log.</string>
-    <string name="update_downloading_notification">Mengunduh Flow %1$s</string>
-    <string name="update_ready_notification">Flow %1$s siap</string>
+    <string name="update_downloading_notification">Mengunduh Fedora Tube %1$s</string>
+    <string name="update_ready_notification">Fedora Tube %1$s siap</string>
     <string name="update_ready_notification_text">Terverifikasi. Ketuk untuk menginstal.</string>
-    <string name="update_title">Flow %1$s tersedia</string>
+    <string name="update_title">Fedora Tube %1$s tersedia</string>
     <string name="update_version_change">%1$s → %2$s</string>
     <string name="update_not_now">Nanti saja</string>
     <string name="update_skip_version">Lewati versi ini</string>
@@ -2888,11 +2888,11 @@
     <string name="update_action_allow">Izinkan penginstalan</string>
     <string name="update_action_install">Instal pembaruan</string>
     <string name="update_action_installing">Menginstal</string>
-    <string name="update_permission_notice">Izinkan Flow menginstal pembaruan. Android hanya meminta izin ini satu kali.</string>
+    <string name="update_permission_notice">Izinkan Fedora Tube menginstal pembaruan. Android hanya meminta izin ini satu kali.</string>
     <string name="update_failed_network">Unduhan berhenti. Periksa koneksi Anda dan coba lagi.</string>
     <string name="update_failed_storage">Ruang penyimpanan tidak cukup untuk pembaruan.</string>
     <string name="update_failed_checksum">File tidak cocok dengan rilis sehingga telah dihapus. Coba lagi.</string>
-    <string name="update_failed_package">File tersebut bukan pembaruan Flow sehingga telah dihapus.</string>
+    <string name="update_failed_package">File tersebut bukan pembaruan Fedora Tube sehingga telah dihapus.</string>
     <string name="update_failed_install">Android tidak dapat menginstal pembaruan. Coba lagi.</string>
     <string name="settings_navigation_bar_title">Bilah navigasi</string>
     <string name="settings_language_region_title">Bahasa &amp; wilayah</string>
@@ -3012,7 +3012,7 @@
     <string name="settings_backup_tab_auto">Otomatis</string>
     <string name="settings_backup_full">Cadangan lengkap</string>
     <string name="settings_backup_individual">Ekspor individual</string>
-    <string name="settings_backup_restore_flow">Pulihkan dari Flow</string>
+    <string name="settings_backup_restore_flow">Pulihkan dari Fedora Tube</string>
     <string name="settings_backup_source_youtube">YouTube dan Google Takeout</string>
     <string name="settings_backup_source_newpipe">NewPipe</string>
     <string name="settings_backup_source_libretube">LibreTube</string>
@@ -3028,7 +3028,7 @@
     <string name="settings_storage_access_summary">Juga memungkinkan Media lokal mencantumkan file yang disimpan oleh aplikasi lain</string>
     <string name="settings_storage_usage">%1$s tersedia dari %2$s</string>
     <string name="settings_location_default">Default</string>
-    <string name="settings_music_folder_label">Musik / Flow</string>
+    <string name="settings_music_folder_label">Musik / Fedora Tube</string>
     <string name="settings_keywords_downloads">simpan offline, folder, penyimpanan, kartu SD</string>
     <string name="settings_section_notification_types">Beri tahu saya tentang</string>
     <string name="settings_keywords_notifications">pemberitahuan, push, unggahan baru, pemeriksaan latar belakang</string>
@@ -3060,7 +3060,7 @@
     <string name="settings_changelog_all_releases">Semua rilis di GitHub</string>
     <string name="settings_changelog_expand">Tampilkan perubahan</string>
     <string name="settings_changelog_collapse">Sembunyikan perubahan</string>
-    <string name="settings_creator_role">Kreator dan pengembang Flow</string>
+    <string name="settings_creator_role">Kreator dan pengembang Fedora Tube</string>
     <string name="device_info_section_device">Perangkat</string>
     <string name="device_info_section_system">Sistem</string>
     <string name="device_info_section_display">Tampilan</string>
@@ -3111,7 +3111,7 @@
     <string name="settings_custom_theme_start_from">Mulai dari</string>
     <string name="settings_custom_theme_count">%1$d dari %2$d tema</string>
     <string name="settings_custom_theme_empty">Belum ada tema kustom</string>
-    <string name="settings_custom_theme_empty_body">Mulai dari palet apa pun atau impor palet yang dibuat di Flow Desktop.</string>
+    <string name="settings_custom_theme_empty_body">Mulai dari palet apa pun atau impor palet yang dibuat di Fedora Tube Desktop.</string>
     <string name="settings_custom_theme_import_failed">Tidak ada tema yang valid dalam file tersebut</string>
     <string name="settings_custom_theme_limit">Anda dapat menyimpan hingga %1$d tema</string>
     <string name="settings_custom_theme_exported">Tema diekspor</string>
@@ -3141,9 +3141,9 @@
     <string name="settings_custom_theme_in_use">Sedang digunakan</string>
     <string name="settings_custom_theme_export_failed">Tema tidak dapat disimpan</string>
     <string name="taste_title">Selera Anda</string>
-    <string name="taste_summary">Cara Flow melihat Anda dan hal yang membentuk feed Anda</string>
+    <string name="taste_summary">Cara Fedora Tube melihat Anda dan hal yang membentuk feed Anda</string>
     <string name="taste_keywords">persona, profil, algoritme, rekomendasi, minat, otak, mesin, pusat kendali</string>
-    <string name="taste_card_hint">Lihat cara Flow melihat Anda</string>
+    <string name="taste_card_hint">Lihat cara Fedora Tube melihat Anda</string>
     <string name="taste_card_loading">Membaca profil Anda</string>
     <string name="taste_shape_header">Bentuk selera</string>
     <string name="taste_shape_description">Profil Anda dibandingkan dengan yang Anda tonton pada waktu ini</string>
@@ -3179,14 +3179,14 @@
     <string name="taste_export_music">Ekspor profil musik</string>
     <string name="taste_import_music">Impor profil musik</string>
     <string name="taste_reset_music">Atur ulang profil musik</string>
-    <string name="taste_reset_video_body">Ini menghapus data yang dipelajari Flow dari video Anda dan memulai ulang dari nol. Ringkasan serta channel, topik, dan video tersembunyi Anda tetap tersimpan.</string>
+    <string name="taste_reset_video_body">Ini menghapus data yang dipelajari Fedora Tube dari video Anda dan memulai ulang dari nol. Ringkasan serta channel, topik, dan video tersembunyi Anda tetap tersimpan.</string>
     <string name="taste_reset_music_title">Atur ulang profil musik?</string>
-    <string name="taste_reset_music_body">Tindakan ini menghapus data yang dipelajari Flow dari musik Anda dan memulai kembali dari nol. Rekap Anda tetap ada.</string>
+    <string name="taste_reset_music_body">Tindakan ini menghapus data yang dipelajari Fedora Tube dari musik Anda dan memulai kembali dari nol. Rekap Anda tetap ada.</string>
     <string name="taste_trait_now">Sekarang %1$s</string>
     <string name="taste_reset_done">Profil diatur ulang</string>
     <string name="diagnostics_engine_header">Detail mesin</string>
     <string name="diagnostics_engine_queries_none">Belum ada</string>
-    <string name="recap_title">Rekap Flow</string>
+    <string name="recap_title">Rekap Fedora Tube</string>
     <string name="recap_summary">Yang Anda tonton dan dengarkan, bulan demi bulan</string>
     <string name="recap_keywords">wrapped, statistik, rekap, tinjauan tahunan, waktu menonton, waktu mendengarkan, paling banyak ditonton, artis teratas</string>
     <string name="recap_period_month">Bulan</string>
@@ -3195,7 +3195,7 @@
     <string name="recap_source_all">Semuanya</string>
     <string name="recap_source_video">Video</string>
     <string name="recap_source_music">Musik</string>
-    <string name="recap_total_time">Waktu di Flow</string>
+    <string name="recap_total_time">Waktu di Fedora Tube</string>
     <string name="recap_delta_up">%1$s lebih banyak daripada periode sebelumnya</string>
     <string name="recap_delta_down">%1$s lebih sedikit daripada periode sebelumnya</string>
     <string name="recap_delta_same">Kurang lebih sama dengan periode sebelumnya</string>
@@ -3266,7 +3266,7 @@
         <item quantity="other">%d video</item>
     </plurals>
     <string name="recap_empty_title">Rekap Anda dimulai sekarang</string>
-    <string name="recap_empty_body">Flow menyimpan statistik ini hanya di perangkat ini. Tonton dan dengarkan selama beberapa waktu, lalu statistik akan terisi.</string>
+    <string name="recap_empty_body">Fedora Tube menyimpan statistik ini hanya di perangkat ini. Tonton dan dengarkan selama beberapa waktu, lalu statistik akan terisi.</string>
     <string name="recap_period_empty">Tidak ada yang tercatat untuk periode ini</string>
     <string name="recap_insights_title">Hal yang menonjol</string>
     <string name="recap_insight_night_owl">Burung hantu malam</string>
@@ -3288,7 +3288,7 @@
     <string name="recap_ready_body">Lihat yang Anda tonton dan dengarkan, lalu bagikan jika Anda mau</string>
     <string name="recap_ready_open">Buka</string>
     <string name="recap_ready_dismiss">Nanti saja</string>
-    <string name="recap_story_intro">%1$s Anda di Flow</string>
+    <string name="recap_story_intro">%1$s Anda di Fedora Tube</string>
     <plurals name="recap_story_intro_body">
         <item quantity="other">Tersebar selama %d hari</item>
     </plurals>
@@ -3310,12 +3310,12 @@
     <string name="recap_story_summary">%1$s Anda, dalam satu kartu</string>
     <string name="recap_story_share">Bagikan</string>
     <string name="recap_story_share_title">Bagikan rekap Anda</string>
-    <string name="recap_story_share_text">%1$s saya di Flow: %2$s</string>
+    <string name="recap_story_share_text">%1$s saya di Fedora Tube: %2$s</string>
     <string name="recap_story_close">Tutup</string>
     <string name="recap_story_next">Berikutnya</string>
     <string name="recap_story_previous">Sebelumnya</string>
     <string name="recap_story_page">Halaman %1$d dari %2$d</string>
-    <string name="recap_story_made_with">Dibuat dengan Flow</string>
+    <string name="recap_story_made_with">Dibuat dengan Fedora Tube</string>
     <string name="recap_story_pause">Jeda</string>
     <string name="recap_story_play">Putar</string>
     <string name="recap_summary_top_channel">Channel teratas</string>
@@ -3336,7 +3336,7 @@
     <string name="player_appearance_plain_control_colors_title">Kontrol warna</string>
     <string name="player_appearance_plain_control_colors_monochrome">Hitam putih</string>
     <string name="check_out_short_template">Lihat Short ini: %1$s\nhttps://youtube.com/shorts/%2$s</string>
-    <string name="link_not_supported">Flow tidak dapat membuka jenis tautan ini</string>
+    <string name="link_not_supported">Fedora Tube tidak dapat membuka jenis tautan ini</string>
     <string name="content_settings_hide_watched_shorts_title">Sembunyikan Shorts yang telah ditonton</string>
     <string name="player_appearance_plain_control_colors_app">Tema aplikasi</string>
     <string name="lyrics_source_local_file">File lirik</string>
@@ -3345,7 +3345,7 @@
     <string name="icon_name_expressive_segmented">F tersegmentasi</string>
     <string name="icon_name_expressive_play">Sunny Play</string>
     <string name="icon_name_expressive_sky">Sky Clover</string>
-    <string name="icon_name_expressive_mint">Mint Flower</string>
+    <string name="icon_name_expressive_mint">Mint Fedora Tubeer</string>
     <string name="icon_name_expressive_cookie">Night Cookie</string>
     <string name="icon_name_expressive_oval">Oval</string>
     <string name="icon_name_expressive_pill">Pil</string>
@@ -3355,7 +3355,7 @@
     <string name="content_settings_home_subscriptions_subtitle">Gabungkan video dari channel yang Anda ikuti ke Beranda</string>
     <string name="settings_section_watch_history">Riwayat tontonan</string>
     <string name="pause_watch_history_title">Jeda riwayat tontonan</string>
-    <string name="pause_watch_history_subtitle">Berhenti menyimpan tontonan Anda. Deep Flow juga berhenti belajar</string>
+    <string name="pause_watch_history_subtitle">Berhenti menyimpan tontonan Anda. Deep Fedora Tube juga berhenti belajar</string>
     <string name="content_settings_hide_watched_shorts_subtitle">Jangan tampilkan Shorts yang telah selesai ditonton dari rak dan feed Shorts</string>
     <string name="settings_open_music_player_on_play_title">Buka pemutar penuh untuk lagu baru</string>
     <string name="settings_open_music_player_on_play_summary">Nonaktif akan mempertahankan lagu baru di pemutar mini</string>
@@ -3443,7 +3443,7 @@
     <string name="eq_bass_boost">Peningkatan bass</string>
     <string name="eq_edit">Edit equalizer</string>
     <string name="eq_system">Equalizer sistem</string>
-    <string name="eq_system_desc">Ditambahkan ke equalizer Flow</string>
+    <string name="eq_system_desc">Ditambahkan ke equalizer Fedora Tube</string>
     <string name="eq_graph_description">Kurva respons, %1$d band. Seret titik untuk mengubahnya.</string>
     <string name="eq_graph_hint">Ketuk kurva untuk menambahkan band</string>
     <string name="eq_name">Nama</string>
@@ -3488,7 +3488,7 @@
     <string name="subtitle_timing_step_template">%1$s dtk</string>
     <string name="download_subtitle_file">File subtitle</string>
     <string name="download_subtitle_file_subtitle">Simpan teks subtitle dalam bahasa subtitle Anda di samping video yang diunduh tanpa menu</string>
-    <string name="subtitle_add_file_failed">Flow tidak dapat membaca file tersebut sebagai subtitle</string>
+    <string name="subtitle_add_file_failed">Fedora Tube tidak dapat membaca file tersebut sebagai subtitle</string>
     <string name="subtitle_fullscreen_position_template">Posisi dalam layar penuh: %1$d</string>
     <string name="subtitle_fullscreen_landscape">Lanskap</string>
     <string name="subtitle_fullscreen_vertical">Vertikal</string>
@@ -3542,7 +3542,7 @@
     <string name="widget_week_title">7 hari terakhir</string>
     <string name="widget_week_top_artist">Artis teratas bulan ini</string>
     <string name="settings_widgets_title">Widget</string>
-    <string name="settings_widgets_summary">Letakkan Flow di layar utama Anda</string>
+    <string name="settings_widgets_summary">Letakkan Fedora Tube di layar utama Anda</string>
     <string name="settings_widgets_add_header">Tambahkan ke layar utama</string>
     <string name="settings_widgets_footer">Ketuk salah satu untuk menempatkannya, atau tekan lama layar utama Anda.</string>
     <string name="settings_widgets_unsupported">Launcher Anda tidak dapat menambahkan widget untuk aplikasi. Tekan lama layar utama Anda untuk menambahkannya.</string>
@@ -3577,7 +3577,7 @@
         <item quantity="other">%1$d file disembunyikan</item>
     </plurals>
     <string name="local_manage">Kelola</string>
-    <string name="local_partial_access_title">Flow hanya dapat melihat video yang Anda pilih</string>
+    <string name="local_partial_access_title">Fedora Tube hanya dapat melihat video yang Anda pilih</string>
     <string name="local_partial_access_body">Izinkan akses ke semua video untuk melihat sisanya.</string>
     <string name="local_open_settings">Buka pengaturan</string>
     <string name="local_permission_denied_body">Izinkan akses ke video dan musik dalam pengaturan aplikasi agar dapat ditampilkan di sini.</string>
@@ -3628,7 +3628,7 @@
     <string name="downloads_sort_largest">Terbesar</string>
     <string name="downloads_sort_title">Judul</string>
     <string name="downloads_sort_channel">Channel</string>
-    <string name="downloads_storage_used">%1$s di Flow</string>
+    <string name="downloads_storage_used">%1$s di Fedora Tube</string>
     <string name="downloads_storage_free">%1$s tersedia</string>
     <string name="downloads_storage_videos">Video %1$s</string>
     <string name="downloads_storage_music">Musik %1$s</string>
@@ -3673,8 +3673,8 @@
     <string name="playlist_exported">Playlist disimpan</string>
     <string name="playlist_export_failed">Tidak dapat menyimpan playlist</string>
     <string name="playlist_share_failed">Tidak dapat membagikan playlist</string>
-    <string name="playlist_import_not_a_playlist">File ini bukan playlist Flow</string>
-    <string name="playlist_import_too_new">Playlist ini memerlukan versi Flow yang lebih baru</string>
+    <string name="playlist_import_not_a_playlist">File ini bukan playlist Fedora Tube</string>
+    <string name="playlist_import_too_new">Playlist ini memerlukan versi Fedora Tube yang lebih baru</string>
     <string name="playlist_import_empty">Playlist ini tidak memiliki video untuk diimpor</string>
     <string name="playlist_import_unreadable">Tidak dapat membaca file ini</string>
     <plurals name="playlist_imported">
@@ -3838,7 +3838,7 @@
     <string name="scrobbling_import">Impor artis teratas Anda</string>
     <string name="scrobbling_import_summary">Menambahkan artis yang paling sering Anda putar ke artis favorit</string>
     <string name="scrobbling_import_offer_title">Bentuk rekomendasi musik Anda dengan %1$s?</string>
-    <string name="scrobbling_import_offer_body">Flow menambahkan 20 artis yang paling sering Anda putar selama setahun terakhir ke artis favorit. Anda dapat menghapusnya kapan saja nanti.</string>
+    <string name="scrobbling_import_offer_body">Fedora Tube menambahkan 20 artis yang paling sering Anda putar selama setahun terakhir ke artis favorit. Anda dapat menghapusnya kapan saja nanti.</string>
     <string name="scrobbling_import_action">Impor</string>
     <string name="scrobbling_import_later">Jangan sekarang</string>
     <plurals name="scrobbling_import_done">
