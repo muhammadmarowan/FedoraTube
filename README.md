@@ -40,11 +40,6 @@
 * **On-Device Recommendation Engine:** Recommendations are computed privately on your device. Your watch habits never leave your phone.
 * **No Google Account Needed:** Full access to subscriptions, playlists, and history without any login.
 * **Backup & Restore:** Easily export and import your subscriptions and history anytime.
-
-### 🚀 Seamless In-App Updates
-* **Instant Update Notifications:** Automatically detects new releases on launch.
-* **One-Click In-App Install:** Download and install updates directly within the app without manually browsing the web.
-
 ---
 
 ## 📱 Screenshots
@@ -75,20 +70,6 @@
 <br>
 
 <div align="center">
-
-### 📥 Download Latest Release
-
-Get the latest APK directly from the [GitHub Releases](https://github.com/muhammadmarowan/FedoraTube/releases/latest) page:
-
-| Architecture | Device Type | Download Link |
-| :--- | :--- | :--- |
-| **ARM64-v8a** | Modern Android Devices *(Recommended)* | [Download APK](https://github.com/muhammadmarowan/FedoraTube/releases/latest) |
-| **Universal** | All Devices & Emulators | [Download APK](https://github.com/muhammadmarowan/FedoraTube/releases/latest) |
-| **ARMeabi-v7a** | Older 32-bit Android Devices | [Download APK](https://github.com/muhammadmarowan/FedoraTube/releases/latest) |
-
-</div>
-
----
 
 ## 📄 License
 
