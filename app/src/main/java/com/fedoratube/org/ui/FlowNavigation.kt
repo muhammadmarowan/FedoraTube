@@ -128,9 +128,6 @@ fun NavGraphBuilder.flowAppGraph(
             onNotificationClick = { videoId ->
                 navController.navigateToPlayer(videoId)
             },
-            onOpenSettings = {
-                navController.navigate("settings?target=${SettingsTarget(SettingsDestination.NOTIFICATIONS).encode()}")
-            },
         )
     }
 

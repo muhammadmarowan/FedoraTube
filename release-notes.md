@@ -1,3 +1,14 @@
+# Fedora Tube v1.4.1
+
+**Release date:** 2026-10-21
+**Status:** Stable
+
+## Highlights
+
+- Simplified notifications screen: removed settings icon and settings navigation
+- Pure vector adaptive launcher icon matching YouTube proportions
+- UI cleanups and stability improvements
+
 # Fedora Tube v1.4.0
 
 **Release date:** 2026-10-21

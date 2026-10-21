@@ -12,11 +12,6 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.DeleteSweep
 import androidx.compose.material.icons.outlined.NotificationsNone
-import androidx.compose.material.icons.outlined.Settings
-import androidx.compose.material.icons.outlined.Tune
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -64,7 +59,6 @@ private val ListBottomPadding = 32.dp
 fun NotificationScreen(
     onBackClick: () -> Unit,
     onNotificationClick: (String) -> Unit,
-    onOpenSettings: () -> Unit,
     viewModel: NotificationViewModel = hiltViewModel(),
 ) {
     val notifications by viewModel.notifications.collectAsStateWithLifecycle()
@@ -100,9 +94,6 @@ fun NotificationScreen(
                 title = stringResource(R.string.notifications),
                 onBack = onBackClick,
                 actions = {
-                    IconButton(onClick = onOpenSettings) {
-                        Icon(Icons.Outlined.Settings, contentDescription = stringResource(R.string.notifications_open_settings))
-                    }
                     if (notifications.isNotEmpty()) {
                         IconButton(onClick = { confirmClear = true }) {
                             Icon(Icons.Outlined.DeleteSweep, contentDescription = stringResource(R.string.clear_all_notifications))
@@ -113,7 +104,7 @@ fun NotificationScreen(
         },
     ) { padding ->
         if (sections.isEmpty()) {
-            EmptyInbox(onOpenSettings, Modifier.padding(padding))
+            EmptyInbox(Modifier.padding(padding))
             return@Scaffold
         }
         Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.TopCenter) {
@@ -158,23 +149,15 @@ fun NotificationScreen(
     }
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun EmptyInbox(
-    onOpenSettings: () -> Unit,
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
 ) {
     FlowEmptyState(
         title = stringResource(R.string.peace_and_quiet),
         subtitle = stringResource(R.string.notifications_empty_body),
         icon = Icons.Outlined.NotificationsNone,
         modifier = modifier,
-        action = {
-            FilledTonalButton(onClick = onOpenSettings, shapes = ButtonDefaults.shapes()) {
-                Icon(Icons.Outlined.Tune, contentDescription = null, modifier = Modifier.padding(end = ButtonDefaults.IconSpacing))
-                Text(stringResource(R.string.notifications_open_settings))
-            }
-        },
     )
 }
 

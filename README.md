@@ -4,15 +4,14 @@
 
 # Fedora Tube
 
-**An elegant, privacy-respecting YouTube & YouTube Music client designed for Android and Linux.**
+**An elegant, privacy-respecting YouTube & YouTube Music client designed for Android.**
 
 <br>
 
 [![Latest Release](https://img.shields.io/github/v/release/muhammadmarowan/FedoraTube?style=for-the-badge&color=0072EF&logo=github&label=Release)](https://github.com/muhammadmarowan/FedoraTube/releases/latest)
 [![Download APK](https://img.shields.io/github/v/release/muhammadmarowan/FedoraTube?style=for-the-badge&color=00C853&logo=android&logoColor=white&label=DOWNLOAD%20APK)](https://github.com/muhammadmarowan/FedoraTube/releases/latest)
-[![Download Linux](https://img.shields.io/badge/Download-Linux-E95420?style=for-the-badge&logo=linux&logoColor=white)](https://github.com/muhammadmarowan/FedoraTube/releases/latest)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg?style=for-the-badge)](License)
-[![Platform](https://img.shields.io/badge/Platform-Android%20%7C%20Linux-lightgrey?style=for-the-badge&logo=linux)](https://github.com/muhammadmarowan/FedoraTube/releases/latest)
+[![Platform](https://img.shields.io/badge/Platform-Android_8.0+-lightgrey?style=for-the-badge&logo=android)](https://developer.android.com)
 
 <br>
 
@@ -46,13 +45,13 @@
 
 ## 📥 Downloads
 
-| Platform | Package | Description | Download |
+| Architecture | Package | Description | Download |
 | :--- | :--- | :--- | :--- |
-| **Android** | APK (arm64-v8a) | Recommended for modern Android phones | [Download APK](https://github.com/muhammadmarowan/FedoraTube/releases/latest) |
-| **Android** | APK (Universal) | Works on all Android devices | [Download APK](https://github.com/muhammadmarowan/FedoraTube/releases/latest) |
-| **Linux** | AppImage | Universal standalone executable for any Linux distro | [Download AppImage](https://github.com/muhammadmarowan/FedoraTube/releases/latest) |
-| **Linux** | RPM (`.rpm`) | Native package for Fedora, RHEL, openSUSE | [Download RPM](https://github.com/muhammadmarowan/FedoraTube/releases/latest) |
-| **Linux** | DEB (`.deb`) | Native package for Ubuntu, Debian, Linux Mint | [Download DEB](https://github.com/muhammadmarowan/FedoraTube/releases/latest) |
+| **ARM64** | `FedoraTube-v*-arm64-v8a.apk` | Recommended for modern Android phones | [Download APK](https://github.com/muhammadmarowan/FedoraTube/releases/latest) |
+| **Universal** | `FedoraTube-v*-universal.apk` | Compatible with all Android devices | [Download APK](https://github.com/muhammadmarowan/FedoraTube/releases/latest) |
+| **ARMv7** | `FedoraTube-v*-armeabi-v7a.apk` | For older 32-bit Android phones | [Download APK](https://github.com/muhammadmarowan/FedoraTube/releases/latest) |
+| **x86_64** | `FedoraTube-v*-x86_64.apk` | For Android emulators & ChromeOS | [Download APK](https://github.com/muhammadmarowan/FedoraTube/releases/latest) |
+
 ---
 
 ## 📱 Screenshots
