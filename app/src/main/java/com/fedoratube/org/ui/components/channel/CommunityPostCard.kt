@@ -3,6 +3,7 @@ package com.fedoratube.org.ui.components.channel
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -58,6 +59,7 @@ fun CommunityPostCard(
     onVideoClick: (Video) -> Unit = {},
     showDivider: Boolean = true,
     compact: Boolean = false,
+    commentsContent: (@Composable () -> Unit)? = null,
 ) {
     var textExpanded by rememberSaveable(post.id) { mutableStateOf(false) }
     var textOverflows by rememberSaveable(post.id) { mutableStateOf(false) }
@@ -174,6 +176,18 @@ fun CommunityPostCard(
                 )
                 Spacer(Modifier.width(8.dp))
                 Text(post.commentCountText.ifBlank { stringResource(R.string.comments) })
+            }
+        }
+
+        val currentCommentsContent = commentsContent
+        if (currentCommentsContent != null) {
+            Box(
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = PostHorizontalPadding),
+            ) {
+                currentCommentsContent()
             }
         }
 

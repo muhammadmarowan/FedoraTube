@@ -263,6 +263,7 @@ internal fun PlayerCommentsPanelHost(
     onNavigateToChannel: (String) -> Unit,
     onClose: () -> Unit,
     modifier: Modifier = Modifier,
+    showCloseButton: Boolean = true,
 ) {
     PlayerCommentsPanel(
         comments = commentsUiState.visibleComments(screenState),
@@ -286,6 +287,7 @@ internal fun PlayerCommentsPanelHost(
         },
         onLoadMore = { viewModel.loadMoreComments(videoId) },
         onClose = onClose,
+        showCloseButton = showCloseButton,
         modifier = modifier,
     )
 }

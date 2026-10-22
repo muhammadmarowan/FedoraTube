@@ -27,10 +27,12 @@ import androidx.compose.ui.unit.dp
 import com.fedoratube.org.R
 import com.fedoratube.org.data.local.HomeFeedColumns
 import com.fedoratube.org.data.model.Channel
+import com.fedoratube.org.data.model.Comment
 import com.fedoratube.org.data.model.Video
 import com.fedoratube.org.data.shorts.queue.ShortsQueueSource
 import com.fedoratube.org.innertube.pages.renderer.CommunityPost
 import com.fedoratube.org.ui.components.channel.CommunityPostCard
+import com.fedoratube.org.ui.components.channel.CommunityPostInlineComments
 import com.fedoratube.org.ui.components.layout.flowBottomContentPadding
 import com.fedoratube.org.ui.components.shared.FlowPullToRefreshBox
 import com.fedoratube.org.ui.components.shared.card.MediaVideoCard
@@ -73,7 +75,11 @@ internal fun SubscriptionsFeedContent(
     onGroupSelected: (String?) -> Unit = {},
     onManageGroups: () -> Unit = {},
     onCommunityPostComments: (CommunityPost) -> Unit = {},
+    onCloseCommunityPostComments: () -> Unit = {},
+    onLoadMoreCommunityPostComments: () -> Unit = {},
+    onLoadCommunityCommentReplies: (Comment, Boolean) -> Unit = { _, _ -> },
     onCommunityPostShare: (CommunityPost) -> Unit = {},
+    onOpenChannel: (Channel) -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     val pullRefreshState = rememberPullToRefreshState()
@@ -116,6 +122,7 @@ internal fun SubscriptionsFeedContent(
             LazyVerticalGrid(
                 columns = androidx.compose.foundation.lazy.grid.GridCells.Fixed(1),
                 state = gridState,
+                userScrollEnabled = state.activeCommunityPost == null,
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(top = FeedTopPadding, bottom = flowBottomContentPadding()),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -194,7 +201,7 @@ internal fun SubscriptionsFeedContent(
                                             row.post.channelId.takeIf { it.isNotEmpty() }
                                                 ?: state.subscribedChannels.find { it.name.equals(row.post.authorName, ignoreCase = true) }?.id
                                         if (channelId != null) {
-                                            onChannelClick(
+                                            onOpenChannel(
                                                 Channel(
                                                     id = channelId,
                                                     name = row.post.authorName,
@@ -204,10 +211,54 @@ internal fun SubscriptionsFeedContent(
                                             )
                                         }
                                     },
-                                    onCommentsClick = { onCommunityPostComments(row.post) },
+                                    onCommentsClick = {
+                                        if (state.activeCommunityPost?.id == row.post.id) {
+                                            onCloseCommunityPostComments()
+                                        } else {
+                                            onCommunityPostComments(row.post)
+                                        }
+                                    },
                                     onShareClick = { onCommunityPostShare(row.post) },
                                     onVideoClick = onVideoClick,
                                     compact = false,
+                                    commentsContent =
+                                        if (state.activeCommunityPost?.id == row.post.id) {
+                                            {
+                                                CommunityPostInlineComments(
+                                                    comments = state.communityComments,
+                                                    isLoading = state.isLoadingCommunityComments,
+                                                    onClose = onCloseCommunityPostComments,
+                                                    totalText = row.post.commentCountText,
+                                                    isLoadingMore = state.isLoadingMoreCommunityComments,
+                                                    onLoadMore = onLoadMoreCommunityPostComments,
+                                                    hasMore = state.communityCommentsContinuation != null,
+                                                    onLoadReplies = { comment -> onLoadCommunityCommentReplies(comment, false) },
+                                                    onLoadMoreReplies = { comment -> onLoadCommunityCommentReplies(comment, true) },
+                                                    onAuthorClick = { authorRef ->
+                                                        onOpenChannel(
+                                                            Channel(
+                                                                id = authorRef,
+                                                                name = "",
+                                                                thumbnailUrl = "",
+                                                                subscriberCount = 0L,
+                                                            ),
+                                                        )
+                                                    },
+                                                    onAvatarClick = { authorRef ->
+                                                        onOpenChannel(
+                                                            Channel(
+                                                                id = authorRef,
+                                                                name = "",
+                                                                thumbnailUrl = "",
+                                                                subscriberCount = 0L,
+                                                            ),
+                                                        )
+                                                    },
+                                                )
+                                            }
+                                        } else {
+                                            null
+                                        },
                                 )
                             }
                         }

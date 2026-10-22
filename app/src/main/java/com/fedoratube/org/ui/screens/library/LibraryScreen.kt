@@ -14,11 +14,18 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.QrCode2
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.VideoLibrary
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.pluralStringResource
@@ -33,9 +40,12 @@ import com.fedoratube.org.data.music.model.MusicTrack
 import com.fedoratube.org.data.stats.RecapPeriod
 import com.fedoratube.org.data.video.DownloadedVideo
 import com.fedoratube.org.ui.OnTabReselected
+import com.fedoratube.org.ui.components.dialogs.ShareAppQrDialog
 import com.fedoratube.org.ui.components.layout.flowBottomContentPadding
 import com.fedoratube.org.ui.components.layout.navigation.FlowTab
+import com.fedoratube.org.ui.components.layout.topbar.FlowGlobalActionsMode
 import com.fedoratube.org.ui.components.layout.topbar.FlowTopBar
+import com.fedoratube.org.ui.components.layout.topbar.LocalFlowGlobalActions
 import com.fedoratube.org.ui.components.library.LibraryNavigationRow
 import com.fedoratube.org.ui.components.library.LibrarySection
 import com.fedoratube.org.ui.components.shared.FlowEmptyState
@@ -76,6 +86,7 @@ fun LibraryScreen(
     val notesCount by viewModel.notesCount.collectAsStateWithLifecycle()
     val locale = LocalConfiguration.current.locales[0]
     val listState = rememberLazyListState()
+    var showQrDialog by rememberSaveable { mutableStateOf(false) }
     OnTabReselected(FlowTab.Library.route) { listState.animateScrollToItem(0) }
 
     Scaffold(
@@ -83,7 +94,24 @@ fun LibraryScreen(
         topBar = {
             FlowTopBar(
                 title = stringResource(R.string.library),
-                globalActionsShowSettings = true,
+                globalActions = FlowGlobalActionsMode.None,
+                actions = {
+                    IconButton(onClick = { showQrDialog = true }) {
+                        Icon(
+                            imageVector = Icons.Outlined.QrCode2,
+                            contentDescription = stringResource(R.string.share_app_qr),
+                        )
+                    }
+                    val globalActions = LocalFlowGlobalActions.current
+                    if (globalActions != null) {
+                        IconButton(onClick = globalActions.onOpenSettings) {
+                            Icon(
+                                imageVector = Icons.Outlined.Settings,
+                                contentDescription = stringResource(R.string.settings),
+                            )
+                        }
+                    }
+                },
             )
         },
     ) { padding ->
@@ -150,5 +178,9 @@ fun LibraryScreen(
                 }
             }
         }
+    }
+
+    if (showQrDialog) {
+        ShareAppQrDialog(onDismiss = { showQrDialog = false })
     }
 }

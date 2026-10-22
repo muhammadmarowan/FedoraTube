@@ -3625,7 +3625,7 @@
     <string name="settings_appearance_summary">Theme, app icon, layout and navigation bar</string>
     <string name="settings_language_region_summary">App language, content language and country</string>
     <string name="settings_playback_summary">Autoplay, gestures, captions and player buttons</string>
-    <string name="settings_quality_summary">Video, Shorts and music quality</string>
+    <string name="settings_quality_summary">Video and music quality</string>
     <string name="settings_content_summary">Home, subscriptions, Shorts and notes</string>
     <string name="settings_topics_summary">Topics you follow and topics you hide</string>
     <string name="settings_integrations_summary">SponsorBlock, DeArrow, dislikes and more</string>
@@ -3728,7 +3728,10 @@
     <string name="thumbnail_quality_low_desc">Least data, softer on large cards</string>
     <string name="thumbnail_quality_off">Off</string>
     <string name="thumbnail_quality_off_desc">Loads none, except for downloads and device files</string>
-    <string name="thumbnail_quality_notice">Lower quality or Off saves data on every feed and on Shorts. Downloads and device files keep their covers.</string>
+    <string name="thumbnail_quality_notice">Lower quality or Off saves data on every feed. Downloads and device files keep their covers.</string>
+    <string name="share_app_qr">Share app</string>
+    <string name="share_app_qr_title">Download FedoraTube</string>
+    <string name="share_app_qr_subtitle">Scan this QR code with another phone to download the app directly</string>
     <string name="settings_keywords_thumbnails">thumbnail, images, data saver, data usage, hide thumbnails, no images</string>
     <string name="settings_quality_wifi">On Wi-Fi</string>
     <string name="settings_quality_mobile">On mobile data</string>

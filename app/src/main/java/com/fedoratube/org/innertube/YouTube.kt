@@ -812,9 +812,10 @@ object YouTube {
         continuation: String,
         channelName: String,
         channelThumbnailUrl: String,
+        channelId: String = "",
     ): Result<CommunityPostsPage> =
         communityPostsPage(
-            channelId = "",
+            channelId = channelId,
             channelName = channelName,
             channelThumbnailUrl = channelThumbnailUrl,
             continuation = continuation,
@@ -875,6 +876,12 @@ object YouTube {
             Json.parseToJsonElement(response.bodyAsText()).toCommunityPostsPage(
                 fallbackAuthorName = channelName,
                 fallbackAuthorAvatarUrl = channelThumbnailUrl,
+                owner =
+                    com.fedoratube.org.innertube.pages.renderer.FeedItemOwner(
+                        id = channelId,
+                        name = channelName,
+                        avatarUrl = channelThumbnailUrl,
+                    ),
             )
         }
 

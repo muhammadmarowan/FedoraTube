@@ -108,9 +108,10 @@ internal class ChannelCommunityController(
             _state.update { it.copy(isLoadingMorePosts = true) }
             YouTube
                 .communityPostsContinuation(
-                    continuation,
-                    channelSnapshot.name,
-                    channelSnapshot.avatarUrl,
+                    continuation = continuation,
+                    channelName = channelSnapshot.name,
+                    channelThumbnailUrl = channelSnapshot.avatarUrl,
+                    channelId = channelSnapshot.id,
                 ).fold(
                     onSuccess = { page ->
                         if (channel?.id != channelSnapshot.id) return@fold

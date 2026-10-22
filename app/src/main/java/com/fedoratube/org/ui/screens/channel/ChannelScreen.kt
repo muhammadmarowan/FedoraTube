@@ -2,6 +2,7 @@ package com.fedoratube.org.ui.screens.channel
 
 import android.content.Intent
 import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -229,6 +230,16 @@ fun ChannelScreen(
                             onSearchToggle = { viewModel.setSearchActive(!uiState.searchActive) },
                             onSearchQueryChange = { viewModel.searchInChannel(it) },
                             onCommunityPostComments = viewModel::openCommunityPostComments,
+                            onCloseCommunityPostComments = viewModel::closeCommunityPostComments,
+                            onLoadMoreCommunityPostComments = viewModel::loadMoreCommunityPostComments,
+                            onLoadCommunityCommentReplies = { comment, append ->
+                                if (append) {
+                                    viewModel.loadMoreCommunityCommentReplies(comment)
+                                } else {
+                                    viewModel.loadCommunityCommentReplies(comment)
+                                }
+                            },
+                            communityComments = sortedCommunityComments,
                             onCommunityPostShare = { post ->
                                 val shareIntent =
                                     Intent(Intent.ACTION_SEND).apply {
@@ -254,22 +265,8 @@ fun ChannelScreen(
             }
         }
 
-        if (communityUiState.activePost != null) {
-            FlowCommentsBottomSheet(
-                comments = sortedCommunityComments,
-                isLoading = communityUiState.isLoadingComments,
-                onDismiss = viewModel::closeCommunityPostComments,
-                selectedFilter = communityCommentSort,
-                onFilterChanged = { communityCommentSort = it },
-                isLoadingMore = communityUiState.isLoadingMoreComments,
-                onLoadMore = viewModel::loadMoreCommunityPostComments,
-                hasMore = communityUiState.commentsContinuation != null,
-                onLoadReplies = viewModel::loadCommunityCommentReplies,
-                onLoadMoreReplies = viewModel::loadMoreCommunityCommentReplies,
-                onAuthorClick = { authorChannelId ->
-                    if (authorChannelId.isNotBlank()) onChannelClick(authorChannelId)
-                },
-            )
+        BackHandler(enabled = communityUiState.activePost != null) {
+            viewModel.closeCommunityPostComments()
         }
     }
 

@@ -34,6 +34,7 @@ import com.fedoratube.org.ui.screens.player.content.VideoInfoContent
 import com.fedoratube.org.ui.screens.player.content.relatedListUsesGrid
 import com.fedoratube.org.ui.screens.player.content.relatedVideosContent
 import com.fedoratube.org.ui.screens.player.content.relatedVideosGridContent
+import com.fedoratube.org.ui.screens.player.dialogs.PlayerCommentsPanelHost
 import com.fedoratube.org.ui.screens.player.state.PlayerLayoutMode
 import com.fedoratube.org.ui.screens.player.state.PlayerScreenState
 import com.fedoratube.org.ui.screens.player.state.PlayerSheet
@@ -82,6 +83,7 @@ internal fun EnhancedVideoPlayerScreen(
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val commentsUiState = rememberPlayerCommentsUiState(viewModel)
+    val isFocusModeEnabled by prefs.preferences.focusModeEnabled.collectAsStateWithLifecycle(initialValue = false)
 
     val isLocalMedia = LocalMediaIds.isLocal(video.id)
     val showRelatedVideos = prefs.showRelatedVideos && !isLocalMedia
@@ -177,7 +179,7 @@ internal fun EnhancedVideoPlayerScreen(
                             screenState = screenState,
                             prefs = prefs,
                             commentsEnabled = commentsEnabled,
-                            showRelatedVideos = showRelatedVideos,
+                            showRelatedVideos = if (isFocusModeEnabled) false else showRelatedVideos,
                             relatedCardStyle = relatedCardStyle,
                             onVideoClick = onVideoClick,
                             onChannelClick = onChannelClick,
@@ -225,9 +227,29 @@ internal fun EnhancedVideoPlayerScreen(
                                 scope = scope,
                                 snackbarHostState = snackbarHostState,
                                 onChannelClick = onChannelClick,
+                                isFocusMode = isFocusModeEnabled,
                             )
                         }
-                        if (showRelatedVideos) {
+                        if (isFocusModeEnabled) {
+                            if (commentsEnabled) {
+                                item {
+                                    PlayerCommentsPanelHost(
+                                        videoId = video.id,
+                                        screenState = screenState,
+                                        viewModel = viewModel,
+                                        commentsUiState = commentsUiState,
+                                        artworkUrl = video.thumbnailUrl,
+                                        onNavigateToChannel = onChannelClick,
+                                        onClose = {},
+                                        showCloseButton = false,
+                                        modifier =
+                                            Modifier
+                                                .fillMaxWidth()
+                                                .height(550.dp),
+                                    )
+                                }
+                            }
+                        } else if (showRelatedVideos) {
                             if (relatedListUsesGrid(isMediumLayout, relatedCardStyle, relatedLayout)) {
                                 relatedVideosGridContent(
                                     relatedVideos = uiState.relatedVideos,

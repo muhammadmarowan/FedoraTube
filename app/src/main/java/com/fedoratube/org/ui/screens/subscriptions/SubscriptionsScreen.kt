@@ -3,6 +3,7 @@ package com.fedoratube.org.ui.screens.subscriptions
 import android.content.Intent
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.compose.BackHandler
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Box
@@ -300,6 +301,10 @@ fun SubscriptionsScreen(
                         onRetryFailedChannels = viewModel::retryFailedChannels,
                         onDismissFailedChannels = viewModel::dismissFailedChannels,
                         onCommunityPostComments = viewModel::openCommunityPostComments,
+                        onCloseCommunityPostComments = viewModel::closeCommunityPostComments,
+                        onLoadMoreCommunityPostComments = viewModel::loadMoreCommunityPostComments,
+                        onLoadCommunityCommentReplies = viewModel::loadCommunityCommentReplies,
+                        onOpenChannel = onChannelClick,
                         onCommunityPostShare = { post ->
                             val shareIntent =
                                 Intent(Intent.ACTION_SEND).apply {
@@ -355,17 +360,8 @@ fun SubscriptionsScreen(
         )
     }
 
-    if (uiState.activeCommunityPost != null) {
-        FlowCommentsBottomSheet(
-            comments = uiState.communityComments,
-            isLoading = uiState.isLoadingCommunityComments,
-            onDismiss = viewModel::closeCommunityPostComments,
-            isLoadingMore = uiState.isLoadingMoreCommunityComments,
-            onLoadMore = viewModel::loadMoreCommunityPostComments,
-            hasMore = uiState.communityCommentsContinuation != null,
-            onLoadReplies = { comment -> viewModel.loadCommunityCommentReplies(comment, false) },
-            onLoadMoreReplies = { comment -> viewModel.loadCommunityCommentReplies(comment, true) },
-        )
+    BackHandler(enabled = uiState.activeCommunityPost != null) {
+        viewModel.closeCommunityPostComments()
     }
 }
 

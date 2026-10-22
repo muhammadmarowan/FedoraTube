@@ -95,6 +95,10 @@ internal fun ChannelContent(
     onSearchToggle: () -> Unit = {},
     onSearchQueryChange: (String) -> Unit = {},
     onCommunityPostComments: (CommunityPost) -> Unit,
+    onCloseCommunityPostComments: () -> Unit = {},
+    onLoadMoreCommunityPostComments: () -> Unit = {},
+    onLoadCommunityCommentReplies: (com.fedoratube.org.data.model.Comment, Boolean) -> Unit = { _, _ -> },
+    communityComments: List<com.fedoratube.org.data.model.Comment> = emptyList(),
     onCommunityPostShare: (CommunityPost) -> Unit,
     onLoadMoreCommunityPosts: () -> Unit,
     onRetryCommunityPosts: () -> Unit,
@@ -289,6 +293,16 @@ internal fun ChannelContent(
                             onShareClick = onCommunityPostShare,
                             onLoadMore = onLoadMoreCommunityPosts,
                             onRetry = onRetryCommunityPosts,
+                            activePost = communityUiState.activePost,
+                            comments = communityComments,
+                            isLoadingComments = communityUiState.isLoadingComments,
+                            isLoadingMoreComments = communityUiState.isLoadingMoreComments,
+                            hasMoreComments = communityUiState.commentsContinuation != null,
+                            onCloseComments = onCloseCommunityPostComments,
+                            onLoadMoreComments = onLoadMoreCommunityPostComments,
+                            onLoadReplies = { comment -> onLoadCommunityCommentReplies(comment, false) },
+                            onLoadMoreReplies = { comment -> onLoadCommunityCommentReplies(comment, true) },
+                            onOpenChannel = onChannelClick,
                         )
                     }
                 }

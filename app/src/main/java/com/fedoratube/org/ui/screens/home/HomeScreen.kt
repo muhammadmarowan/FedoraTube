@@ -28,8 +28,10 @@ import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.FileDownload
 import androidx.compose.material.icons.outlined.MusicNote
 import androidx.compose.material.icons.outlined.Notifications
+import androidx.compose.material.icons.outlined.QrCode2
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.Settings
+import com.fedoratube.org.ui.components.dialogs.ShareAppQrDialog
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -322,6 +324,8 @@ private fun FocusModeContent(
     onNavigateToDownloads: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    var showQrDialog by rememberSaveable { mutableStateOf(false) }
+
     Box(
         modifier = modifier.fillMaxSize().padding(horizontal = 24.dp),
         contentAlignment = Alignment.Center,
@@ -380,9 +384,9 @@ private fun FocusModeContent(
 
             Spacer(modifier = Modifier.height(28.dp))
 
-            // Centered actions row: Settings on the left, Downloads on the right
+            // Centered actions row: Settings on the left, Downloads in the center, QR code on the right
             Row(
-                horizontalArrangement = Arrangement.spacedBy(28.dp),
+                horizontalArrangement = Arrangement.spacedBy(24.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 FilledTonalIconButton(
@@ -416,8 +420,28 @@ private fun FocusModeContent(
                         modifier = Modifier.size(24.dp),
                     )
                 }
+
+                FilledTonalIconButton(
+                    onClick = { showQrDialog = true },
+                    modifier = Modifier.size(52.dp),
+                    colors =
+                        IconButtonDefaults.filledTonalIconButtonColors(
+                            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                            contentColor = MaterialTheme.colorScheme.onSurface,
+                        ),
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.QrCode2,
+                        contentDescription = stringResource(R.string.share_app_qr),
+                        modifier = Modifier.size(24.dp),
+                    )
+                }
             }
         }
+    }
+
+    if (showQrDialog) {
+        ShareAppQrDialog(onDismiss = { showQrDialog = false })
     }
 }
 

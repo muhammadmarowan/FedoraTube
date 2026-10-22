@@ -2,6 +2,10 @@ package com.fedoratube.org.ui.components.shared.quickactions
 
 import android.content.ClipData
 import android.os.Build
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.PlaylistAdd
 import androidx.compose.material.icons.filled.CheckCircle
@@ -112,6 +116,8 @@ fun VideoQuickActionsBottomSheet(
 
             else -> {
                 VideoPrimaryActions(video, viewModel, onSave = { sheet.hideThen { page = VideoMenuPage.Save } }, onDismiss = close)
+
+                Spacer(modifier = Modifier.height(16.dp))
 
                 val download = downloadRow(video, viewModel, close)
                 val removeRow =

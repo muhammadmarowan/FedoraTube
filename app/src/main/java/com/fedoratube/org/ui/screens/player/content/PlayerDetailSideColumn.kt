@@ -65,6 +65,7 @@ internal fun PlayerDetailSideColumn(
     val commentsUiState = rememberPlayerCommentsUiState(viewModel)
     val scope = rememberCoroutineScope()
     val playerPreferences = prefs.preferences
+    val isFocusModeEnabled by playerPreferences.focusModeEnabled.collectAsStateWithLifecycle(initialValue = false)
     val closeSheet = { screenState.closeSheet() }
 
     BoxWithConstraints(modifier) {
@@ -202,6 +203,7 @@ internal fun PlayerDetailSideColumn(
                                     artworkUrl = video.thumbnailUrl,
                                     onNavigateToChannel = onChannelClick,
                                     onClose = closeSheet,
+                                    showCloseButton = !isFocusModeEnabled,
                                     modifier = paneModifier,
                                 )
                             }

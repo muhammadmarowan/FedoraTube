@@ -49,6 +49,7 @@ internal fun VideoInfoContent(
     scope: CoroutineScope,
     snackbarHostState: SnackbarHostState,
     onChannelClick: (String) -> Unit,
+    isFocusMode: Boolean = false,
 ) {
     var showAddToPlaylistDialog by remember(video.id) { mutableStateOf(false) }
     val shareVideoAction = rememberVideoShareAction()
@@ -211,7 +212,7 @@ internal fun VideoInfoContent(
         )
     }
 
-    if (commentsEnabled) {
+    if (commentsEnabled && !isFocusMode) {
         CommentsPreview(
             latestComment = if (showCommentsPreview) commentsUiState.comments.firstOrNull()?.text else null,
             authorAvatar = if (showCommentsPreview) commentsUiState.comments.firstOrNull()?.authorThumbnail else null,

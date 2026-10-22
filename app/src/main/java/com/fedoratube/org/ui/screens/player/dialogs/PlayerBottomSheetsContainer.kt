@@ -70,8 +70,11 @@ internal fun PlayerBottomSheetsContainer(
         }
     }
 
+    val context = androidx.compose.ui.platform.LocalContext.current
+    val isFocusModeEnabled by remember(context) { com.fedoratube.org.data.local.PlayerPreferences(context).focusModeEnabled }.collectAsStateWithLifecycle(initialValue = false)
+
     // Comments Bottom Sheet
-    if (screenState.activeSheet == PlayerSheet.Comments() && commentsEnabled && !hostedInSidePanel) {
+    if (screenState.activeSheet == PlayerSheet.Comments() && commentsEnabled && !hostedInSidePanel && !isFocusModeEnabled) {
         FlowCommentsBottomSheet(
             comments = visibleComments,
             isLoading = commentsUiState.isLoading,

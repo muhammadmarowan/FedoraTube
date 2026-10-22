@@ -45,9 +45,6 @@ internal object QualityIndex {
             keywords = R.string.settings_keywords_codec,
             revealVia = "quality.video.codec",
         )
-    val shortsWifi = entry("shorts.wifi", R.string.settings_quality_wifi, SettingsTabs.QUALITY_SHORTS, R.string.settings_quality_tab_shorts)
-    val shortsMobile =
-        entry("shorts.mobile", R.string.settings_quality_mobile, SettingsTabs.QUALITY_SHORTS, R.string.settings_quality_tab_shorts)
     val thumbnailsWifi =
         entry(
             "thumbnails.wifi",
@@ -66,5 +63,5 @@ internal object QualityIndex {
         )
     val music = entry("music", R.string.music_quality_header, SettingsTabs.QUALITY_MUSIC, R.string.settings_quality_tab_music)
 
-    val all = listOf(videoWifi, videoMobile, codec, fallbackCodec, thumbnailsWifi, thumbnailsMobile, shortsWifi, shortsMobile, music)
+    val all = listOf(videoWifi, videoMobile, codec, fallbackCodec, thumbnailsWifi, thumbnailsMobile, music)
 }

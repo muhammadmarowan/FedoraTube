@@ -51,6 +51,7 @@ fun PlayerCommentsPanel(
     artworkUrl: String? = null,
     timedOnly: Boolean = false,
     onTimedChange: ((Boolean) -> Unit)? = null,
+    showCloseButton: Boolean = true,
 ) {
     val listState = rememberLazyListState()
     val tint = rememberMediaArtworkTint(artworkUrl)
@@ -80,11 +81,13 @@ fun PlayerCommentsPanel(
                 )
             }
             Spacer(Modifier.weight(1f))
-            IconButton(onClick = onClose) {
-                Icon(
-                    Icons.Rounded.Close,
-                    contentDescription = stringResource(R.string.close),
-                )
+            if (showCloseButton) {
+                IconButton(onClick = onClose) {
+                    Icon(
+                        Icons.Rounded.Close,
+                        contentDescription = stringResource(R.string.close),
+                    )
+                }
             }
         }
         CommentSortChips(

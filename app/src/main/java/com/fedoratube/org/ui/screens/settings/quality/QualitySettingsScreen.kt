@@ -37,8 +37,6 @@ private val TabsBottomPadding = 8.dp
 private enum class QualityPicker {
     VIDEO_WIFI,
     VIDEO_MOBILE,
-    SHORTS_WIFI,
-    SHORTS_MOBILE,
     CODEC,
     FALLBACK_CODEC,
     THUMBNAILS_WIFI,
@@ -219,14 +217,6 @@ private fun QualityPickerDialog(
 
         QualityPicker.VIDEO_MOBILE -> {
             resolution(R.string.settings_quality_mobile, VideoQualities, state.videoMobile, viewModel::setVideoMobile)
-        }
-
-        QualityPicker.SHORTS_WIFI -> {
-            resolution(R.string.settings_quality_wifi, VideoQualities, state.shortsWifi, viewModel::setShortsWifi)
-        }
-
-        QualityPicker.SHORTS_MOBILE -> {
-            resolution(R.string.settings_quality_mobile, VideoQualities, state.shortsMobile, viewModel::setShortsMobile)
         }
 
         QualityPicker.THUMBNAILS_WIFI -> {

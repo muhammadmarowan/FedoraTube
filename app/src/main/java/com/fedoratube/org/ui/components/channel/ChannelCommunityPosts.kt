@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.fedoratube.org.R
+import com.fedoratube.org.data.model.Comment
 import com.fedoratube.org.innertube.pages.renderer.CommunityPost
 import com.fedoratube.org.ui.components.shared.FlowFeedProgress
 import com.fedoratube.org.ui.components.shared.FlowLoadingIndicator
@@ -38,9 +39,20 @@ internal fun ChannelCommunityPosts(
     onLoadMore: () -> Unit,
     onRetry: () -> Unit,
     modifier: Modifier = Modifier,
+    activePost: CommunityPost? = null,
+    comments: List<Comment> = emptyList(),
+    isLoadingComments: Boolean = false,
+    isLoadingMoreComments: Boolean = false,
+    hasMoreComments: Boolean = false,
+    onCloseComments: () -> Unit = {},
+    onLoadMoreComments: () -> Unit = {},
+    onLoadReplies: (Comment) -> Unit = {},
+    onLoadMoreReplies: (Comment) -> Unit = {},
+    onOpenChannel: (String) -> Unit = {},
 ) {
     LazyColumn(
         state = listState,
+        userScrollEnabled = activePost == null,
         modifier = modifier.fillMaxSize(),
         contentPadding = contentPadding,
     ) {
@@ -94,8 +106,34 @@ internal fun ChannelCommunityPosts(
                     CommunityPostCard(
                         post = post,
                         onAuthorClick = onAuthorClick,
-                        onCommentsClick = { onCommentsClick(post) },
+                        onCommentsClick = {
+                            if (activePost?.id == post.id) {
+                                onCloseComments()
+                            } else {
+                                onCommentsClick(post)
+                            }
+                        },
                         onShareClick = { onShareClick(post) },
+                        commentsContent =
+                            if (activePost?.id == post.id) {
+                                {
+                                    CommunityPostInlineComments(
+                                        comments = comments,
+                                        isLoading = isLoadingComments,
+                                        onClose = onCloseComments,
+                                        totalText = post.commentCountText,
+                                        isLoadingMore = isLoadingMoreComments,
+                                        onLoadMore = onLoadMoreComments,
+                                        hasMore = hasMoreComments,
+                                        onLoadReplies = onLoadReplies,
+                                        onLoadMoreReplies = onLoadMoreReplies,
+                                        onAuthorClick = onOpenChannel,
+                                        onAvatarClick = onOpenChannel,
+                                    )
+                                }
+                            } else {
+                                null
+                            },
                     )
                 }
                 if (hasMore) {
