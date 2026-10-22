@@ -1,5 +1,6 @@
 package com.fedoratube.org.ui.screens.subscriptions
 
+import android.content.Intent
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -58,6 +59,7 @@ import com.fedoratube.org.ui.components.layout.LocalFlowBottomInsets
 import com.fedoratube.org.ui.components.layout.floatAboveBottomChrome
 import com.fedoratube.org.ui.components.layout.topbar.FlowSearchTopBar
 import com.fedoratube.org.ui.components.layout.topbar.FlowTopBar
+import com.fedoratube.org.ui.components.shared.FlowCommentsBottomSheet
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filter
@@ -297,6 +299,20 @@ fun SubscriptionsScreen(
                         },
                         onRetryFailedChannels = viewModel::retryFailedChannels,
                         onDismissFailedChannels = viewModel::dismissFailedChannels,
+                        onCommunityPostComments = viewModel::openCommunityPostComments,
+                        onCommunityPostShare = { post ->
+                            val shareIntent =
+                                Intent(Intent.ACTION_SEND).apply {
+                                    type = "text/plain"
+                                    putExtra(Intent.EXTRA_TEXT, "https://www.youtube.com/post/${post.id}")
+                                }
+                            context.startActivity(
+                                Intent.createChooser(
+                                    shareIntent,
+                                    context.getString(R.string.share_community_post),
+                                ),
+                            )
+                        },
                     )
                 }
             }
@@ -336,6 +352,19 @@ fun SubscriptionsScreen(
                 }
                 showCreateGroupDialog = false
             },
+        )
+    }
+
+    if (uiState.activeCommunityPost != null) {
+        FlowCommentsBottomSheet(
+            comments = uiState.communityComments,
+            isLoading = uiState.isLoadingCommunityComments,
+            onDismiss = viewModel::closeCommunityPostComments,
+            isLoadingMore = uiState.isLoadingMoreCommunityComments,
+            onLoadMore = viewModel::loadMoreCommunityPostComments,
+            hasMore = uiState.communityCommentsContinuation != null,
+            onLoadReplies = { comment -> viewModel.loadCommunityCommentReplies(comment, false) },
+            onLoadMoreReplies = { comment -> viewModel.loadCommunityCommentReplies(comment, true) },
         )
     }
 }

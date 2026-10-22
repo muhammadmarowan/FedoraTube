@@ -22,6 +22,7 @@ metro*
 release.ps1
 release.sh
 release.bat
+release_*/
 releasenote.ps1
 releasenote.sh
 build_result.md

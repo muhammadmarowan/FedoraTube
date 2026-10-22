@@ -152,6 +152,23 @@ internal fun VideoInfoSection(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
+                    text = if (displayChannelName.startsWith("@")) displayChannelName else "@$displayChannelName",
+                    style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.SemiBold),
+                    color = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier.clickable(enabled = !isDeviceFile) { openChannelOrCollaborators() },
+                )
+
+                Spacer(modifier = Modifier.width(6.dp))
+
+                Text(
+                    text = "•",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+
+                Spacer(modifier = Modifier.width(6.dp))
+
+                Text(
                     text =
                         when {
                             isUpcoming && viewCount > 0L -> stringResource(R.string.upcoming_waiting_count, formatViewCount(viewCount))
@@ -184,79 +201,9 @@ internal fun VideoInfoSection(
             }
         }
 
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(10.dp))
 
-        // ============ CHANNEL SECTION ============
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween,
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier =
-                    Modifier
-                        .weight(1f)
-                        .clickable(enabled = !isDeviceFile) { openChannelOrCollaborators() },
-            ) {
-                ChannelAvatarStack(
-                    urls = avatarUrls,
-                    contentDescription = displayChannelName,
-                    avatarSize = 44.dp,
-                )
-
-                Spacer(modifier = Modifier.width(12.dp))
-
-                Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                        text = displayChannelName,
-                        style =
-                            MaterialTheme.typography.titleMedium.copy(
-                                fontWeight = FontWeight.SemiBold,
-                                fontSize = 16.sp,
-                            ),
-                        color = MaterialTheme.colorScheme.onBackground,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-
-                    val subText = subscriberCount?.let { formatSubscriberCount(it) } ?: ""
-                    if (subText.isNotEmpty()) {
-                        Text(
-                            text = subText,
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.extendedColors.textSecondary,
-                            maxLines = 1,
-                        )
-                    }
-                }
-            }
-
-            Spacer(modifier = Modifier.width(8.dp))
-
-            if (!isDeviceFile && collaborators.size > 1) {
-                // One button cannot name which channel it follows, so it opens the list that can (#1160).
-                FlowSubscribeButton(
-                    size = FlowSubscribeButtonSize.Compact,
-                    isSubscribed = collaborators.any { it.channelId in subscribedCollaboratorIds },
-                    onSubscribeClick = { showCollaborators = true },
-                    onSubscribedClick = { showCollaborators = true },
-                )
-            } else if (!isDeviceFile) {
-                FlowSubscribeButton(
-                    size = FlowSubscribeButtonSize.Compact,
-                    isSubscribed = isSubscribed,
-                    isNotificationsEnabled = isNotificationsEnabled,
-                    onSubscribeClick = onSubscribeClick,
-                    onUnsubscribeClick = onUnsubscribeClick,
-                    onNotificationChange = onNotificationChange,
-                )
-            }
-        }
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        // ============ ACTION ROW ============
+        // ============ YOUTUBE-STYLE ACTION & SUBSCRIPTION BAR ============
         VideoActionRow(
             likeState = likeState,
             likeCount = likeCount,
@@ -274,6 +221,17 @@ internal fun VideoInfoSection(
             onNoteClick = onNoteClick,
             hasNote = hasNote,
             isDeviceFile = isDeviceFile,
+            avatarUrls = avatarUrls,
+            channelName = displayChannelName,
+            onChannelClick = openChannelOrCollaborators,
+            isSubscribed = isSubscribed,
+            isNotificationsEnabled = isNotificationsEnabled,
+            onSubscribeClick = onSubscribeClick,
+            onUnsubscribeClick = onUnsubscribeClick,
+            onNotificationChange = onNotificationChange,
+            collaborators = collaborators,
+            subscribedCollaboratorIds = subscribedCollaboratorIds,
+            onCollaboratorsClick = { showCollaborators = true },
         )
     }
 

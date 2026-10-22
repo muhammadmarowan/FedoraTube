@@ -4,8 +4,10 @@ import com.fedoratube.org.R
 import com.fedoratube.org.data.innertube.SubscriptionRefreshStage
 import com.fedoratube.org.data.local.ChannelSubscription
 import com.fedoratube.org.data.model.Channel
+import com.fedoratube.org.data.model.Comment
 import com.fedoratube.org.data.model.SubscriptionGroup
 import com.fedoratube.org.data.model.Video
+import com.fedoratube.org.innertube.pages.renderer.CommunityPost
 import com.fedoratube.org.utils.ThumbnailUrlResolver
 
 enum class SubscriptionSortMode {
@@ -89,6 +91,12 @@ data class SubscriptionsUiState(
     /** Channels the last refresh could not reach at all; surfaced instead of silently showing less. */
     val failedChannelIds: Set<String> = emptySet(),
     val failedChannelReasons: Map<String, String> = emptyMap(),
+    val communityPosts: List<CommunityPost> = emptyList(),
+    val activeCommunityPost: CommunityPost? = null,
+    val communityComments: List<Comment> = emptyList(),
+    val isLoadingCommunityComments: Boolean = false,
+    val communityCommentsContinuation: String? = null,
+    val isLoadingMoreCommunityComments: Boolean = false,
 ) {
     /** The selected channel or group's channels, which scope its refreshes and reads; null for every subscription. */
     fun selectedGroupScope(): Set<String>? =

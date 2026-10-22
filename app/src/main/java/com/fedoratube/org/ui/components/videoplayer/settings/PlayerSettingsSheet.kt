@@ -1,10 +1,14 @@
 package com.fedoratube.org.ui.components.videoplayer.settings
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -13,7 +17,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
@@ -80,11 +86,13 @@ fun SettingsMenuDialog(
             PlayerSettingsPage.Subtitles -> stringResource(R.string.filter_subtitles)
             PlayerSettingsPage.SubtitleStyle -> stringResource(R.string.subtitle_style)
             PlayerSettingsPage.Equalizer -> stringResource(R.string.equalizer)
+            PlayerSettingsPage.More -> stringResource(R.string.more_header)
         }
     val backPage =
         when (currentPage) {
             PlayerSettingsPage.Main -> null
             PlayerSettingsPage.SubtitleStyle -> subtitleStyleReturnPage
+            PlayerSettingsPage.Audio, PlayerSettingsPage.Equalizer -> PlayerSettingsPage.More
             else -> PlayerSettingsPage.Main
         }
     // A panel host swaps the panel's content in place, so a row that opens another surface must not
@@ -113,16 +121,31 @@ fun SettingsMenuDialog(
         onBack = backPage?.let { page -> { currentPage = page } },
         onProgressChange = onSheetProgressChange,
         header = { dragModifier ->
-            FlowSheetHeader(
-                inSidePane = !enableVerticalDismiss,
-                title = currentTitle,
-                onClose = { sheetState.dismiss() },
-                modifier = dragModifier,
-                onBack = backPage?.let { page -> { currentPage = page } },
-                contentPadding = PaddingValues(start = 20.dp, end = 8.dp, top = 6.dp, bottom = 8.dp),
-                closeButtonSize = null,
-                dividerAlpha = 0.4f,
-            )
+            if (currentPage == PlayerSettingsPage.Main && enableVerticalDismiss) {
+                Box(
+                    modifier = dragModifier.fillMaxWidth().padding(top = 10.dp, bottom = 6.dp),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Box(
+                        modifier =
+                            Modifier
+                                .size(width = 36.dp, height = 4.dp)
+                                .clip(CircleShape)
+                                .background(MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f)),
+                    )
+                }
+            } else {
+                FlowSheetHeader(
+                    inSidePane = !enableVerticalDismiss,
+                    title = currentTitle,
+                    onClose = { sheetState.dismiss() },
+                    modifier = dragModifier,
+                    onBack = backPage?.let { page -> { currentPage = page } },
+                    contentPadding = PaddingValues(start = 20.dp, end = 8.dp, top = 6.dp, bottom = 8.dp),
+                    closeButtonSize = null,
+                    dividerAlpha = 0.4f,
+                )
+            }
         },
     ) {
         Column(
@@ -231,6 +254,28 @@ fun SettingsMenuDialog(
                         onStyleChange = onSubtitleStyleChange,
                     )
                 }
+
+                PlayerSettingsPage.More -> {
+                    PlayerSettingsMorePage(
+                        playerState = playerState,
+                        autoplayEnabled = autoplayEnabled,
+                        onNavigateToPage = { currentPage = it },
+                        onCastClick = { leaveFor(onCastClick) },
+                        onPipClick = { sheetState.dismiss(onPipClick) },
+                        onSleepTimerClick = { leaveFor(onSleepTimerClick) },
+                        onAutoplayToggle = onAutoplayToggle,
+                        onSkipSilenceToggle = onSkipSilenceToggle,
+                        onShowSubtitleStyle = {
+                            subtitleStyleReturnPage = PlayerSettingsPage.More
+                            currentPage = PlayerSettingsPage.SubtitleStyle
+                        },
+                        sponsorBlockSegmentCount = sponsorBlockSegmentCount,
+                        sponsorBlockOffForVideo = sponsorBlockOffForVideo,
+                        onSponsorBlockToggle = onSponsorBlockToggle,
+                        notePositionMs = notePositionMs,
+                        onAddNote = onAddNote,
+                    )
+                }
             }
         }
     }
@@ -244,6 +289,7 @@ enum class PlayerSettingsPage {
     Subtitles,
     SubtitleStyle,
     Equalizer,
+    More,
 }
 
 private val SheetContentVerticalPadding = 12.dp

@@ -1,6 +1,8 @@
 package com.fedoratube.org.ui.components.videoplayer.info
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -34,13 +36,19 @@ import androidx.compose.material3.ToggleButton
 import androidx.compose.material3.ToggleButtonDefaults
 import androidx.compose.material3.ToggleButtonShapes
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.fedoratube.org.R
+import com.fedoratube.org.data.model.VideoCollaborator
+import com.fedoratube.org.ui.components.shared.ChannelAvatarStack
+import com.fedoratube.org.ui.components.shared.FlowSubscribeButton
+import com.fedoratube.org.ui.components.shared.FlowSubscribeButtonSize
 import com.fedoratube.org.utils.formatViewCount
 
 private val ActionSpacing = 8.dp
@@ -74,9 +82,21 @@ internal fun VideoActionRow(
     onNoteClick: (() -> Unit)? = null,
     hasNote: Boolean = false,
     isDeviceFile: Boolean = false,
+    avatarUrls: List<String> = emptyList(),
+    channelName: String = "",
+    onChannelClick: () -> Unit = {},
+    isSubscribed: Boolean = false,
+    isNotificationsEnabled: Boolean = false,
+    onSubscribeClick: () -> Unit = {},
+    onUnsubscribeClick: () -> Unit = {},
+    onNotificationChange: (Boolean) -> Unit = {},
+    collaborators: List<VideoCollaborator> = emptyList(),
+    subscribedCollaboratorIds: Set<String> = emptySet(),
+    onCollaboratorsClick: () -> Unit = {},
 ) {
     LazyRow(
         horizontalArrangement = Arrangement.spacedBy(ActionSpacing),
+        verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier.fillMaxWidth(),
     ) {
         if (isDeviceFile) {
@@ -84,16 +104,63 @@ internal fun VideoActionRow(
             return@LazyRow
         }
 
-        item {
-            ActionToggle(
-                icon = if (isSaved) Icons.Filled.Bookmark else Icons.Outlined.BookmarkBorder,
-                label = if (isSaved) stringResource(R.string.saved) else stringResource(R.string.save),
-                checked = isSaved,
-                onCheckedChange = onSaveClick,
+        if (avatarUrls.isNotEmpty()) {
+            item(key = "action_avatar") {
+                Box(
+                    modifier =
+                        Modifier
+                            .size(36.dp)
+                            .clip(CircleShape)
+                            .clickable(onClick = onChannelClick),
+                ) {
+                    ChannelAvatarStack(
+                        urls = avatarUrls,
+                        contentDescription = channelName,
+                        avatarSize = 36.dp,
+                    )
+                }
+            }
+        }
+
+        item(key = "action_subscribe") {
+            if (collaborators.size > 1) {
+                FlowSubscribeButton(
+                    size = FlowSubscribeButtonSize.Compact,
+                    isSubscribed = collaborators.any { it.channelId in subscribedCollaboratorIds },
+                    onSubscribeClick = onCollaboratorsClick,
+                    onSubscribedClick = onCollaboratorsClick,
+                )
+            } else {
+                FlowSubscribeButton(
+                    size = FlowSubscribeButtonSize.Compact,
+                    isSubscribed = isSubscribed,
+                    isNotificationsEnabled = isNotificationsEnabled,
+                    onSubscribeClick = onSubscribeClick,
+                    onUnsubscribeClick = onUnsubscribeClick,
+                    onNotificationChange = onNotificationChange,
+                )
+            }
+        }
+
+        item(key = "action_like_dislike") {
+            SegmentedLikeDislikeButton(
+                likeState = likeState,
+                likeCount = likeCount,
+                dislikeCount = dislikeCount,
+                onLikeClick = onLikeClick,
+                onDislikeClick = onDislikeClick,
             )
         }
 
-        item {
+        item(key = "action_share") {
+            ActionButton(
+                icon = Icons.Outlined.Share,
+                label = stringResource(R.string.share),
+                onClick = onShareClick,
+            )
+        }
+
+        item(key = "action_download") {
             ActionToggle(
                 icon = if (isDownloaded) Icons.Outlined.CheckCircle else Icons.Outlined.Download,
                 label = if (isDownloaded) stringResource(R.string.downloaded) else stringResource(R.string.download),
@@ -102,8 +169,17 @@ internal fun VideoActionRow(
             )
         }
 
+        item(key = "action_save") {
+            ActionToggle(
+                icon = if (isSaved) Icons.Filled.Bookmark else Icons.Outlined.BookmarkBorder,
+                label = if (isSaved) stringResource(R.string.saved) else stringResource(R.string.save),
+                checked = isSaved,
+                onCheckedChange = onSaveClick,
+            )
+        }
+
         if (onNoteClick != null) {
-            item {
+            item(key = "action_note") {
                 ActionToggle(
                     icon = if (hasNote) Icons.Filled.StickyNote2 else Icons.Outlined.StickyNote2,
                     label = stringResource(if (hasNote) R.string.note_title else R.string.note_add),
@@ -113,11 +189,11 @@ internal fun VideoActionRow(
             }
         }
 
-        item {
+        item(key = "action_bg_play") {
             ActionButton(
-                icon = Icons.Outlined.Share,
-                label = stringResource(R.string.share),
-                onClick = onShareClick,
+                icon = Icons.Outlined.Headphones,
+                label = stringResource(R.string.player_action_background),
+                onClick = onBackgroundPlayClick,
             )
         }
     }

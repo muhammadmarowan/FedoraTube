@@ -1,3 +1,16 @@
+# Fedora Tube v1.5.0
+
+**Release date:** 2026-10-22
+**Status:** Stable
+
+## Highlights
+
+- Channel community posts in subscriptions feed with inline viewing, comment sheets, and sharing matching YouTube layout
+- YouTube-styled unified channel subscription and actions bar in the video player
+- YouTube-styled sleek player settings bottom sheet with quality, captions, loop, stable volume, and more
+- Updated Home top bar with crisp official Fedora logo
+- Performance optimizations: smoother feeds, enhanced image caching, and faster scrolling
+
 # Fedora Tube v1.4.1
 
 **Release date:** 2026-10-21

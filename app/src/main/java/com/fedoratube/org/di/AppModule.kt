@@ -56,7 +56,7 @@ object AppModule {
             }.memoryCache {
                 MemoryCache
                     .Builder()
-                    .maxSizePercent(context, 0.10)
+                    .maxSizePercent(context, 0.20)
                     .build()
             }.diskCache {
                 // Coil builds this lazily on its first disk access, off the main thread, so the size
@@ -67,7 +67,7 @@ object AppModule {
                     .directory(context.cacheDir.resolve(IMAGE_CACHE_DIR).toOkioPath())
                     .apply { if (limit != null) maxSizeBytes(limit) else maxSizePercent(AUTOMATIC_DISK_SHARE) }
                     .build()
-            }.crossfade(true)
+            }.crossfade(150)
             .apply { if (BuildConfig.DEBUG) logger(DebugLogger()) }
             .build()
 }

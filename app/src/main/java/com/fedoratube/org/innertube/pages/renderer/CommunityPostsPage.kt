@@ -28,6 +28,7 @@ data class CommunityPost(
     val commentCountText: String,
     val commentEndpointParams: String?,
     val publishedTimeText: String,
+    val channelId: String = "",
 )
 
 data class CommunityPostsPage(
@@ -221,6 +222,16 @@ internal fun JsonObject.toCommunityPost(
                     ?.get("params")
                     .stringOrNull(),
         publishedTimeText = this["publishedTimeText"].youtubeText().orEmpty(),
+        channelId =
+            owner.id.ifEmpty {
+                this["authorEndpoint"]
+                    .objectOrNull()
+                    ?.get("browseEndpoint")
+                    .objectOrNull()
+                    ?.get("browseId")
+                    .stringOrNull()
+                    .orEmpty()
+            },
     )
 }
 

@@ -12,6 +12,7 @@ import com.fedoratube.org.data.local.PlayerPreferences
 import com.fedoratube.org.data.local.SubscriptionRepository
 import com.fedoratube.org.data.local.dao.SubscriptionGroupDao
 import com.fedoratube.org.data.model.Channel
+import com.fedoratube.org.data.model.Comment
 import com.fedoratube.org.data.model.Video
 import com.fedoratube.org.data.model.toUiModel
 import com.fedoratube.org.data.recommendation.FlowNeuroEngine
@@ -19,6 +20,9 @@ import com.fedoratube.org.data.subscriptions.SubscriptionFeedRepository
 import com.fedoratube.org.data.subscriptions.SubscriptionRefreshPlan
 import com.fedoratube.org.data.subscriptions.SubscriptionWatchedVideos
 import com.fedoratube.org.data.subscriptions.withHighQualityThumbnails
+import com.fedoratube.org.innertube.YouTube
+import com.fedoratube.org.innertube.pages.renderer.CommunityPost
+import com.fedoratube.org.ui.screens.channel.ChannelCommunityController
 import com.fedoratube.org.utils.PerformanceDispatcher
 import com.fedoratube.org.utils.ThumbnailUrlResolver
 import com.fedoratube.org.utils.formatYouTubeRelativeTime
@@ -86,6 +90,9 @@ class SubscriptionsViewModel
         private var visibleVideoIds: Set<String> = emptySet()
         private var hasPendingVisibleEnrichment = false
         private var hasStarted = false
+
+        private val communityController = ChannelCommunityController(viewModelScope)
+        private val _feedCommunityPosts = MutableStateFlow<List<CommunityPost>>(emptyList())
 
         /**
          * Starts the preference/feed collectors. Deliberately not run from `init`: the TV shell
@@ -210,10 +217,35 @@ class SubscriptionsViewModel
             }
 
             viewModelScope.launch(PerformanceDispatcher.diskIO) {
+                combine(
+                    communityController.state,
+                    _feedCommunityPosts,
+                    _uiState.map { it.selectedChannelId }.distinctUntilChanged(),
+                ) { commState, feedPosts, selectedId ->
+                    val posts = if (selectedId != null) commState.posts else feedPosts
+                    Triple(posts, commState.activePost, commState)
+                }.collect { (posts, activePost, commState) ->
+                    _uiState.update {
+                        it.copy(
+                            communityPosts = posts,
+                            activeCommunityPost = activePost,
+                            communityComments = commState.comments,
+                            isLoadingCommunityComments = commState.isLoadingComments,
+                            communityCommentsContinuation = commState.commentsContinuation,
+                            isLoadingMoreCommunityComments = commState.isLoadingMoreComments,
+                        )
+                    }
+                }
+            }
+
+            viewModelScope.launch(PerformanceDispatcher.diskIO) {
                 subscriptions.collect { allSubs ->
                     val channels = allSubs.toSubscribedChannels()
                     val notifStates = allSubs.associate { it.channelId to it.isNotificationEnabled }
                     _uiState.update { it.copy(subscribedChannels = channels, notificationStates = notifStates) }
+                    if (_feedCommunityPosts.value.isEmpty() && channels.isNotEmpty()) {
+                        refreshCommunityPosts()
+                    }
                 }
             }
 
@@ -494,10 +526,50 @@ class SubscriptionsViewModel
             viewModelScope.launch(PerformanceDispatcher.diskIO) {
                 refreshVisibleFeed()
             }
+            refreshCommunityPosts()
         }
+
+        fun refreshCommunityPosts() {
+            viewModelScope.launch(PerformanceDispatcher.networkIO) {
+                val selectedId = _uiState.value.selectedChannelId
+                val channels = _uiState.value.subscribedChannels
+                if (selectedId != null) {
+                    val selectedChannel = channels.find { it.id == selectedId }
+                    if (selectedChannel != null) {
+                        communityController.reset(selectedChannel.id, selectedChannel.name, selectedChannel.thumbnailUrl)
+                        communityController.ensurePostsLoaded()
+                    }
+                } else {
+                    val channelsToQuery = channels.take(10)
+                    if (channelsToQuery.isNotEmpty()) {
+                        val fetchedPosts = channelsToQuery.map { channel ->
+                            async {
+                                try {
+                                    YouTube.communityPosts(channel.id, channel.name, channel.thumbnailUrl).getOrNull()?.posts.orEmpty()
+                                } catch (e: Exception) {
+                                    emptyList()
+                                }
+                            }
+                        }.awaitAll().flatten().distinctBy { it.id }
+                        _feedCommunityPosts.value = fetchedPosts
+                    } else {
+                        _feedCommunityPosts.value = emptyList()
+                    }
+                }
+            }
+        }
+
+        fun openCommunityPostComments(post: CommunityPost) = communityController.openComments(post)
+
+        fun closeCommunityPostComments() = communityController.closeComments()
+
+        fun loadMoreCommunityPostComments() = communityController.loadMoreComments()
+
+        fun loadCommunityCommentReplies(comment: Comment, append: Boolean) = communityController.loadReplies(comment, append)
 
         /** Explicit user refresh: every channel shown, regardless of how recently it was fetched. */
         fun refreshFeed() {
+            refreshCommunityPosts()
             viewModelScope.launch(PerformanceDispatcher.networkIO) {
                 runRefresh(force = true, showLoading = true)
             }

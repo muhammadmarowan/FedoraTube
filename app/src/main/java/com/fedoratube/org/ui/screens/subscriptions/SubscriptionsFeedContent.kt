@@ -29,10 +29,24 @@ import com.fedoratube.org.data.local.HomeFeedColumns
 import com.fedoratube.org.data.model.Channel
 import com.fedoratube.org.data.model.Video
 import com.fedoratube.org.data.shorts.queue.ShortsQueueSource
+import com.fedoratube.org.innertube.pages.renderer.CommunityPost
+import com.fedoratube.org.ui.components.channel.CommunityPostCard
 import com.fedoratube.org.ui.components.layout.flowBottomContentPadding
 import com.fedoratube.org.ui.components.shared.FlowPullToRefreshBox
 import com.fedoratube.org.ui.components.shared.card.MediaVideoCard
 import com.fedoratube.org.ui.components.shared.card.VideoCardLayout
+
+sealed interface SubscriptionsFeedRow {
+    val key: String
+
+    data class VideoRow(val video: Video) : SubscriptionsFeedRow {
+        override val key: String get() = "v_${video.id}"
+    }
+
+    data class PostRow(val post: CommunityPost) : SubscriptionsFeedRow {
+        override val key: String get() = "p_${post.id}"
+    }
+}
 
 private val HeaderTopPadding = 8.dp
 private val HeaderBottomPadding = 12.dp
@@ -58,6 +72,8 @@ internal fun SubscriptionsFeedContent(
     onDismissFailedChannels: () -> Unit = {},
     onGroupSelected: (String?) -> Unit = {},
     onManageGroups: () -> Unit = {},
+    onCommunityPostComments: (CommunityPost) -> Unit = {},
+    onCommunityPostShare: (CommunityPost) -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     val pullRefreshState = rememberPullToRefreshState()
@@ -76,6 +92,27 @@ internal fun SubscriptionsFeedContent(
     ) {
         BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
             val nonShortVideos = remember(videos) { videos.filter { !it.isShort } }
+            val feedRows =
+                remember(nonShortVideos, state.communityPosts) {
+                    if (state.communityPosts.isEmpty()) {
+                        nonShortVideos.map { SubscriptionsFeedRow.VideoRow(it) }
+                    } else if (nonShortVideos.isEmpty()) {
+                        state.communityPosts.map { SubscriptionsFeedRow.PostRow(it) }
+                    } else {
+                        val result = mutableListOf<SubscriptionsFeedRow>()
+                        val postQueue = ArrayDeque(state.communityPosts)
+                        nonShortVideos.forEachIndexed { index, video ->
+                            result.add(SubscriptionsFeedRow.VideoRow(video))
+                            if ((index == 0 || (index + 1) % 4 == 0) && postQueue.isNotEmpty()) {
+                                result.add(SubscriptionsFeedRow.PostRow(postQueue.removeFirst()))
+                            }
+                        }
+                        while (postQueue.isNotEmpty()) {
+                            result.add(SubscriptionsFeedRow.PostRow(postQueue.removeFirst()))
+                        }
+                        result
+                    }
+                }
             LazyVerticalGrid(
                 columns = androidx.compose.foundation.lazy.grid.GridCells.Fixed(1),
                 state = gridState,
@@ -117,7 +154,7 @@ internal fun SubscriptionsFeedContent(
                     }
                 }
 
-                if (nonShortVideos.isEmpty() && state.selectedChannelId != null) {
+                if (feedRows.isEmpty() && state.selectedChannelId != null) {
                     item(span = { GridItemSpan(maxLineSpan) }) {
                         Box(
                             modifier =
@@ -135,17 +172,45 @@ internal fun SubscriptionsFeedContent(
                     }
                 } else {
                     items(
-                        items = nonShortVideos,
-                        key = { it.id },
-                        contentType = { "video" },
+                        items = feedRows,
+                        key = { it.key },
+                        contentType = { it::class.java.simpleName },
                         span = { GridItemSpan(1) },
-                    ) { video ->
-                        MediaVideoCard(
-                            video = video,
-                            layout = VideoCardLayout.Stacked,
-                            onClick = { onVideoClick(video) },
-                            useInternalPadding = false,
-                        )
+                    ) { row ->
+                        when (row) {
+                            is SubscriptionsFeedRow.VideoRow -> {
+                                MediaVideoCard(
+                                    video = row.video,
+                                    layout = VideoCardLayout.Stacked,
+                                    onClick = { onVideoClick(row.video) },
+                                    useInternalPadding = false,
+                                )
+                            }
+                            is SubscriptionsFeedRow.PostRow -> {
+                                CommunityPostCard(
+                                    post = row.post,
+                                    onAuthorClick = {
+                                        val channelId =
+                                            row.post.channelId.takeIf { it.isNotEmpty() }
+                                                ?: state.subscribedChannels.find { it.name.equals(row.post.authorName, ignoreCase = true) }?.id
+                                        if (channelId != null) {
+                                            onChannelClick(
+                                                Channel(
+                                                    id = channelId,
+                                                    name = row.post.authorName,
+                                                    thumbnailUrl = row.post.authorAvatarUrl,
+                                                    subscriberCount = 0L,
+                                                ),
+                                            )
+                                        }
+                                    },
+                                    onCommentsClick = { onCommunityPostComments(row.post) },
+                                    onShareClick = { onCommunityPostShare(row.post) },
+                                    onVideoClick = onVideoClick,
+                                    compact = false,
+                                )
+                            }
+                        }
                     }
                 }
             }
