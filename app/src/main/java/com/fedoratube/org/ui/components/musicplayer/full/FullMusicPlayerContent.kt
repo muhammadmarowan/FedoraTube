@@ -354,25 +354,13 @@ internal fun FullMusicPlayerContent(
                                         active = isPlayerSheetExpanded && isArtworkFlipped,
                                     )
 
-                                    IconButton(
-                                        onClick = { isArtworkFlipped = false },
+                                    // Tap anywhere on the flipped lyrics card to flip back to artwork
+                                    Box(
                                         modifier =
                                             Modifier
-                                                .align(Alignment.TopEnd)
-                                                .padding(8.dp)
-                                                .size(36.dp)
-                                                .background(
-                                                    color = MaterialTheme.colorScheme.surface.copy(alpha = 0.7f),
-                                                    shape = CircleShape,
-                                                ),
-                                    ) {
-                                        Icon(
-                                            imageVector = Icons.Rounded.Close,
-                                            contentDescription = stringResource(R.string.close),
-                                            tint = MaterialTheme.colorScheme.onSurface,
-                                            modifier = Modifier.size(20.dp),
-                                        )
-                                    }
+                                                .fillMaxSize()
+                                                .clickable { isArtworkFlipped = false },
+                                    )
                                 }
                             }
                         }

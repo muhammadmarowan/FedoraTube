@@ -211,10 +211,7 @@ internal fun EnhancedVideoPlayerScreen(
                 if (!isInPipMode) {
                     if (isFocusModeEnabled) {
                         Column(
-                            modifier =
-                                Modifier
-                                    .fillMaxSize()
-                                    .padding(bottom = maxOf(ListEndPadding, dockReserve + QueueDockGap)),
+                            modifier = Modifier.fillMaxSize(),
                         ) {
                             VideoInfoContent(
                                 video = video,

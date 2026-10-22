@@ -131,9 +131,6 @@ class NowPlayingWidgetPublisher
         private suspend fun updatePlayerWidgets() {
             try {
                 NowPlayingWidget().updateAll(context)
-                com.fedoratube.org.widget.turntable
-                    .TurntableWidget()
-                    .updateAll(context)
             } catch (e: Exception) {
                 Log.w("NowPlayingPublisher", "updatePlayerWidgets error: ${e.message}")
             }

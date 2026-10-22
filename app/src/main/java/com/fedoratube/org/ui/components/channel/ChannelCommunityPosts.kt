@@ -52,7 +52,6 @@ internal fun ChannelCommunityPosts(
 ) {
     LazyColumn(
         state = listState,
-        userScrollEnabled = activePost == null,
         modifier = modifier.fillMaxSize(),
         contentPadding = contentPadding,
     ) {

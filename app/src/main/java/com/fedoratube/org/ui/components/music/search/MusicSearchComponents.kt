@@ -16,7 +16,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.ArrowOutward
-import androidx.compose.material.icons.rounded.Mic
+import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
@@ -78,8 +78,19 @@ fun MusicSearchBar(
                 modifier = Modifier.weight(1f),
                 onSearch = onSearch,
                 onClear = onClearClick,
+                showClearButton = false,
                 focusRequester = focusRequester,
             )
+
+            IconButton(onClick = {
+                onQueryChange("")
+                onClearClick()
+            }) {
+                Icon(
+                    imageVector = Icons.Rounded.Close,
+                    contentDescription = stringResource(R.string.clear),
+                )
+            }
         }
     }
 }

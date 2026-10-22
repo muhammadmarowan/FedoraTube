@@ -1,20 +1,13 @@
 package com.fedoratube.org.widget.core.component
 
-import android.os.Build
-import android.util.TypedValue
-import android.view.View
-import android.widget.RemoteViews
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
-import androidx.glance.LocalContext
-import androidx.glance.appwidget.AndroidRemoteViews
 import androidx.glance.appwidget.LinearProgressIndicator
 import androidx.glance.layout.height
 import androidx.glance.layout.width
-import com.fedoratube.org.R
 
 /** Steps across the bar; fine enough that one step is under a pixel on any widget. */
 internal const val WIDGET_PROGRESS_MAX = 1000
@@ -49,31 +42,12 @@ internal fun WidgetWavyProgress(
     playing: Boolean,
     width: Dp,
 ) {
-    val context = LocalContext.current
-    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
-        LinearProgressIndicator(
-            progress = progress.toFloat() / WIDGET_PROGRESS_MAX,
-            modifier = GlanceModifier.width(width).height(FallbackHeight),
-            color = GlanceTheme.colors.primary,
-            backgroundColor = GlanceTheme.colors.secondaryContainer,
-        )
-        return
-    }
-    val views =
-        RemoteViews(context.packageName, R.layout.widget_wavy_progress).apply {
-            setProgressBar(R.id.widget_progress, WIDGET_PROGRESS_MAX, if (playing) 0 else progress, false)
-            setInt(R.id.widget_progress, "setSecondaryProgress", WIDGET_PROGRESS_MAX - progress)
-            setColorProvider(R.id.widget_progress, "setProgressTintList", GlanceTheme.colors.primary, context)
-            setColorProvider(R.id.widget_progress, "setSecondaryProgressTintList", GlanceTheme.colors.secondaryContainer, context)
-            setViewVisibility(R.id.widget_progress_wave_clip, if (playing) View.VISIBLE else View.GONE)
-            setViewLayoutWidth(
-                R.id.widget_progress_wave_clip,
-                width.value * progress / WIDGET_PROGRESS_MAX,
-                TypedValue.COMPLEX_UNIT_DIP,
-            )
-            setColorProvider(R.id.widget_progress_wave, "setIndeterminateTintList", GlanceTheme.colors.primary, context)
-        }
-    AndroidRemoteViews(views, GlanceModifier.width(width).height(BarHeight))
+    LinearProgressIndicator(
+        progress = (progress.toFloat() / WIDGET_PROGRESS_MAX).coerceIn(0f, 1f),
+        modifier = GlanceModifier.width(width).height(4.dp),
+        color = GlanceTheme.colors.primary,
+        backgroundColor = GlanceTheme.colors.secondaryContainer,
+    )
 }
 
 private val BarHeight = 12.dp

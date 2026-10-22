@@ -5,8 +5,10 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.foundation.text.input.clearText
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
+import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.GridView
 import androidx.compose.material.icons.rounded.Mic
 import androidx.compose.material.icons.rounded.Tune
@@ -63,9 +65,17 @@ fun SearchTopBar(
             placeholder = stringResource(R.string.search_videos_channels_placeholder),
             modifier = Modifier.weight(1f),
             onSearch = onSearch,
+            showClearButton = false,
             focusRequester = focusRequester,
             onFieldFocused = onFieldFocused,
         )
+
+        IconButton(onClick = { textFieldState.clearText() }) {
+            Icon(
+                imageVector = Icons.Rounded.Close,
+                contentDescription = stringResource(R.string.clear),
+            )
+        }
 
         actions?.invoke()
     }

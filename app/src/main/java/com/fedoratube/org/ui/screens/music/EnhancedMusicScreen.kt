@@ -10,10 +10,8 @@ import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Search
-import androidx.compose.material.icons.rounded.Mic
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -163,14 +161,6 @@ fun EnhancedMusicScreen(
                     }
                 },
             )
-        },
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = onRecognizeClick,
-                modifier = Modifier.floatAboveBottomChrome(bottomInsets),
-            ) {
-                Icon(Icons.Rounded.Mic, stringResource(R.string.recognize_music))
-            }
         },
         containerColor = MaterialTheme.colorScheme.background,
         contentWindowInsets = WindowInsets(0.dp),

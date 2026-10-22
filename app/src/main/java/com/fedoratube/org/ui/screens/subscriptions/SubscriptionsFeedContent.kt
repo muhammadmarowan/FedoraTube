@@ -122,7 +122,6 @@ internal fun SubscriptionsFeedContent(
             LazyVerticalGrid(
                 columns = androidx.compose.foundation.lazy.grid.GridCells.Fixed(1),
                 state = gridState,
-                userScrollEnabled = state.activeCommunityPost == null,
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(top = FeedTopPadding, bottom = flowBottomContentPadding()),
                 verticalArrangement = Arrangement.spacedBy(16.dp),

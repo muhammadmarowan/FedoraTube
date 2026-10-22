@@ -62,6 +62,7 @@ fun FlowSearchField(
     modifier: Modifier = Modifier,
     onSearch: (String) -> Unit = {},
     onClear: (() -> Unit)? = null,
+    showClearButton: Boolean = true,
     focusRequester: FocusRequester? = null,
     onFieldFocused: () -> Unit = {},
     leadingIcon: (@Composable () -> Unit)? = null,
@@ -115,7 +116,7 @@ fun FlowSearchField(
                 )
             }
 
-            if (state.text.isNotEmpty()) {
+            if (showClearButton && state.text.isNotEmpty()) {
                 IconButton(
                     onClick = {
                         state.clearText()
@@ -147,6 +148,7 @@ fun FlowSearchField(
     modifier: Modifier = Modifier,
     onSearch: () -> Unit = {},
     onClear: (() -> Unit)? = null,
+    showClearButton: Boolean = true,
     focusRequester: FocusRequester? = null,
     onFieldFocused: () -> Unit = {},
     leadingIcon: (@Composable () -> Unit)? = null,
@@ -178,6 +180,7 @@ fun FlowSearchField(
         modifier = modifier,
         onSearch = { onSearch() },
         onClear = onClear,
+        showClearButton = showClearButton,
         focusRequester = focusRequester,
         onFieldFocused = onFieldFocused,
         leadingIcon = leadingIcon,

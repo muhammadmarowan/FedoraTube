@@ -42,12 +42,10 @@ class NowPlayingWidget : GlanceAppWidget() {
         context: Context,
         id: GlanceId,
     ) {
-        // One bitmap at the largest size this instance draws, shared by every layout in the RemoteViews.
         val artworkPx = context.dpToPx(NowPlayingLayout.artworkDpFor(GlanceAppWidgetManager(context).getAppWidgetSizes(id)))
         val cornerPx = bakedCornerRadiusPx(context)
         val snapshotFlow = context.nowPlayingSnapshotFlow { NowPlayingWidgetPublisher.hasPublished }
         val initialSnapshot = snapshotFlow.first()
-        val initialArtwork = WidgetImageLoader.load(context, initialSnapshot?.artworkUrl, artworkPx, cornerRadiusPx = cornerPx)
         val colorsFlow = widgetColorsFlow(context)
         val initialColors = colorsFlow.first()
         val styleFlow = PlayerPreferences(context).musicPlayerBackgroundStyle
@@ -56,7 +54,7 @@ class NowPlayingWidget : GlanceAppWidget() {
 
         provideContent {
             val snapshot by snapshotFlow.collectAsState(initialSnapshot)
-            val artwork by produceState(initialArtwork, snapshot?.artworkUrl) {
+            val artwork by produceState<android.graphics.Bitmap?>(null, snapshot?.artworkUrl) {
                 value = WidgetImageLoader.load(context, snapshot?.artworkUrl, artworkPx, cornerRadiusPx = cornerPx)
             }
             val colors by colorsFlow.collectAsState(initialColors)
