@@ -10,7 +10,7 @@ import com.fedoratube.org.data.local.ViewHistory
 import com.fedoratube.org.data.model.toVideo
 import com.fedoratube.org.data.notes.NotesRepository
 import com.fedoratube.org.data.playlist.sortedFor
-import com.fedoratube.org.data.shorts.ShortsContentFilter
+import com.fedoratube.org.data.feed.ShortsContentFilter
 import com.fedoratube.org.data.stats.RecapPeriod
 import com.fedoratube.org.data.stats.RecapReadiness
 import com.fedoratube.org.data.video.VideoDownloadManager

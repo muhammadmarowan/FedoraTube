@@ -28,7 +28,7 @@ import com.fedoratube.org.data.audio.eq.EqState
 import com.fedoratube.org.data.local.MiniBarSwipeAction
 import com.fedoratube.org.data.local.PlayerPreferences
 import com.fedoratube.org.data.model.Video
-import com.fedoratube.org.data.shorts.queue.ShortsQueueSource
+import com.fedoratube.org.data.feed.ShortsQueueSource
 import com.fedoratube.org.player.EnhancedMusicPlayerManager
 import com.fedoratube.org.player.EnhancedPlayerManager
 import com.fedoratube.org.player.GlobalPlayerState

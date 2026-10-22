@@ -29,7 +29,6 @@ import com.fedoratube.org.data.recommendation.RankTrace
 import com.fedoratube.org.data.recommendation.UserBrain
 import com.fedoratube.org.data.repository.YouTubeRepository
 import com.fedoratube.org.data.repository.needsChannelMetadata
-import com.fedoratube.org.data.shorts.ShortsFeedRepository
 import com.fedoratube.org.data.subscriptions.HomeSubscriptionUploads
 import com.fedoratube.org.innertube.pages.renderer.FeedItemOwner
 import com.fedoratube.org.ui.screens.home.chips.ChipFeedContext
@@ -91,9 +90,7 @@ class HomeViewModel
         private val repository: YouTubeRepository,
         private val subscriptionRepository: SubscriptionRepository,
         private val subscriptionFeedRepository: com.fedoratube.org.data.subscriptions.SubscriptionFeedRepository,
-        private val shortsRepository: ShortsFeedRepository,
         private val playerPreferences: com.fedoratube.org.data.local.PlayerPreferences,
-        private val shortsQueueHandoff: com.fedoratube.org.data.shorts.queue.ShortsQueueHandoff,
         private val feedSources: HomeFeedSources,
         private val homeSubscriptionUploads: HomeSubscriptionUploads,
         private val persistentHomeFeedCache: HomeFeedCacheRepository,
@@ -108,7 +105,7 @@ class HomeViewModel
         fun shortsShelfSource(
             shelf: List<com.fedoratube.org.data.model.Video>,
             tapped: com.fedoratube.org.data.model.Video,
-        ) = shortsQueueHandoff.sourceForShelf(shelf, tapped)
+        ): com.fedoratube.org.data.feed.ShortsQueueSource = com.fedoratube.org.data.feed.ShortsQueueSource.Saved(tapped.id)
 
         companion object {
             private const val TAG = "HomeViewModel"
@@ -298,8 +295,7 @@ class HomeViewModel
                                     shorts = state.shorts.filter { it.id != event.videoId },
                                 )
                             }
-                            // Full clear — topic signals changed, discovery queries will differ
-                            shortsRepository.clearCaches()
+
                         }
 
                         is FeedInvalidationBus.Event.MarkedWatched -> {
@@ -489,8 +485,7 @@ class HomeViewModel
                     shorts = state.shorts.filter { it.id != videoId && it.channelId != channelId },
                 )
             }
-            // Targeted eviction — preserves other channel caches in discovery engine
-            shortsRepository.evictChannel(channelId)
+
         }
 
         private suspend fun subscriptionScope(): HomeSubscriptionScope =

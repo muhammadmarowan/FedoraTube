@@ -16,7 +16,7 @@ object AppIcons {
     const val NAMESPACE = "com.fedoratube.org"
 
     /** The alias enabled by default in the manifest. Used as a safe fallback. */
-    const val DEFAULT_SUFFIX = ".IconFlowRed"
+    const val DEFAULT_SUFFIX = ".IconFedoraRed"
 
     /**
      * Every launcher alias, in manifest declaration order. A shipped alias is never removed or renamed:
@@ -25,9 +25,9 @@ object AppIcons {
      */
     val ALL: List<LauncherIcon> =
         listOf(
-            LauncherIcon(".IconFlowRed", R.string.icon_name_flow_red, R.mipmap.ic_launcher),
-            LauncherIcon(".IconFlowLight", R.string.icon_name_flow_light, R.mipmap.ic_launcher_flow_light),
-            LauncherIcon(".IconFlowPlay", R.string.icon_name_flow_play, R.mipmap.ic_launcher_flow_play),
+            LauncherIcon(".IconFedoraRed", R.string.icon_name_fedora_red, R.mipmap.ic_launcher),
+            LauncherIcon(".IconFedoraLight", R.string.icon_name_fedora_light, R.mipmap.ic_launcher_fedora_light),
+            LauncherIcon(".IconFedoraPlay", R.string.icon_name_fedora_play, R.mipmap.ic_launcher_fedora_play),
             LauncherIcon(".IconAmoled", R.string.icon_name_amoled, R.mipmap.ic_launcher_amoled),
             LauncherIcon(".IconMonochrome", R.string.icon_name_monochrome, R.mipmap.ic_launcher_monochrome),
             LauncherIcon(".IconGhost", R.string.icon_name_ghost, R.mipmap.ic_launcher_ghost),

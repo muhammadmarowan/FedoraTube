@@ -5,8 +5,8 @@ import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.NavOptionsBuilder
 import com.fedoratube.org.data.model.Video
-import com.fedoratube.org.data.shorts.queue.ShortsQueueSource
-import com.fedoratube.org.data.shorts.queue.openAtVideoId
+import com.fedoratube.org.data.feed.ShortsQueueSource
+import com.fedoratube.org.data.feed.openAtVideoId
 
 const val SHORTS_ROUTE_PATTERN = "shorts?src={src}"
 

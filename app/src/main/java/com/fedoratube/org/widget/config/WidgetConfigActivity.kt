@@ -11,11 +11,9 @@ import androidx.glance.appwidget.GlanceAppWidgetManager
 import dagger.hilt.android.AndroidEntryPoint
 import com.fedoratube.org.data.local.AppFontPreferences
 import com.fedoratube.org.data.local.LocalDataManager
-import com.fedoratube.org.ui.screens.widgets.PlaylistConfigScreen
 import com.fedoratube.org.ui.screens.widgets.QuickActionsConfigScreen
 import com.fedoratube.org.ui.startup.FlowTheme
 import com.fedoratube.org.ui.startup.themeSettings
-import com.fedoratube.org.widget.playlist.PlaylistWidgetReceiver
 import com.fedoratube.org.widget.quickactions.QuickActionsWidgetReceiver
 import javax.inject.Inject
 
@@ -53,7 +51,6 @@ class WidgetConfigActivity : ComponentActivity() {
             FlowTheme(settings) {
                 when (provider) {
                     QuickActionsWidgetReceiver::class.java.name -> QuickActionsConfigScreen(glanceId, onDone = ::done)
-                    PlaylistWidgetReceiver::class.java.name -> PlaylistConfigScreen(glanceId, onDone = ::done)
                     else -> done()
                 }
             }

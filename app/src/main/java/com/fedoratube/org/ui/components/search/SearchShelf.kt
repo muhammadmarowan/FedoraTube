@@ -33,7 +33,6 @@ import com.fedoratube.org.R
 import com.fedoratube.org.data.model.Video
 import com.fedoratube.org.data.paging.SearchResultItem
 import com.fedoratube.org.data.paging.SearchShelfKind
-import com.fedoratube.org.ui.components.shared.MediaShortsShelf
 import com.fedoratube.org.ui.components.shared.card.MediaVideoCard
 import com.fedoratube.org.ui.components.shared.card.VideoCardDefaults
 import com.fedoratube.org.ui.components.shared.card.VideoCardLayout

@@ -34,9 +34,9 @@
     </queries>
 
     <application
-        android:name=".FlowApplication"
+        android:name=".FedoraApplication"
         android:allowBackup="true"
-        android:backupAgent=".data.backup.FlowBackupAgent"
+        android:backupAgent=".data.backup.FedoraBackupAgent"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:fullBackupOnly="true"
@@ -298,7 +298,7 @@
         <!-- App Icon Variants (via activity-alias)                          -->
         <!-- Default: Flow Red -->
         <activity-alias
-            android:name=".IconFlowRed"
+            android:name=".IconFedoraRed"
             android:enabled="true"
             android:exported="true"
             android:icon="@mipmap/ic_launcher"
@@ -312,11 +312,11 @@
 
         <!-- Flow Light -->
         <activity-alias
-            android:name=".IconFlowLight"
+            android:name=".IconFedoraLight"
             android:enabled="false"
             android:exported="true"
-            android:icon="@mipmap/ic_launcher_flow_light"
-            android:roundIcon="@mipmap/ic_launcher_flow_light_round"
+            android:icon="@mipmap/ic_launcher_fedora_light"
+            android:roundIcon="@mipmap/ic_launcher_fedora_light_round"
             android:targetActivity=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -326,11 +326,11 @@
 
         <!-- Flow Play (white background, red video frame + play mark) -->
         <activity-alias
-            android:name=".IconFlowPlay"
+            android:name=".IconFedoraPlay"
             android:enabled="false"
             android:exported="true"
-            android:icon="@mipmap/ic_launcher_flow_play"
-            android:roundIcon="@mipmap/ic_launcher_flow_play_round"
+            android:icon="@mipmap/ic_launcher_fedora_play"
+            android:roundIcon="@mipmap/ic_launcher_fedora_play_round"
             android:targetActivity=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -614,8 +614,8 @@
     <string name="app_icon_picker_subtitle">Uygulama simgesi stilini seç. Değişiklik anında uygulanır ve ekran kısa süreliğine yenilenir.</string>
     <string name="app_icon_picker_warning">Uyarı: Simge değişikliği, uygulama kısayolunu ana ekranından kısa bir süreliğine kaldırabilir. Gerekirse kısayolu tekrar ekle.</string>
     <string name="app_icon_apply_toast">Simge değiştirildi - Ana ekranın yenilenecek</string>
-    <string name="icon_name_flow_red">Fedora Tube Kırmızısı</string>
-    <string name="icon_name_flow_light">Fedora Tube Aydınlık</string>
+    <string name="icon_name_fedora_red">Fedora Tube Kırmızısı</string>
+    <string name="icon_name_fedora_light">Fedora Tube Aydınlık</string>
     <string name="icon_name_amoled">Derin Amoled</string>
     <string name="icon_name_monochrome">Siyah Beyaz</string>
     <string name="icon_name_ghost">Hayalet</string>
@@ -1693,7 +1693,7 @@
     <string name="appearance_color_alpha">Saydamlık</string>
     <string name="appearance_navigate_back">Geri dön</string>
     <string name="appearance_selected">Seçili</string>
-    <string name="icon_name_flow_play">Fedora Tube Play</string>
+    <string name="icon_name_fedora_play">Fedora Tube Play</string>
     <string name="player_appearance_hide_music_artwork_title">Müzik oynatıcı kapağını gizle</string>
     <string name="player_appearance_hide_music_artwork_subtitle">Kapak yerine, kapaktan alınan rengin üzerinde uygulama simgesini göster</string>
     <string name="player_appearance_shorts_ui_title">Shorts oynatıcı arayüzü</string>

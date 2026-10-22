@@ -3,6 +3,7 @@
 package com.fedoratube.org.ui.screens.update
 
 import android.text.format.Formatter
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -46,6 +47,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.platform.UriHandler
@@ -62,6 +65,7 @@ import com.fedoratube.org.data.update.AppVersions
 import com.fedoratube.org.data.update.GitHubRelease
 import com.fedoratube.org.data.update.UpdateFailure
 import com.fedoratube.org.ui.components.layout.topbar.FlowTopBar
+import com.fedoratube.org.ui.components.shared.FedoraThumbnailsWallpaper
 import com.fedoratube.org.ui.components.shared.FlowEmptyState
 import com.fedoratube.org.ui.components.shared.FlowErrorState
 import com.fedoratube.org.ui.components.shared.FlowLoadingIndicator
@@ -94,9 +98,24 @@ fun UpdateScreen(
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME) { viewModel.onResume() }
     val release = state.release
 
-    Scaffold(
-        containerColor = MaterialTheme.colorScheme.background,
-        contentWindowInsets = WindowInsets(0.dp),
+    Box(Modifier.fillMaxSize()) {
+        FedoraThumbnailsWallpaper(Modifier.fillMaxSize())
+        Box(
+            Modifier
+                .fillMaxSize()
+                .background(
+                    Brush.verticalGradient(
+                        0.0f to MaterialTheme.colorScheme.background.copy(alpha = 0.55f),
+                        0.35f to MaterialTheme.colorScheme.background.copy(alpha = 0.70f),
+                        0.70f to MaterialTheme.colorScheme.background.copy(alpha = 0.88f),
+                        1.0f to MaterialTheme.colorScheme.background,
+                    ),
+                ),
+        )
+
+        Scaffold(
+            containerColor = Color.Transparent,
+            contentWindowInsets = WindowInsets(0.dp),
         topBar = {
             FlowTopBar(
                 title = "",
@@ -179,6 +198,7 @@ fun UpdateScreen(
             }
         }
     }
+}
 }
 
 @Composable

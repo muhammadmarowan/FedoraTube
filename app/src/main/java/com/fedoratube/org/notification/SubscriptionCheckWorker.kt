@@ -19,7 +19,7 @@ import dagger.hilt.components.SingletonComponent
 import com.fedoratube.org.data.local.ChannelSubscription
 import com.fedoratube.org.data.local.PlayerPreferences
 import com.fedoratube.org.data.local.SubscriptionRepository
-import com.fedoratube.org.data.shorts.ChannelReelIndex
+import com.fedoratube.org.data.feed.ChannelReelIndex
 import com.fedoratube.org.data.subscriptions.ChannelRssClient
 import com.fedoratube.org.data.subscriptions.ChannelRssParser
 import com.fedoratube.org.data.subscriptions.SubscriptionFeedRepository

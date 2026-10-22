@@ -5,7 +5,6 @@ import androidx.media3.common.util.UnstableApi
 import com.fedoratube.org.player.EnhancedMusicPlayerManager
 import com.fedoratube.org.player.EnhancedPlayerManager
 import com.fedoratube.org.player.GlobalPlayerState
-import com.fedoratube.org.player.shorts.ShortsPlayerPool
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.currentCoroutineContext
@@ -21,7 +20,6 @@ import kotlinx.coroutines.isActive
 @OptIn(UnstableApi::class)
 class DiscordPlaybackSource(
     private val videoManager: EnhancedPlayerManager = EnhancedPlayerManager.getInstance(),
-    private val shortsPool: ShortsPlayerPool = ShortsPlayerPool.getInstance(),
     private val selector: DiscordPlaybackSelector = DiscordPlaybackSelector(),
 ) {
     val playback: Flow<PlaybackSnapshot?> = discordPlaybackSnapshotFlow(
@@ -30,34 +28,17 @@ class DiscordPlaybackSource(
             videoManager.playerState.map { Unit },
             EnhancedMusicPlayerManager.currentTrack.map { Unit },
             EnhancedMusicPlayerManager.playerState.map { Unit },
-            shortsPool.currentVideo.map { Unit },
             ticker(),
         ),
         snapshotDispatcher = Dispatchers.Main.immediate,
         readSnapshot = {
             selector.select(
-                short = shortSnapshot(),
+                short = null,
                 video = videoSnapshot(),
                 music = musicSnapshot(),
             )
         },
     )
-
-    private fun shortSnapshot(): PlaybackSnapshot? {
-        val short = shortsPool.currentVideo.value ?: return null
-        if (shortsPool.currentVideoId.value != short.id) return null
-        return PlaybackSnapshot(
-            kind = PlaybackKind.SHORT,
-            mediaId = short.id,
-            title = short.title,
-            subtitle = short.channelName,
-            artworkUrl = short.thumbnailUrl,
-            positionMs = shortsPool.playbackPosition(),
-            durationMs = shortsPool.playbackDuration(),
-            isPlaying = shortsPool.isPlaying(),
-            isLive = false,
-        )
-    }
 
     private fun videoSnapshot(): PlaybackSnapshot? {
         val video = GlobalPlayerState.currentVideo.value ?: return null

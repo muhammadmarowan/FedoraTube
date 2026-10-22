@@ -204,6 +204,9 @@ class Media3MusicService : MediaLibraryService() {
     lateinit var downloadUtil: DownloadUtil
 
     @Inject
+    lateinit var playlistRepository: com.fedoratube.org.data.music.PlaylistRepository
+
+    @Inject
     lateinit var legacySongs: LegacySongDownloads
 
     @Inject
@@ -782,10 +785,6 @@ class Media3MusicService : MediaLibraryService() {
         // this service's scope is already cancelled, and the session must still land.
         musicBrain.onListenSessionAsync(track, playedMs.toDouble() / durationMs, pinnedGenre, playedMs)
         if (!alreadyScrobbled) scrobbler.onListened(track, durationMs, playedMs, startedAtMs)
-        widgetContentSync.get().run {
-            request(com.fedoratube.org.widget.core.refresh.WidgetContentKey.ON_REPEAT)
-            request(com.fedoratube.org.widget.core.refresh.WidgetContentKey.WEEK)
-        }
     }
 
     /**
@@ -1742,8 +1741,39 @@ class Media3MusicService : MediaLibraryService() {
             args: Bundle,
         ): ListenableFuture<SessionResult> {
             if (customCommand.customAction == ACTION_TOGGLE_LIKE) {
-                com.fedoratube.org.player.EnhancedMusicPlayerManager
-                    .emitToggleLikeEvent()
+                val currentTrack = com.fedoratube.org.player.EnhancedMusicPlayerManager.currentTrack.value
+                val newLike = !com.fedoratube.org.player.EnhancedMusicPlayerManager.isLiked.value
+                com.fedoratube.org.player.EnhancedMusicPlayerManager.setLiked(newLike)
+                if (::player.isInitialized) {
+                    widgetPublisher.publish(player)
+                }
+                if (currentTrack != null && !com.fedoratube.org.data.localmedia.LocalMediaIds.isLocal(currentTrack.videoId)) {
+                    scrobbler.onLikeChanged(currentTrack, newLike)
+                    lifecycleScope.launch(com.fedoratube.org.utils.PerformanceDispatcher.diskIO) {
+                        val likedRepo = com.fedoratube.org.data.local.LikedVideosRepository.getInstance(this@Media3MusicService)
+                        if (newLike) {
+                            playlistRepository.addToFavorites(currentTrack)
+                            likedRepo.likeVideo(
+                                com.fedoratube.org.data.local.LikedVideoInfo(
+                                    videoId = currentTrack.videoId,
+                                    title = currentTrack.title,
+                                    thumbnail = currentTrack.thumbnailUrl,
+                                    channelName = currentTrack.artist,
+                                    isMusic = true,
+                                    channelId = currentTrack.channelId.takeIf(String::isNotBlank),
+                                    durationSeconds = currentTrack.duration,
+                                ),
+                            )
+                            musicBrain.onExplicitLike(currentTrack)
+                            if (prefs.autoDownloadLikedMusic.first()) {
+                                musicDownloads.downloadTrack(currentTrack)
+                            }
+                        } else {
+                            playlistRepository.removeFromFavorites(currentTrack.videoId)
+                            likedRepo.removeLikeState(currentTrack.videoId)
+                        }
+                    }
+                }
                 return Futures.immediateFuture(SessionResult(SessionResult.RESULT_SUCCESS))
             }
 

@@ -2,7 +2,7 @@ package com.fedoratube.org.ui
 
 import android.net.Uri
 import androidx.navigation.NavHostController
-import com.fedoratube.org.data.shorts.queue.ShortsQueueSource
+import com.fedoratube.org.data.feed.ShortsQueueSource
 import com.fedoratube.org.ui.components.layout.navigation.MediaNavigator
 import com.fedoratube.org.utils.YouTubeLink
 

@@ -425,7 +425,7 @@
     <string name="app_icon_picker_subtitle">Wählen Sie einen Launcher-Symbol-Stil. Die Änderung wird sofort wirksam und der Launcher wird kurz aktualisiert.</string>
     <string name="app_icon_picker_warning">Achtung: Beim Wechseln der Symbole wird ein Android-Systemmechanismus verwendet, der die App-Verknüpfung möglicherweise kurzzeitig von deinem Startbildschirm entfernt. Halte den Launcher bei Bedarf lange gedrückt, um sie wieder hinzuzufügen.</string>
     <string name="app_icon_apply_toast">Symbol aktualisiert - Ihr Launcher wird neu geladen</string>
-    <string name="icon_name_flow_red">Fedora Tube Rot</string>
+    <string name="icon_name_fedora_red">Fedora Tube Rot</string>
     <string name="icon_name_amoled">AMOLED Dunkel</string>
     <string name="icon_name_monochrome">Monochrom</string>
     <string name="icon_name_ghost">Geist</string>
@@ -640,7 +640,7 @@
     <string name="categories_switch_to_list">Zur Listenansicht wechseln</string>
     <string name="category_all">Alle</string>
     <string name="category_trending">Im Trend</string>
-    <string name="icon_name_flow_light">Fedora Tube hell</string>
+    <string name="icon_name_fedora_light">Fedora Tube hell</string>
     <string name="lyrics_provider_lyrics_plus">LyricsPlus</string>
     <string name="content_settings_subs_show_shorts_subtitle">„Shorts“ im Abonnement-Feed anzeigen</string>
     <string name="content_settings_subs_show_live_title">Live-Streams im Abonnement</string>
@@ -1921,7 +1921,7 @@
         <item quantity="one">%1$d Stunde</item>
         <item quantity="other">%1$d Stunden</item>
     </plurals>
-    <string name="icon_name_flow_play">Fedora Tube Play</string>
+    <string name="icon_name_fedora_play">Fedora Tube Play</string>
     <string name="player_appearance_haptics_title">Vibration</string>
     <string name="player_appearance_gesture_overlay_subtitle">Wie Lautstärke und Helligkeit gezeigt werden, während du wischst</string>
     <string name="gesture_overlay_style_vertical">Vertikal</string>

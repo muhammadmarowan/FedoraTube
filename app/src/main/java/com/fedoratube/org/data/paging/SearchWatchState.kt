@@ -4,7 +4,7 @@ import com.fedoratube.org.data.local.WatchState
 import com.fedoratube.org.data.local.WatchedThreshold
 import com.fedoratube.org.data.local.dao.WatchProgress
 import com.fedoratube.org.data.model.Video
-import com.fedoratube.org.data.shorts.isShortComplete
+import com.fedoratube.org.data.feed.isShortComplete
 
 /** Answers which of a page's videos the user has watched, from one history read for just those ids. */
 fun interface WatchedVideoLookup {

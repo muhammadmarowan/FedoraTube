@@ -2,7 +2,7 @@ package com.fedoratube.org.data.innertube
 
 import com.google.common.truth.Truth.assertThat
 import com.fedoratube.org.data.model.Video
-import com.fedoratube.org.data.shorts.ChannelReelIndex
+import com.fedoratube.org.data.feed.ChannelReelIndex
 import com.fedoratube.org.data.subscriptions.ChannelRssClient
 import com.fedoratube.org.data.subscriptions.ChannelRssEntry
 import com.fedoratube.org.data.subscriptions.ChannelRssFeed

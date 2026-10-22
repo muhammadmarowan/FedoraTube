@@ -2,7 +2,7 @@ package com.fedoratube.org.data.innertube
 
 import android.util.Log
 import com.fedoratube.org.data.model.Video
-import com.fedoratube.org.data.shorts.ChannelReelIndex
+import com.fedoratube.org.data.feed.ChannelReelIndex
 import com.fedoratube.org.data.subscriptions.ChannelRssClient
 import com.fedoratube.org.data.subscriptions.ChannelRssEntry
 import com.fedoratube.org.data.subscriptions.ChannelUploadsClient

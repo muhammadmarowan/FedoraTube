@@ -536,9 +536,6 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun pauseShortsPlayers() {
-        com.fedoratube.org.player.shorts.ShortsPlayerPool
-            .getInstance()
-            .pauseAll()
     }
 
     private fun restoreVideoForPipWindow(isInPictureInPictureMode: Boolean) {
@@ -705,17 +702,6 @@ class MainActivity : ComponentActivity() {
             )
             return
         }
-
-        if (!lifecyclePlaybackPreferences.settings.shortsPipEnabled || isMusicPlaying) return
-        val shortsPool =
-            com.fedoratube.org.player.shorts.ShortsPlayerPool
-                .getInstance()
-        if (!shortsPool.isPlaying()) return
-        enterPlayerPictureInPictureMode(
-            aspectRatio = shortsPool.activeVideoAspectRatio() ?: PORTRAIT_REEL_ASPECT_RATIO,
-            isPlaying = true,
-            navigation = PictureInPictureHelper.shortsNavigation,
-        )
     }
 
     override fun onTrimMemory(level: Int) {

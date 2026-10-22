@@ -11,9 +11,8 @@ import com.fedoratube.org.data.local.entity.VideoEntity
 import com.fedoratube.org.data.local.entity.WatchHistoryEntity
 import com.fedoratube.org.data.model.Video
 import com.fedoratube.org.data.repository.YouTubeRepository
-import com.fedoratube.org.data.shorts.ShortsContentFilter
-import com.fedoratube.org.data.shorts.queue.ShortsQueueHandoff
-import com.fedoratube.org.data.shorts.queue.ShortsQueueSource
+import com.fedoratube.org.data.feed.ShortsContentFilter
+import com.fedoratube.org.data.feed.ShortsQueueSource
 import com.fedoratube.org.utils.PerformanceDispatcher
 import com.fedoratube.org.utils.ThumbnailUrlResolver
 import kotlinx.coroutines.Dispatchers
@@ -71,7 +70,6 @@ class HistoryViewModel
         private val videoDao: VideoDao,
         private val watchHistoryDao: WatchHistoryDao,
         private val shortsContentFilter: ShortsContentFilter,
-        private val shortsQueueHandoff: ShortsQueueHandoff,
     ) : ViewModel() {
         private val isEnriching = AtomicBoolean(false)
         private val attemptedEnrichment = HashSet<String>()
@@ -197,7 +195,7 @@ class HistoryViewModel
         fun shortsRowSource(
             row: List<Video>,
             tapped: Video,
-        ): ShortsQueueSource = shortsQueueHandoff.sourceForShelf(row, tapped)
+        ): ShortsQueueSource = ShortsQueueSource.Saved(tapped.id)
 
         private suspend fun enrichFromDatabase(history: List<VideoHistoryEntry>): List<VideoHistoryEntry> {
             val lookupIds =

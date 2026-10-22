@@ -8,7 +8,7 @@ import com.fedoratube.org.data.model.Comment
 import com.fedoratube.org.data.model.Video
 import com.fedoratube.org.data.model.VideoCollaborator
 import com.fedoratube.org.data.model.needsCollaboratorResolution
-import com.fedoratube.org.data.shorts.ShortsClassifier
+import com.fedoratube.org.data.feed.ShortsClassifier
 import com.fedoratube.org.innertube.YouTube
 import com.fedoratube.org.innertube.models.response.VideoChapter
 import com.fedoratube.org.innertube.models.response.VideoChaptersParser

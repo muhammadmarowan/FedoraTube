@@ -10,8 +10,7 @@ import com.fedoratube.org.data.local.SortType
 import com.fedoratube.org.data.local.UploadDate
 import com.fedoratube.org.data.recommendation.FlowNeuroEngine
 import com.fedoratube.org.data.search.SearchSuggestionsRepository
-import com.fedoratube.org.data.shorts.ShortsContentFilter
-import com.fedoratube.org.data.shorts.queue.ShortsQueueHandoff
+import com.fedoratube.org.data.feed.ShortsContentFilter
 import com.fedoratube.org.innertube.pages.search.SearchSuggestion
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -43,7 +42,6 @@ class SearchViewModelTest {
             context,
             suggestions,
             ShortsContentFilter(flowOf(true)),
-            ShortsQueueHandoff(),
             history,
             mockk(relaxed = true),
             mockk(relaxed = true),

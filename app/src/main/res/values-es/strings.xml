@@ -517,7 +517,7 @@
     <string name="settings_item_region">Región de tendencia</string>
     <string name="settings_item_search_history">Búsqueda e historial</string>
     <string name="settings_item_search_history_subtitle">Borrar historial, gestionar sugerencias</string>
-    <string name="icon_name_flow_red">Fedora Tube Rojo</string>
+    <string name="icon_name_fedora_red">Fedora Tube Rojo</string>
     <string name="icon_name_monochrome">Monocromo</string>
     <string name="icon_name_ghost">Fantasma</string>
     <string name="icon_name_dynamic">Material You</string>
@@ -1485,7 +1485,7 @@
     <string name="appearance_system_dark_theme">Tema del modo oscuro</string>
     <string name="theme_desc_material_you">Colores extraídos del fondo de pantalla en Android 12 y posteriores.</string>
     <string name="appearance_system_defaults_title">Temas predeterminados del sistema</string>
-    <string name="icon_name_flow_light">Fedora Tube Claro</string>
+    <string name="icon_name_fedora_light">Fedora Tube Claro</string>
     <string name="icon_name_material_sky">Material Sky</string>
     <string name="icon_name_material_mint">Material Mint</string>
     <string name="content_settings_subs_show_videos_title">Vídeos de suscripciones</string>
@@ -1664,7 +1664,7 @@
     <string name="appearance_color_alpha">Alfa</string>
     <string name="appearance_navigate_back">Volver atrás</string>
     <string name="appearance_selected">Seleccionado</string>
-    <string name="icon_name_flow_play">Fedora Tube Play</string>
+    <string name="icon_name_fedora_play">Fedora Tube Play</string>
     <string name="player_appearance_hide_music_artwork_title">Ocultar la portada del reproductor de música</string>
     <string name="player_appearance_hide_music_artwork_subtitle">Mostrar el icono de la aplicación con el color extraído de la portada</string>
     <string name="subscriptions_sort_label">Ordenar canales</string>

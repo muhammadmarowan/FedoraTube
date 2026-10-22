@@ -866,9 +866,9 @@
     <string name="app_icon_picker_subtitle">Choose a launcher icon style. The change takes effect immediately and the launcher will briefly refresh.</string>
     <string name="app_icon_picker_warning">Changing the icon may remove Fedora Tube from your home screen for a moment. Add it back from the app drawer if needed.</string>
     <string name="app_icon_apply_toast">Icon updated - your launcher will refresh</string>
-    <string name="icon_name_flow_red">Fedora Tube Default</string>
-    <string name="icon_name_flow_light">Fedora Tube Light</string>
-    <string name="icon_name_flow_play">Fedora Tube Play</string>
+    <string name="icon_name_fedora_red">Fedora Tube Default</string>
+    <string name="icon_name_fedora_light">Fedora Tube Light</string>
+    <string name="icon_name_fedora_play">Fedora Tube Play</string>
     <string name="icon_name_amoled">AMOLED Dark</string>
     <string name="icon_name_monochrome">Monochrome</string>
     <string name="icon_name_ghost">Ghost</string>

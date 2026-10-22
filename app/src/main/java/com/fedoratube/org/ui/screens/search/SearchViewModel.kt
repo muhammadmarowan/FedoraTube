@@ -22,9 +22,8 @@ import com.fedoratube.org.data.paging.WatchedVideoLookup
 import com.fedoratube.org.data.paging.watchedVideoIds
 import com.fedoratube.org.data.recommendation.FlowNeuroEngine
 import com.fedoratube.org.data.search.SearchSuggestionsRepository
-import com.fedoratube.org.data.shorts.ShortsContentFilter
-import com.fedoratube.org.data.shorts.queue.ShortsQueueHandoff
-import com.fedoratube.org.data.shorts.queue.ShortsQueueSource
+import com.fedoratube.org.data.feed.ShortsContentFilter
+import com.fedoratube.org.data.feed.ShortsQueueSource
 import com.fedoratube.org.data.stats.VideoStatsRecorder
 import com.fedoratube.org.innertube.pages.search.SearchHeader
 import com.fedoratube.org.innertube.pages.search.SearchSuggestion
@@ -55,7 +54,6 @@ class SearchViewModel
         @ApplicationContext private val context: Context,
         private val suggestionsRepository: SearchSuggestionsRepository,
         private val shortsContentFilter: ShortsContentFilter,
-        private val shortsQueueHandoff: ShortsQueueHandoff,
         private val searchHistory: SearchHistoryRepository,
         private val videoStats: VideoStatsRecorder,
         private val neuroEngine: FlowNeuroEngine,
@@ -111,7 +109,7 @@ class SearchViewModel
         fun shortsShelfSource(
             shelf: List<Video>,
             tapped: Video,
-        ): ShortsQueueSource = shortsQueueHandoff.sourceForShelf(shelf, tapped)
+        ): ShortsQueueSource = ShortsQueueSource.Saved(tapped.id)
 
         fun search(
             query: String,

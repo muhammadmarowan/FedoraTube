@@ -19,7 +19,7 @@ class PaxsenixLyricsProvider : LyricsProvider {
         album: String?
     ): Result<List<LyricsEntry>> = withContext(Dispatchers.IO) {
         runCatching {
-            val context = com.fedoratube.org.FlowApplication.appContext
+            val context = com.fedoratube.org.FedoraApplication.appContext
             Paxsenix.init(context)
             val lrc = Paxsenix.getLyrics(title, artist, duration, album).getOrThrow()
             LyricsUtils.parseLyrics(lrc)

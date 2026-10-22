@@ -1,7 +1,7 @@
 package com.fedoratube.org.utils
 
 import android.util.Log
-import com.fedoratube.org.FlowApplication
+import com.fedoratube.org.FedoraApplication
 import com.fedoratube.org.data.local.MusicAudioQuality
 import com.fedoratube.org.data.local.PlayerPreferences
 import com.fedoratube.org.innertube.models.YouTubeClient
@@ -64,13 +64,13 @@ object MusicPlayerUtils {
     )
 
     private suspend fun loadAudioSelectionPreferences(): AudioSelectionPreferences {
-        val playerPreferences = PlayerPreferences(FlowApplication.appContext)
+        val playerPreferences = PlayerPreferences(FedoraApplication.appContext)
         return AudioSelectionPreferences(
             preferredAudioLanguage = playerPreferences.preferredAudioLanguage.first(),
             musicAudioQuality =
                 playerPreferences.musicAudioQuality
                     .first()
-                    .resolve(onWifi = NetworkState.isOnWifi(FlowApplication.appContext)),
+                    .resolve(onWifi = NetworkState.isOnWifi(FedoraApplication.appContext)),
         )
     }
 

@@ -36,7 +36,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.fedoratube.org.R
 import com.fedoratube.org.data.local.VideoHistoryEntry
 import com.fedoratube.org.data.music.model.MusicTrack
-import com.fedoratube.org.data.shorts.queue.ShortsQueueSource
+import com.fedoratube.org.data.feed.ShortsQueueSource
 import com.fedoratube.org.ui.components.layout.LocalFlowBottomInsets
 import com.fedoratube.org.ui.components.layout.floatAboveBottomChrome
 import com.fedoratube.org.ui.components.layout.topbar.FlowTopBar

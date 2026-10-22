@@ -2,7 +2,7 @@ package com.fedoratube.org.ui
 
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
-import com.fedoratube.org.data.shorts.queue.ShortsQueueSource
+import com.fedoratube.org.data.feed.ShortsQueueSource
 import com.fedoratube.org.ui.components.layout.navigation.FlowTab
 import java.net.URI
 import java.net.URLEncoder

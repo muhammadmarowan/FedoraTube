@@ -103,11 +103,13 @@ fun OnboardingScreen(
     }
 
     Box(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
-        Spacer(
-            Modifier
-                .fillMaxSize()
-                .onboardingBackdrop(backdropFrom, shownStep, MaterialTheme.colorScheme.surfaceContainer) { backdrop.value },
-        )
+        if (shownStep != OnboardingStep.WELCOME) {
+            Spacer(
+                Modifier
+                    .fillMaxSize()
+                    .onboardingBackdrop(backdropFrom, shownStep, MaterialTheme.colorScheme.surfaceContainer) { backdrop.value },
+            )
+        }
         Scaffold(
             containerColor = Color.Transparent,
             contentWindowInsets = WindowInsets(0.dp),

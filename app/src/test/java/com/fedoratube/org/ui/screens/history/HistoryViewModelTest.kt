@@ -6,8 +6,7 @@ import com.fedoratube.org.data.local.ViewHistory
 import com.fedoratube.org.data.local.dao.VideoDao
 import com.fedoratube.org.data.local.dao.WatchHistoryDao
 import com.fedoratube.org.data.repository.YouTubeRepository
-import com.fedoratube.org.data.shorts.ShortsContentFilter
-import com.fedoratube.org.data.shorts.queue.ShortsQueueHandoff
+import com.fedoratube.org.data.feed.ShortsContentFilter
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -68,7 +67,6 @@ class HistoryViewModelTest {
                     videoDao,
                     watchHistoryDao,
                     ShortsContentFilter(flowOf(true)),
-                    ShortsQueueHandoff(),
                 )
             testDispatcher.scheduler.advanceUntilIdle()
 
@@ -90,7 +88,6 @@ class HistoryViewModelTest {
                     videoDao,
                     watchHistoryDao,
                     ShortsContentFilter(flowOf(true)),
-                    ShortsQueueHandoff(),
                 )
             viewModel.clearHistory()
             testDispatcher.scheduler.advanceUntilIdle()
@@ -110,7 +107,6 @@ class HistoryViewModelTest {
                     videoDao,
                     watchHistoryDao,
                     ShortsContentFilter(flowOf(true)),
-                    ShortsQueueHandoff(),
                 )
             viewModel.removeFromHistory("vid_123")
             testDispatcher.scheduler.advanceUntilIdle()

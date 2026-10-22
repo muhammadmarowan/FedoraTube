@@ -29,7 +29,7 @@ import com.fedoratube.org.data.local.HomeFeedColumns
 import com.fedoratube.org.data.model.Channel
 import com.fedoratube.org.data.model.Comment
 import com.fedoratube.org.data.model.Video
-import com.fedoratube.org.data.shorts.queue.ShortsQueueSource
+import com.fedoratube.org.data.feed.ShortsQueueSource
 import com.fedoratube.org.innertube.pages.renderer.CommunityPost
 import com.fedoratube.org.ui.components.channel.CommunityPostCard
 import com.fedoratube.org.ui.components.channel.CommunityPostInlineComments

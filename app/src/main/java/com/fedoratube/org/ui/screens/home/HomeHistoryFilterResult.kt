@@ -2,7 +2,7 @@ package com.fedoratube.org.ui.screens.home
 
 import com.fedoratube.org.data.local.VideoHistoryEntry
 import com.fedoratube.org.data.local.WatchedThreshold
-import com.fedoratube.org.data.shorts.isShortComplete
+import com.fedoratube.org.data.feed.isShortComplete
 
 internal data class HomeHistoryFilterResult(
     val watchedVideoIds: Set<String>,

@@ -35,8 +35,8 @@ import org.junit.Test
  */
 class BrainGoldenVectorTest {
     private fun fixture(): String =
-        checkNotNull(javaClass.getResourceAsStream("/sync/flow_neuro_brain.json")) {
-            "missing test resource sync/flow_neuro_brain.json"
+        checkNotNull(javaClass.getResourceAsStream("/sync/fedoratube_neuro_brain.json")) {
+            "missing test resource sync/fedoratube_neuro_brain.json"
         }.use { it.readBytes().toString(Charsets.UTF_8) }
 
     private val deviceA = "device-aaa"

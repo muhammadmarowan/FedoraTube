@@ -54,7 +54,7 @@ import com.fedoratube.org.data.local.PlayerPreferences
 import com.fedoratube.org.data.model.Channel
 import com.fedoratube.org.data.model.SubscriptionGroup
 import com.fedoratube.org.data.model.Video
-import com.fedoratube.org.data.shorts.queue.ShortsQueueSource
+import com.fedoratube.org.data.feed.ShortsQueueSource
 import com.fedoratube.org.ui.TabScrollEventBus
 import com.fedoratube.org.ui.components.layout.LocalFlowBottomInsets
 import com.fedoratube.org.ui.components.layout.floatAboveBottomChrome

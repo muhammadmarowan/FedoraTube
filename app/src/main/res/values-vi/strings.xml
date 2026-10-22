@@ -554,9 +554,9 @@
     <string name="app_icon_picker_subtitle">Chọn kiểu biểu tượng. Thay đổi áp dụng ngay, màn hình chính sẽ làm mới.</string>
     <string name="app_icon_picker_warning">Lưu ý: chuyển biểu tượng có thể tạm thời xóa biểu tượng khỏi màn hình chính. Giữ biểu tượng để thêm lại nếu cần.</string>
     <string name="app_icon_apply_toast">Đã cập nhật biểu tượng - màn hình chính sẽ làm mới</string>
-    <string name="icon_name_flow_red">Fedora Tube Đỏ</string>
-    <string name="icon_name_flow_light">Fedora Tube Sáng</string>
-    <string name="icon_name_flow_play">Fedora Tube Phát</string>
+    <string name="icon_name_fedora_red">Fedora Tube Đỏ</string>
+    <string name="icon_name_fedora_light">Fedora Tube Sáng</string>
+    <string name="icon_name_fedora_play">Fedora Tube Phát</string>
     <string name="icon_name_amoled">AMOLED Tối</string>
     <string name="icon_name_monochrome">Đơn sắc</string>
     <string name="player_appearance_title">Giao diện trình phát</string>

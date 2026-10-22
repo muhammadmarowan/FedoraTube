@@ -1066,7 +1066,7 @@
     <string name="settings_item_time_management">إدارة الوقت</string>
     <string name="settings_item_time_management_subtitle">إحصائيات الاستخدام، تذكيرات وقت النوم</string>
     <string name="app_icon_apply_toast">تم تحديث الأيقونة - سيتم تحديث مشغل التطبيقات الخاص بك</string>
-    <string name="icon_name_flow_red">أحمر Fedora Tube</string>
+    <string name="icon_name_fedora_red">أحمر Fedora Tube</string>
     <string name="icon_name_dynamic">ألوان ديناميكية</string>
     <string name="player_nav_btn_subtitle">إظهار أزرار الفيديو التالي و السابق في المشغل المصغر</string>
     <string name="lyrics_provider_title">مُقدّم كلمات الأغاني</string>
@@ -1429,7 +1429,7 @@
     <string name="appearance_system_defaults_subtitle">إختر السمة التي سيتم استخدامها عند تبديل جهازك بين الوضع الفاتح والوضع الداكن.</string>
     <string name="appearance_system_light_theme">الوضع الفاتح</string>
     <string name="appearance_system_dark_theme">الوضع الداكن</string>
-    <string name="icon_name_flow_light">فاتح Fedora Tube</string>
+    <string name="icon_name_fedora_light">فاتح Fedora Tube</string>
     <string name="icon_name_material_sky">سماوي Material</string>
     <string name="icon_name_material_mint">نعناع Material</string>
     <string name="theme_name_material_you">الألوان الديناميكية</string>
@@ -1635,7 +1635,7 @@
     <string name="content_settings_share_without_text_subtitle">شارك فقط رابط الفيديو، بدون رسالة \"شاهد هذا الفيديو\"</string>
     <string name="deep_flow_save_history_title">حفظ إلي سجل المشاهدة</string>
     <string name="deep_flow_save_history_subtitle">الاحتفاظ بسجل المشاهدة دون استخدامه لتحسين التوصيات</string>
-    <string name="icon_name_flow_play">زر تشغيل</string>
+    <string name="icon_name_fedora_play">زر تشغيل</string>
     <string name="player_appearance_controls_while_loading_subtitle">إظهار عناصر التحكم قبل اكتمال تحميل الفيديو</string>
     <string name="content_settings_watched_threshold_90">تم تشغيل 90%</string>
     <string name="content_settings_watched_threshold_95">تم تشغيل 95%</string>

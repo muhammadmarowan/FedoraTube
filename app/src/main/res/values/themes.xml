@@ -23,7 +23,7 @@
         <item name="windowSplashScreenBackground">@color/splash_background_light</item>
     </style>
     <style name="Theme.Flow.Starting.Light.Play">
-        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_fg_flow_play</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_fg_fedora_play</item>
     </style>
     <style name="Theme.Flow.Starting.Light.Amoled">
         <item name="windowSplashScreenAnimatedIcon">@drawable/splash_icon_amoled_inset</item>
@@ -42,7 +42,7 @@
         <item name="windowSplashScreenBackground">@color/splash_background_dark</item>
     </style>
     <style name="Theme.Flow.Starting.Dark.Play">
-        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_fg_flow_play</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_fg_fedora_play</item>
     </style>
     <style name="Theme.Flow.Starting.Dark.Amoled">
         <item name="windowSplashScreenAnimatedIcon">@drawable/splash_icon_amoled_inset</item>
@@ -64,7 +64,7 @@
         <item name="windowSplashScreenBackground">@color/splash_background_black</item>
     </style>
     <style name="Theme.Flow.Starting.Black.Play">
-        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_fg_flow_play</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_fg_fedora_play</item>
     </style>
     <style name="Theme.Flow.Starting.Black.Amoled">
         <item name="windowSplashScreenAnimatedIcon">@drawable/splash_icon_amoled_inset</item>

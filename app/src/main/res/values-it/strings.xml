@@ -374,7 +374,7 @@
     <string name="app_icon_picker_subtitle">Scegli uno stile per l\'icona del launcher. La modifica ha effetto immediato e il launcher si aggiornerà brevemente.</string>
     <string name="app_icon_picker_warning">Cambiare icona potrebbe rimuovere momentaneamente Fedora Tube dalla schermata home. Aggiungila nuovamente dal drawer delle app, se necessario.</string>
     <string name="app_icon_apply_toast">Icona aggiornata - il tuo launcher si aggiornerà</string>
-    <string name="icon_name_flow_red">Rosso Fedora Tube</string>
+    <string name="icon_name_fedora_red">Rosso Fedora Tube</string>
     <string name="icon_name_amoled">AMOLED scuro</string>
     <string name="icon_name_monochrome">Monocromatica</string>
     <string name="icon_name_ghost">Ghost</string>
@@ -1442,7 +1442,7 @@
     <string name="appearance_system_defaults_subtitle">Scegli quale tema viene utilizzato quando il dispositivo passa dalla modalità chiara a quella scura.</string>
     <string name="appearance_system_light_theme">Tema modalità chiara</string>
     <string name="appearance_system_dark_theme">Tema modalità scura</string>
-    <string name="icon_name_flow_light">Fedora Tube Light</string>
+    <string name="icon_name_fedora_light">Fedora Tube Light</string>
     <string name="icon_name_material_sky">Material Sky</string>
     <string name="icon_name_material_mint">Material Mint</string>
     <string name="theme_name_material_you">Material You</string>
@@ -1637,7 +1637,7 @@
     <string name="player_settings_autoplay_countdown_title">Ritardo della riproduzione automatica</string>
     <string name="player_settings_autoplay_countdown_none">Nessuno (cambia immediatamente)</string>
     <string name="player_settings_autoplay_countdown_dialog_body">Mostra un conto alla rovescia prima del passaggio automatico al video successivo. Durante il conto alla rovescia puoi ricominciare il video attuale, annullare il passaggio, oppure riprodurre il video successivo immediatamente.</string>
-    <string name="icon_name_flow_play">Fedora Tube Play</string>
+    <string name="icon_name_fedora_play">Fedora Tube Play</string>
     <string name="autoplay_countdown_up_next">A seguire</string>
     <string name="autoplay_countdown_next_video">Prossimo video</string>
     <string name="autoplay_countdown_cancel">Annulla</string>

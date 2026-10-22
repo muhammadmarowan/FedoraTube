@@ -351,7 +351,7 @@
     <string name="app_icon_picker_subtitle">Выберите стиль значка. Изменения вступят в силу сразу, а рабочий стол перезапустится.</string>
     <string name="app_icon_picker_warning">Внимание: смена значка использует системный механизм Android, который может временно удалить ярлык приложения с главного экрана. Зажмите свободное место на рабочем столе, чтобы добавить его снова при необходимости.</string>
     <string name="app_icon_apply_toast">Иконка обновлена - рабочий стол обновится</string>
-    <string name="icon_name_flow_red">Fedora Tube Red</string>
+    <string name="icon_name_fedora_red">Fedora Tube Red</string>
     <string name="icon_name_amoled">AMOLED Dark</string>
     <string name="icon_name_monochrome">Монохром</string>
     <string name="icon_name_ghost">Призрак</string>
@@ -764,7 +764,7 @@
     <string name="appearance_system_defaults_subtitle">Выберите, какая тема будет использоваться при переключении устройства между светлым и темным режимами.</string>
     <string name="appearance_system_light_theme">Тема в светлом режиме</string>
     <string name="appearance_system_dark_theme">Тема в темном режиме</string>
-    <string name="icon_name_flow_light">Fedora Tube Light</string>
+    <string name="icon_name_fedora_light">Fedora Tube Light</string>
     <string name="icon_name_material_sky">Material Sky</string>
     <string name="icon_name_material_mint">Material Mint</string>
     <string name="player_appearance_brightness_gesture_title">Жест яркости</string>
@@ -1606,7 +1606,7 @@
     <string name="appearance_color_alpha">Прозрачность</string>
     <string name="appearance_navigate_back">Вернуться назад</string>
     <string name="appearance_selected">Выбрано</string>
-    <string name="icon_name_flow_play">Fedora Tube Play</string>
+    <string name="icon_name_fedora_play">Fedora Tube Play</string>
     <string name="player_fullscreen_seekbar_width_value">%1$d dp</string>
     <string name="lyrics_provider_lyrics_plus">LyricsPlus</string>
     <string name="currently_blocked">В данный момент заблокировано</string>

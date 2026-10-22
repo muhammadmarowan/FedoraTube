@@ -462,8 +462,8 @@
     <string name="app_icon_picker_subtitle">Wybierz styl ikony aplikacji. Po zmianie aplikacja uruchomi się ponownie.</string>
     <string name="app_icon_picker_warning">Uwaga: Zmiana ikony wykorzystuje mechanizm systemu Android, który może tymczasowo usunąć skrót z ekranu głównego. Jeśli tak się stanie, wystarczy dodać go ponownie z listy aplikacji.</string>
     <string name="app_icon_apply_toast">Ikona zaktualizowana - aplikacja się włączy ponownie</string>
-    <string name="icon_name_flow_red">Fedora Tube Czerwony</string>
-    <string name="icon_name_flow_light">Fedora Tube Jasny</string>
+    <string name="icon_name_fedora_red">Fedora Tube Czerwony</string>
+    <string name="icon_name_fedora_light">Fedora Tube Jasny</string>
     <string name="icon_name_amoled">Czarny AMOLED</string>
     <string name="icon_name_monochrome">Monochromatyczny</string>
     <string name="icon_name_ghost">Duch</string>
@@ -1547,7 +1547,7 @@
     <string name="appearance_color_alpha">Alfa</string>
     <string name="appearance_navigate_back">Nawiguj wstecz</string>
     <string name="appearance_selected">Zaznaczono</string>
-    <string name="icon_name_flow_play">Fedora Tube Play</string>
+    <string name="icon_name_fedora_play">Fedora Tube Play</string>
     <string name="shorts_saved">Short został zapisany</string>
     <string name="shorts_unsaved">Short nie został zapisany</string>
     <string name="autoplay_countdown_up_next">Następny</string>

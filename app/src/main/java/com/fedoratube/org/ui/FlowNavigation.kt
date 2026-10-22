@@ -10,6 +10,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.fedoratube.org.data.feed.ShortsQueueSource
 import com.fedoratube.org.data.local.PlaylistRepository
 import com.fedoratube.org.data.localmedia.LocalMediaIds
 import com.fedoratube.org.data.localmedia.toMusicTrack
@@ -17,7 +18,6 @@ import com.fedoratube.org.data.localmedia.toVideo
 import com.fedoratube.org.data.model.Video
 import com.fedoratube.org.data.music.model.toMusicTrack
 import com.fedoratube.org.data.music.model.toVideo
-import com.fedoratube.org.data.shorts.queue.ShortsQueueSource
 import com.fedoratube.org.player.GlobalPlayerState
 import com.fedoratube.org.ui.components.layout.LocalFlowBottomInsets
 import com.fedoratube.org.ui.components.layout.navigation.MediaNavigator
@@ -43,7 +43,6 @@ import com.fedoratube.org.ui.screens.recap.RecapScreen
 import com.fedoratube.org.ui.screens.recap.story.RecapStoryScreen
 import com.fedoratube.org.ui.screens.search.SearchScreen
 import com.fedoratube.org.ui.screens.settings.SettingsHost
-import com.fedoratube.org.ui.screens.shorts.ShortsScreen
 import com.fedoratube.org.ui.screens.subscriptions.SubscriptionsScreen
 import com.fedoratube.org.ui.screens.update.UPDATE_ROUTE
 import com.fedoratube.org.ui.screens.update.UpdateScreen
@@ -131,31 +130,7 @@ fun NavGraphBuilder.flowAppGraph(
         )
     }
 
-    composable(
-        route = SHORTS_ROUTE_PATTERN,
-        arguments =
-            listOf(
-                navArgument(SHORTS_ROUTE_ARG) {
-                    type = NavType.StringType
-                    nullable = true
-                    defaultValue = null
-                },
-            ),
-    ) { backStackEntry ->
-        currentRoute.value = SHORTS_ROUTE_KEY
-        val source = ShortsQueueSource.decode(backStackEntry.arguments?.getString(SHORTS_ROUTE_ARG))
-        val isRootTab = source == ShortsQueueSource.Feed
-        ShortsScreen(
-            source = source,
-            bottomNavOverlayPadding = if (isRootTab) LocalFlowBottomInsets.current.barBottom else 0.dp,
-            onBack = {
-                navController.popBackStack()
-            },
-            onChannelClick = { channelId ->
-                mediaNavigator.openChannel(channelId)
-            },
-        )
-    }
+
 
     composable("subscriptions") { backStackEntry ->
         currentRoute.value = "subscriptions"

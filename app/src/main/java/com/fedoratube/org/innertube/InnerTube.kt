@@ -1,7 +1,7 @@
 package com.fedoratube.org.innertube
 
 import android.util.Log
-import com.fedoratube.org.FlowApplication
+import com.fedoratube.org.FedoraApplication
 import com.fedoratube.org.data.local.PlayerPreferences
 import com.fedoratube.org.innertube.models.Context
 import com.fedoratube.org.innertube.models.MediaInfo
@@ -1122,7 +1122,7 @@ class InnerTube {
                         it?.videoPrimaryInfoRenderer != null
                     }?.videoPrimaryInfoRenderer
 
-            val rytdEnabled = PlayerPreferences(FlowApplication.appContext).rytdEnabled.first()
+            val rytdEnabled = PlayerPreferences(FedoraApplication.appContext).rytdEnabled.first()
             val returnYouTubeDislikeResponse =
                 if (rytdEnabled) {
                     returnYouTubeDislike(videoId).body<ReturnYouTubeDislikeResponse>()

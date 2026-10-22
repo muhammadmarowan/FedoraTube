@@ -555,9 +555,9 @@
     <string name="app_icon_picker_subtitle">选择启动器图标样式。更改立即生效，启动器将短暂刷新。</string>
     <string name="app_icon_picker_warning">注意：切换图标使用 Android 系统机制，可能会暂时从主屏幕上删除应用程序快捷方式。如果需要，长按启动器可将其添加回来。</string>
     <string name="app_icon_apply_toast">图标已更新 - 您的启动器将刷新</string>
-    <string name="icon_name_flow_red">Fedora Tube 红色</string>
-    <string name="icon_name_flow_light">Fedora Tube Light</string>
-    <string name="icon_name_flow_play">Fedora Tube Play</string>
+    <string name="icon_name_fedora_red">Fedora Tube 红色</string>
+    <string name="icon_name_fedora_light">Fedora Tube Light</string>
+    <string name="icon_name_fedora_play">Fedora Tube Play</string>
     <string name="icon_name_amoled">AMOLED 深色</string>
     <string name="icon_name_monochrome">单色</string>
     <string name="icon_name_ghost">幽灵</string>

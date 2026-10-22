@@ -443,9 +443,9 @@
     <string name="app_icon_picker_subtitle">選擇啟動器圖示樣式。變更會立即生效，啟動器將短暫重新整理。</string>
     <string name="app_icon_picker_warning">變更圖示可能會暫時將 Fedora Tube 從主畫面移除。如有需要，請從應用程式抽屜將它加回主畫面。</string>
     <string name="app_icon_apply_toast">圖示已更新－啟動器將重新整理</string>
-    <string name="icon_name_flow_red">Fedora Tube Red</string>
-    <string name="icon_name_flow_light">Fedora Tube Light</string>
-    <string name="icon_name_flow_play">Fedora Tube Play</string>
+    <string name="icon_name_fedora_red">Fedora Tube Red</string>
+    <string name="icon_name_fedora_light">Fedora Tube Light</string>
+    <string name="icon_name_fedora_play">Fedora Tube Play</string>
     <string name="icon_name_amoled">AMOLED黑</string>
     <string name="icon_name_monochrome">單色</string>
     <string name="icon_name_ghost">幽靈</string>

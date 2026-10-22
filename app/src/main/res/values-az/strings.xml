@@ -555,9 +555,9 @@
     <string name="app_icon_picker_subtitle">Başladıcı nişanının üslubunu seçin. Dəyişiklik dərhal qüvvəyə minəcək və başladıcı qısa müddətə yenilənəcək.</string>
     <string name="app_icon_picker_warning">Diqqət: nişan dəyişdirilərkən Android sistem mexanizmi tətbiq qısayolunu əsas ekrandan qısa müddətə silə bilər. Lazım gələrsə, başladıcıya basıb saxlayaraq onu yenidən əlavə edin.</string>
     <string name="app_icon_apply_toast">Nişan yeniləndi — başladıcı yenilənəcək</string>
-    <string name="icon_name_flow_red">Fedora Tube qırmızısı</string>
-    <string name="icon_name_flow_light">Fedora Tube açıq</string>
-    <string name="icon_name_flow_play">Fedora Tube Play</string>
+    <string name="icon_name_fedora_red">Fedora Tube qırmızısı</string>
+    <string name="icon_name_fedora_light">Fedora Tube açıq</string>
+    <string name="icon_name_fedora_play">Fedora Tube Play</string>
     <string name="icon_name_amoled">AMOLED tünd</string>
     <string name="icon_name_monochrome">Monoxrom</string>
     <string name="icon_name_ghost">Ruh</string>

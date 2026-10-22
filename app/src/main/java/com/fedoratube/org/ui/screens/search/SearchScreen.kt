@@ -47,7 +47,7 @@ import com.fedoratube.org.data.model.Playlist
 import com.fedoratube.org.data.model.Video
 import com.fedoratube.org.data.paging.SearchResultItem
 import com.fedoratube.org.data.paging.supportsVideoFilters
-import com.fedoratube.org.data.shorts.queue.ShortsQueueSource
+import com.fedoratube.org.data.feed.ShortsQueueSource
 import com.fedoratube.org.ui.OnTabReselected
 import com.fedoratube.org.ui.components.layout.navigation.FlowTab
 import com.fedoratube.org.ui.components.layout.navigation.LocalMediaNavigator

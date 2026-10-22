@@ -136,6 +136,12 @@ class MusicPlayerViewModel
             }
 
             viewModelScope.launch {
+                EnhancedMusicPlayerManager.isLiked.collect { liked ->
+                    _uiState.update { it.copy(isLiked = liked) }
+                }
+            }
+
+            viewModelScope.launch {
                 EnhancedMusicPlayerManager.currentPosition.collect { position ->
                     acceptedPlaybackPosition(position)?.let { acceptedPosition ->
                         _currentPositionMs.value = acceptedPosition

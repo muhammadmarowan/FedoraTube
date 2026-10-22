@@ -3,7 +3,7 @@ package com.fedoratube.org.data.subscriptions
 import com.fedoratube.org.data.local.AppDatabase
 import com.fedoratube.org.data.local.PlayerPreferences
 import com.fedoratube.org.data.local.ViewHistory
-import com.fedoratube.org.data.shorts.finishedShortIds
+import com.fedoratube.org.data.feed.finishedShortIds
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged

@@ -11,8 +11,8 @@
     <color name="icon_bg_monochrome">#000000</color>
     <color name="icon_bg_ghost">#000000</color>
     <color name="icon_bg_dynamic">#000000</color>
-    <color name="icon_bg_flow_light">#000000</color>
-    <color name="icon_bg_flow_play">#000000</color>
+    <color name="icon_bg_fedora_light">#000000</color>
+    <color name="icon_bg_fedora_play">#000000</color>
     <color name="icon_bg_material_sky">#000000</color>
     <color name="icon_bg_material_mint">#000000</color>
     <color name="icon_bg_expressive_scallop">#000000</color>

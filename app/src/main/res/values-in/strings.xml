@@ -122,7 +122,7 @@
     <string name="appearance_category_dark">Gelap</string>
     <string name="appearance_category_special">Spesial</string>
     <string name="app_icon_apply_toast">Ikon diperbarui - launcher Anda akan disegarkan</string>
-    <string name="icon_name_flow_red">Fedora Tube Merah</string>
+    <string name="icon_name_fedora_red">Fedora Tube Merah</string>
     <string name="icon_name_amoled">AMOLED Gelap</string>
     <string name="icon_name_monochrome">Monokrom</string>
     <string name="icon_name_ghost">Hantu</string>
@@ -1442,7 +1442,7 @@
     <string name="appearance_system_defaults_subtitle">Pilih tema yang digunakan saat perangkat Anda beralih antara mode terang dan gelap.</string>
     <string name="appearance_system_light_theme">Tema mode terang</string>
     <string name="appearance_system_dark_theme">Tema mode gelap</string>
-    <string name="icon_name_flow_light">Fedora Tube Light</string>
+    <string name="icon_name_fedora_light">Fedora Tube Light</string>
     <string name="icon_name_material_sky">Material Sky</string>
     <string name="icon_name_material_mint">Material Mint</string>
     <string name="player_adaptive_size_title">Ukuran Pemutar Adaptif</string>
@@ -1628,7 +1628,7 @@
     <string name="content_settings_share_without_text_subtitle">Bagikan hanya tautan video, tanpa pesan “Check out this video”</string>
     <string name="deep_flow_save_history_title">Simpan untuk melihat riwayat tontonan</string>
     <string name="deep_flow_save_history_subtitle">Simpan riwayat tontonan tanpa memengaruhi rekomendasi</string>
-    <string name="icon_name_flow_play">Fedora Tube mainkan</string>
+    <string name="icon_name_fedora_play">Fedora Tube mainkan</string>
     <string name="player_appearance_controls_while_loading_title">Kontrol Saat Memuat</string>
     <string name="player_appearance_controls_while_loading_subtitle">Tampilkan kontrol sebelum video selesai dimuat</string>
     <string name="player_settings_autoplay_countdown_title">Jeda putar otomatis</string>
