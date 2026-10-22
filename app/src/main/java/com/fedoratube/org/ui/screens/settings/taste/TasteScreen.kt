@@ -105,10 +105,10 @@ internal fun TasteScreen(
                 onOpenFavouriteArtists = { onNavigate(SettingsTarget(SettingsDestination.FAVOURITE_ARTISTS)) },
                 onOpenDiscoverChannels = { onNavigate(SettingsTarget(SettingsDestination.DISCOVER_CHANNELS)) },
                 onOpenRecap = onOpenRecap,
-                onExportVideo = { exportVideo.launch("flow_video_profile_${LocalDate.now()}.json") },
+                onExportVideo = { exportVideo.launch("fedoratube_video_profile_${LocalDate.now()}.json") },
                 onImportVideo = { importVideo.launch(arrayOf(JSON)) },
                 onResetVideo = { confirmReset = ResetKind.VIDEO },
-                onExportMusic = { exportMusic.launch("flow_music_profile_${LocalDate.now()}.json") },
+                onExportMusic = { exportMusic.launch("fedoratube_music_profile_${LocalDate.now()}.json") },
                 onImportMusic = { importMusic.launch(arrayOf(JSON)) },
                 onResetMusic = { confirmReset = ResetKind.MUSIC },
             )

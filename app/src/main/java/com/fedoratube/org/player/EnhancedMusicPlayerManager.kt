@@ -167,7 +167,7 @@ object EnhancedMusicPlayerManager {
     private val _repeatMode = MutableStateFlow(RepeatMode.OFF)
     val repeatMode: StateFlow<RepeatMode> = _repeatMode.asStateFlow()
 
-    private val _playingFrom = MutableStateFlow("Flow Music")
+    private val _playingFrom = MutableStateFlow("FedoraTube Music")
     val playingFrom: StateFlow<String> = _playingFrom.asStateFlow()
 
     private val _isLiked = MutableStateFlow(false)

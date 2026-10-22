@@ -95,11 +95,12 @@ fun SearchScreen(
 
     val mediaNavigator = LocalMediaNavigator.current
     val search: (String, SearchFilter) -> Unit = { query, filters ->
-        state.onSubmit(query)
-        viewModel.submit(query, filters)
+        val clean = query.trim().trimEnd('.', '?', '!', ',', ';')
+        state.onSubmit(clean)
+        viewModel.submit(clean, filters)
     }
     val submitWith: (String, SearchFilter) -> Unit = { raw, filters ->
-        val text = raw.trim()
+        val text = raw.trim().trimEnd('.', '?', '!', ',', ';')
         val link = parseYouTubeLink(text)
         when {
             text.isEmpty() -> Unit
@@ -109,6 +110,8 @@ fun SearchScreen(
         }
     }
     val submit: (String) -> Unit = { raw -> submitWith(raw, uiState.filters) }
+    val focusManager = LocalFocusManager.current
+    val keyboard = LocalSoftwareKeyboardController.current
 
     val voiceSearchLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -118,15 +121,17 @@ fun SearchScreen(
                 ?.firstOrNull()
                 ?.takeIf(String::isNotBlank)
                 ?.let { spoken ->
-                    state.textFieldState.setTextAndPlaceCursorAtEnd(spoken)
-                    submit(spoken)
+                    val clean = spoken.trim().trimEnd('.', '?', '!', ',', ';')
+                    focusManager.clearFocus(force = true)
+                    keyboard?.hide()
+                    state.onSubmit(clean)
+                    state.textFieldState.setTextAndPlaceCursorAtEnd(clean)
+                    submit(clean)
                 }
         }
 
     val showResults = uiState.query.isNotBlank() && !state.isTyping
     val focusRequester = remember { FocusRequester() }
-    val focusManager = LocalFocusManager.current
-    val keyboard = LocalSoftwareKeyboardController.current
 
     LaunchedEffect(showResults) {
         if (showResults) {

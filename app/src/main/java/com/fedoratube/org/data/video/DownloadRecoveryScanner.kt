@@ -95,7 +95,7 @@ class DownloadRecoveryScanner
 
         private fun defaultFolders(): List<File> =
             buildList {
-                listOf(VIDEO_DIR, "Flow").forEach { folderName ->
+                listOf(VIDEO_DIR, "FedoraTube", "Flow").forEach { folderName ->
                     listOf(Environment.DIRECTORY_DOWNLOADS, Environment.DIRECTORY_MOVIES, Environment.DIRECTORY_MUSIC).forEach { type ->
                         runCatching { add(File(Environment.getExternalStoragePublicDirectory(type), folderName)) }
                         context.getExternalFilesDir(type)?.let { add(File(it, folderName)) }

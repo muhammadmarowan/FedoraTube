@@ -148,7 +148,7 @@ internal fun DiagnosticsScreen(
                 showChevron = false,
                 enabled = snapshotCount > 0,
                 value = noSnapshotText.takeIf { snapshotCount == 0 },
-                onClick = { exportSnapshot.launch("flow_home_snapshot_${LocalDate.now()}.json.gz") },
+                onClick = { exportSnapshot.launch("fedoratube_home_snapshot_${LocalDate.now()}.json.gz") },
             )
         }
         item("diagnostics.tabs") {

@@ -127,7 +127,7 @@ object PlayerDiagnostics {
 
         // Header
         sb.appendLine("═══════════════════════════════════")
-        sb.appendLine("       FLOW PLAYER DIAGNOSTICS")
+        sb.appendLine("       FEDORATUBE PLAYER DIAGNOSTICS")
         sb.appendLine("  ${DATE_FORMAT.format(Date())} — ${Build.MODEL}")
         sb.appendLine("═══════════════════════════════════")
         sb.appendLine()
@@ -215,7 +215,7 @@ object PlayerDiagnostics {
         return try {
             val report = buildReport(context)
             val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-            val clip = ClipData.newPlainText("Flow Player Diagnostics", report)
+            val clip = ClipData.newPlainText("FedoraTube Player Diagnostics", report)
             clipboard.setPrimaryClip(clip)
             Log.i(TAG, "Diagnostics copied to clipboard (${report.length} chars)")
             true

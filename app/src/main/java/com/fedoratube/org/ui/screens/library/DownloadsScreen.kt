@@ -5,7 +5,6 @@ import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,6 +13,8 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Checklist
 import androidx.compose.material.icons.filled.SelectAll
@@ -31,6 +32,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -187,14 +189,34 @@ fun DownloadsScreen(
                         uiState.incompleteMusicDownloads.isEmpty()
 
                 val musicColumns = flowGridColumns(compact = 1, medium = 1, expanded = 2)
-                Crossfade(
-                    targetState = selectedKind,
-                    animationSpec = MaterialTheme.motionScheme.defaultEffectsSpec(),
-                    label = "downloads_kind",
+                val pagerState =
+                    rememberPagerState(
+                        initialPage = if (selectedKind == MediaKind.Videos) 0 else 1,
+                        pageCount = { 2 },
+                    )
+                val pagerScope = rememberCoroutineScope()
+
+                LaunchedEffect(pagerState.currentPage) {
+                    val newKind = if (pagerState.currentPage == 0) MediaKind.Videos else MediaKind.Music
+                    if (selectedKind != newKind) {
+                        exitSelection()
+                        selectedKind = newKind
+                    }
+                }
+
+                LaunchedEffect(selectedKind) {
+                    val targetPage = if (selectedKind == MediaKind.Videos) 0 else 1
+                    if (pagerState.currentPage != targetPage) {
+                        pagerState.animateScrollToPage(targetPage)
+                    }
+                }
+
+                HorizontalPager(
+                    state = pagerState,
                     modifier = Modifier.weight(1f).dismissKeyboardOnPress { focusManager.clearFocus() },
-                ) { kind ->
-                    when (kind) {
-                        MediaKind.Videos -> {
+                ) { page ->
+                    when (page) {
+                        0 -> {
                             VideosDownloadsList(
                                 shelf = { inset ->
                                     DownloadCollectionsShelf(uiState.videoCollections, onOpenCollection, onRemoveCollection, inset)
@@ -215,7 +237,7 @@ fun DownloadsScreen(
                             )
                         }
 
-                        MediaKind.Music -> {
+                        1 -> {
                             MusicDownloadsList(
                                 shelf = { inset ->
                                     DownloadCollectionsShelf(uiState.musicCollections, onOpenCollection, onRemoveCollection, inset)

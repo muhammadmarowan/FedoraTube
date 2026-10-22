@@ -45,7 +45,7 @@ class CrashSummaryTest {
 
         assertThat(
             url,
-        ).startsWith("https://github.com/Flow-Tube/Flow/issues/new?template=bug_report.yml&title=%5BBug%5D%3A%20IllegalArgumentException")
+        ).startsWith("https://github.com/muhammadmarowan/FedoraTube/issues/new?template=bug_report.yml&title=%5BBug%5D%3A%20IllegalArgumentException")
         assertThat(url).contains("&app-version=2.2.5&")
         assertThat(url).contains("&android-version=16%20%28SDK%2036%29&")
         assertThat(url).contains("&device=Xiaomi%2023049PCD8G&")
@@ -57,8 +57,8 @@ class CrashSummaryTest {
         val url = parseCrashSummary(report).issueUrl()
 
         assertThat(url).contains("&steps=Not%20known.")
-        assertThat(url).contains("&expected=Flow%20keeps%20running.")
-        assertThat(url).contains("&actual=Flow%20crashed%20with%20IllegalArgumentException%3A%20Padding%20must%20be%20non-negative&")
+        assertThat(url).contains("&expected=Fedora%20Tube%20keeps%20running.")
+        assertThat(url).contains("&actual=FedoraTube%20crashed%20with%20IllegalArgumentException%3A%20Padding%20must%20be%20non-negative&")
     }
 
     @Test

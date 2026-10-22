@@ -251,12 +251,12 @@ class Media3MusicService : MediaLibraryService() {
 
         try {
             val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
-            wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "Flow:MusicServiceWakeLock")
+            wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "FedoraTube:MusicServiceWakeLock")
             wakeLock?.setReferenceCounted(false)
 
             val wifiManager = applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
             @Suppress("DEPRECATION")
-            wifiLock = wifiManager.createWifiLock(WifiManager.WIFI_MODE_FULL, "Flow:MusicServiceWifiLock")
+            wifiLock = wifiManager.createWifiLock(WifiManager.WIFI_MODE_FULL, "FedoraTube:MusicServiceWifiLock")
             wifiLock?.setReferenceCounted(false)
         } catch (e: Exception) {
             Log.e(TAG, "Failed to acquire locks", e)

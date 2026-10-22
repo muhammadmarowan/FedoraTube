@@ -87,12 +87,12 @@ class VideoPlayerService : MediaSessionService() {
 
         try {
             val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
-            wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "Flow:VideoPlayerWakeLock")
+            wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "FedoraTube:VideoPlayerWakeLock")
             wakeLock?.setReferenceCounted(false)
 
             val wifiManager = applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
             @Suppress("DEPRECATION")
-            wifiLock = wifiManager.createWifiLock(WifiManager.WIFI_MODE_FULL, "Flow:VideoPlayerWifiLock")
+            wifiLock = wifiManager.createWifiLock(WifiManager.WIFI_MODE_FULL, "FedoraTube:VideoPlayerWifiLock")
             wifiLock?.setReferenceCounted(false)
         } catch (e: Exception) {
             Log.e(TAG, "Failed to create locks", e)

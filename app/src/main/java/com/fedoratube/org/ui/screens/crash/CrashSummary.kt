@@ -77,7 +77,7 @@ fun CrashSummary.issueUrl(): String {
             device?.let { "device" to it },
             "steps" to UNKNOWN_STEPS,
             "expected" to EXPECTED,
-            "actual" to "Flow crashed with $error".take(MAX_URL_ACTUAL_CHARS),
+            "actual" to "FedoraTube crashed with $error".take(MAX_URL_ACTUAL_CHARS),
             "logs" to log,
         )
     return NEW_ISSUE_URL + "?" +

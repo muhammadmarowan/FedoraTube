@@ -334,6 +334,15 @@ private fun FocusModeContent(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.fillMaxWidth().offset(y = (-60).dp),
         ) {
+            Image(
+                painter = painterResource(R.drawable.ic_fedora_tube_wordmark),
+                contentDescription = stringResource(R.string.app_name),
+                modifier = Modifier.height(36.dp),
+                contentScale = ContentScale.FillHeight,
+            )
+
+            Spacer(modifier = Modifier.height(28.dp))
+
             Surface(
                 onClick = onSearchClick,
                 shape = CircleShape,

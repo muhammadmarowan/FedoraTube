@@ -5,7 +5,7 @@ import java.nio.ByteBuffer
 
 /** Builds the iTunes-style `ilst` atom list (the only MP4 tag form Android's MediaStore reads). */
 internal object IlstAtoms {
-    const val ENCODER_NAME = "Flow"
+    const val ENCODER_NAME = "FedoraTube"
     const val MAX_COVER_BYTES = 1_000_000
 
     private const val DATA_TYPE_IMPLICIT = 0

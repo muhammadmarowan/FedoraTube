@@ -19,6 +19,8 @@ import com.fedoratube.org.innertube.models.SearchSuggestions
 import com.fedoratube.org.innertube.models.YTItem
 import com.fedoratube.org.innertube.pages.ArtistSectionKind
 import com.fedoratube.org.innertube.pages.MoodAndGenres
+import com.fedoratube.org.innertube.pages.SearchSummary
+import com.fedoratube.org.innertube.pages.SearchSummaryKind
 import com.fedoratube.org.innertube.pages.SearchSummaryPage
 import com.fedoratube.org.ui.components.search.matchingTyped
 import com.fedoratube.org.utils.PerformanceDispatcher
@@ -117,33 +119,61 @@ class MusicSearchViewModel
             q: String = _query.value,
             type: SearchType = SearchType.TEXT,
         ) {
-            if (q.isBlank()) return
+            val cleanQ = q.trim().trimEnd('.', '?', '!', ',', ';')
+            if (cleanQ.isBlank()) return
 
-            _query.value = q
-            viewModelScope.launch { searchHistory.saveSearchQuery(q.trim(), type, SearchHistoryScope.MUSIC) }
+            _query.value = cleanQ
+            viewModelScope.launch { searchHistory.saveSearchQuery(cleanQ, type, SearchHistoryScope.MUSIC) }
             _uiState.update { it.copy(isLoading = true, isSearching = true, activeFilter = null, error = null) }
 
             viewModelScope.launch(PerformanceDispatcher.networkIO) {
                 val result =
                     withTimeoutOrNull(15_000L) {
-                        YouTube.searchSummary(q)
+                        YouTube.searchSummary(cleanQ)
                     }
 
-                result
-                    ?.onSuccess { summaryPage ->
-                        _uiState.update { state ->
-                            state.copy(
-                                searchSummary = summaryPage.distinctItemsForLazyKeys(),
-                                isLoading = false,
-                                isSearching = true,
-                                continuation = summaryPage.continuation,
+                var summaryPage = result?.getOrNull()
+                if (summaryPage == null || summaryPage.summaries.isEmpty() || summaryPage.summaries.all { it.items.isEmpty() }) {
+                    val fallbackResult =
+                        withTimeoutOrNull(12_000L) {
+                            YouTube.search(cleanQ, SearchFilter.FILTER_SONG)
+                        }?.getOrNull()
+
+                    if (fallbackResult != null && fallbackResult.items.isNotEmpty()) {
+                        summaryPage =
+                            SearchSummaryPage(
+                                summaries =
+                                    listOf(
+                                        SearchSummary(
+                                            title = context.getString(R.string.filter_songs),
+                                            items = fallbackResult.items,
+                                            kind = SearchSummaryKind.SONGS,
+                                        ),
+                                    ),
+                                continuation = fallbackResult.continuation,
                             )
-                        }
-                    }?.onFailure { throwable ->
-                        android.util.Log.w("MusicSearchViewModel", "Search failed", throwable)
-                        _uiState.update { state -> state.copy(isLoading = false, error = context.getString(R.string.search_failed)) }
-                    } ?: run {
-                    _uiState.update { state -> state.copy(isLoading = false, error = context.getString(R.string.error_search_timed_out)) }
+                    }
+                }
+
+                if (summaryPage != null && summaryPage.summaries.any { it.items.isNotEmpty() }) {
+                    _uiState.update { state ->
+                        state.copy(
+                            searchSummary = summaryPage.distinctItemsForLazyKeys(),
+                            isLoading = false,
+                            isSearching = true,
+                            continuation = summaryPage.continuation,
+                        )
+                    }
+                } else if (result?.isFailure == true) {
+                    _uiState.update { state -> state.copy(isLoading = false, error = context.getString(R.string.search_failed)) }
+                } else {
+                    _uiState.update { state ->
+                        state.copy(
+                            searchSummary = SearchSummaryPage(emptyList()),
+                            isLoading = false,
+                            isSearching = true,
+                        )
+                    }
                 }
             }
         }

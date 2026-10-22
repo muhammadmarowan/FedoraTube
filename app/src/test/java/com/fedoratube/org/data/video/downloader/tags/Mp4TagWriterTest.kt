@@ -75,7 +75,7 @@ class Mp4TagWriterTest {
         assertThat(Mp4Fixtures.ilstText(ilst, "©cmt")).isEqualTo(tags.sourceUrl)
         assertThat(Mp4Fixtures.ilstText(ilst, "desc")).isEqualTo(tags.description)
         assertThat(Mp4Fixtures.ilstText(ilst, "©lyr")).isEqualTo(tags.lyrics)
-        assertThat(Mp4Fixtures.ilstText(ilst, "©too")).isEqualTo("Flow")
+        assertThat(Mp4Fixtures.ilstText(ilst, "©too")).isEqualTo("FedoraTube")
         val trkn = Mp4Fixtures.ilstData(ilst, "trkn")!!
         assertThat(trkn.first).isEqualTo(0)
         assertThat(trkn.second.map { it.toInt() }).containsExactly(0, 0, 0, 1, 0, 10, 0, 0).inOrder()

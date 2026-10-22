@@ -301,7 +301,7 @@ object Paxsenix {
                 Request
                     .Builder()
                     .url(url)
-                    .header("User-Agent", "Flow/$appVersion")
+                    .header("User-Agent", "FedoraTube/$appVersion")
                     .build()
 
             val response = client.newCall(request).execute()

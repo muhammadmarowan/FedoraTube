@@ -31,8 +31,8 @@ class BackupAndTopicsHelpersTest {
     @Test
     fun `export file names keep their historical shapes`() {
         val now = Instant.ofEpochMilli(1_700_000_000_000)
-        assertEquals("flow_master_backup_1700000000000.zip", ExportKind.MASTER.fileName(now))
-        assertEquals("flow-watch-history.json", ExportKind.WATCH_HISTORY.fileName(now))
+        assertEquals("fedoratube_master_backup_1700000000000.zip", ExportKind.MASTER.fileName(now))
+        assertEquals("fedoratube-watch-history.json", ExportKind.WATCH_HISTORY.fileName(now))
     }
 
     @Test

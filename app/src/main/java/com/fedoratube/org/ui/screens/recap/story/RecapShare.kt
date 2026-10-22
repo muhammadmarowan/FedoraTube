@@ -11,7 +11,7 @@ import kotlinx.coroutines.withContext
 import java.io.File
 
 private const val SHARE_DIR = "recap"
-private const val SHARE_FILE = "flow_recap.png"
+private const val SHARE_FILE = "fedoratube_recap.png"
 private const val PNG_QUALITY = 100
 
 /**

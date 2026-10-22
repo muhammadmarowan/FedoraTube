@@ -166,7 +166,7 @@ internal fun listensJson(
                                         "additional_info",
                                         buildJsonObject {
                                             if (entry.durationSec > 0) put("duration_ms", entry.durationSec * 1000L)
-                                            put("submission_client", "Flow")
+                                            put("submission_client", "FedoraTube")
                                             put("submission_client_version", BuildConfig.VERSION_NAME)
                                             if (entry.fromYouTube) put("music_service", "music.youtube.com")
                                         },

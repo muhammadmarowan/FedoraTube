@@ -1,14 +1,28 @@
 package com.fedoratube.org.ui.components.musicplayer.full
 
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -22,11 +36,15 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.min
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import com.fedoratube.org.R
 import com.fedoratube.org.data.local.MusicPlayerBackgroundStyle
 import com.fedoratube.org.data.localmedia.LocalMediaIds
 import com.fedoratube.org.data.music.model.MusicTrack
@@ -203,6 +221,19 @@ internal fun FullMusicPlayerContent(
         showLyricsSheet = true
     }
 
+    var isArtworkFlipped by rememberSaveable { mutableStateOf(false) }
+
+    LaunchedEffect(uiState.currentTrack?.videoId) {
+        isArtworkFlipped = false
+    }
+
+    val artworkFlipRotation by animateFloatAsState(
+        targetValue = if (isArtworkFlipped) 180f else 0f,
+        animationSpec = tween(durationMillis = 500, easing = FastOutSlowInEasing),
+        label = "artwork_flip",
+    )
+    val cardLyricsBackdrop = remember(palette.base) { lyricsBackdrop(palette.base) }
+
     BoxWithConstraints(
         modifier = Modifier.fillMaxSize(),
     ) {
@@ -257,33 +288,94 @@ internal fun FullMusicPlayerContent(
                         isPlaying = uiState.isPlaying,
                         modifier = modifier,
                     ) {
-                        PlayerArtwork(
-                            thumbnailUrl = thumbnailUrl,
-                            previousThumbnailUrl = previousTrack?.highResThumbnailUrl,
-                            nextThumbnailUrl = nextTrack?.highResThumbnailUrl,
-                            previewDirection = previewDirection,
-                            // Spinners in the warm, collapsed tree animate at alpha 0 otherwise.
-                            isLoading = (uiState.isLoading || videoLoading) && isPlayerSheetExpanded,
-                            hideArtwork = hideArtwork || immersiveBackground || videoShowing,
-                            hiddenArtworkColor =
-                                if (immersiveBackground || videoShowing) Color.Unspecified else colorScheme.surfaceContainerHigh,
-                            onSkipPrevious = { viewModel.skipToPrevious() },
-                            onSkipNext = { viewModel.skipToNext() },
-                            modifier = Modifier.fillMaxSize(),
-                            onDragPreviewChange = { artworkDragPreview = it },
-                            underlay =
-                                videoPlayer?.let { player ->
-                                    {
-                                        PlayerVideo(
-                                            player = player,
-                                            cornerRadius = PlayerArtworkCornerRadius,
-                                            onShowingChange = { videoShowing = it },
-                                            modifier = Modifier.fillMaxSize(),
+                        val frameDensity = LocalDensity.current
+                        Box(
+                            modifier =
+                                Modifier
+                                    .fillMaxSize()
+                                    .graphicsLayer {
+                                        rotationY = artworkFlipRotation
+                                        cameraDistance = 12f * frameDensity.density
+                                    },
+                        ) {
+                            if (artworkFlipRotation <= 90f) {
+                                Box(
+                                    modifier =
+                                        Modifier
+                                            .fillMaxSize()
+                                            .clickable {
+                                                uiState.currentTrack?.let { viewModel.ensureLyricsLoaded(it) }
+                                                isArtworkFlipped = true
+                                            },
+                                ) {
+                                    PlayerArtwork(
+                                        thumbnailUrl = thumbnailUrl,
+                                        previousThumbnailUrl = previousTrack?.highResThumbnailUrl,
+                                        nextThumbnailUrl = nextTrack?.highResThumbnailUrl,
+                                        previewDirection = previewDirection,
+                                        // Spinners in the warm, collapsed tree animate at alpha 0 otherwise.
+                                        isLoading = (uiState.isLoading || videoLoading) && isPlayerSheetExpanded,
+                                        hideArtwork = hideArtwork || immersiveBackground || videoShowing,
+                                        hiddenArtworkColor =
+                                            if (immersiveBackground || videoShowing) Color.Unspecified else colorScheme.surfaceContainerHigh,
+                                        onSkipPrevious = { viewModel.skipToPrevious() },
+                                        onSkipNext = { viewModel.skipToNext() },
+                                        modifier = Modifier.fillMaxSize(),
+                                        onDragPreviewChange = { artworkDragPreview = it },
+                                        underlay =
+                                            videoPlayer?.let { player ->
+                                                {
+                                                    PlayerVideo(
+                                                        player = player,
+                                                        cornerRadius = PlayerArtworkCornerRadius,
+                                                        onShowingChange = { videoShowing = it },
+                                                        modifier = Modifier.fillMaxSize(),
+                                                    )
+                                                }
+                                            },
+                                        overlay = animatedArtwork.takeUnless { immersiveBackground },
+                                    )
+                                }
+                            } else {
+                                Box(
+                                    modifier =
+                                        Modifier
+                                            .fillMaxSize()
+                                            .graphicsLayer { rotationY = 180f }
+                                            .clip(RoundedCornerShape(PlayerArtworkCornerRadius))
+                                            .background(colorScheme.surfaceContainerHigh),
+                                ) {
+                                    NowPlayingLyricsPane(
+                                        uiState = uiState,
+                                        viewModel = viewModel,
+                                        accentColor = colorScheme.primary,
+                                        backdropColor = cardLyricsBackdrop,
+                                        positionState = positionState,
+                                        active = isPlayerSheetExpanded && isArtworkFlipped,
+                                    )
+
+                                    IconButton(
+                                        onClick = { isArtworkFlipped = false },
+                                        modifier =
+                                            Modifier
+                                                .align(Alignment.TopEnd)
+                                                .padding(8.dp)
+                                                .size(36.dp)
+                                                .background(
+                                                    color = MaterialTheme.colorScheme.surface.copy(alpha = 0.7f),
+                                                    shape = CircleShape,
+                                                ),
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Rounded.Close,
+                                            contentDescription = stringResource(R.string.close),
+                                            tint = MaterialTheme.colorScheme.onSurface,
+                                            modifier = Modifier.size(20.dp),
                                         )
                                     }
-                                },
-                            overlay = animatedArtwork.takeUnless { immersiveBackground },
-                        )
+                                }
+                            }
+                        }
                     }
                 },
                 header = { modifier ->

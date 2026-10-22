@@ -3,6 +3,10 @@ package com.fedoratube.org.ui
 import android.app.Activity
 import androidx.compose.animation.*
 import androidx.compose.animation.core.Animatable
+import androidx.compose.foundation.gestures.awaitEachGesture
+import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.foundation.gestures.awaitTouchSlopOrCancellation
+import androidx.compose.foundation.gestures.drag
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.offset
@@ -13,12 +17,15 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.input.pointer.positionChange
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import kotlin.math.abs
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.media3.common.util.UnstableApi
@@ -39,6 +46,7 @@ import com.fedoratube.org.ui.components.layout.FlowBottomInsets
 import com.fedoratube.org.ui.components.layout.LocalFlowBottomInsets
 import com.fedoratube.org.ui.components.layout.navigation.FlowNavigationChrome
 import com.fedoratube.org.ui.components.layout.navigation.FlowNavigationDefaults
+import com.fedoratube.org.ui.components.layout.navigation.FlowTab
 import com.fedoratube.org.ui.components.layout.navigation.NavigationVisibility
 import com.fedoratube.org.ui.components.layout.navigation.flowUsesNavigationRail
 import com.fedoratube.org.ui.components.layout.navigation.rememberFlowNavigationScrollState
@@ -470,11 +478,40 @@ fun FlowApp(
                         } else {
                             paddingValues
                         }
+
+                    val mainTabs = remember { listOf(FlowTab.Home, FlowTab.Music, FlowTab.Subscriptions, FlowTab.Library) }
+                    val isPlayerExpanded = playerSheetState.currentValue == PlayerSheetValue.Expanded || musicPlayerSheetState.isExpanded
+                    val isMainTab = currentRoute.value in mainTabs.map { it.route } && !isPlayerExpanded
+                    val isRtl = layoutDirection == LayoutDirection.Rtl
+
+                    val onAdvanceTab: () -> Unit = {
+                        val currentIndex = mainTabs.indexOf(selectedTab)
+                        if (currentIndex in 0 until mainTabs.size - 1) {
+                            val nextTab = mainTabs[currentIndex + 1]
+                            currentRoute.value = nextTab.route
+                            navController.navigateToTab(nextTab, defaultStartRoute)
+                        }
+                    }
+
+                    val onRecedeTab: () -> Unit = {
+                        val currentIndex = mainTabs.indexOf(selectedTab)
+                        if (currentIndex in 1 until mainTabs.size) {
+                            val prevTab = mainTabs[currentIndex - 1]
+                            currentRoute.value = prevTab.route
+                            navController.navigateToTab(prevTab, defaultStartRoute)
+                        }
+                    }
+
                     Box(
                         modifier =
                             Modifier
                                 .padding(if (isInPipMode) PaddingValues(0.dp) else contentPadding)
-                                .nestedScroll(navScrollState.nestedScrollConnection),
+                                .nestedScroll(navScrollState.nestedScrollConnection)
+                                .mainTabSwipeGesture(
+                                    enabled = isMainTab && !isInPipMode,
+                                    onSwipeLeft = if (isRtl) onRecedeTab else onAdvanceTab,
+                                    onSwipeRight = if (isRtl) onAdvanceTab else onRecedeTab,
+                                ),
                     ) {
                         if (needsOnboarding != null) {
                             val homeViewModel: HomeViewModel = hiltViewModel(activity!!)
@@ -579,5 +616,50 @@ fun FlowApp(
             enabled = needsOnboarding == false && !isInPipMode && !playerVisible,
             onNavigateToDonations = { navController.navigate("donations") },
         )
+    }
+}
+
+private fun Modifier.mainTabSwipeGesture(
+    enabled: Boolean,
+    onSwipeLeft: () -> Unit,
+    onSwipeRight: () -> Unit,
+): Modifier {
+    if (!enabled) return this
+    return this.pointerInput(enabled) {
+        val thresholdPx = 60f * density
+        awaitEachGesture {
+            val down = awaitFirstDown(requireUnconsumed = false)
+            var totalDragX = 0f
+            var totalDragY = 0f
+            var isHorizontal: Boolean? = null
+
+            val dragStart =
+                awaitTouchSlopOrCancellation(down.id) { change, overSlop ->
+                    totalDragX += overSlop.x
+                    totalDragY += overSlop.y
+                    if (abs(overSlop.x) > abs(overSlop.y) * 1.3f && abs(overSlop.x) > 8f) {
+                        isHorizontal = true
+                        change.consume()
+                    } else if (abs(overSlop.y) > abs(overSlop.x)) {
+                        isHorizontal = false
+                    }
+                }
+
+            if (isHorizontal == true && dragStart != null) {
+                var accumulatedX = totalDragX
+                val completed =
+                    drag(dragStart.id) { change ->
+                        accumulatedX += change.positionChange().x
+                        change.consume()
+                    }
+                if (completed) {
+                    if (accumulatedX < -thresholdPx) {
+                        onSwipeLeft()
+                    } else if (accumulatedX > thresholdPx) {
+                        onSwipeRight()
+                    }
+                }
+            }
+        }
     }
 }

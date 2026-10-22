@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">فلو</string>
+    <string name="app_name">Fedora Tube</string>
     <string name="subscriptions_search_placeholder">سبسکرپشن تلاش کریں…</string>
     <string name="subscriptions_sort_label">چینلز کو ترتیب دیں</string>
     <string name="subscriptions_sort_default">ڈیفالٹ</string>
