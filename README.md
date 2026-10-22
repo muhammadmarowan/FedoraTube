@@ -19,7 +19,7 @@
 
 ---
 
-## 📱 Screenshots
+## Screenshots
 
 <div align="center">
   <table>
@@ -52,47 +52,29 @@
 
 ---
 
-## ⚡ Highlights & Key Features
+## Highlights & Key Features
 
-### 🚫 100% Shorts-Free & Anti-Doomscroll
+### 100% Shorts-Free & Anti-Doomscroll
 * **Zero Shorts Feeds:** YouTube Shorts are permanently disabled and stripped out across the entire application.
-* **No Reel Addiction:** Say goodbye to endless vertical scrolling traps—FedoraTube eliminates Shorts shelves, navigation, and recommendations entirely.
+* **No Reel Addiction:** Say goodbye to endless vertical scrolling traps—FedoraTube eliminates Shorts shelves.
 * **Mindful Consumption:** Watch long-form, educational, and high-value content with full control over your time and focus.
 
-### 🎯 Minimalist Focus Mode
+### Minimalist Focus Mode
 * **Search-First Experience:** A clean, distraction-free interface featuring a central search bar with quick access to your media.
 * **No Algorithmic Clutter:** Suppress infinite home feeds and intrusive notifications.
-* **Focus Player:** Watch videos with comments accessible on-demand while related algorithmic suggestions stay hidden.
-* **Instant QR Sharing:** Share the application instantly with nearby friends directly from Focus Mode.
 
-### 🎵 Dedicated YouTube Music Engine
-* **Full Music Hub:** Browse trending hits, Top 100 charts, artist discographies, and personalized mood & genre stations (Chill, Focus, Gaming, Commute).
+### Music Player
+* **Full Music Hub:** Browse trending hits, Top 100 charts, artist discographies, and personalized mood & genre stations
 * **Live Synced Lyrics:** Sing along with dynamic, real-time time-synced lyrics with one-tap flip album artwork.
-* **Audio-First Background Play:** Seamless background streaming, rich lock screen media notifications, and home screen Now Playing widget.
 
-### 🎬 Ad-Free Streaming & SponsorBlock
-* **Zero Commercials & Trackers:** Watch videos without pre-roll, mid-roll, or intrusive display advertisements.
+### Ad-Free Streaming 
 * **Built-in SponsorBlock:** Automatically skip sponsored segments, intros, outros, and subscribe reminders.
 * **Background Play & PiP:** Keep audio playing with your phone screen turned off or in Picture-in-Picture popup window mode.
 
-### 🔒 100% Private, Lightweight & Offline First
+### 100% Private, Lightweight & Offline First
 * **On-Device Recommendation Engine:** Recommendations are computed privately on your phone. Your watch habits never leave your device.
 * **No Google Account Required:** Full access to subscriptions, playlists, and history without logging in.
-* **Featherweight & Optimized:** Engineered with R8 shrinking and minification for a tiny ~19 MB APK footprint and lightning-fast responsiveness.
 * **Backup & Restore:** Easily export and import your subscriptions and history anytime.
-
----
-
-## 📥 Getting Started & Downloads
-
-You can download the latest official release APK from the [Releases page](https://github.com/muhammadmarowan/FedoraTube/releases/latest):
-
-| Architecture | Description | Download |
-| :--- | :--- | :--- |
-| **arm64-v8a** | **Recommended** for modern Android smartphones and tablets (64-bit) | [Download APK](https://github.com/muhammadmarowan/FedoraTube/releases/latest) |
-| **armeabi-v7a** | For older 32-bit Android devices | [Download APK](https://github.com/muhammadmarowan/FedoraTube/releases/latest) |
-| **universal** | All-in-one package compatible with every Android device | [Download APK](https://github.com/muhammadmarowan/FedoraTube/releases/latest) |
-| **x86 / x86_64** | For Android emulators and ChromeOS devices | [Download APK](https://github.com/muhammadmarowan/FedoraTube/releases/latest) |
 
 ---
 
