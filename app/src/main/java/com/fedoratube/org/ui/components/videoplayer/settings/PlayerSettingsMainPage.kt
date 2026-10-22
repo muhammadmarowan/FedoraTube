@@ -1,35 +1,43 @@
 package com.fedoratube.org.ui.components.videoplayer.settings
 
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.automirrored.rounded.VolumeUp
+import androidx.compose.material.icons.filled.AudioFile
+import androidx.compose.material.icons.filled.Bedtime
+import androidx.compose.material.icons.filled.Cast
+import androidx.compose.material.icons.filled.Equalizer
+import androidx.compose.material.icons.filled.HighQuality
+import androidx.compose.material.icons.filled.PictureInPicture
+import androidx.compose.material.icons.filled.SkipNext
 import androidx.compose.material.icons.filled.Speed
-import androidx.compose.material.icons.outlined.ClosedCaption
-import androidx.compose.material.icons.outlined.HelpOutline
-import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material.icons.filled.Subtitles
+import androidx.compose.material.icons.filled.Tune
+import androidx.compose.material.icons.outlined.MoreTime
+import androidx.compose.material.icons.rounded.GraphicEq
 import androidx.compose.material.icons.rounded.Repeat
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.fedoratube.org.R
 import com.fedoratube.org.player.EnhancedPlayerState
+import com.fedoratube.org.ui.components.equalizer.equalizerSummary
+import com.fedoratube.org.ui.components.shared.FlowNavRow
+import com.fedoratube.org.ui.components.shared.FlowRowGroup
+import com.fedoratube.org.ui.components.shared.FlowSectionHeader
+import com.fedoratube.org.ui.components.shared.FlowSwitchRow
+import com.fedoratube.org.ui.components.shared.flowRowGroupShape
 import com.fedoratube.org.ui.components.shared.playbackSpeedLabel
+import com.fedoratube.org.utils.formatDurationMillis
+
+private const val VIDEO_ROWS = 1
+private const val PLAYBACK_ROWS = 3
+private const val AUDIO_ROWS = 1
+private const val CAPTION_ROWS = 2
+private const val OVERLAY_ROWS = 3
+private const val EFFECT_ROWS = 3
+private const val DISPLAY_ROWS = 1
 
 @Composable
 internal fun PlayerSettingsMainPage(
@@ -53,133 +61,160 @@ internal fun PlayerSettingsMainPage(
     notePositionMs: Long? = null,
     onAddNote: () -> Unit = {},
 ) {
-    val qualityLabel =
-        if (playerState.currentQuality == 0) {
-            stringResource(R.string.quality_auto)
-        } else {
-            "${playerState.currentQuality}p"
-        }
-
-    val captionLabel =
-        if (subtitlesEnabled) {
-            playerState.availableSubtitles.find { it.url == playerState.selectedSubtitleUrl }?.label?.takeIf { it.isNotBlank() }
-                ?: stringResource(R.string.on)
-        } else {
-            null
-        }
-
-    Column(
-        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
-    ) {
-        // 1. Quality • Auto (720p60)
-        YouTubeSettingsRow(
-            icon = Icons.Outlined.Settings,
+    val playbackRows = if (sponsorBlockSegmentCount > 0) PLAYBACK_ROWS + 1 else PLAYBACK_ROWS
+    FlowSectionHeader(stringResource(R.string.video))
+    FlowRowGroup {
+        FlowNavRow(
+            leadingIcon = Icons.Filled.HighQuality,
             title = stringResource(R.string.quality),
-            trailingText = qualityLabel,
+            trailingText =
+                if (playerState.currentQuality == 0) {
+                    stringResource(R.string.quality_auto)
+                } else {
+                    "${playerState.currentQuality}p"
+                },
+            shape = flowRowGroupShape(0, VIDEO_ROWS),
             onClick = { onNavigateToPage(PlayerSettingsPage.Quality) },
         )
+    }
 
-        // 2. Captions
-        YouTubeSettingsRow(
-            icon = Icons.Outlined.ClosedCaption,
-            title = stringResource(R.string.captions),
-            trailingText = captionLabel,
-            onClick = { onNavigateToPage(PlayerSettingsPage.Subtitles) },
-        )
-
-        // 3. Loop video
-        YouTubeSettingsRow(
-            icon = Icons.Rounded.Repeat,
-            title = stringResource(R.string.loop_video),
-            trailingText = if (playerState.isLooping) stringResource(R.string.on) else null,
-            onClick = { onLoopToggle(!playerState.isLooping) },
-        )
-
-        // 4. Stable volume
-        YouTubeSettingsRow(
-            icon = Icons.AutoMirrored.Rounded.VolumeUp,
-            title = stringResource(R.string.player_settings_stable_voice),
-            trailingText = if (playerState.isStableVolumeEnabled) stringResource(R.string.on) else null,
-            onClick = { onStableVolumeToggle(!playerState.isStableVolumeEnabled) },
-        )
-
-        // 5. Help & feedback / Sleep timer
-        YouTubeSettingsRow(
-            icon = Icons.Outlined.HelpOutline,
-            title = stringResource(R.string.sleep_timer),
-            onClick = onSleepTimerClick,
-        )
-
-        // 6. Playback speed • 1x
-        YouTubeSettingsRow(
-            icon = Icons.Filled.Speed,
+    FlowSectionHeader(stringResource(R.string.playback_header))
+    FlowRowGroup {
+        FlowNavRow(
+            leadingIcon = Icons.Filled.Speed,
             title = stringResource(R.string.playback_speed),
             trailingText = playbackSpeedLabel(playerState.playbackSpeed),
+            shape = flowRowGroupShape(0, playbackRows),
             onClick = { onNavigateToPage(PlayerSettingsPage.Speed) },
         )
-
-        // 7. Ambient mode / Watch in VR
-        YouTubeSettingsRow(
-            icon = ImageVector.vectorResource(R.drawable.ic_ambient_mode),
-            title = stringResource(R.string.player_settings_ambient_mode),
-            trailingText = if (ambientModeEnabled) stringResource(R.string.on) else null,
-            onClick = { onAmbientModeToggle(!ambientModeEnabled) },
+        FlowSwitchRow(
+            leadingIcon = Icons.Rounded.Repeat,
+            title = stringResource(R.string.loop_video),
+            checked = playerState.isLooping,
+            shape = flowRowGroupShape(1, playbackRows),
+            onCheckedChange = onLoopToggle,
         )
+        FlowSwitchRow(
+            leadingIcon = Icons.Filled.SkipNext,
+            title = stringResource(R.string.autoplay_next),
+            checked = autoplayEnabled,
+            enabled = !playerState.isLooping,
+            shape = flowRowGroupShape(2, playbackRows),
+            onCheckedChange = onAutoplayToggle,
+        )
+        if (sponsorBlockSegmentCount > 0) {
+            FlowSwitchRow(
+                leadingIcon = ImageVector.vectorResource(R.drawable.ic_block),
+                title = stringResource(R.string.player_settings_sponsorblock_video),
+                supportingText =
+                    pluralStringResource(R.plurals.sb_video_segments, sponsorBlockSegmentCount, sponsorBlockSegmentCount),
+                checked = !sponsorBlockOffForVideo,
+                shape = flowRowGroupShape(3, playbackRows),
+                onCheckedChange = { on -> onSponsorBlockToggle(!on) },
+            )
+        }
+    }
 
-        // 8. More >
-        YouTubeSettingsRow(
-            icon = Icons.Outlined.Settings,
-            title = stringResource(R.string.more_header),
-            showChevron = true,
-            onClick = { onNavigateToPage(PlayerSettingsPage.More) },
+    if (notePositionMs != null) {
+        FlowSectionHeader(stringResource(R.string.note_title))
+        FlowRowGroup {
+            FlowNavRow(
+                leadingIcon = Icons.Outlined.MoreTime,
+                title = stringResource(R.string.note_at_time, formatDurationMillis(notePositionMs)),
+                shape = flowRowGroupShape(0, 1),
+                onClick = onAddNote,
+            )
+        }
+    }
+
+    FlowSectionHeader(stringResource(R.string.audio_settings_title))
+    FlowRowGroup {
+        FlowNavRow(
+            leadingIcon = Icons.Filled.AudioFile,
+            title = stringResource(R.string.audio_track),
+            trailingText =
+                audioTrackDisplayLabel(
+                    playerState.availableAudioTracks.getOrNull(playerState.currentAudioTrack),
+                    playerState.currentAudioTrack,
+                ),
+            shape = flowRowGroupShape(0, AUDIO_ROWS),
+            onClick = { onNavigateToPage(PlayerSettingsPage.Audio) },
         )
     }
-}
 
-@Composable
-private fun YouTubeSettingsRow(
-    icon: ImageVector,
-    title: String,
-    trailingText: String? = null,
-    showChevron: Boolean = false,
-    onClick: () -> Unit,
-) {
-    Row(
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .clickable(onClick = onClick)
-                .padding(horizontal = 24.dp, vertical = 14.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Icon(
-            imageVector = icon,
-            contentDescription = null,
-            modifier = Modifier.size(24.dp),
-            tint = MaterialTheme.colorScheme.onSurface,
+    FlowSectionHeader(stringResource(R.string.captions))
+    FlowRowGroup {
+        FlowNavRow(
+            leadingIcon = Icons.Filled.Subtitles,
+            title = stringResource(R.string.filter_subtitles),
+            trailingText =
+                if (subtitlesEnabled) stringResource(R.string.on) else stringResource(R.string.off),
+            shape = flowRowGroupShape(0, CAPTION_ROWS),
+            onClick = { onNavigateToPage(PlayerSettingsPage.Subtitles) },
         )
-        Spacer(modifier = Modifier.width(20.dp))
-        Text(
-            text = title,
-            style = MaterialTheme.typography.bodyLarge.copy(fontSize = 16.sp),
-            color = MaterialTheme.colorScheme.onSurface,
+        FlowNavRow(
+            leadingIcon = Icons.Filled.Tune,
+            title = stringResource(R.string.subtitle_style),
+            shape = flowRowGroupShape(1, CAPTION_ROWS),
+            onClick = onShowSubtitleStyle,
         )
-        if (trailingText != null) {
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(
-                text = "•  $trailingText",
-                style = MaterialTheme.typography.bodyMedium.copy(fontSize = 14.sp),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        }
-        Spacer(modifier = Modifier.weight(1f))
-        if (showChevron) {
-            Icon(
-                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                contentDescription = null,
-                modifier = Modifier.size(20.dp),
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        }
+    }
+
+    FlowSectionHeader(stringResource(R.string.player_settings_overlay_controls))
+    FlowRowGroup {
+        FlowNavRow(
+            leadingIcon = Icons.Filled.Cast,
+            title = stringResource(R.string.cast_to_tv),
+            shape = flowRowGroupShape(0, OVERLAY_ROWS),
+            onClick = onCastClick,
+        )
+        FlowNavRow(
+            leadingIcon = Icons.Filled.PictureInPicture,
+            title = stringResource(R.string.pip_mode),
+            shape = flowRowGroupShape(1, OVERLAY_ROWS),
+            onClick = onPipClick,
+        )
+        FlowNavRow(
+            leadingIcon = Icons.Filled.Bedtime,
+            title = stringResource(R.string.sleep_timer),
+            shape = flowRowGroupShape(2, OVERLAY_ROWS),
+            onClick = onSleepTimerClick,
+        )
+    }
+
+    FlowSectionHeader(stringResource(R.string.audio_effects))
+    FlowRowGroup {
+        FlowNavRow(
+            leadingIcon = Icons.Filled.Equalizer,
+            title = stringResource(R.string.equalizer),
+            trailingText = equalizerSummary(),
+            shape = flowRowGroupShape(0, EFFECT_ROWS),
+            onClick = { onNavigateToPage(PlayerSettingsPage.Equalizer) },
+        )
+        FlowSwitchRow(
+            leadingIcon = Icons.Rounded.GraphicEq,
+            title = stringResource(R.string.player_settings_skip_silence),
+            checked = playerState.isSkipSilenceEnabled,
+            shape = flowRowGroupShape(1, EFFECT_ROWS),
+            onCheckedChange = onSkipSilenceToggle,
+        )
+        FlowSwitchRow(
+            leadingIcon = Icons.AutoMirrored.Rounded.VolumeUp,
+            title = stringResource(R.string.player_settings_stable_voice),
+            checked = playerState.isStableVolumeEnabled,
+            shape = flowRowGroupShape(2, EFFECT_ROWS),
+            onCheckedChange = onStableVolumeToggle,
+        )
+    }
+
+    FlowSectionHeader(stringResource(R.string.player_settings_display))
+    FlowRowGroup {
+        FlowSwitchRow(
+            leadingIcon = ImageVector.vectorResource(R.drawable.ic_ambient_mode),
+            title = stringResource(R.string.player_settings_ambient_mode),
+            checked = ambientModeEnabled,
+            shape = flowRowGroupShape(0, DISPLAY_ROWS),
+            onCheckedChange = onAmbientModeToggle,
+        )
     }
 }

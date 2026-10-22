@@ -203,9 +203,9 @@ class EnhancedPlayerManager private constructor() {
     private var manualLoopEnabled: Boolean = false
     private var globalLoopEnabled: Boolean = false
 
-    @Volatile private var autoplayEnabled: Boolean = true
+    @Volatile private var autoplayEnabled: Boolean = false
 
-    @Volatile private var queueAutoplayEnabled: Boolean = true
+    @Volatile private var queueAutoplayEnabled: Boolean = false
     private var autoplayCandidates: List<Video> = emptyList()
     private var autoplaySourceVideoId: String? = null
 

@@ -33,8 +33,10 @@ import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
@@ -67,6 +69,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -227,19 +230,6 @@ fun HomeScreen(
                                 contentDescription = stringResource(R.string.notifications),
                             )
                         }
-                    } else {
-                        IconButton(onClick = onNavigateToDownloads) {
-                            Icon(
-                                Icons.Outlined.FileDownload,
-                                contentDescription = stringResource(R.string.library_downloads_label),
-                            )
-                        }
-                        IconButton(onClick = onNavigateToSettings) {
-                            Icon(
-                                Icons.Outlined.Settings,
-                                contentDescription = stringResource(R.string.settings),
-                            )
-                        }
                     }
                 },
                 globalActions = FlowGlobalActionsMode.None,
@@ -250,6 +240,8 @@ fun HomeScreen(
             FocusModeContent(
                 onSearchClick = onSearchClick,
                 onMusicClick = onNavigateToMusic,
+                onNavigateToSettings = onNavigateToSettings,
+                onNavigateToDownloads = onNavigateToDownloads,
                 modifier = Modifier.fillMaxSize().padding(padding),
             )
         } else {
@@ -326,48 +318,101 @@ fun HomeScreen(
 private fun FocusModeContent(
     onSearchClick: () -> Unit,
     onMusicClick: () -> Unit,
+    onNavigateToSettings: () -> Unit,
+    onNavigateToDownloads: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(
         modifier = modifier.fillMaxSize().padding(horizontal = 24.dp),
         contentAlignment = Alignment.Center,
     ) {
-        Surface(
-            onClick = onSearchClick,
-            shape = CircleShape,
-            color = MaterialTheme.colorScheme.surfaceVariant,
-            tonalElevation = 2.dp,
-            modifier =
-                Modifier
-                    .offset(y = (-80).dp)
-                    .fillMaxWidth()
-                    .height(56.dp),
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.fillMaxWidth().offset(y = (-60).dp),
         ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxSize().padding(start = 20.dp, end = 8.dp),
+            Surface(
+                onClick = onSearchClick,
+                shape = CircleShape,
+                color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                tonalElevation = 3.dp,
+                shadowElevation = 2.dp,
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .height(56.dp),
             ) {
-                Icon(
-                    imageVector = Icons.Outlined.Search,
-                    contentDescription = stringResource(R.string.search),
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.size(24.dp),
-                )
-                Spacer(modifier = Modifier.width(16.dp))
-                Text(
-                    text = stringResource(R.string.focus_mode_search_placeholder),
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.weight(1f),
-                )
-                IconButton(
-                    onClick = onMusicClick,
-                    modifier = Modifier.size(40.dp),
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxSize().padding(start = 20.dp, end = 8.dp),
                 ) {
                     Icon(
-                        imageVector = Icons.Outlined.MusicNote,
-                        contentDescription = stringResource(R.string.nav_music_shortcut),
+                        imageVector = Icons.Outlined.Search,
+                        contentDescription = stringResource(R.string.search),
                         tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(24.dp),
+                    )
+                    Spacer(modifier = Modifier.width(16.dp))
+                    Text(
+                        text = stringResource(R.string.focus_mode_search_placeholder),
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.weight(1f),
+                    )
+                    FilledTonalIconButton(
+                        onClick = onMusicClick,
+                        modifier = Modifier.size(40.dp),
+                        colors =
+                            IconButtonDefaults.filledTonalIconButtonColors(
+                                containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                                contentColor = MaterialTheme.colorScheme.primary,
+                            ),
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.MusicNote,
+                            contentDescription = stringResource(R.string.nav_music_shortcut),
+                            modifier = Modifier.size(22.dp),
+                        )
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(28.dp))
+
+            // Centered actions row: Settings on the left, Downloads on the right
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(28.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                FilledTonalIconButton(
+                    onClick = onNavigateToSettings,
+                    modifier = Modifier.size(52.dp),
+                    colors =
+                        IconButtonDefaults.filledTonalIconButtonColors(
+                            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                            contentColor = MaterialTheme.colorScheme.onSurface,
+                        ),
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.Settings,
+                        contentDescription = stringResource(R.string.settings),
+                        modifier = Modifier.size(24.dp),
+                    )
+                }
+
+                FilledTonalIconButton(
+                    onClick = onNavigateToDownloads,
+                    modifier = Modifier.size(52.dp),
+                    colors =
+                        IconButtonDefaults.filledTonalIconButtonColors(
+                            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                            contentColor = MaterialTheme.colorScheme.onSurface,
+                        ),
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.FileDownload,
+                        contentDescription = stringResource(R.string.library_downloads_label),
                         modifier = Modifier.size(24.dp),
                     )
                 }

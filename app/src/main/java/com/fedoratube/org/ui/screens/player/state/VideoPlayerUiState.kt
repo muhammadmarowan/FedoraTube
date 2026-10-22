@@ -34,7 +34,7 @@ data class VideoPlayerUiState(
     /** A livestream that has ended: its date reads "Streamed …" rather than a plain date. */
     val isArchivedLivestream: Boolean = false,
     val heatmap: VideoHeatmap? = null,
-    val autoplayEnabled: Boolean = true,
+    val autoplayEnabled: Boolean = false,
     val streamSizes: Map<String, Long> = emptyMap(),
     val localFilePath: String? = null,
     val localFileVideoId: String? = null,

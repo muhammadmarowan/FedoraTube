@@ -139,6 +139,8 @@ internal fun VideoStageControls(
                 screenState.isSpeedBoostActive || screenState.showZoomIndicator || screenState.isSeekDragging,
             yieldsTapsToPlayer =
                 screenState.isTapWindowOpen || screenState.showSeekBackAnimation || screenState.showSeekForwardAnimation,
+            isDoubleTapSeeking =
+                screenState.showSeekBackAnimation || screenState.showSeekForwardAnimation,
         )
     // The session is rebuilt every composition, so these lambdas are too; they read the values the
     // host observed this frame exactly as the parameter list they replace did.

@@ -1589,7 +1589,7 @@ class PlayerPreferences(
     val autoplayEnabled: Flow<Boolean> =
         context.playerPreferencesDataStore.data
             .map { preferences ->
-                preferences[Keys.AUTOPLAY_ENABLED] ?: true
+                preferences[Keys.AUTOPLAY_ENABLED] ?: false
             }
 
     suspend fun setAutoplayEnabled(enabled: Boolean) {
@@ -1626,7 +1626,7 @@ class PlayerPreferences(
     val queueAutoplayEnabled: Flow<Boolean> =
         context.playerPreferencesDataStore.data
             .map { preferences ->
-                preferences[Keys.QUEUE_AUTOPLAY_ENABLED] ?: true
+                preferences[Keys.QUEUE_AUTOPLAY_ENABLED] ?: false
             }
 
     suspend fun setQueueAutoplayEnabled(enabled: Boolean) {

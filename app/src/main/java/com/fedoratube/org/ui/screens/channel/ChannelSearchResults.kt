@@ -100,11 +100,12 @@ internal fun ChannelSearchResults(
                         )
                     }
                 LazyVerticalGrid(
-                    columns = GridCells.Fixed(1),
+                    columns = if (feedLayout.isCompact) GridCells.Fixed(2) else GridCells.Adaptive(minSize = 160.dp),
                     state = listState,
                     modifier = Modifier.fillMaxSize(),
                     contentPadding = padding,
-                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                    verticalArrangement = Arrangement.spacedBy(14.dp),
                 ) {
                     itemsIndexed(
                         items = uiState.searchResults,
@@ -120,7 +121,7 @@ internal fun ChannelSearchResults(
                             useInternalPadding = false,
                         )
                     }
-                    item(key = "bottom_gap", span = { GridItemSpan(1) }) { Spacer(Modifier.height(16.dp)) }
+                    item(key = "bottom_gap", span = { GridItemSpan(maxLineSpan) }) { Spacer(Modifier.height(16.dp)) }
                 }
             }
         }

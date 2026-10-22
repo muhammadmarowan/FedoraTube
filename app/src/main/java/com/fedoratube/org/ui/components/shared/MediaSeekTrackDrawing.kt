@@ -16,8 +16,8 @@ import com.fedoratube.org.ui.theme.SPONSOR_BLOCK_SEGMENT_ALPHA
 import com.fedoratube.org.ui.theme.defaultSponsorBlockColor
 import org.schabi.newpipe.extractor.stream.StreamSegment
 
-internal val RestTrackHeight = 5.dp
-internal val ActiveTrackHeight = 10.dp
+internal val RestTrackHeight = 3.dp
+internal val ActiveTrackHeight = 6.dp
 
 /**
  * Paints the track: base, buffered, progress, chapter gaps and SponsorBlock segments.

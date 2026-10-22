@@ -29,7 +29,7 @@ fun TvPlaybackSettingsPane(
     val backgroundPlay by playerPreferences.backgroundPlayEnabled.collectAsStateWithLifecycle(
         initialValue = DEFAULT_BACKGROUND_PLAY_ENABLED,
     )
-    val autoplay by playerPreferences.autoplayEnabled.collectAsStateWithLifecycle(initialValue = true)
+    val autoplay by playerPreferences.autoplayEnabled.collectAsStateWithLifecycle(initialValue = false)
     val skipSilence by playerPreferences.skipSilenceEnabled.collectAsStateWithLifecycle(initialValue = false)
     val stableVolume by playerPreferences.stableVolumeEnabled.collectAsStateWithLifecycle(initialValue = false)
     val autoCaptions by playerPreferences.autoEnableSubtitles.collectAsStateWithLifecycle(initialValue = false)

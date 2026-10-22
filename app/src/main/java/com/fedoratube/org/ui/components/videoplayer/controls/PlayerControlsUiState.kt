@@ -30,7 +30,7 @@ internal data class PlayerControlsUiState(
     val storyboard: List<StoryboardLevel> = emptyList(),
     val heatmap: VideoHeatmap? = null,
     val isSubtitlesEnabled: Boolean = false,
-    val autoplayEnabled: Boolean = true,
+    val autoplayEnabled: Boolean = false,
     val isLooping: Boolean = false,
     val hasPrevious: Boolean = false,
     val hasNext: Boolean = false,
@@ -53,4 +53,6 @@ internal data class PlayerControlsUiState(
     val isGestureReadoutActive: Boolean = false,
     /** A double tap is still open or a double-tap seek is running, so the next touch is the player's. */
     val yieldsTapsToPlayer: Boolean = false,
+    /** Double-tap seek animation is active. */
+    val isDoubleTapSeeking: Boolean = false,
 )

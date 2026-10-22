@@ -220,14 +220,6 @@ internal fun PlayerBottomBar(
                     )
                 }
 
-                if (compactQualityLabel != null) {
-                    PlayerLabelPill(
-                        label = compactQualityLabel,
-                        onClick = actions.onQualityClick,
-                        height = metrics.pillHeight,
-                    )
-                }
-
                 PlayerPillIconButton(
                     onClick = actions.onFullscreenClick,
                     icon = if (isFullscreen) Icons.Rounded.CloseFullscreen else Icons.Rounded.OpenInFull,

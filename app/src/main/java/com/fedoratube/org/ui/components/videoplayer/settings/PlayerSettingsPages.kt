@@ -4,46 +4,31 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AudioFile
-import androidx.compose.material.icons.filled.Cast
-import androidx.compose.material.icons.filled.Equalizer
 import androidx.compose.material.icons.filled.FileOpen
-import androidx.compose.material.icons.filled.PictureInPicture
-import androidx.compose.material.icons.filled.SkipNext
 import androidx.compose.material.icons.filled.Tune
-import androidx.compose.material.icons.outlined.MoreTime
-import androidx.compose.material.icons.rounded.GraphicEq
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.fedoratube.org.R
 import com.fedoratube.org.player.AudioTrackOption
-import com.fedoratube.org.player.EnhancedPlayerState
 import com.fedoratube.org.player.QualityOption
 import com.fedoratube.org.player.SubtitleOption
 import com.fedoratube.org.player.state.SubtitleOrigin
 import com.fedoratube.org.player.stream.VideoCodecUtils
-import com.fedoratube.org.ui.components.equalizer.equalizerSummary
 import com.fedoratube.org.ui.components.shared.FlowNavRow
 import com.fedoratube.org.ui.components.shared.FlowRowGroup
-import com.fedoratube.org.ui.components.shared.FlowSectionHeader
 import com.fedoratube.org.ui.components.shared.FlowSelectionRow
-import com.fedoratube.org.ui.components.shared.FlowSwitchRow
 import com.fedoratube.org.ui.components.shared.MediaAudioTrackRow
 import com.fedoratube.org.ui.components.shared.MediaPlaybackSpeedPicker
 import com.fedoratube.org.ui.components.shared.MediaQualitySelectorContent
 import com.fedoratube.org.ui.components.shared.MediaQualitySelectorOption
 import com.fedoratube.org.ui.components.shared.audioTrackFallbackLabel
 import com.fedoratube.org.ui.components.shared.flowRowGroupShape
-import com.fedoratube.org.utils.formatDurationMillis
 
 @Composable
 internal fun PlayerSettingsQualityPage(
@@ -226,108 +211,3 @@ internal fun audioTrackDisplayLabel(
     track: AudioTrackOption?,
     fallbackIndex: Int,
 ): String = track?.label?.takeIf { it.isNotBlank() } ?: audioTrackFallbackLabel(fallbackIndex)
-
-@Composable
-internal fun PlayerSettingsMorePage(
-    playerState: EnhancedPlayerState,
-    autoplayEnabled: Boolean,
-    onNavigateToPage: (PlayerSettingsPage) -> Unit,
-    onCastClick: () -> Unit,
-    onPipClick: () -> Unit,
-    onSleepTimerClick: () -> Unit,
-    onAutoplayToggle: (Boolean) -> Unit,
-    onSkipSilenceToggle: (Boolean) -> Unit,
-    onShowSubtitleStyle: () -> Unit,
-    sponsorBlockSegmentCount: Int = 0,
-    sponsorBlockOffForVideo: Boolean = false,
-    onSponsorBlockToggle: (off: Boolean) -> Unit = {},
-    notePositionMs: Long? = null,
-    onAddNote: () -> Unit = {},
-) {
-    val totalAudioRows = 2
-    FlowSectionHeader(stringResource(R.string.audio_settings_title))
-    FlowRowGroup {
-        FlowNavRow(
-            leadingIcon = Icons.Filled.AudioFile,
-            title = stringResource(R.string.audio_track),
-            trailingText =
-                audioTrackDisplayLabel(
-                    playerState.availableAudioTracks.getOrNull(playerState.currentAudioTrack),
-                    playerState.currentAudioTrack,
-                ),
-            shape = flowRowGroupShape(0, totalAudioRows),
-            onClick = { onNavigateToPage(PlayerSettingsPage.Audio) },
-        )
-        FlowNavRow(
-            leadingIcon = Icons.Filled.Equalizer,
-            title = stringResource(R.string.equalizer),
-            trailingText = equalizerSummary(),
-            shape = flowRowGroupShape(1, totalAudioRows),
-            onClick = { onNavigateToPage(PlayerSettingsPage.Equalizer) },
-        )
-    }
-
-    FlowSectionHeader(stringResource(R.string.player_settings_overlay_controls))
-    FlowRowGroup {
-        FlowNavRow(
-            leadingIcon = Icons.Filled.Cast,
-            title = stringResource(R.string.cast_to_tv),
-            shape = flowRowGroupShape(0, 3),
-            onClick = onCastClick,
-        )
-        FlowNavRow(
-            leadingIcon = Icons.Filled.PictureInPicture,
-            title = stringResource(R.string.pip_mode),
-            shape = flowRowGroupShape(1, 3),
-            onClick = onPipClick,
-        )
-        FlowNavRow(
-            leadingIcon = Icons.Filled.Tune,
-            title = stringResource(R.string.subtitle_style),
-            shape = flowRowGroupShape(2, 3),
-            onClick = onShowSubtitleStyle,
-        )
-    }
-
-    val playbackRows = if (sponsorBlockSegmentCount > 0) 3 else 2
-    FlowSectionHeader(stringResource(R.string.playback_header))
-    FlowRowGroup {
-        FlowSwitchRow(
-            leadingIcon = Icons.Filled.SkipNext,
-            title = stringResource(R.string.autoplay_next),
-            checked = autoplayEnabled,
-            shape = flowRowGroupShape(0, playbackRows),
-            onCheckedChange = onAutoplayToggle,
-        )
-        FlowSwitchRow(
-            leadingIcon = Icons.Rounded.GraphicEq,
-            title = stringResource(R.string.player_settings_skip_silence),
-            checked = playerState.isSkipSilenceEnabled,
-            shape = flowRowGroupShape(1, playbackRows),
-            onCheckedChange = onSkipSilenceToggle,
-        )
-        if (sponsorBlockSegmentCount > 0) {
-            FlowSwitchRow(
-                leadingIcon = ImageVector.vectorResource(R.drawable.ic_block),
-                title = stringResource(R.string.player_settings_sponsorblock_video),
-                supportingText =
-                    pluralStringResource(R.plurals.sb_video_segments, sponsorBlockSegmentCount, sponsorBlockSegmentCount),
-                checked = !sponsorBlockOffForVideo,
-                shape = flowRowGroupShape(2, playbackRows),
-                onCheckedChange = { on -> onSponsorBlockToggle(!on) },
-            )
-        }
-    }
-
-    if (notePositionMs != null) {
-        FlowSectionHeader(stringResource(R.string.note_title))
-        FlowRowGroup {
-            FlowNavRow(
-                leadingIcon = Icons.Outlined.MoreTime,
-                title = stringResource(R.string.note_at_time, formatDurationMillis(notePositionMs)),
-                shape = flowRowGroupShape(0, 1),
-                onClick = onAddNote,
-            )
-        }
-    }
-}

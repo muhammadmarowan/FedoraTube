@@ -259,17 +259,6 @@ fun FlowSubscribeButton(
                         menuExpanded = false
                     },
                 )
-            }
-
-            if (onManageGroups != null) {
-                DropdownMenuItem(
-                    text = { Text(stringResource(R.string.channel_add_to_group)) },
-                    leadingIcon = { Icon(Icons.Rounded.Folder, contentDescription = null) },
-                    onClick = {
-                        onManageGroups()
-                        menuExpanded = false
-                    },
-                )
                 HorizontalDivider()
             }
 

@@ -81,7 +81,9 @@ internal fun ChannelTabItems(
 
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
         val feedLayout = rememberFeedGridLayout(maxWidth, columnPreference)
+        val isVideos = kind == ChannelTabKind.Videos
         val isShorts = kind == ChannelTabKind.Shorts
+        val isLive = kind == ChannelTabKind.Live
         val plan =
             rememberFeedGridPlan(
                 layout = feedLayout,
@@ -92,7 +94,12 @@ internal fun ChannelTabItems(
                 itemsKey = pagingItems.itemSnapshotList,
                 compactRowSpacing = feedLayout.cardSpacing,
             )
-        val sidePadding = if (isShorts) ShortCardDefaults.gridPadding(feedLayout) else plan.horizontalPadding
+        val sidePadding =
+            when {
+                isVideos || isLive -> 10.dp
+                isShorts -> ShortCardDefaults.gridPadding(feedLayout)
+                else -> plan.horizontalPadding
+            }
         val padding =
             remember(contentPadding, sidePadding) {
                 PaddingValues(
@@ -106,13 +113,20 @@ internal fun ChannelTabItems(
         val topGap = if (feedLayout.isCompact || !hasFilterBar) 8.dp else null
         val append = pagingItems.loadState.append
 
+        val gridColumns =
+            when {
+                isShorts -> GridCells.Adaptive(minSize = 120.dp)
+                isVideos || isLive -> if (feedLayout.isCompact) GridCells.Fixed(2) else GridCells.Adaptive(minSize = 160.dp)
+                else -> GridCells.Fixed(1)
+            }
+
         LazyVerticalGrid(
-            columns = GridCells.Fixed(1),
+            columns = gridColumns,
             state = listState,
             modifier = Modifier.fillMaxSize(),
             contentPadding = padding,
-            horizontalArrangement = Arrangement.spacedBy(0.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(if (isVideos || isLive || isShorts) 10.dp else 0.dp),
+            verticalArrangement = Arrangement.spacedBy(if (isVideos || isLive || isShorts) 14.dp else 16.dp),
         ) {
             if (topGap != null) {
                 fullSpanItem(key = "top_gap") { Spacer(Modifier.height(topGap)) }
@@ -121,7 +135,13 @@ internal fun ChannelTabItems(
                 count = pagingItems.itemCount,
                 key = { index -> pagingItems.peek(index)?.itemKey() ?: "placeholder:$index" },
                 contentType = { index -> pagingItems.peek(index)?.contentType() ?: "placeholder" },
-                span = { GridItemSpan(1) },
+                span = { index ->
+                    if (pagingItems.peek(index).spansRow()) {
+                        GridItemSpan(maxLineSpan)
+                    } else {
+                        GridItemSpan(1)
+                    }
+                },
             ) { index ->
                 when (val item = pagingItems[index]) {
                     is FeedItem.VideoItem -> {

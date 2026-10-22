@@ -187,24 +187,7 @@ fun ChannelScreen(
                     }
                 },
                 onBack = onBackClick,
-                actions = {
-                    IconButton(onClick = {
-                        // channelUrl may already be a full URL, so it must be normalized rather than
-                        // pasted behind /channel/ — that produced a nested, unopenable share link.
-                        val shareUrl = youtubeChannelUrl(uiState.header?.id ?: channelUrl) ?: channelUrl
-                        val shareIntent =
-                            Intent(Intent.ACTION_SEND).apply {
-                                type = "text/plain"
-                                putExtra(Intent.EXTRA_TEXT, shareUrl)
-                            }
-                        context.startActivity(Intent.createChooser(shareIntent, null))
-                    }) {
-                        Icon(
-                            imageVector = Icons.Default.Share,
-                            contentDescription = stringResource(R.string.share),
-                        )
-                    }
-                },
+                actions = {},
             )
 
             Box(modifier = Modifier.fillMaxSize()) {

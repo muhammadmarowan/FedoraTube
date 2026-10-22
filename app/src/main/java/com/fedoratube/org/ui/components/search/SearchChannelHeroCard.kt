@@ -65,8 +65,8 @@ fun SearchChannelHeroCard(
     Surface(
         modifier = modifier.fillMaxWidth().padding(horizontal = CardMargin, vertical = CardGap),
         shape = MaterialTheme.shapes.large,
-        color = tint.container,
-        contentColor = tint.onContainer,
+        color = androidx.compose.ui.graphics.Color.Transparent,
+        contentColor = MaterialTheme.colorScheme.onSurface,
     ) {
         BoxWithConstraints {
             val actionsInline = maxWidth >= InlineActionsWidth
@@ -140,7 +140,7 @@ private fun ChannelIdentity(
             Text(
                 text = channel.name,
                 style = MaterialTheme.typography.titleMedium,
-                color = tint.onContainer,
+                color = MaterialTheme.colorScheme.onSurface,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier.weight(1f, fill = false),
@@ -149,7 +149,7 @@ private fun ChannelIdentity(
                 Icon(
                     imageVector = Icons.Rounded.CheckCircle,
                     contentDescription = stringResource(R.string.verified),
-                    tint = tint.accent,
+                    tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(VerifiedIconSize),
                 )
             }
@@ -158,7 +158,7 @@ private fun ChannelIdentity(
             Text(
                 text = it,
                 style = MaterialTheme.typography.bodySmall,
-                color = tint.onContainer,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
@@ -191,7 +191,7 @@ private fun ChannelActions(
         OutlinedButton(
             onClick = onOpen,
             shapes = ButtonDefaults.shapes(),
-            colors = ButtonDefaults.outlinedButtonColors(contentColor = tint.onContainer),
+            colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.onSurface),
             modifier = Modifier.weight(1f),
         ) {
             Text(

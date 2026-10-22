@@ -320,7 +320,7 @@ internal fun PlayerControlsOverlay(
                 }
 
                 AnimatedVisibility(
-                    visible = !isCleared,
+                    visible = !isCleared && !state.isDoubleTapSeeking,
                     enter = fadeIn(fadeSpec),
                     exit = fadeOut(fadeSpec),
                     modifier = Modifier.align(Alignment.Center),
