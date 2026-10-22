@@ -26,10 +26,6 @@
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 
-    <!-- Microphone capture for music recognition and voice search -->
-    <uses-permission android:name="android.permission.RECORD_AUDIO" />
-    <uses-feature android:name="android.hardware.microphone" android:required="false" />
-
     <!-- Lets the equalizer page offer an installed system or third-party equalizer panel. -->
     <queries>
         <intent>

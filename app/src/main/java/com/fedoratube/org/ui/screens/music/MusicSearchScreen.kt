@@ -156,21 +156,6 @@ fun MusicSearchScreen(
         }
     }
 
-    val voiceSearchLauncher =
-        rememberLauncherForActivityResult(
-            contract = ActivityResultContracts.StartActivityForResult(),
-        ) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                val spokenText = result.data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)?.firstOrNull()
-                if (!spokenText.isNullOrBlank()) {
-                    val clean = spokenText.trim().trimEnd('.', '?', '!', ',', ';')
-                    dismissSearchInput()
-                    viewModel.onQueryChange(clean)
-                    viewModel.performSearch(clean, SearchType.VOICE)
-                }
-            }
-        }
-
     Scaffold(
         topBar = {
             MusicSearchBar(
@@ -182,14 +167,6 @@ fun MusicSearchScreen(
                 },
                 onBackClick = onBackClick,
                 onClearClick = viewModel::clearSearch,
-                onVoiceSearchClick = {
-                    val intent =
-                        Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
-                            putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
-                            putExtra(RecognizerIntent.EXTRA_PROMPT, context.getString(R.string.voice_search_prompt))
-                        }
-                    voiceSearchLauncher.launch(intent)
-                },
                 focusRequester = focusRequester,
             )
         },

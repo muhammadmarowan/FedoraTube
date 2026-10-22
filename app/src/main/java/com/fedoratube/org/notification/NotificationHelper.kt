@@ -130,6 +130,7 @@ object NotificationHelper {
                     setShowBadge(false)
                     enableLights(false)
                     enableVibration(false)
+                    lockscreenVisibility = android.app.Notification.VISIBILITY_PUBLIC
                 }
 
             // Music playback channel - Low importance for background music
@@ -143,6 +144,7 @@ object NotificationHelper {
                     setShowBadge(false)
                     enableLights(false)
                     enableVibration(false)
+                    lockscreenVisibility = android.app.Notification.VISIBILITY_PUBLIC
                 }
 
             // General notifications channel

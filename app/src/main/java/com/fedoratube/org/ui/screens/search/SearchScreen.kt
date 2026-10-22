@@ -113,23 +113,6 @@ fun SearchScreen(
     val focusManager = LocalFocusManager.current
     val keyboard = LocalSoftwareKeyboardController.current
 
-    val voiceSearchLauncher =
-        rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode != Activity.RESULT_OK) return@rememberLauncherForActivityResult
-            result.data
-                ?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
-                ?.firstOrNull()
-                ?.takeIf(String::isNotBlank)
-                ?.let { spoken ->
-                    val clean = spoken.trim().trimEnd('.', '?', '!', ',', ';')
-                    focusManager.clearFocus(force = true)
-                    keyboard?.hide()
-                    state.onSubmit(clean)
-                    state.textFieldState.setTextAndPlaceCursorAtEnd(clean)
-                    submit(clean)
-                }
-        }
-
     val showResults = uiState.query.isNotBlank() && !state.isTyping
     val focusRequester = remember { FocusRequester() }
 
@@ -167,7 +150,6 @@ fun SearchScreen(
                 textFieldState = state.textFieldState,
                 onSearch = submit,
                 onBack = onBack,
-                onVoiceSearch = { launchVoiceSearch(context, voiceSearchLauncher::launch) },
                 focusRequester = focusRequester,
                 onFieldFocused = state::startTyping,
                 actions = null,
@@ -252,21 +234,6 @@ fun SearchScreen(
             },
             onDismiss = { showFilters = false },
         )
-    }
-}
-
-private fun launchVoiceSearch(
-    context: Context,
-    launch: (Intent) -> Unit,
-) {
-    val intent =
-        Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
-            putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
-            putExtra(RecognizerIntent.EXTRA_PROMPT, context.getString(R.string.search_voice_prompt))
-        }
-    try {
-        launch(intent)
-    } catch (_: ActivityNotFoundException) {
     }
 }
 

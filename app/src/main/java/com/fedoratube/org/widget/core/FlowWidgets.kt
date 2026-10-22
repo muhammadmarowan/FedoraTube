@@ -156,14 +156,6 @@ object FlowWidgets {
                 description = R.string.widget_quick_actions_description,
                 icon = R.drawable.ic_widget_search,
             ),
-            FlowWidgetEntry(
-                id = "recognize",
-                receiver = RecognizeWidgetReceiver::class,
-                widget = ::RecognizeWidget,
-                label = R.string.widget_recognize_label,
-                description = R.string.widget_recognize_description,
-                icon = R.drawable.ic_widget_mic,
-            ),
         )
 }
 

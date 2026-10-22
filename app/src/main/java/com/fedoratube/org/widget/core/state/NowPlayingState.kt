@@ -53,7 +53,7 @@ fun Context.nowPlayingSnapshotFlow(isLive: () -> Boolean): Flow<NowPlayingSnapsh
             title = prefs[Keys.TITLE].orEmpty(),
             artist = prefs[Keys.ARTIST].orEmpty(),
             artworkUrl = prefs[Keys.ARTWORK_URL],
-            isPlaying = (prefs[Keys.IS_PLAYING] ?: false) && isLive(),
+            isPlaying = (prefs[Keys.IS_PLAYING] ?: false) && (isLive() || (android.os.SystemClock.elapsedRealtime() - (prefs[Keys.CAPTURED_AT_ELAPSED_MS] ?: 0L) < 30_000L)),
             isLiked = prefs[Keys.IS_LIKED] ?: false,
             positionMs = prefs[Keys.POSITION_MS] ?: 0L,
             durationMs = prefs[Keys.DURATION_MS] ?: 0L,

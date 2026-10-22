@@ -16,7 +16,6 @@ enum class QuickShortcut(
 ) {
     DOWNLOADS("downloads", R.drawable.ic_widget_download, R.string.library_downloads_label, WidgetDeepLink.ROUTE_DOWNLOADS),
     HISTORY("history", R.drawable.ic_widget_history, R.string.library_history_label, WidgetDeepLink.ROUTE_HISTORY),
-    RECOGNIZE("recognize", R.drawable.ic_widget_mic, R.string.recognize_music, WidgetDeepLink.ROUTE_RECOGNIZE),
     MUSIC("music", R.drawable.ic_widget_music, R.string.nav_music, WidgetDeepLink.ROUTE_MUSIC),
     SUBSCRIPTIONS("subscriptions", R.drawable.ic_widget_subscriptions, R.string.nav_subs, WidgetDeepLink.ROUTE_SUBSCRIPTIONS),
     LIBRARY("library", R.drawable.ic_widget_library, R.string.nav_library, WidgetDeepLink.ROUTE_LIBRARY),
@@ -24,7 +23,7 @@ enum class QuickShortcut(
 
     companion object {
         const val MAX = 4
-        val DEFAULT = listOf(DOWNLOADS, HISTORY, RECOGNIZE)
+        val DEFAULT = listOf(DOWNLOADS, HISTORY, MUSIC)
         val KEY = stringPreferencesKey("quick_shortcuts")
 
         fun decode(stored: String?): List<QuickShortcut> =

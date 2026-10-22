@@ -72,13 +72,9 @@ class VideoPlayerService : MediaSessionService() {
     override fun onCreate() {
         super.onCreate()
         val notificationProvider =
-            DefaultMediaNotificationProvider
-                .Builder(this)
-                .setChannelId(NotificationHelper.CHANNEL_PLAYBACK)
-                .setChannelName(R.string.notification_channel_video_playback)
-                .setNotificationId(NotificationHelper.NOTIFICATION_PLAYBACK)
-                .build()
-                .apply { setSmallIcon(R.drawable.ic_notification_logo) }
+            VideoNotificationProvider().apply {
+                setSmallIcon(R.drawable.ic_notification_logo)
+            }
         setMediaNotificationProvider(notificationProvider)
         recordForegroundStartFailures("video-service")
 
@@ -228,6 +224,29 @@ class VideoPlayerService : MediaSessionService() {
             if (wifiLock?.isHeld == true) wifiLock?.release()
         } catch (e: Exception) {
             Log.w(TAG, "Failed to release wifi lock", e)
+        }
+    }
+
+    private inner class VideoNotificationProvider :
+        DefaultMediaNotificationProvider(
+            this@VideoPlayerService,
+            { NotificationHelper.NOTIFICATION_PLAYBACK },
+            NotificationHelper.CHANNEL_PLAYBACK,
+            R.string.notification_channel_video_playback,
+        ) {
+        override fun addNotificationActions(
+            session: MediaSession,
+            mediaButtons: com.google.common.collect.ImmutableList<androidx.media3.session.CommandButton>,
+            builder: androidx.core.app.NotificationCompat.Builder,
+            actionFactory: androidx.media3.session.MediaNotification.ActionFactory,
+        ): IntArray {
+            builder.setVisibility(androidx.core.app.NotificationCompat.VISIBILITY_PUBLIC)
+            builder.setCategory(androidx.core.app.NotificationCompat.CATEGORY_TRANSPORT)
+            builder.setShowWhen(false)
+            if (session.player.isPlaying) {
+                builder.setOngoing(true)
+            }
+            return super.addNotificationActions(session, mediaButtons, builder, actionFactory)
         }
     }
 }

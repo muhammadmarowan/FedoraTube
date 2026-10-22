@@ -209,11 +209,13 @@ internal fun EnhancedVideoPlayerScreen(
                 // Kept through fullscreen: the layout hides the page there, and keeping the list
                 // means leaving fullscreen, or waiting for the turn into it, never shows it empty.
                 if (!isInPipMode) {
-                    LazyColumn(
-                        Modifier.fillMaxSize(),
-                        contentPadding = PaddingValues(bottom = maxOf(ListEndPadding, dockReserve + QueueDockGap)),
-                    ) {
-                        item {
+                    if (isFocusModeEnabled) {
+                        Column(
+                            modifier =
+                                Modifier
+                                    .fillMaxSize()
+                                    .padding(bottom = maxOf(ListEndPadding, dockReserve + QueueDockGap)),
+                        ) {
                             VideoInfoContent(
                                 video = video,
                                 uiState = uiState,
@@ -227,42 +229,59 @@ internal fun EnhancedVideoPlayerScreen(
                                 scope = scope,
                                 snackbarHostState = snackbarHostState,
                                 onChannelClick = onChannelClick,
-                                isFocusMode = isFocusModeEnabled,
+                                isFocusMode = true,
                             )
-                        }
-                        if (isFocusModeEnabled) {
                             if (commentsEnabled) {
-                                item {
-                                    PlayerCommentsPanelHost(
-                                        videoId = video.id,
-                                        screenState = screenState,
-                                        viewModel = viewModel,
-                                        commentsUiState = commentsUiState,
-                                        artworkUrl = video.thumbnailUrl,
-                                        onNavigateToChannel = onChannelClick,
-                                        onClose = {},
-                                        showCloseButton = false,
-                                        modifier =
-                                            Modifier
-                                                .fillMaxWidth()
-                                                .height(550.dp),
+                                PlayerCommentsPanelHost(
+                                    videoId = video.id,
+                                    screenState = screenState,
+                                    viewModel = viewModel,
+                                    commentsUiState = commentsUiState,
+                                    artworkUrl = video.thumbnailUrl,
+                                    onNavigateToChannel = onChannelClick,
+                                    onClose = {},
+                                    showCloseButton = false,
+                                    modifier = Modifier.fillMaxWidth().weight(1f),
+                                )
+                            }
+                        }
+                    } else {
+                        LazyColumn(
+                            Modifier.fillMaxSize(),
+                            contentPadding = PaddingValues(bottom = maxOf(ListEndPadding, dockReserve + QueueDockGap)),
+                        ) {
+                            item {
+                                VideoInfoContent(
+                                    video = video,
+                                    uiState = uiState,
+                                    viewModel = viewModel,
+                                    screenState = screenState,
+                                    commentsUiState = commentsUiState,
+                                    commentsEnabled = commentsEnabled,
+                                    showCommentsPreview = showCommentsPreview,
+                                    deArrowEnabled = prefs.deArrowEnabled,
+                                    context = context,
+                                    scope = scope,
+                                    snackbarHostState = snackbarHostState,
+                                    onChannelClick = onChannelClick,
+                                    isFocusMode = false,
+                                )
+                            }
+                            if (showRelatedVideos) {
+                                if (relatedListUsesGrid(isMediumLayout, relatedCardStyle, relatedLayout)) {
+                                    relatedVideosGridContent(
+                                        relatedVideos = uiState.relatedVideos,
+                                        layout = relatedLayout,
+                                        onVideoClick = onVideoClick,
+                                        cardStyle = relatedCardStyle,
+                                    )
+                                } else {
+                                    relatedVideosContent(
+                                        relatedVideos = uiState.relatedVideos,
+                                        onVideoClick = onVideoClick,
+                                        cardStyle = relatedCardStyle,
                                     )
                                 }
-                            }
-                        } else if (showRelatedVideos) {
-                            if (relatedListUsesGrid(isMediumLayout, relatedCardStyle, relatedLayout)) {
-                                relatedVideosGridContent(
-                                    relatedVideos = uiState.relatedVideos,
-                                    layout = relatedLayout,
-                                    onVideoClick = onVideoClick,
-                                    cardStyle = relatedCardStyle,
-                                )
-                            } else {
-                                relatedVideosContent(
-                                    relatedVideos = uiState.relatedVideos,
-                                    onVideoClick = onVideoClick,
-                                    cardStyle = relatedCardStyle,
-                                )
                             }
                         }
                     }

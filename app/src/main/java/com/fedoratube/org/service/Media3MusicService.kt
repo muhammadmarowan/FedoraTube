@@ -43,6 +43,7 @@ import com.google.common.util.concurrent.SettableFuture
 import dagger.hilt.android.AndroidEntryPoint
 import com.fedoratube.org.MainActivity
 import com.fedoratube.org.R
+import com.fedoratube.org.notification.NotificationHelper
 import com.fedoratube.org.data.audio.eq.EqualizerRepository
 import com.fedoratube.org.data.download.DownloadUtil
 import com.fedoratube.org.data.download.LegacySongDownloads
@@ -600,6 +601,24 @@ class Media3MusicService : MediaLibraryService() {
                         scheduleScrobbleCheck()
                     } else {
                         closePlayingSegment()
+                    }
+                }
+
+                override fun onMediaMetadataChanged(mediaMetadata: androidx.media3.common.MediaMetadata) {
+                    updateNotification()
+                    widgetPublisher.publish(player)
+                }
+
+                override fun onEvents(player: Player, events: Player.Events) {
+                    if (events.containsAny(
+                            Player.EVENT_PLAYBACK_STATE_CHANGED,
+                            Player.EVENT_IS_PLAYING_CHANGED,
+                            Player.EVENT_MEDIA_METADATA_CHANGED,
+                            Player.EVENT_MEDIA_ITEM_TRANSITION,
+                            Player.EVENT_PLAY_WHEN_READY_CHANGED,
+                        )
+                    ) {
+                        widgetPublisher.publish(player)
                     }
                 }
             },
@@ -1221,7 +1240,11 @@ class Media3MusicService : MediaLibraryService() {
                 .setBitmapLoader(sessionArtworkBitmapLoader(this))
                 .build()
 
-        setMediaNotificationProvider(CustomNotificationProvider())
+        setMediaNotificationProvider(
+            CustomNotificationProvider().apply {
+                setSmallIcon(R.drawable.ic_notification_logo)
+            },
+        )
 
         updateNotification()
     }
@@ -1750,7 +1773,28 @@ class Media3MusicService : MediaLibraryService() {
     }
 
     @OptIn(UnstableApi::class)
-    private inner class CustomNotificationProvider : DefaultMediaNotificationProvider(this@Media3MusicService) {
+    private inner class CustomNotificationProvider :
+        DefaultMediaNotificationProvider(
+            this@Media3MusicService,
+            { NotificationHelper.NOTIFICATION_MUSIC_PLAYBACK },
+            NotificationHelper.CHANNEL_MUSIC_PLAYBACK,
+            R.string.notification_channel_music_playback,
+        ) {
+        override fun addNotificationActions(
+            session: MediaSession,
+            mediaButtons: ImmutableList<CommandButton>,
+            builder: androidx.core.app.NotificationCompat.Builder,
+            actionFactory: androidx.media3.session.MediaNotification.ActionFactory,
+        ): IntArray {
+            builder.setVisibility(androidx.core.app.NotificationCompat.VISIBILITY_PUBLIC)
+            builder.setCategory(androidx.core.app.NotificationCompat.CATEGORY_TRANSPORT)
+            builder.setShowWhen(false)
+            if (session.player.isPlaying) {
+                builder.setOngoing(true)
+            }
+            return super.addNotificationActions(session, mediaButtons, builder, actionFactory)
+        }
+
         override fun getMediaButtons(
             session: MediaSession,
             playerCommands: Player.Commands,

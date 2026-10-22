@@ -2,6 +2,7 @@ package com.fedoratube.org.widget.nowplaying
 
 import android.content.Context
 import android.os.SystemClock
+import android.util.Log
 import androidx.glance.appwidget.updateAll
 import androidx.media3.common.C
 import androidx.media3.common.Player
@@ -16,9 +17,8 @@ import com.fedoratube.org.widget.core.state.nowPlayingSnapshotFlow
 import com.fedoratube.org.widget.core.state.writeNowPlayingSnapshot
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -35,27 +35,47 @@ class NowPlayingWidgetPublisher
         @ApplicationContext private val context: Context,
     ) {
         private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
-        private var publishJob: Job? = null
+        private val updateChannel = Channel<NowPlayingSnapshot?>(Channel.CONFLATED)
         private val progressTicker = NowPlayingProgressTicker(context, scope)
+
+        init {
+            scope.launch {
+                for (snapshot in updateChannel) {
+                    try {
+                        if (snapshot == null) {
+                            context.clearNowPlayingSnapshot()
+                        } else {
+                            context.writeNowPlayingSnapshot(snapshot)
+                        }
+                        updatePlayerWidgets()
+                        progressTicker.follow(snapshot)
+                    } catch (e: Exception) {
+                        Log.w("NowPlayingPublisher", "Failed to update now playing widgets: ${e.message}")
+                    }
+                }
+            }
+        }
 
         /** Must be called on the player's application thread (service listener callbacks are). */
         @OptIn(UnstableApi::class)
         fun publish(player: Player) {
             hasPublished = true
             val item = player.currentMediaItem
+            val track = EnhancedMusicPlayerManager.currentTrack.value
             val snapshot =
                 item?.let {
+                    val rawTitle = it.mediaMetadata.title?.toString()
+                    val title = if (!rawTitle.isNullOrBlank()) rawTitle else track?.title.orEmpty()
+                    val rawArtist = it.mediaMetadata.artist?.toString()
+                    val artist = if (!rawArtist.isNullOrBlank()) rawArtist else track?.artist.orEmpty()
+                    val artworkUrl = it.mediaMetadata.artworkUri?.toString()
+                        ?: track?.highResThumbnailUrl
+
                     NowPlayingSnapshot(
                         mediaId = it.mediaId,
-                        title =
-                            it.mediaMetadata.title
-                                ?.toString()
-                                .orEmpty(),
-                        artist =
-                            it.mediaMetadata.artist
-                                ?.toString()
-                                .orEmpty(),
-                        artworkUrl = it.mediaMetadata.artworkUri?.toString(),
+                        title = title,
+                        artist = artist,
+                        artworkUrl = artworkUrl,
                         // Buffering still shows pause, matching the notification's own button.
                         isPlaying = !Util.shouldShowPlayButton(player),
                         isLiked = EnhancedMusicPlayerManager.isLiked.value,
@@ -65,26 +85,20 @@ class NowPlayingWidgetPublisher
                         speed = player.playbackParameters.speed,
                     )
                 }
-            publishJob?.cancel()
-            publishJob =
-                scope.launch {
-                    // Debounce bursts (transition + state + isPlaying often fire together)
-                    delay(150)
-                    if (snapshot == null) context.clearNowPlayingSnapshot() else context.writeNowPlayingSnapshot(snapshot)
-                    updatePlayerWidgets()
-                    progressTicker.follow(snapshot)
-                }
+            updateChannel.trySend(snapshot)
         }
 
         /** Service is going away — keep the last track on the widget, but shown paused. */
         fun publishStopped() {
-            publishJob?.cancel()
             progressTicker.follow(null)
-            publishJob =
-                scope.launch {
+            scope.launch {
+                try {
                     context.markNowPlayingStopped()
                     updatePlayerWidgets()
+                } catch (e: Exception) {
+                    Log.w("NowPlayingPublisher", "Widget stop error: ${e.message}")
                 }
+            }
         }
 
         companion object {
@@ -103,17 +117,25 @@ class NowPlayingWidgetPublisher
          */
         fun repairStalePlayback() {
             scope.launch {
-                val stored = context.nowPlayingSnapshotFlow { true }.first() ?: return@launch
-                if (!stored.isPlaying || hasPublished) return@launch
-                context.markNowPlayingStopped()
-                updatePlayerWidgets()
+                try {
+                    val stored = context.nowPlayingSnapshotFlow { true }.first() ?: return@launch
+                    if (!stored.isPlaying || hasPublished) return@launch
+                    context.markNowPlayingStopped()
+                    updatePlayerWidgets()
+                } catch (e: Exception) {
+                    Log.w("NowPlayingPublisher", "repairStalePlayback error: ${e.message}")
+                }
             }
         }
 
         private suspend fun updatePlayerWidgets() {
-            NowPlayingWidget().updateAll(context)
-            com.fedoratube.org.widget.turntable
-                .TurntableWidget()
-                .updateAll(context)
+            try {
+                NowPlayingWidget().updateAll(context)
+                com.fedoratube.org.widget.turntable
+                    .TurntableWidget()
+                    .updateAll(context)
+            } catch (e: Exception) {
+                Log.w("NowPlayingPublisher", "updatePlayerWidgets error: ${e.message}")
+            }
         }
     }

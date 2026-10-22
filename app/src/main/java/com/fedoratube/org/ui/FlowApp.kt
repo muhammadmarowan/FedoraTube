@@ -479,39 +479,11 @@ fun FlowApp(
                             paddingValues
                         }
 
-                    val mainTabs = remember { listOf(FlowTab.Home, FlowTab.Music, FlowTab.Subscriptions, FlowTab.Library) }
-                    val isPlayerExpanded = playerSheetState.currentValue == PlayerSheetValue.Expanded || musicPlayerSheetState.isExpanded
-                    val isMainTab = currentRoute.value in mainTabs.map { it.route } && !isPlayerExpanded
-                    val isRtl = layoutDirection == LayoutDirection.Rtl
-
-                    val onAdvanceTab: () -> Unit = {
-                        val currentIndex = mainTabs.indexOf(selectedTab)
-                        if (currentIndex in 0 until mainTabs.size - 1) {
-                            val nextTab = mainTabs[currentIndex + 1]
-                            currentRoute.value = nextTab.route
-                            navController.navigateToTab(nextTab, defaultStartRoute)
-                        }
-                    }
-
-                    val onRecedeTab: () -> Unit = {
-                        val currentIndex = mainTabs.indexOf(selectedTab)
-                        if (currentIndex in 1 until mainTabs.size) {
-                            val prevTab = mainTabs[currentIndex - 1]
-                            currentRoute.value = prevTab.route
-                            navController.navigateToTab(prevTab, defaultStartRoute)
-                        }
-                    }
-
                     Box(
                         modifier =
                             Modifier
                                 .padding(if (isInPipMode) PaddingValues(0.dp) else contentPadding)
-                                .nestedScroll(navScrollState.nestedScrollConnection)
-                                .mainTabSwipeGesture(
-                                    enabled = isMainTab && !isInPipMode,
-                                    onSwipeLeft = if (isRtl) onRecedeTab else onAdvanceTab,
-                                    onSwipeRight = if (isRtl) onAdvanceTab else onRecedeTab,
-                                ),
+                                .nestedScroll(navScrollState.nestedScrollConnection),
                     ) {
                         if (needsOnboarding != null) {
                             val homeViewModel: HomeViewModel = hiltViewModel(activity!!)
@@ -616,50 +588,5 @@ fun FlowApp(
             enabled = needsOnboarding == false && !isInPipMode && !playerVisible,
             onNavigateToDonations = { navController.navigate("donations") },
         )
-    }
-}
-
-private fun Modifier.mainTabSwipeGesture(
-    enabled: Boolean,
-    onSwipeLeft: () -> Unit,
-    onSwipeRight: () -> Unit,
-): Modifier {
-    if (!enabled) return this
-    return this.pointerInput(enabled) {
-        val thresholdPx = 60f * density
-        awaitEachGesture {
-            val down = awaitFirstDown(requireUnconsumed = false)
-            var totalDragX = 0f
-            var totalDragY = 0f
-            var isHorizontal: Boolean? = null
-
-            val dragStart =
-                awaitTouchSlopOrCancellation(down.id) { change, overSlop ->
-                    totalDragX += overSlop.x
-                    totalDragY += overSlop.y
-                    if (abs(overSlop.x) > abs(overSlop.y) * 1.3f && abs(overSlop.x) > 8f) {
-                        isHorizontal = true
-                        change.consume()
-                    } else if (abs(overSlop.y) > abs(overSlop.x)) {
-                        isHorizontal = false
-                    }
-                }
-
-            if (isHorizontal == true && dragStart != null) {
-                var accumulatedX = totalDragX
-                val completed =
-                    drag(dragStart.id) { change ->
-                        accumulatedX += change.positionChange().x
-                        change.consume()
-                    }
-                if (completed) {
-                    if (accumulatedX < -thresholdPx) {
-                        onSwipeLeft()
-                    } else if (accumulatedX > thresholdPx) {
-                        onSwipeRight()
-                    }
-                }
-            }
-        }
     }
 }
