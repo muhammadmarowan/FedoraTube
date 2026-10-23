@@ -96,7 +96,9 @@ internal fun FullMusicPlayerContent(
     val colorScheme = MaterialTheme.colorScheme
     val navigator = LocalMediaNavigator.current
 
-    val thumbnailUrl = uiState.currentTrack?.highResThumbnailUrl ?: track.highResThumbnailUrl
+    val currentTrack by EnhancedMusicPlayerManager.currentTrack.collectAsState()
+    val activeTrack = currentTrack ?: uiState.currentTrack ?: track
+    val thumbnailUrl = activeTrack.highResThumbnailUrl
     var showMoreOptions by remember { mutableStateOf(false) }
     var showSaveSheet by remember { mutableStateOf(false) }
     var showAudioSettings by remember { mutableStateOf(false) }

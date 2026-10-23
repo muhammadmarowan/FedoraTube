@@ -22,6 +22,7 @@ data class StremioAddon(
     val catalogs: List<StremioCatalog> = emptyList(),
     val enabled: Boolean = true,
     val isDeletable: Boolean = true,
+    val isNuvioPlugin: Boolean = false,
 )
 
 @Serializable

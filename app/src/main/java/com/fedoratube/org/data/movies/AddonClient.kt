@@ -83,6 +83,7 @@ object AddonClient {
                     catalogs = emptyList(),
                     enabled = true,
                     isDeletable = true,
+                    isNuvioPlugin = true,
                 )
             }
 

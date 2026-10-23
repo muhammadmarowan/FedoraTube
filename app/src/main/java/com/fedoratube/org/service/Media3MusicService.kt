@@ -496,6 +496,7 @@ class Media3MusicService : MediaLibraryService() {
                     }
 
                     widgetPublisher.publish(player)
+                    updateNotification()
                 }
 
                 override fun onTimelineChanged(
@@ -1746,6 +1747,7 @@ class Media3MusicService : MediaLibraryService() {
                 com.fedoratube.org.player.EnhancedMusicPlayerManager.setLiked(newLike)
                 if (::player.isInitialized) {
                     widgetPublisher.publish(player)
+                    updateNotification()
                 }
                 if (currentTrack != null && !com.fedoratube.org.data.localmedia.LocalMediaIds.isLocal(currentTrack.videoId)) {
                     scrobbler.onLikeChanged(currentTrack, newLike)

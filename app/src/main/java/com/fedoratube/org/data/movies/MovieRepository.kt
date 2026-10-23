@@ -178,14 +178,20 @@ class MovieRepository private constructor(context: Context) {
 
     suspend fun getHomeFeed(): MoviesHomeState = withContext(Dispatchers.IO) {
         val enabledAddons = _installedAddons.value.filter { it.enabled }
-        val catalogAddons = enabledAddons.filter { it.resources.contains("catalog") || it.catalogs.isNotEmpty() }
+        // ONLY use the default fedoratube addon for the Discover home feed so it loads lightning fast without delays.
+        // Other installed addons are used for video stream playback.
+        val defaultAddon = enabledAddons.firstOrNull {
+            it.id == DEFAULT_ADDONS.first().id || it.transportUrl == DEFAULT_ADDONS.first().transportUrl || !it.isDeletable
+        } ?: enabledAddons.firstOrNull { it.resources.contains("catalog") || it.catalogs.isNotEmpty() }
 
-        if (catalogAddons.isEmpty()) {
+        if (defaultAddon == null) {
             return@withContext MoviesHomeState(
                 isLoading = false,
                 errorMessage = "No catalog addon installed or enabled",
             )
         }
+
+        val catalogAddons = listOf(defaultAddon)
 
         try {
             coroutineScope {
@@ -281,7 +287,17 @@ class MovieRepository private constructor(context: Context) {
         coroutineScope {
             val deferredList = streamAddons.map { addon ->
                 async {
-                    AddonClient.fetchStreams(addon.transportUrl, type, id, addon.name, addon.iconUrl)
+                    if (addon.isNuvioPlugin || addon.id.startsWith("nuvio_") || addon.description.contains("Nuvio Plugin")) {
+                        com.fedoratube.org.data.movies.nuvio.NuvioPluginRunner.fetchStreamsForNuvioPlugin(
+                            appContext,
+                            addon.transportUrl,
+                            addon.name,
+                            type,
+                            id,
+                        )
+                    } else {
+                        AddonClient.fetchStreams(addon.transportUrl, type, id, addon.name, addon.iconUrl)
+                    }
                 }
             }
 

@@ -22,8 +22,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.OpenInNew
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.*
@@ -74,6 +76,8 @@ fun MovieDetailsScreen(
     var showStreamSheet by remember { mutableStateOf(false) }
     var streamSheetTitle by remember { mutableStateOf("") }
     var targetEpisodeForStream by remember { mutableStateOf<MovieEpisode?>(null) }
+    var sourceSearchQuery by remember { mutableStateOf("") }
+    var isSourceSearchVisible by remember { mutableStateOf(false) }
 
     fun loadStreamsForId(targetId: String) {
         isLoadingStreams = true
@@ -521,27 +525,75 @@ fun MovieDetailsScreen(
                             .navigationBarsPadding()
                             .padding(bottom = 16.dp),
                     ) {
-                        Column(
+                        Row(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(horizontal = 20.dp, vertical = 4.dp),
-                            verticalArrangement = Arrangement.spacedBy(4.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween,
                         ) {
-                            Text(
-                                text = "Select Source",
-                                style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
-                                color = MaterialTheme.colorScheme.onSurface,
-                            )
-                            Text(
-                                text = streamSheetTitle,
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
+                            Column(
+                                modifier = Modifier.weight(1f),
+                                verticalArrangement = Arrangement.spacedBy(4.dp),
+                            ) {
+                                Text(
+                                    text = "Select Source",
+                                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+                                    color = MaterialTheme.colorScheme.onSurface,
+                                )
+                                Text(
+                                    text = streamSheetTitle,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                )
+                            }
+                            IconButton(onClick = { isSourceSearchVisible = !isSourceSearchVisible }) {
+                                Icon(
+                                    imageVector = Icons.Filled.Search,
+                                    contentDescription = "Search sources",
+                                    tint = if (isSourceSearchVisible) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
+                                )
+                            }
+                        }
+
+                        if (isSourceSearchVisible) {
+                            OutlinedTextField(
+                                value = sourceSearchQuery,
+                                onValueChange = { sourceSearchQuery = it },
+                                placeholder = { Text("Search sources (e.g. 1080p, 4K, Hindi)...", fontSize = 13.sp) },
+                                leadingIcon = { Icon(Icons.Filled.Search, contentDescription = null, modifier = Modifier.size(18.dp)) },
+                                trailingIcon = {
+                                    if (sourceSearchQuery.isNotEmpty()) {
+                                        IconButton(onClick = { sourceSearchQuery = "" }) {
+                                            Icon(Icons.Filled.Close, contentDescription = "Clear", modifier = Modifier.size(18.dp))
+                                        }
+                                    }
+                                },
+                                singleLine = true,
+                                shape = RoundedCornerShape(12.dp),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 16.dp, vertical = 4.dp),
                             )
                         }
 
                         HorizontalDivider(modifier = Modifier.padding(vertical = 10.dp))
+
+                        val filteredStreams = remember(streams, sourceSearchQuery) {
+                            if (sourceSearchQuery.isBlank()) streams
+                            else {
+                                val q = sourceSearchQuery.trim().lowercase()
+                                streams.filter { s ->
+                                    s.displayTitle.lowercase().contains(q) ||
+                                    s.displayQuality.lowercase().contains(q) ||
+                                    s.addonName.lowercase().contains(q) ||
+                                    s.description?.lowercase()?.contains(q) == true ||
+                                    s.name?.lowercase()?.contains(q) == true
+                                }
+                            }
+                        }
 
                         when {
                             isLoadingStreams -> {
@@ -591,13 +643,27 @@ fun MovieDetailsScreen(
                                     }
                                 }
                             }
+                            filteredStreams.isEmpty() -> {
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(28.dp),
+                                    contentAlignment = Alignment.Center,
+                                ) {
+                                    Text(
+                                        text = "No sources match \"$sourceSearchQuery\"",
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    )
+                                }
+                            }
                             else -> {
                                 LazyColumn(
                                     modifier = Modifier.fillMaxWidth(),
                                     contentPadding = PaddingValues(horizontal = 16.dp, vertical = 6.dp),
                                     verticalArrangement = Arrangement.spacedBy(8.dp),
                                 ) {
-                                    items(streams, key = { "${it.addonName}_${it.playbackUrl ?: it.infoHash}_${it.displayTitle}" }) { stream ->
+                                    items(filteredStreams, key = { "${it.addonName}_${it.playbackUrl ?: it.infoHash}_${it.displayTitle}" }) { stream ->
                                         NuvioStreamCardItem(
                                             stream = stream,
                                             movieTitle = currentMeta.name,

@@ -467,7 +467,7 @@ internal fun UnifiedMusicPlayerSheet(
                                 .offset { fullOffset },
                     ) {
                         FullMusicPlayerContent(
-                            track = track,
+                            track = displayTrack,
                             isPlayerSheetExpanded = state.isExpanded,
                             palette = palette,
                             backdrop = backdrop,

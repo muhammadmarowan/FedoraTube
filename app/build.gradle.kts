@@ -56,8 +56,8 @@ android {
         applicationId = "com.fedoratube.org"
         minSdk = 26
         targetSdk = 36
-        versionCode = 16
-        versionName = "1.6.1"
+        versionCode = 17
+        versionName = "1.6.2"
 
         buildConfigField("int", "NIGHTLY_RUN", "0")
         buildConfigField("String", "APP_LANGUAGE_TAGS", "\"${(listOf("en") + translatedLocaleTags()).joinToString(",")}\"")
@@ -272,6 +272,8 @@ composeCompiler {
 
 dependencies {
     implementation(files("libs/lib-nuvio-engine-android-0.1.5.aar"))
+    implementation(files("libs/quickjs-kt-android-1.0.5-nuvio.aar"))
+    implementation("org.jsoup:jsoup:1.18.3")
 
     // --- Core Android ---
     implementation(libs.androidx.core.ktx)
