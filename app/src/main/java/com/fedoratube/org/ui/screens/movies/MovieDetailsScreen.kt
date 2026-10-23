@@ -6,19 +6,24 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.widget.Toast
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.OpenInNew
 import androidx.compose.material.icons.filled.ContentCopy
-import androidx.compose.material.icons.filled.OpenInNew
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -45,13 +50,14 @@ import kotlinx.coroutines.launch
 fun MovieDetailsScreen(
     type: String,
     id: String,
-    onPlayStream: (streamUrl: String, title: String, subtitle: String?, poster: String?, headers: Map<String, String>?) -> Unit,
+    onPlayStream: (stream: MovieStream, movie: MovieDetails, episode: MovieEpisode?, allStreams: List<MovieStream>) -> Unit,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
     val repository = remember(context) { MovieRepository.getInstance(context) }
     val scope = rememberCoroutineScope()
+    val listState = rememberLazyListState()
 
     var details by remember { mutableStateOf<MovieDetails?>(null) }
     var isLoadingDetails by remember { mutableStateOf(true) }
@@ -92,18 +98,18 @@ fun MovieDetailsScreen(
     Scaffold(
         modifier = modifier.fillMaxSize(),
         containerColor = MaterialTheme.colorScheme.background,
+        contentWindowInsets = WindowInsets(0.dp),
     ) { innerPadding ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(bottom = innerPadding.calculateBottomPadding()),
+                .padding(innerPadding),
         ) {
             when {
                 isLoadingDetails -> {
-                    CircularProgressIndicator(
-                        modifier = Modifier.align(Alignment.Center),
-                        color = MaterialTheme.colorScheme.primary,
-                    )
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
+                    }
                 }
                 details == null -> {
                     Column(
@@ -130,15 +136,16 @@ fun MovieDetailsScreen(
                     }
 
                     LazyColumn(
+                        state = listState,
                         modifier = Modifier.fillMaxSize(),
-                        contentPadding = PaddingValues(bottom = 32.dp),
+                        contentPadding = PaddingValues(bottom = 48.dp),
                     ) {
-                        // Header with Backdrop & Gradient
-                        item(key = "header") {
+                        // Nuvio-style Hero Backdrop
+                        item(key = "hero_backdrop") {
                             Box(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .height(280.dp),
+                                    .height(340.dp),
                             ) {
                                 val backdropUrl = meta.background ?: meta.poster
                                 if (!backdropUrl.isNullOrBlank()) {
@@ -150,35 +157,37 @@ fun MovieDetailsScreen(
                                     )
                                 }
 
+                                // Multi-stop dark gradient for seamless blend
                                 Box(
                                     modifier = Modifier
                                         .fillMaxSize()
                                         .background(
                                             Brush.verticalGradient(
                                                 colors = listOf(
-                                                    Color.Black.copy(alpha = 0.45f),
+                                                    Color.Black.copy(alpha = 0.5f),
                                                     Color.Transparent,
-                                                    MaterialTheme.colorScheme.background.copy(alpha = 0.85f),
+                                                    Color.Black.copy(alpha = 0.7f),
                                                     MaterialTheme.colorScheme.background,
                                                 ),
                                             ),
                                         ),
                                 )
 
-                                // Back button
-                                IconButton(
-                                    onClick = onBack,
+                                // Floating Top Bar (Back button, Share button)
+                                Row(
                                     modifier = Modifier
                                         .statusBarsPadding()
-                                        .padding(8.dp)
-                                        .align(Alignment.TopStart),
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 12.dp, vertical = 6.dp),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically,
                                 ) {
                                     Surface(
                                         shape = CircleShape,
-                                        color = Color.Black.copy(alpha = 0.6f),
-                                        modifier = Modifier.size(36.dp),
+                                        color = Color.Black.copy(alpha = 0.65f),
+                                        modifier = Modifier.size(40.dp),
                                     ) {
-                                        Box(contentAlignment = Alignment.Center) {
+                                        IconButton(onClick = onBack) {
                                             Icon(
                                                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                                                 contentDescription = "Back",
@@ -187,35 +196,59 @@ fun MovieDetailsScreen(
                                             )
                                         }
                                     }
+
+                                    Surface(
+                                        shape = CircleShape,
+                                        color = Color.Black.copy(alpha = 0.65f),
+                                        modifier = Modifier.size(40.dp),
+                                    ) {
+                                        IconButton(onClick = {
+                                            try {
+                                                val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                                                    this.type = "text/plain"
+                                                    putExtra(Intent.EXTRA_SUBJECT, meta.name)
+                                                    putExtra(Intent.EXTRA_TEXT, "${meta.name}\nhttps://www.imdb.com/title/${meta.id}/")
+                                                }
+                                                context.startActivity(Intent.createChooser(shareIntent, "Share"))
+                                            } catch (_: Exception) {}
+                                        }) {
+                                            Icon(
+                                                imageVector = Icons.Filled.Share,
+                                                contentDescription = "Share",
+                                                tint = Color.White,
+                                                modifier = Modifier.size(18.dp),
+                                            )
+                                        }
+                                    }
                                 }
 
-                                // Header info overlay at bottom
+                                // Poster + Title Overlay
                                 Row(
                                     modifier = Modifier
                                         .align(Alignment.BottomStart)
-                                        .padding(horizontal = 16.dp, vertical = 8.dp),
-                                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                                        .padding(horizontal = 16.dp, vertical = 10.dp),
+                                    horizontalArrangement = Arrangement.spacedBy(14.dp),
                                     verticalAlignment = Alignment.Bottom,
                                 ) {
-                                    // Small Poster
                                     if (!meta.poster.isNullOrBlank()) {
                                         AsyncImage(
                                             model = meta.poster,
                                             contentDescription = meta.name,
                                             contentScale = ContentScale.Crop,
                                             modifier = Modifier
-                                                .width(80.dp)
-                                                .height(120.dp)
-                                                .clip(RoundedCornerShape(8.dp)),
+                                                .width(90.dp)
+                                                .height(135.dp)
+                                                .clip(RoundedCornerShape(10.dp)),
                                         )
                                     }
 
                                     Column(
+                                        modifier = Modifier.weight(1f),
                                         verticalArrangement = Arrangement.spacedBy(4.dp),
                                     ) {
                                         Text(
                                             text = meta.name,
-                                            style = MaterialTheme.typography.titleLarge.copy(
+                                            style = MaterialTheme.typography.headlineSmall.copy(
                                                 fontWeight = FontWeight.Bold,
                                             ),
                                             color = MaterialTheme.colorScheme.onBackground,
@@ -225,7 +258,7 @@ fun MovieDetailsScreen(
 
                                         Row(
                                             verticalAlignment = Alignment.CenterVertically,
-                                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                            horizontalArrangement = Arrangement.spacedBy(6.dp),
                                         ) {
                                             meta.imdbRating?.let { rating ->
                                                 Surface(
@@ -246,7 +279,7 @@ fun MovieDetailsScreen(
                                                         Text(
                                                             text = rating,
                                                             color = Color.Black,
-                                                            fontSize = 10.sp,
+                                                            fontSize = 11.sp,
                                                             fontWeight = FontWeight.Bold,
                                                         )
                                                     }
@@ -263,7 +296,7 @@ fun MovieDetailsScreen(
 
                                             meta.runtime?.let {
                                                 Text(
-                                                    text = it,
+                                                    text = "• $it",
                                                     style = MaterialTheme.typography.bodySmall,
                                                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                                                 )
@@ -284,15 +317,65 @@ fun MovieDetailsScreen(
                             }
                         }
 
-                        // Synopsis / Overview
+                        // Prominent "WATCH NOW" Pill Button
+                        item(key = "watch_now_button") {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                            ) {
+                                Button(
+                                    onClick = {
+                                        val firstStream = streams.firstOrNull()
+                                        if (firstStream != null) {
+                                            onPlayStream(firstStream, meta, selectedEpisode, streams)
+                                        } else {
+                                            scope.launch {
+                                                listState.animateScrollToItem(4)
+                                            }
+                                        }
+                                    },
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(50.dp),
+                                    shape = RoundedCornerShape(25.dp),
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = MaterialTheme.colorScheme.primary,
+                                    ),
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Filled.PlayArrow,
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.onPrimary,
+                                        modifier = Modifier.size(24.dp),
+                                    )
+                                    Spacer(Modifier.width(8.dp))
+                                    Text(
+                                        text = if (meta.type == "series" && selectedEpisode != null) {
+                                            "Watch S${selectedEpisode?.season ?: 1} E${selectedEpisode?.episode ?: 1}"
+                                        } else {
+                                            "Watch Now"
+                                        },
+                                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                                        color = MaterialTheme.colorScheme.onPrimary,
+                                    )
+                                }
+                            }
+                        }
+
+                        // Overview / Storyline
                         meta.description?.takeIf { it.isNotBlank() }?.let { overview ->
-                            item(key = "overview") {
+                            item(key = "overview_section") {
+                                var expanded by remember { mutableStateOf(false) }
                                 Column(
-                                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 16.dp, vertical = 6.dp)
+                                        .clickable { expanded = !expanded },
                                     verticalArrangement = Arrangement.spacedBy(4.dp),
                                 ) {
                                     Text(
-                                        text = "Overview",
+                                        text = "Storyline",
                                         style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                                         color = MaterialTheme.colorScheme.onBackground,
                                     )
@@ -300,41 +383,43 @@ fun MovieDetailsScreen(
                                         text = overview,
                                         style = MaterialTheme.typography.bodyMedium,
                                         color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        maxLines = if (expanded) Int.MAX_VALUE else 3,
+                                        overflow = TextOverflow.Ellipsis,
                                     )
                                 }
                             }
                         }
 
-                        // If Series: Season Picker and Episode List
+                        // If Series: Season Picker and Episode Cards
                         if (meta.type == "series" && meta.videos.isNotEmpty()) {
-                            item(key = "seasons_title") {
+                            item(key = "episodes_header") {
                                 Text(
                                     text = "Episodes",
                                     style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                                     color = MaterialTheme.colorScheme.onBackground,
-                                    modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 8.dp),
+                                    modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 12.dp, bottom = 4.dp),
                                 )
                             }
 
                             if (availableSeasons.size > 1) {
-                                item(key = "seasons_tabs") {
+                                item(key = "season_chips") {
                                     LazyRow(
                                         contentPadding = PaddingValues(horizontal = 16.dp),
                                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                                         modifier = Modifier.padding(vertical = 4.dp),
                                     ) {
-                                        items(availableSeasons) { seasonNum ->
+                                        items(availableSeasons) { sNum ->
                                             FilterChip(
-                                                selected = selectedSeason == seasonNum,
+                                                selected = selectedSeason == sNum,
                                                 onClick = {
-                                                    selectedSeason = seasonNum
-                                                    val ep = meta.videos.firstOrNull { it.season == seasonNum }
+                                                    selectedSeason = sNum
+                                                    val ep = meta.videos.firstOrNull { it.season == sNum }
                                                     if (ep != null) {
                                                         selectedEpisode = ep
                                                         loadStreamsForId(ep.id)
                                                     }
                                                 },
-                                                label = { Text("Season $seasonNum") },
+                                                label = { Text("Season $sNum") },
                                                 shape = RoundedCornerShape(20.dp),
                                             )
                                         }
@@ -342,7 +427,6 @@ fun MovieDetailsScreen(
                                 }
                             }
 
-                            // Episode Cards for selected season
                             val currentSeasonEpisodes = meta.videos.filter { (it.season ?: 1) == selectedSeason }
                             items(currentSeasonEpisodes, key = { "ep_${it.id}" }) { episode ->
                                 val isSelected = selectedEpisode?.id == episode.id
@@ -357,9 +441,9 @@ fun MovieDetailsScreen(
                                     shape = RoundedCornerShape(12.dp),
                                     colors = CardDefaults.cardColors(
                                         containerColor = if (isSelected) {
-                                            MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f)
+                                            MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.45f)
                                         } else {
-                                            MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f)
+                                            MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
                                         },
                                     ),
                                 ) {
@@ -370,11 +454,10 @@ fun MovieDetailsScreen(
                                         horizontalArrangement = Arrangement.spacedBy(12.dp),
                                         verticalAlignment = Alignment.CenterVertically,
                                     ) {
-                                        // Episode thumbnail
                                         Box(
                                             modifier = Modifier
-                                                .width(96.dp)
-                                                .height(56.dp)
+                                                .width(100.dp)
+                                                .height(60.dp)
                                                 .clip(RoundedCornerShape(8.dp))
                                                 .background(MaterialTheme.colorScheme.surfaceVariant),
                                             contentAlignment = Alignment.Center,
@@ -421,14 +504,34 @@ fun MovieDetailsScreen(
                             }
                         }
 
-                        // Streams Section
+                        // Available Streams Section
                         item(key = "streams_header") {
-                            Text(
-                                text = "Available Streams",
-                                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                                color = MaterialTheme.colorScheme.onBackground,
-                                modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 8.dp),
-                            )
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 8.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                            ) {
+                                Text(
+                                    text = "Streams & Sources",
+                                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                                    color = MaterialTheme.colorScheme.onBackground,
+                                )
+                                if (streams.isNotEmpty()) {
+                                    Surface(
+                                        shape = RoundedCornerShape(12.dp),
+                                        color = MaterialTheme.colorScheme.surfaceVariant,
+                                    ) {
+                                        Text(
+                                            text = "${streams.size} available",
+                                            fontSize = 11.sp,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp),
+                                        )
+                                    }
+                                }
+                            }
                         }
 
                         when {
@@ -454,11 +557,11 @@ fun MovieDetailsScreen(
                                             .fillMaxWidth()
                                             .padding(horizontal = 16.dp),
                                         shape = RoundedCornerShape(12.dp),
-                                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+                                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f)),
                                     ) {
                                         Column(
                                             modifier = Modifier.padding(16.dp),
-                                            verticalArrangement = Arrangement.spacedBy(6.dp),
+                                            verticalArrangement = Arrangement.spacedBy(4.dp),
                                         ) {
                                             Text(
                                                 text = "No Streams Found",
@@ -466,9 +569,9 @@ fun MovieDetailsScreen(
                                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                                             )
                                             Text(
-                                                text = "Add or configure stream addons (e.g. Torrentio or Superflix) in Settings -> Addons & Plugins.",
+                                                text = "Add Stremio or Nuvio stream providers in Settings -> Addons.",
                                                 style = MaterialTheme.typography.bodySmall,
-                                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f),
                                             )
                                         }
                                     }
@@ -476,18 +579,11 @@ fun MovieDetailsScreen(
                             }
                             else -> {
                                 items(streams, key = { "${it.addonName}_${it.playbackUrl ?: it.infoHash}_${it.displayTitle}" }) { stream ->
-                                    StreamCardItem(
+                                    NuvioStreamCardItem(
                                         stream = stream,
                                         movieTitle = meta.name,
-                                        episodeTitle = selectedEpisode?.title,
-                                        posterUrl = meta.poster,
-                                        onPlayStream = { url, headers ->
-                                            val fullTitle = if (selectedEpisode != null) {
-                                                "${meta.name} - S${selectedEpisode?.season ?: 1}E${selectedEpisode?.episode ?: 1} ${selectedEpisode?.title}"
-                                            } else {
-                                                meta.name
-                                            }
-                                            onPlayStream(url, fullTitle, stream.displayTitle, meta.poster, headers)
+                                        onClick = {
+                                            onPlayStream(stream, meta, selectedEpisode, streams)
                                         },
                                     )
                                 }
@@ -501,12 +597,10 @@ fun MovieDetailsScreen(
 }
 
 @Composable
-private fun StreamCardItem(
+private fun NuvioStreamCardItem(
     stream: MovieStream,
     movieTitle: String,
-    episodeTitle: String?,
-    posterUrl: String?,
-    onPlayStream: (url: String, headers: Map<String, String>?) -> Unit,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
@@ -520,33 +614,13 @@ private fun StreamCardItem(
 
     val magnetOrUrl = if (stream.isTorrent) stream.getMagnetUri(movieTitle) else stream.playbackUrl
 
-    fun handlePlayOrLaunch() {
-        if (stream.isDirectPlayable && !stream.playbackUrl.isNullOrBlank()) {
-            onPlayStream(stream.playbackUrl!!, stream.proxyHeaders)
-        } else {
-            val magnet = stream.getMagnetUri(movieTitle) ?: stream.playbackUrl
-            if (!magnet.isNullOrBlank()) {
-                try {
-                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(magnet)).apply {
-                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    }
-                    context.startActivity(Intent.createChooser(intent, "Open Torrent With"))
-                } catch (e: Exception) {
-                    Toast.makeText(context, "No torrent app found. Please install Flud, LibreTorrent or TorrServe.", Toast.LENGTH_LONG).show()
-                }
-            } else {
-                Toast.makeText(context, "No stream URL found", Toast.LENGTH_SHORT).show()
-            }
-        }
-    }
-
     Card(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 4.dp)
-            .clickable { handlePlayOrLaunch() },
+            .clickable(onClick = onClick),
         shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.65f)),
     ) {
         Row(
             modifier = Modifier
@@ -596,13 +670,13 @@ private fun StreamCardItem(
                     overflow = TextOverflow.Ellipsis,
                 )
                 Text(
-                    text = stream.addonName.ifBlank { "Addon Stream" },
+                    text = stream.addonName.ifBlank { "Stream Provider" },
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
 
-            // External open button
+            // External Open Button
             if (!magnetOrUrl.isNullOrBlank()) {
                 IconButton(
                     onClick = {
@@ -618,47 +692,46 @@ private fun StreamCardItem(
                                     addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                                 }
                             }
-                            context.startActivity(Intent.createChooser(intent, if (stream.isTorrent) "Open Magnet With" else "Play stream with"))
+                            context.startActivity(Intent.createChooser(intent, if (stream.isTorrent) "Open Magnet With" else "Play With"))
                         } catch (e: Exception) {
-                            Toast.makeText(context, if (stream.isTorrent) "No torrent app found (install Flud / LibreTorrent)" else "Could not open external player", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, if (stream.isTorrent) "No torrent app found" else "Could not open external player", Toast.LENGTH_SHORT).show()
                         }
                     },
-                    modifier = Modifier.size(36.dp),
+                    modifier = Modifier.size(34.dp),
                 ) {
                     Icon(
-                        imageVector = Icons.Filled.OpenInNew,
-                        contentDescription = "Open externally",
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.size(20.dp),
-                    )
-                }
-
-                // Copy URL button
-                IconButton(
-                    onClick = {
-                        val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                        val clip = ClipData.newPlainText("Stream URL", magnetOrUrl)
-                        clipboard.setPrimaryClip(clip)
-                        Toast.makeText(context, if (stream.isTorrent) "Magnet link copied" else "Stream link copied", Toast.LENGTH_SHORT).show()
-                    },
-                    modifier = Modifier.size(36.dp),
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.ContentCopy,
-                        contentDescription = "Copy stream link",
+                        imageVector = Icons.AutoMirrored.Filled.OpenInNew,
+                        contentDescription = "External Player",
                         tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.size(18.dp),
                     )
                 }
+
+                IconButton(
+                    onClick = {
+                        val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                        val clip = ClipData.newPlainText("Stream Link", magnetOrUrl)
+                        clipboard.setPrimaryClip(clip)
+                        Toast.makeText(context, if (stream.isTorrent) "Magnet copied" else "Stream link copied", Toast.LENGTH_SHORT).show()
+                    },
+                    modifier = Modifier.size(34.dp),
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.ContentCopy,
+                        contentDescription = "Copy Link",
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.size(16.dp),
+                    )
+                }
             }
 
-            // Play button
+            // Play Button
             Surface(
                 shape = CircleShape,
                 color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier
                     .size(38.dp)
-                    .clickable { handlePlayOrLaunch() },
+                    .clickable(onClick = onClick),
             ) {
                 Box(contentAlignment = Alignment.Center) {
                     Icon(
@@ -672,4 +745,3 @@ private fun StreamCardItem(
         }
     }
 }
-

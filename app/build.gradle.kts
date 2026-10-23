@@ -271,6 +271,8 @@ composeCompiler {
 }
 
 dependencies {
+    implementation(files("libs/lib-nuvio-engine-android-0.1.5.aar"))
+
     // --- Core Android ---
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.core.splashscreen)

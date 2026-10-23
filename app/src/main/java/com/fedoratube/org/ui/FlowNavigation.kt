@@ -102,6 +102,9 @@ fun NavGraphBuilder.flowAppGraph(
             onNavigateToDownloads = {
                 navController.navigate("downloads")
             },
+            onNavigateToMovies = {
+                navController.navigate("movies")
+            },
             onNotificationClick = {
                 navController.navigate("notifications")
             },

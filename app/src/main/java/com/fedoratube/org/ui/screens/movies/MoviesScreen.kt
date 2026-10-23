@@ -27,8 +27,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import com.fedoratube.org.R
+import com.fedoratube.org.data.local.PlayerPreferences
 import com.fedoratube.org.data.movies.MovieItem
 import com.fedoratube.org.data.movies.MovieRepository
 import com.fedoratube.org.data.movies.MoviesHomeState
@@ -41,10 +43,13 @@ fun MoviesScreen(
     onMovieClick: (type: String, id: String) -> Unit,
     onSearchClick: () -> Unit,
     onAddonsClick: () -> Unit,
+    onBack: (() -> Unit)? = null,
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
     val repository = remember(context) { MovieRepository.getInstance(context) }
+    val preferences = remember(context) { PlayerPreferences(context) }
+    val isFocusModeEnabled by preferences.focusModeEnabled.collectAsStateWithLifecycle(initialValue = false)
     val scope = rememberCoroutineScope()
 
     var state by remember { mutableStateOf(MoviesHomeState()) }
@@ -69,6 +74,7 @@ fun MoviesScreen(
         topBar = {
             FlowTopBar(
                 title = stringResource(R.string.screen_title_movies),
+                onBack = if (isFocusModeEnabled) onBack else null,
                 actions = {
                     IconButton(onClick = onSearchClick) {
                         Icon(
@@ -138,16 +144,6 @@ fun MoviesScreen(
                         ),
                         verticalArrangement = Arrangement.spacedBy(20.dp),
                     ) {
-                        // Hero Featured Banner
-                        state.heroItem?.let { hero ->
-                            item(key = "hero_${hero.id}") {
-                                HeroFeaturedCard(
-                                    movie = hero,
-                                    onClick = { onMovieClick(hero.type, hero.id) },
-                                )
-                            }
-                        }
-
                         // Catalog Sections (Horizontal Rows for each installed addon catalog)
                         items(state.sections, key = { it.id }) { section ->
                             Column(
@@ -177,151 +173,6 @@ fun MoviesScreen(
                             }
                         }
                     }
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun HeroFeaturedCard(
-    movie: MovieItem,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Card(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp)
-            .height(210.dp)
-            .clickable(onClick = onClick),
-        shape = RoundedCornerShape(18.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-    ) {
-        Box(modifier = Modifier.fillMaxSize()) {
-            val imageUrl = movie.banner ?: movie.poster
-            if (!imageUrl.isNullOrBlank()) {
-                AsyncImage(
-                    model = imageUrl,
-                    contentDescription = movie.name,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxSize(),
-                )
-            }
-
-            // Dark gradient overlay
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(
-                        Brush.verticalGradient(
-                            colors = listOf(
-                                Color.Transparent,
-                                Color.Black.copy(alpha = 0.5f),
-                                Color.Black.copy(alpha = 0.92f),
-                            ),
-                            startY = 60f,
-                        ),
-                    ),
-            )
-
-            // Content details
-            Column(
-                modifier = Modifier
-                    .align(Alignment.BottomStart)
-                    .padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(6.dp),
-            ) {
-                // IMDb Rating & Type Badge
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                ) {
-                    movie.imdbRating?.let { rating ->
-                        Surface(
-                            shape = RoundedCornerShape(6.dp),
-                            color = Color(0xFFF5C518),
-                        ) {
-                            Row(
-                                modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(2.dp),
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Filled.Star,
-                                    contentDescription = null,
-                                    tint = Color.Black,
-                                    modifier = Modifier.size(12.dp),
-                                )
-                                Text(
-                                    text = rating,
-                                    color = Color.Black,
-                                    fontSize = 11.sp,
-                                    fontWeight = FontWeight.Bold,
-                                )
-                            }
-                        }
-                    }
-
-                    movie.releaseInfo?.let { year ->
-                        Text(
-                            text = year,
-                            color = Color.White.copy(alpha = 0.8f),
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.Medium,
-                        )
-                    }
-
-                    Surface(
-                        shape = RoundedCornerShape(6.dp),
-                        color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.85f),
-                    ) {
-                        Text(
-                            text = if (movie.type == "series") "SERIES" else "MOVIE",
-                            color = MaterialTheme.colorScheme.onPrimaryContainer,
-                            fontSize = 10.sp,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
-                        )
-                    }
-                }
-
-                Text(
-                    text = movie.name,
-                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
-                    color = Color.White,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-
-                if (movie.genres.isNotEmpty()) {
-                    Text(
-                        text = movie.genres.joinToString(" • "),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = Color.White.copy(alpha = 0.7f),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-                }
-            }
-
-            // Play Icon Button
-            Surface(
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .padding(16.dp)
-                    .size(44.dp),
-                shape = CircleShape,
-                color = MaterialTheme.colorScheme.primary,
-            ) {
-                Box(contentAlignment = Alignment.Center) {
-                    Icon(
-                        imageVector = Icons.Filled.PlayArrow,
-                        contentDescription = "Play",
-                        tint = MaterialTheme.colorScheme.onPrimary,
-                        modifier = Modifier.size(26.dp),
-                    )
                 }
             }
         }

@@ -23,8 +23,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.fedoratube.org.R
 import com.fedoratube.org.data.movies.MovieRepository
-import com.fedoratube.org.data.movies.PopularAddonPreset
 import com.fedoratube.org.data.movies.StremioAddon
+import com.fedoratube.org.ui.components.layout.topbar.FlowTopBar
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -65,27 +65,11 @@ fun AddonsSettingsScreen(
     Scaffold(
         modifier = modifier.fillMaxSize(),
         containerColor = MaterialTheme.colorScheme.background,
+        contentWindowInsets = WindowInsets(0.dp),
         topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = stringResource(R.string.settings_addons_title),
-                        style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
-                    )
-                },
-                navigationIcon = {
-                    if (onBack != null) {
-                        IconButton(onClick = onBack) {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = "Back",
-                            )
-                        }
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.background,
-                ),
+            FlowTopBar(
+                title = stringResource(R.string.settings_addons_title),
+                onBack = onBack,
             )
         },
     ) { innerPadding ->
@@ -117,13 +101,13 @@ fun AddonsSettingsScreen(
                                 tint = MaterialTheme.colorScheme.onPrimaryContainer,
                             )
                             Text(
-                                text = "Stremio & Nuvio Addons",
+                                text = "Media Addons & Plugins",
                                 style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                                 color = MaterialTheme.colorScheme.onPrimaryContainer,
                             )
                         }
                         Text(
-                            text = "Add media catalogs, stream scrapers, or subtitle addons using any Stremio-compatible manifest URL.",
+                            text = "Add media catalogs, stream scrapers, or subtitle addons using any Stremio or Nuvio manifest URL.",
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.85f),
                         )
@@ -157,26 +141,6 @@ fun AddonsSettingsScreen(
                     addon = addon,
                     onToggle = { enabled -> repository.toggleAddon(addon.id, enabled) },
                     onDelete = { repository.removeAddon(addon.id) },
-                )
-            }
-
-            // Popular Addons Presets Header
-            item {
-                Text(
-                    text = stringResource(R.string.addons_popular),
-                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                    color = MaterialTheme.colorScheme.onBackground,
-                    modifier = Modifier.padding(top = 12.dp),
-                )
-            }
-
-            // Popular Addons Presets List
-            items(MovieRepository.POPULAR_PRESETS, key = { it.manifestUrl }) { preset ->
-                val isInstalled = installedAddons.any { it.transportUrl == preset.manifestUrl }
-                PopularPresetCard(
-                    preset = preset,
-                    isInstalled = isInstalled,
-                    onInstall = { installAddon(preset.manifestUrl) },
                 )
             }
         }
@@ -295,95 +259,6 @@ private fun InstalledAddonCard(
                         tint = MaterialTheme.colorScheme.error,
                         modifier = Modifier.size(20.dp),
                     )
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun PopularPresetCard(
-    preset: PopularAddonPreset,
-    isInstalled: Boolean,
-    onInstall: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Card(
-        modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.7f)),
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(14.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
-            Column(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(2.dp),
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(6.dp),
-                ) {
-                    Text(
-                        text = preset.name,
-                        style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                    Surface(
-                        shape = RoundedCornerShape(4.dp),
-                        color = MaterialTheme.colorScheme.secondaryContainer,
-                    ) {
-                        Text(
-                            text = preset.type,
-                            fontSize = 9.sp,
-                            fontWeight = FontWeight.Medium,
-                            color = MaterialTheme.colorScheme.onSecondaryContainer,
-                            modifier = Modifier.padding(horizontal = 4.dp, vertical = 1.dp),
-                        )
-                    }
-                }
-                Text(
-                    text = preset.description,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f),
-                    maxLines = 2,
-                )
-            }
-
-            if (isInstalled) {
-                Surface(
-                    shape = RoundedCornerShape(16.dp),
-                    color = MaterialTheme.colorScheme.primaryContainer,
-                ) {
-                    Row(
-                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(4.dp),
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.Check,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                            modifier = Modifier.size(14.dp),
-                        )
-                        Text(
-                            text = stringResource(R.string.addons_installed_badge),
-                            fontSize = 11.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onPrimaryContainer,
-                        )
-                    }
-                }
-            } else {
-                FilledTonalButton(
-                    onClick = onInstall,
-                    contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
-                ) {
-                    Text(stringResource(R.string.addons_install), fontSize = 12.sp)
                 }
             }
         }

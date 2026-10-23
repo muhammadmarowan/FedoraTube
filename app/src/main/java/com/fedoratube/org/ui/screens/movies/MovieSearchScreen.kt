@@ -82,20 +82,13 @@ fun MovieSearchScreen(
                         query = query,
                         onQueryChange = { query = it },
                         placeholder = stringResource(R.string.movies_search_hint),
-                        modifier = Modifier.weight(1f),
-                        showClearButton = false,
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(end = 8.dp),
+                        showClearButton = true,
+                        onClear = { query = "" },
                         focusRequester = focusRequester,
                     )
-
-                    if (query.isNotEmpty()) {
-                        IconButton(onClick = { query = "" }) {
-                            Icon(
-                                imageVector = Icons.Rounded.Close,
-                                contentDescription = stringResource(R.string.clear),
-                                tint = MaterialTheme.colorScheme.onBackground,
-                            )
-                        }
-                    }
                 }
             }
         },
@@ -148,7 +141,7 @@ fun MovieSearchScreen(
                             modifier = Modifier.size(64.dp),
                         )
                         Text(
-                            text = "Search across Stremio & Nuvio Addons",
+                            text = "Search movies and TV shows",
                             style = MaterialTheme.typography.bodyLarge,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )

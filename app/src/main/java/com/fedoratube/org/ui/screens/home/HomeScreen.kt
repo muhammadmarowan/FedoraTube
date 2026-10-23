@@ -26,6 +26,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.CenterFocusStrong
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.FileDownload
+import androidx.compose.material.icons.outlined.Movie
 import androidx.compose.material.icons.outlined.MusicNote
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.QrCode2
@@ -115,6 +116,7 @@ fun HomeScreen(
     onNavigateToSettings: () -> Unit = {},
     onNavigateToMusic: () -> Unit = {},
     onNavigateToDownloads: () -> Unit = {},
+    onNavigateToMovies: () -> Unit = {},
     onNotificationClick: () -> Unit = {},
     onNavigateToHistory: () -> Unit = {},
     onOpenShortsFeed: () -> Unit = {},
@@ -244,6 +246,7 @@ fun HomeScreen(
                 onMusicClick = onNavigateToMusic,
                 onNavigateToSettings = onNavigateToSettings,
                 onNavigateToDownloads = onNavigateToDownloads,
+                onNavigateToMovies = onNavigateToMovies,
                 modifier = Modifier.fillMaxSize().padding(padding),
             )
         } else {
@@ -322,6 +325,7 @@ private fun FocusModeContent(
     onMusicClick: () -> Unit,
     onNavigateToSettings: () -> Unit,
     onNavigateToDownloads: () -> Unit,
+    onNavigateToMovies: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var showQrDialog by rememberSaveable { mutableStateOf(false) }
@@ -393,9 +397,9 @@ private fun FocusModeContent(
 
             Spacer(modifier = Modifier.height(28.dp))
 
-            // Centered actions row: Settings on the left, Downloads in the center, QR code on the right
+            // Centered actions row: Settings on the left, Downloads, Movie (right of Downloads), QR code on the right
             Row(
-                horizontalArrangement = Arrangement.spacedBy(24.dp),
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 FilledTonalIconButton(
@@ -426,6 +430,22 @@ private fun FocusModeContent(
                     Icon(
                         imageVector = Icons.Outlined.FileDownload,
                         contentDescription = stringResource(R.string.library_downloads_label),
+                        modifier = Modifier.size(24.dp),
+                    )
+                }
+
+                FilledTonalIconButton(
+                    onClick = onNavigateToMovies,
+                    modifier = Modifier.size(52.dp),
+                    colors =
+                        IconButtonDefaults.filledTonalIconButtonColors(
+                            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                            contentColor = MaterialTheme.colorScheme.onSurface,
+                        ),
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.Movie,
+                        contentDescription = stringResource(R.string.screen_title_movies),
                         modifier = Modifier.size(24.dp),
                     )
                 }
