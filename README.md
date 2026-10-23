@@ -4,14 +4,14 @@
 
 # FedoraTube
 
-**A fast, elegant, and distraction-free YouTube & YouTube Music client built for Android.**
+**A fast, elegant, and distraction-free YouTube, Music, and Movies streaming client designed for Android.**
 
 <br>
 
 [![Latest Release](https://img.shields.io/github/v/release/muhammadmarowan/FedoraTube?style=for-the-badge&color=0072EF&logo=github&label=Release)](https://github.com/muhammadmarowan/FedoraTube/releases/latest)
 [![Platform](https://img.shields.io/badge/Platform-Android_8.0+-3DDC84?style=for-the-badge&logo=android&logoColor=white)](https://github.com/muhammadmarowan/FedoraTube/releases/latest)
 [![Shorts Blocked](https://img.shields.io/badge/Shorts-100%25_Blocked-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://github.com/muhammadmarowan/FedoraTube)
-[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg?style=for-the-badge)](LICENSE)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg?style=for-the-badge)](License)
 
 <br>
 
@@ -19,35 +19,30 @@
 
 ---
 
-## Download
-
-Get the latest stable build from the releases page and install it on any Android 8.0+ device.
-
-- [Latest Release](https://github.com/muhammadmarowan/FedoraTube/releases/latest)
-- [Changelog](https://github.com/muhammadmarowan/FedoraTube/releases)
-- [Report an Issue](https://github.com/muhammadmarowan/FedoraTube/issues)
-
----
-
-## Screenshots
+## 📱 Screenshots
 
 <div align="center">
   <table>
     <tr>
-      <td align="center" width="33%">
-        <b>Home / Discover</b><br>
-        <sub>Clean movie and media discovery</sub><br><br>
-        <img src="https://raw.githubusercontent.com/muhammadmarowan/FedoraTube/main/Assets/home-discover.png" width="260" alt="FedoraTube home and discover screen">
+      <td align="center" width="25%">
+        <b>Home Feed</b><br>
+        <sub>Clean subscription & recommendation feed</sub><br><br>
+        <img src="Assets/home.png" width="220" alt="Home Feed">
       </td>
-      <td align="center" width="33%">
-        <b>Music</b><br>
-        <sub>Focused, distraction-free listening</sub><br><br>
-        <img src="https://raw.githubusercontent.com/muhammadmarowan/FedoraTube/main/Assets/music-screen.png" width="260" alt="FedoraTube music screen">
+      <td align="center" width="25%">
+        <b>Music Hub</b><br>
+        <sub>Top charts, artists & mood playlists</sub><br><br>
+        <img src="Assets/music.png" width="220" alt="Music Hub">
       </td>
-      <td align="center" width="33%">
-        <b>Video / Player</b><br>
-        <sub>Minimal player and content experience</sub><br><br>
-        <img src="https://raw.githubusercontent.com/muhammadmarowan/FedoraTube/main/Assets/video-player.png" width="260" alt="FedoraTube video player screen">
+      <td align="center" width="25%">
+        <b>Discover Movies & TV</b><br>
+        <sub>Trending movies, series & direct streams</sub><br><br>
+        <img src="Assets/discover.png" width="220" alt="Discover Movies & TV">
+      </td>
+      <td align="center" width="25%">
+        <b>Focus Mode</b><br>
+        <sub>Minimalist search-first canvas</sub><br><br>
+        <img src="Assets/focus_mode.png" width="220" alt="Focus Mode">
       </td>
     </tr>
   </table>
@@ -57,36 +52,36 @@ Get the latest stable build from the releases page and install it on any Android
 
 ---
 
-## Highlights & Key Features
+## ✨ Highlights & Key Features
 
-### 100% Shorts-Free & Anti-Doomscroll
-* **Zero Shorts Feeds:** YouTube Shorts are permanently disabled and removed across the app.
-* **No Reel Addiction:** Eliminate endless vertical scrolling traps and stay focused.
+### 🎬 Discover Movies & TV Series
+* **Browse Endless Catalogs:** Explore Trending Movies, Top Rated, Now Playing, and TV Series directly in the Discover tab.
+* **Stremio & Nuvio Plugin Support:** Native support for Stremio media addons and complete in-app Nuvio JavaScript scraper runtime.
+* **Torrent & Direct Streams:** High-speed direct HTTPS/HLS video playback along with a built-in libtorrent streaming engine.
+* **Instant Source Search & Multi-Track Audio:** Search and filter sources instantly (4K, 1080p, languages), with dedicated landscape player, audio track selector, and watch history integration.
+
+### 🚫 100% Shorts-Free & Anti-Doomscroll
+* **Zero Shorts Feeds:** YouTube Shorts are permanently disabled and stripped out across the entire application.
+* **No Reel Addiction:** Say goodbye to endless vertical scrolling traps—FedoraTube eliminates Shorts shelves.
 * **Mindful Consumption:** Enjoy long-form, educational, and high-value content without algorithmic distraction.
 
-### Minimalist Focus Mode
+### 🎯 Minimalist Focus Mode
 * **Search-First Experience:** A clean, distraction-free interface centered on discovery and playback.
 * **No Algorithmic Clutter:** Suppress noisy home feeds and intrusive recommendations.
 
-### Movies & Music Discovery
-* **Movie-Friendly Discovery Flow:** Browse trending and popular titles alongside your media watchlist.
-* **Full Music Hub:** Explore trending hits, charts, artist discographies, and mood-based stations.
+### 🎵 Full Music Player & Hub
+* **Music Hub:** Explore trending hits, Top 100 charts, artist discographies, and mood-based stations.
 * **Live Synced Lyrics:** Sing along with dynamic, real-time lyrics and quick album-art flipping.
+* **Lockscreen & Background Sync:** Dynamic artwork updates on lockscreen and player background upon track change.
 
-### Ad-Free Streaming
+### ⚡ Ad-Free Streaming & Background Play
 * **Built-in SponsorBlock:** Automatically skip sponsored segments, intros, outros, and subscription reminders.
-* **Background Play & PiP:** Keep audio playing while your screen is off or in Picture-in-Picture mode.
+* **Background Play & PiP:** Keep audio playing while your screen is off or in Picture-in-Picture popup window mode.
 
-### 100% Private, Lightweight & Offline First
+### 🔒 100% Private, Lightweight & Offline First
 * **On-Device Recommendation Engine:** Recommendations are computed privately on your device. Your watch habits never leave your phone.
 * **No Google Account Required:** Access subscriptions, playlists, and history without logging in.
-* **Backup & Restore:** Easily export and import your subscriptions and history anytime.
-
----
-
-## Why FedoraTube?
-
-FedoraTube is built for users who want a cleaner, calmer, and more intentional YouTube experience. It strips away the most addictive parts of the platform while keeping the features that matter most: good content, smooth playback, and control over your attention.
+* **Backup & Restore:** Easily export and import your subscriptions, history, and addons anytime.
 
 ---
 
@@ -94,8 +89,8 @@ FedoraTube is built for users who want a cleaner, calmer, and more intentional Y
 
 ## 📄 License
 
-This project is free and open source software distributed under the **GNU General Public License v3 (GPLv3)**.  
-In accordance with GPLv3, all source code and derivative modifications remain fully open and accessible.
+This project is Free and Open Source Software distributed under the **GNU General Public License v3 (GPLv3)**.  
+In accordance with GPLv3, all source code and derivative modifications remain completely open and freely accessible.
 
 Copyright © 2026 **FedoraTube Contributors**
 
