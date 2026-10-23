@@ -16,6 +16,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
@@ -27,6 +28,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.automirrored.filled.OpenInNew
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.rounded.AspectRatio
@@ -34,7 +36,6 @@ import androidx.compose.material.icons.rounded.FastForward
 import androidx.compose.material.icons.rounded.FastRewind
 import androidx.compose.material.icons.rounded.Pause
 import androidx.compose.material.icons.rounded.PlayArrow
-import androidx.compose.material.icons.rounded.Subtitles
 import androidx.compose.material.icons.rounded.VideoLibrary
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -49,9 +50,13 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MimeTypes
@@ -146,7 +151,6 @@ fun MoviePlayerScreen(
     var showSourceSheet by remember { mutableStateOf(false) }
     var showEpisodesSheet by remember { mutableStateOf(false) }
     var showAudioSheet by remember { mutableStateOf(false) }
-    var showSubtitleSheet by remember { mutableStateOf(false) }
     var tracksSnapshot by remember { mutableStateOf<Tracks?>(null) }
 
     // Resize modes: FIT, ZOOM, FILL, 16:9
@@ -190,6 +194,11 @@ fun MoviePlayerScreen(
             .apply {
                 if (isHls) setMimeType(MimeTypes.APPLICATION_M3U8)
             }
+            .build()
+        // Ensure subtitles are disabled by default
+        exoPlayer.trackSelectionParameters = exoPlayer.trackSelectionParameters
+            .buildUpon()
+            .setTrackTypeDisabled(C.TRACK_TYPE_TEXT, true)
             .build()
         exoPlayer.setMediaItem(mediaItem)
         exoPlayer.prepare()
@@ -262,6 +271,13 @@ fun MoviePlayerScreen(
         activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
         activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
+        // Immersive Fullscreen Mode (hide system bars and status bar)
+        val insetsController = activity?.let { WindowCompat.getInsetsController(it.window, it.window.decorView) }
+        insetsController?.let {
+            it.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+            it.hide(WindowInsetsCompat.Type.systemBars())
+        }
+
         val listener = object : Player.Listener {
             override fun onPlaybackStateChanged(playbackState: Int) {
                 isBuffering = playbackState == Player.STATE_BUFFERING
@@ -294,13 +310,28 @@ fun MoviePlayerScreen(
         onDispose {
             recordWatchHistory(exoPlayer.currentPosition, exoPlayer.duration)
             exoPlayer.removeListener(listener)
-            exoPlayer.release()
+            // Immediately stop playback on UI thread to prevent exit freeze/lag
+            exoPlayer.stop()
+            exoPlayer.clearMediaItems()
+            // Release codecs asynchronously on background thread
+            Thread {
+                try {
+                    exoPlayer.release()
+                } catch (_: Exception) {}
+            }.start()
+
             activity?.requestedOrientation = originalOrientation
             activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+            insetsController?.show(WindowInsetsCompat.Type.systemBars())
+
             if (activeIsTorrent) {
-                scope.launch {
-                    TorrentEngineManager.stopStream()
-                }
+                Thread {
+                    try {
+                        kotlinx.coroutines.runBlocking {
+                            TorrentEngineManager.stopStream()
+                        }
+                    } catch (_: Exception) {}
+                }.start()
             }
         }
     }
@@ -501,8 +532,8 @@ fun MoviePlayerScreen(
             }
         }
 
-        // Buffering / Torrent Loading
-        if ((isBuffering || torrentLoading) && !hasError) {
+        // Buffering / Torrent Loading (when controls are hidden)
+        if (!controlsVisible && (isBuffering || torrentLoading) && !hasError) {
             Column(
                 modifier = Modifier
                     .align(Alignment.Center)
@@ -621,12 +652,11 @@ fun MoviePlayerScreen(
                         ),
                     ),
             ) {
-                // Top Bar
+                // Top Bar (minimal padding, no statusBarsPadding gap in fullscreen)
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .statusBarsPadding()
-                        .padding(horizontal = 12.dp, vertical = 8.dp),
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     IconButton(onClick = onBack) {
@@ -699,76 +729,45 @@ fun MoviePlayerScreen(
                             modifier = Modifier.size(22.dp),
                         )
                     }
-
-                    // Subtitles
-                    IconButton(onClick = {
-                        tracksSnapshot = exoPlayer.currentTracks
-                        showSubtitleSheet = true
-                    }) {
-                        Icon(
-                            imageVector = Icons.Rounded.Subtitles,
-                            contentDescription = "Subtitles",
-                            tint = Color.White,
-                            modifier = Modifier.size(22.dp),
-                        )
-                    }
                 }
 
-                // Center Play / Rewind / FastForward
-                Row(
+                // Center Play/Pause or Buffering
+                Box(
                     modifier = Modifier.align(Alignment.Center),
-                    horizontalArrangement = Arrangement.spacedBy(36.dp),
-                    verticalAlignment = Alignment.CenterVertically,
+                    contentAlignment = Alignment.Center,
                 ) {
-                    IconButton(
-                        onClick = {
-                            val newPos = (exoPlayer.currentPosition - 10000L).coerceAtLeast(0L)
-                            exoPlayer.seekTo(newPos)
-                            currentPosition = newPos
-                        },
-                        modifier = Modifier.size(48.dp),
-                    ) {
-                        Icon(
-                            imageVector = Icons.Rounded.FastRewind,
-                            contentDescription = "Rewind 10s",
-                            tint = Color.White,
-                            modifier = Modifier.size(34.dp),
-                        )
-                    }
-
-                    Surface(
-                        shape = CircleShape,
-                        color = Color.White.copy(alpha = 0.22f),
-                        modifier = Modifier
-                            .size(72.dp)
-                            .clickable {
-                                if (exoPlayer.isPlaying) exoPlayer.pause() else exoPlayer.play()
-                            },
-                    ) {
-                        Box(contentAlignment = Alignment.Center) {
-                            Icon(
-                                imageVector = if (isPlaying) Icons.Rounded.Pause else Icons.Rounded.PlayArrow,
-                                contentDescription = if (isPlaying) "Pause" else "Play",
-                                tint = Color.White,
-                                modifier = Modifier.size(42.dp),
+                    if (isBuffering || torrentLoading) {
+                        Box(
+                            modifier = Modifier
+                                .size(64.dp)
+                                .background(Color.Black.copy(alpha = 0.5f), CircleShape),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            CircularProgressIndicator(
+                                color = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.size(36.dp),
+                                strokeWidth = 3.dp,
                             )
                         }
-                    }
-
-                    IconButton(
-                        onClick = {
-                            val newPos = (exoPlayer.currentPosition + 10000L).coerceAtMost(duration)
-                            exoPlayer.seekTo(newPos)
-                            currentPosition = newPos
-                        },
-                        modifier = Modifier.size(48.dp),
-                    ) {
-                        Icon(
-                            imageVector = Icons.Rounded.FastForward,
-                            contentDescription = "Forward 10s",
-                            tint = Color.White,
-                            modifier = Modifier.size(34.dp),
-                        )
+                    } else {
+                        Surface(
+                            shape = CircleShape,
+                            color = Color.White.copy(alpha = 0.25f),
+                            modifier = Modifier
+                                .size(68.dp)
+                                .clickable {
+                                    if (exoPlayer.isPlaying) exoPlayer.pause() else exoPlayer.play()
+                                },
+                        ) {
+                            Box(contentAlignment = Alignment.Center) {
+                                Icon(
+                                    imageVector = if (isPlaying) Icons.Rounded.Pause else Icons.Rounded.PlayArrow,
+                                    contentDescription = if (isPlaying) "Pause" else "Play",
+                                    tint = Color.White,
+                                    modifier = Modifier.size(38.dp),
+                                )
+                            }
+                        }
                     }
                 }
 
@@ -778,8 +777,8 @@ fun MoviePlayerScreen(
                         .fillMaxWidth()
                         .align(Alignment.BottomCenter)
                         .navigationBarsPadding()
-                        .padding(horizontal = 16.dp, vertical = 12.dp),
-                    verticalArrangement = Arrangement.spacedBy(6.dp),
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                    verticalArrangement = Arrangement.spacedBy(4.dp),
                 ) {
                     // Torrent P2P Stats HUD pill
                     if (activeIsTorrent) {
@@ -808,7 +807,50 @@ fun MoviePlayerScreen(
                         }
                     }
 
-                    // Seek Slider + Timestamps
+                    // Action shortcuts ABOVE timeline (Sources & Episodes)
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        // Switch Stream Source button
+                        if (currentStreamList.isNotEmpty()) {
+                            FilledTonalButton(
+                                onClick = { showSourceSheet = true },
+                                colors = ButtonDefaults.filledTonalButtonColors(
+                                    containerColor = Color.White.copy(alpha = 0.18f),
+                                    contentColor = Color.White,
+                                ),
+                                contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
+                                shape = RoundedCornerShape(16.dp),
+                            ) {
+                                Icon(Icons.Rounded.VideoLibrary, contentDescription = null, modifier = Modifier.size(16.dp))
+                                Spacer(Modifier.width(6.dp))
+                                Text("Sources (${currentStreamList.size})", fontSize = 12.sp)
+                            }
+                        } else {
+                            Spacer(Modifier.width(1.dp))
+                        }
+
+                        // Episodes Switcher button (for series)
+                        if (episodes.isNotEmpty()) {
+                            FilledTonalButton(
+                                onClick = { showEpisodesSheet = true },
+                                colors = ButtonDefaults.filledTonalButtonColors(
+                                    containerColor = Color.White.copy(alpha = 0.18f),
+                                    contentColor = Color.White,
+                                ),
+                                contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
+                                shape = RoundedCornerShape(16.dp),
+                            ) {
+                                Icon(Icons.AutoMirrored.Filled.List, contentDescription = null, modifier = Modifier.size(16.dp))
+                                Spacer(Modifier.width(6.dp))
+                                Text("Episodes (${episodes.size})", fontSize = 12.sp)
+                            }
+                        }
+                    }
+
+                    // Seek Slider + Timestamps (At the very bottom)
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically,
@@ -835,7 +877,26 @@ fun MoviePlayerScreen(
                                 exoPlayer.seekTo(target)
                                 currentPosition = target
                             },
-                            modifier = Modifier.weight(1f),
+                            modifier = Modifier
+                                .weight(1f)
+                                .height(16.dp),
+                            thumb = {
+                                SliderDefaults.Thumb(
+                                    interactionSource = remember { MutableInteractionSource() },
+                                    thumbSize = DpSize(10.dp, 10.dp),
+                                    colors = SliderDefaults.colors(thumbColor = MaterialTheme.colorScheme.primary),
+                                )
+                            },
+                            track = { sliderState ->
+                                SliderDefaults.Track(
+                                    sliderState = sliderState,
+                                    modifier = Modifier.height(2.5.dp),
+                                    colors = SliderDefaults.colors(
+                                        activeTrackColor = MaterialTheme.colorScheme.primary,
+                                        inactiveTrackColor = Color.White.copy(alpha = 0.3f),
+                                    ),
+                                )
+                            },
                             colors = SliderDefaults.colors(
                                 thumbColor = MaterialTheme.colorScheme.primary,
                                 activeTrackColor = MaterialTheme.colorScheme.primary,
@@ -850,49 +911,6 @@ fun MoviePlayerScreen(
                             fontWeight = FontWeight.Medium,
                         )
                     }
-
-                    // Bottom action shortcuts (Source Switcher, Episodes switcher)
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        // Switch Stream Source button
-                        if (currentStreamList.isNotEmpty()) {
-                            FilledTonalButton(
-                                onClick = { showSourceSheet = true },
-                                colors = ButtonDefaults.filledTonalButtonColors(
-                                    containerColor = Color.White.copy(alpha = 0.15f),
-                                    contentColor = Color.White,
-                                ),
-                                contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
-                                shape = RoundedCornerShape(16.dp),
-                            ) {
-                                Icon(Icons.Rounded.VideoLibrary, contentDescription = null, modifier = Modifier.size(16.dp))
-                                Spacer(Modifier.width(6.dp))
-                                Text("Sources (${currentStreamList.size})", fontSize = 12.sp)
-                            }
-                        } else {
-                            Spacer(Modifier.width(1.dp))
-                        }
-
-                        // Episodes Switcher button (for series)
-                        if (episodes.isNotEmpty()) {
-                            FilledTonalButton(
-                                onClick = { showEpisodesSheet = true },
-                                colors = ButtonDefaults.filledTonalButtonColors(
-                                    containerColor = Color.White.copy(alpha = 0.15f),
-                                    contentColor = Color.White,
-                                ),
-                                contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
-                                shape = RoundedCornerShape(16.dp),
-                            ) {
-                                Icon(Icons.Filled.List, contentDescription = null, modifier = Modifier.size(16.dp))
-                                Spacer(Modifier.width(6.dp))
-                                Text("Episodes (${episodes.size})", fontSize = 12.sp)
-                            }
-                        }
-                    }
                 }
             }
         }
@@ -903,11 +921,13 @@ fun MoviePlayerScreen(
         ModalBottomSheet(
             onDismissRequest = { showSourceSheet = false },
             containerColor = MaterialTheme.colorScheme.surface,
+            contentWindowInsets = { WindowInsets(0.dp) },
         ) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 24.dp),
+                    .navigationBarsPadding()
+                    .padding(bottom = 16.dp),
             ) {
                 Text(
                     text = "Select Stream Source",
@@ -961,11 +981,11 @@ fun MoviePlayerScreen(
                                     color = if (stream.isDirectPlayable) Color(0xFF2E7D32) else Color(0xFFE65100),
                                 ) {
                                     Text(
-                                        text = if (stream.isDirectPlayable) "DIRECT" else "TORRENT",
+                                        text = if (stream.isDirectPlayable) "D" else "T",
                                         color = Color.White,
-                                        fontSize = 9.sp,
+                                        fontSize = 11.sp,
                                         fontWeight = FontWeight.Bold,
-                                        modifier = Modifier.padding(horizontal = 5.dp, vertical = 2.dp),
+                                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 3.dp),
                                     )
                                 }
                                 Text(
@@ -979,7 +999,7 @@ fun MoviePlayerScreen(
                                         text = stream.displayTitle,
                                         style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
                                         maxLines = 1,
-                                        overflow = TextOverflow.Ellipsis,
+                                        modifier = Modifier.basicMarquee(),
                                     )
                                     Text(
                                         text = stream.addonName,
@@ -1199,128 +1219,5 @@ fun MoviePlayerScreen(
         }
     }
 
-    // Subtitle Tracks Sheet
-    if (showSubtitleSheet) {
-        ModalBottomSheet(
-            onDismissRequest = { showSubtitleSheet = false },
-            containerColor = MaterialTheme.colorScheme.surface,
-            dragHandle = { BottomSheetDefaults.DragHandle() },
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp)
-                    .padding(bottom = 32.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-            ) {
-                Text(
-                    text = "Subtitles",
-                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
-                    color = MaterialTheme.colorScheme.onSurface,
-                )
 
-                val isTextDisabled = C.TRACK_TYPE_TEXT in exoPlayer.trackSelectionParameters.disabledTrackTypes
-                val textTracks = remember(tracksSnapshot) {
-                    tracksSnapshot?.groups?.filter { it.type == C.TRACK_TYPE_TEXT } ?: emptyList()
-                }
-
-                LazyColumn(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalArrangement = Arrangement.spacedBy(4.dp),
-                ) {
-                    // Option to turn subtitles off
-                    item {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clip(RoundedCornerShape(8.dp))
-                                .clickable {
-                                    exoPlayer.trackSelectionParameters = exoPlayer.trackSelectionParameters
-                                        .buildUpon()
-                                        .setTrackTypeDisabled(C.TRACK_TYPE_TEXT, true)
-                                        .clearOverridesOfType(C.TRACK_TYPE_TEXT)
-                                        .build()
-                                    tracksSnapshot = exoPlayer.currentTracks
-                                    Toast.makeText(context, "Subtitles: Off", Toast.LENGTH_SHORT).show()
-                                    showSubtitleSheet = false
-                                }
-                                .padding(horizontal = 8.dp, vertical = 12.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                            Text(
-                                text = "Off",
-                                style = MaterialTheme.typography.bodyMedium.copy(
-                                    fontWeight = if (isTextDisabled) FontWeight.Bold else FontWeight.Normal,
-                                ),
-                                color = if (isTextDisabled) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
-                            )
-                            if (isTextDisabled) {
-                                Icon(
-                                    imageVector = Icons.Filled.Check,
-                                    contentDescription = "Selected",
-                                    tint = MaterialTheme.colorScheme.primary,
-                                    modifier = Modifier.size(20.dp),
-                                )
-                            }
-                        }
-                    }
-
-                    textTracks.forEach { group ->
-                        items(group.length) { i ->
-                            val format = group.getTrackFormat(i)
-                            val isSelected = !isTextDisabled && group.isTrackSelected(i)
-                            val langCode = format.language
-                            val friendlyLang = if (!langCode.isNullOrBlank()) {
-                                try {
-                                    val loc = Locale.forLanguageTag(langCode)
-                                    val name = loc.getDisplayLanguage(Locale.getDefault())
-                                    if (name.isNotBlank()) name.replaceFirstChar { it.uppercase() } else loc.displayLanguage
-                                } catch (_: Exception) {
-                                    langCode.uppercase()
-                                }
-                            } else null
-
-                            val displayName = format.label ?: friendlyLang ?: "Subtitle Track ${i + 1}"
-
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clip(RoundedCornerShape(8.dp))
-                                    .clickable {
-                                        exoPlayer.trackSelectionParameters = exoPlayer.trackSelectionParameters
-                                            .buildUpon()
-                                            .setTrackTypeDisabled(C.TRACK_TYPE_TEXT, false)
-                                            .setOverrideForType(TrackSelectionOverride(group.mediaTrackGroup, i))
-                                            .build()
-                                        tracksSnapshot = exoPlayer.currentTracks
-                                        Toast.makeText(context, "Subtitles: $displayName", Toast.LENGTH_SHORT).show()
-                                        showSubtitleSheet = false
-                                    }
-                                    .padding(horizontal = 8.dp, vertical = 12.dp),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically,
-                            ) {
-                                Text(
-                                    text = displayName,
-                                    style = MaterialTheme.typography.bodyMedium.copy(
-                                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
-                                    ),
-                                    color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
-                                )
-                                if (isSelected) {
-                                    Icon(
-                                        imageVector = Icons.Filled.Check,
-                                        contentDescription = "Selected",
-                                        tint = MaterialTheme.colorScheme.primary,
-                                        modifier = Modifier.size(20.dp),
-                                    )
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
 }

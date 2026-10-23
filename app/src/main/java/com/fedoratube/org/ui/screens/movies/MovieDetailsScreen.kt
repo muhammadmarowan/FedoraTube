@@ -10,6 +10,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -493,11 +494,13 @@ fun MovieDetailsScreen(
                     onDismissRequest = { showStreamSheet = false },
                     containerColor = MaterialTheme.colorScheme.surface,
                     dragHandle = { BottomSheetDefaults.DragHandle() },
+                    contentWindowInsets = { WindowInsets(0.dp) },
                 ) {
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(bottom = 32.dp),
+                            .navigationBarsPadding()
+                            .padding(bottom = 16.dp),
                     ) {
                         Column(
                             modifier = Modifier
@@ -571,9 +574,7 @@ fun MovieDetailsScreen(
                             }
                             else -> {
                                 LazyColumn(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .heightIn(max = 440.dp),
+                                    modifier = Modifier.fillMaxWidth(),
                                     contentPadding = PaddingValues(horizontal = 16.dp, vertical = 6.dp),
                                     verticalArrangement = Arrangement.spacedBy(8.dp),
                                 ) {
@@ -604,7 +605,6 @@ private fun NuvioStreamCardItem(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val context = LocalContext.current
     val quality = stream.displayQuality
     val badgeColor = when {
         quality.contains("4K") || quality.contains("2160") -> Color(0xFFE53935)
@@ -613,12 +613,10 @@ private fun NuvioStreamCardItem(
         else -> MaterialTheme.colorScheme.secondary
     }
 
-    val magnetOrUrl = if (stream.isTorrent) stream.getMagnetUri(movieTitle) else stream.playbackUrl
-
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 4.dp)
+            .padding(horizontal = 4.dp, vertical = 2.dp)
             .clickable(onClick = onClick),
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.65f)),
@@ -644,21 +642,21 @@ private fun NuvioStreamCardItem(
                 )
             }
 
-            // Direct vs Torrent Badge
+            // Direct vs Torrent Badge: "D" or "T"
             Surface(
                 shape = RoundedCornerShape(6.dp),
                 color = if (stream.isDirectPlayable) Color(0xFF2E7D32) else Color(0xFFE65100),
             ) {
                 Text(
-                    text = if (stream.isDirectPlayable) "DIRECT" else "TORRENT",
+                    text = if (stream.isDirectPlayable) "D" else "T",
                     color = Color.White,
-                    fontSize = 9.sp,
+                    fontSize = 11.sp,
                     fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(horizontal = 5.dp, vertical = 2.dp),
+                    modifier = Modifier.padding(horizontal = 6.dp, vertical = 3.dp),
                 )
             }
 
-            // Stream Info
+            // Stream Info with auto-sliding Marquee
             Column(
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.spacedBy(2.dp),
@@ -668,62 +666,14 @@ private fun NuvioStreamCardItem(
                     style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
                     color = MaterialTheme.colorScheme.onBackground,
                     maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.basicMarquee(),
                 )
                 Text(
                     text = stream.addonName.ifBlank { "Stream Provider" },
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 1,
                 )
-            }
-
-            // External Open Button
-            if (!magnetOrUrl.isNullOrBlank()) {
-                IconButton(
-                    onClick = {
-                        try {
-                            val uri = Uri.parse(magnetOrUrl)
-                            val intent = if (stream.isTorrent) {
-                                Intent(Intent.ACTION_VIEW, uri).apply {
-                                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                                }
-                            } else {
-                                Intent(Intent.ACTION_VIEW).apply {
-                                    setDataAndType(uri, "video/*")
-                                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                                }
-                            }
-                            context.startActivity(Intent.createChooser(intent, if (stream.isTorrent) "Open Magnet With" else "Play With"))
-                        } catch (e: Exception) {
-                            Toast.makeText(context, if (stream.isTorrent) "No torrent app found" else "Could not open external player", Toast.LENGTH_SHORT).show()
-                        }
-                    },
-                    modifier = Modifier.size(34.dp),
-                ) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.OpenInNew,
-                        contentDescription = "External Player",
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.size(18.dp),
-                    )
-                }
-
-                IconButton(
-                    onClick = {
-                        val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                        val clip = ClipData.newPlainText("Stream Link", magnetOrUrl)
-                        clipboard.setPrimaryClip(clip)
-                        Toast.makeText(context, if (stream.isTorrent) "Magnet copied" else "Stream link copied", Toast.LENGTH_SHORT).show()
-                    },
-                    modifier = Modifier.size(34.dp),
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.ContentCopy,
-                        contentDescription = "Copy Link",
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.size(16.dp),
-                    )
-                }
             }
 
             // Play Button
@@ -731,7 +681,7 @@ private fun NuvioStreamCardItem(
                 shape = CircleShape,
                 color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier
-                    .size(38.dp)
+                    .size(36.dp)
                     .clickable(onClick = onClick),
             ) {
                 Box(contentAlignment = Alignment.Center) {
@@ -739,7 +689,7 @@ private fun NuvioStreamCardItem(
                         imageVector = Icons.Filled.PlayArrow,
                         contentDescription = "Play",
                         tint = MaterialTheme.colorScheme.onPrimary,
-                        modifier = Modifier.size(22.dp),
+                        modifier = Modifier.size(20.dp),
                     )
                 }
             }
