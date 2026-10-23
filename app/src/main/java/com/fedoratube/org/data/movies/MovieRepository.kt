@@ -43,6 +43,12 @@ class MovieRepository private constructor(context: Context) {
 
         val POPULAR_PRESETS = listOf(
             PopularAddonPreset(
+                name = "PlavioHD (Direct Streams)",
+                description = "Direct HTTPS & HLS video streams for movies and series (no torrents needed)",
+                manifestUrl = "https://hd.plavio.site/manifest.json",
+                type = "Direct Streams",
+            ),
+            PopularAddonPreset(
                 name = "Cinemeta (Official)",
                 description = "Official catalog for IMDb ratings, posters, movies & series metadata",
                 manifestUrl = "https://v3-cinemeta.strem.io/manifest.json",
@@ -52,31 +58,31 @@ class MovieRepository private constructor(context: Context) {
                 name = "Torrentio",
                 description = "High-speed torrent & debrid stream provider for movies and TV series",
                 manifestUrl = "https://torrentio.strem.fun/manifest.json",
-                type = "Streams",
+                type = "Torrents & Debrid",
             ),
             PopularAddonPreset(
-                name = "Cyberflix Catalog",
-                description = "Popular streaming services catalog (Netflix, Disney+, HBO Max, Apple TV+)",
-                manifestUrl = "https://cyberflix.kamyroll.tech/manifest.json",
-                type = "Catalog",
+                name = "Yoru Nuvio Providers",
+                description = "Popular Nuvio community scraper repository for direct streams",
+                manifestUrl = "https://raw.githubusercontent.com/yoruix/nuvio-providers/refs/heads/main/manifest.json",
+                type = "Nuvio Plugin",
             ),
             PopularAddonPreset(
-                name = "Superflix",
-                description = "Direct HTTP video streaming addon for movies and series",
-                manifestUrl = "https://superflix.site/manifest.json",
-                type = "Streams",
-            ),
-            PopularAddonPreset(
-                name = "Streaming Catalogs",
-                description = "Browse content by streaming platforms and popular networks",
-                manifestUrl = "https://7a82163c306e-stremio-netflix-catalog-addon.baby-beamup.club/manifest.json",
-                type = "Catalog",
+                name = "All-in-One Nuvio",
+                description = "Comprehensive anime, movie and drama scrapers bundle",
+                manifestUrl = "https://raw.githubusercontent.com/NuvioPlugin/All-in-One-Nuvio/refs/heads/main/manifest.json",
+                type = "Nuvio Plugin",
             ),
             PopularAddonPreset(
                 name = "OpenSubtitles v3",
                 description = "Multi-language subtitles from OpenSubtitles.org",
                 manifestUrl = "https://opensubtitles-v3.strem.io/manifest.json",
                 type = "Subtitles",
+            ),
+            PopularAddonPreset(
+                name = "Streaming Catalogs",
+                description = "Browse content by streaming platforms and popular networks",
+                manifestUrl = "https://7a82163c306e-stremio-netflix-catalog-addon.baby-beamup.club/manifest.json",
+                type = "Catalog",
             ),
             PopularAddonPreset(
                 name = "Anime Kitsu",
@@ -86,7 +92,7 @@ class MovieRepository private constructor(context: Context) {
             ),
         )
 
-        private val DEFAULT_ADDONS = listOf(
+        val DEFAULT_ADDONS = listOf(
             StremioAddon(
                 id = "com.linvo.cinemeta",
                 name = "Cinemeta",
@@ -96,6 +102,25 @@ class MovieRepository private constructor(context: Context) {
                 transportUrl = "https://v3-cinemeta.strem.io/manifest.json",
                 types = listOf("movie", "series"),
                 resources = listOf("catalog", "meta"),
+                catalogs = listOf(
+                    StremioCatalog("movie", "top", "Trending Movies"),
+                    StremioCatalog("series", "top", "Top TV Series"),
+                ),
+                enabled = true,
+                isDeletable = false,
+            ),
+            StremioAddon(
+                id = "community.plaviohd",
+                name = "PlavioHD (Direct Streams)",
+                version = "1.9.49",
+                description = "Direct HTTPS & HLS movies & TV series streams",
+                iconUrl = "https://hd.plavio.site/logo.png",
+                transportUrl = "https://hd.plavio.site/manifest.json",
+                types = listOf("movie", "series", "tv"),
+                resources = listOf("stream", "catalog", "meta"),
+                catalogs = listOf(
+                    StremioCatalog("tv", "plaviohd-live-tv", "Live TV"),
+                ),
                 enabled = true,
                 isDeletable = false,
             ),
@@ -120,8 +145,7 @@ class MovieRepository private constructor(context: Context) {
 
     private fun loadAddons() {
         val storedJson = prefs.getString(KEY_ADDONS, null)
-        val addons = if (storedJson.isNullOrBlank()) {
-            saveAddons(DEFAULT_ADDONS)
+        var addons = if (storedJson.isNullOrBlank()) {
             DEFAULT_ADDONS
         } else {
             try {
@@ -131,7 +155,15 @@ class MovieRepository private constructor(context: Context) {
                 DEFAULT_ADDONS
             }
         }
-        _installedAddons.value = addons
+
+        // Ensure key defaults (Cinemeta and PlavioHD for direct streams) are always present
+        val missingDefaults = DEFAULT_ADDONS.filter { def -> addons.none { it.id == def.id } }
+        if (missingDefaults.isNotEmpty()) {
+            addons = addons + missingDefaults
+            saveAddons(addons)
+        } else {
+            _installedAddons.value = addons
+        }
     }
 
     private fun saveAddons(addons: List<StremioAddon>) {
@@ -175,14 +207,11 @@ class MovieRepository private constructor(context: Context) {
         saveAddons(updated)
     }
 
-    suspend fun getHomeFeed(
-        genre: String? = null,
-        typeFilter: String? = null,
-    ): MoviesHomeState = withContext(Dispatchers.IO) {
-        val catalogAddons = _installedAddons.value.filter { it.enabled && it.resources.contains("catalog") }
-        val mainAddon = catalogAddons.firstOrNull { it.id == "com.linvo.cinemeta" } ?: catalogAddons.firstOrNull()
+    suspend fun getHomeFeed(): MoviesHomeState = withContext(Dispatchers.IO) {
+        val enabledAddons = _installedAddons.value.filter { it.enabled }
+        val catalogAddons = enabledAddons.filter { it.resources.contains("catalog") || it.catalogs.isNotEmpty() }
 
-        if (mainAddon == null) {
+        if (catalogAddons.isEmpty()) {
             return@withContext MoviesHomeState(
                 isLoading = false,
                 errorMessage = "No catalog addon installed or enabled",
@@ -191,44 +220,54 @@ class MovieRepository private constructor(context: Context) {
 
         try {
             coroutineScope {
-                val shouldFetchMovies = typeFilter == null || typeFilter == "movie"
-                val shouldFetchSeries = typeFilter == null || typeFilter == "series"
+                val sectionDeferredList = mutableListOf<Pair<String, kotlinx.coroutines.Deferred<List<MovieItem>>>>()
 
-                val popularMoviesDeferred = if (shouldFetchMovies) {
-                    async { AddonClient.fetchCatalog(mainAddon.transportUrl, "movie", "top", genre = genre) }
-                } else null
-
-                val popularSeriesDeferred = if (shouldFetchSeries) {
-                    async { AddonClient.fetchCatalog(mainAddon.transportUrl, "series", "top", genre = genre) }
-                } else null
-
-                val popularMovies = popularMoviesDeferred?.await().orEmpty()
-                val popularSeries = popularSeriesDeferred?.await().orEmpty()
-
-                val sections = mutableListOf<MovieCatalogSection>()
-
-                if (popularMovies.isNotEmpty()) {
-                    sections.add(MovieCatalogSection("movies_trending", "Trending Movies", popularMovies.take(15)))
-                    if (popularMovies.size > 15) {
-                        sections.add(MovieCatalogSection("movies_popular", "Popular Movies", popularMovies.drop(15)))
+                for (addon in catalogAddons) {
+                    if (addon.id == "com.linvo.cinemeta" || addon.catalogs.isEmpty()) {
+                        // Cinemeta or standard addon default catalogs
+                        val moviesDef = async { AddonClient.fetchCatalog(addon.transportUrl, "movie", "top") }
+                        val seriesDef = async { AddonClient.fetchCatalog(addon.transportUrl, "series", "top") }
+                        sectionDeferredList.add("Trending Movies" to moviesDef)
+                        sectionDeferredList.add("Top TV Series" to seriesDef)
+                    } else {
+                        // Custom addon catalogs (e.g. Cyberflix, Streaming Catalogs, Live TV)
+                        for (catalog in addon.catalogs.take(4)) {
+                            val def = async {
+                                AddonClient.fetchCatalog(addon.transportUrl, catalog.type, catalog.id)
+                            }
+                            val sectionTitle = if (catalog.name.contains(addon.name, ignoreCase = true)) {
+                                catalog.name
+                            } else {
+                                "${catalog.name} (${addon.name})"
+                            }
+                            sectionDeferredList.add(sectionTitle to def)
+                        }
                     }
                 }
 
-                if (popularSeries.isNotEmpty()) {
-                    sections.add(MovieCatalogSection("series_popular", "Top TV Series", popularSeries))
+                val sections = mutableListOf<MovieCatalogSection>()
+                val allItems = mutableListOf<MovieItem>()
+
+                for ((title, deferred) in sectionDeferredList) {
+                    val items = deferred.await()
+                    if (items.isNotEmpty()) {
+                        allItems.addAll(items)
+                        if (items.size > 15 && title == "Trending Movies") {
+                            sections.add(MovieCatalogSection("sec_${sections.size}", "Trending Movies", items.take(15)))
+                            sections.add(MovieCatalogSection("sec_${sections.size}", "Popular Movies", items.drop(15)))
+                        } else {
+                            sections.add(MovieCatalogSection("sec_${sections.size}", title, items))
+                        }
+                    }
                 }
 
-                val heroItem = popularMovies.firstOrNull { !it.banner.isNullOrBlank() }
-                    ?: popularSeries.firstOrNull { !it.banner.isNullOrBlank() }
-                    ?: popularMovies.firstOrNull()
-                    ?: popularSeries.firstOrNull()
+                val heroItem = allItems.firstOrNull { !it.banner.isNullOrBlank() }
+                    ?: allItems.firstOrNull()
 
                 MoviesHomeState(
                     isLoading = false,
                     heroItem = heroItem,
                     sections = sections,
-                    selectedGenre = genre,
-                    selectedType = typeFilter,
                 )
             }
         } catch (e: Exception) {
@@ -244,21 +283,18 @@ class MovieRepository private constructor(context: Context) {
         if (query.isBlank()) return@withContext emptyList()
 
         val catalogAddons = _installedAddons.value.filter { it.enabled && it.resources.contains("catalog") }
-        val mainAddon = catalogAddons.firstOrNull { it.id == "com.linvo.cinemeta" } ?: catalogAddons.firstOrNull()
-            ?: return@withContext emptyList()
+        if (catalogAddons.isEmpty()) return@withContext emptyList()
 
         coroutineScope {
-            val moviesDeferred = async {
-                AddonClient.fetchCatalog(mainAddon.transportUrl, "movie", "top", search = query)
-            }
-            val seriesDeferred = async {
-                AddonClient.fetchCatalog(mainAddon.transportUrl, "series", "top", search = query)
+            val deferredList = catalogAddons.flatMap { addon ->
+                listOf(
+                    async { AddonClient.fetchCatalog(addon.transportUrl, "movie", "top", search = query) },
+                    async { AddonClient.fetchCatalog(addon.transportUrl, "series", "top", search = query) },
+                )
             }
 
-            val movies = moviesDeferred.await()
-            val series = seriesDeferred.await()
-
-            (movies + series).distinctBy { it.id }
+            val allResults = deferredList.awaitAll().flatten()
+            allResults.distinctBy { it.id }
         }
     }
 
@@ -283,20 +319,21 @@ class MovieRepository private constructor(context: Context) {
             }
 
             val allStreams = deferredList.awaitAll().flatten()
-            // Sort streams: 4K first, then 1080p, 720p, etc.
+            // Prioritize direct playable HTTPS streams over torrents, and sort by resolution (4K > 1080p > 720p)
             allStreams.sortedWith(
-                compareByDescending<MovieStream> {
-                    val q = it.displayQuality
-                    when {
-                        q.contains("4K") || q.contains("2160") -> 4
-                        q.contains("1080") -> 3
-                        q.contains("720") -> 2
-                        q.contains("480") -> 1
-                        else -> 0
+                compareByDescending<MovieStream> { it.isDirectPlayable }
+                    .thenByDescending {
+                        val q = it.displayQuality
+                        when {
+                            q.contains("4K") || q.contains("2160") -> 4
+                            q.contains("1080") -> 3
+                            q.contains("720") -> 2
+                            q.contains("480") -> 1
+                            else -> 0
+                        }
                     }
-                }.thenByDescending { it.url != null }
+                    .thenByDescending { it.url != null }
             )
         }
     }
 }
-

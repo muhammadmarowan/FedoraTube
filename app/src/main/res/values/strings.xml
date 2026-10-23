@@ -2088,6 +2088,7 @@
     <string name="loading_music">Loading music...</string>
     <!-- Enhanced Music Screen -->
     <string name="screen_title_music">MUSIC</string>
+    <string name="screen_title_movies">MOVIES</string>
     <string name="section_listen_again">Listen again</string>
     <string name="section_on_repeat">On Repeat</string>
     <string name="section_daily_mix_title">%1$s Mix</string>

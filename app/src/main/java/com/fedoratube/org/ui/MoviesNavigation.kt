@@ -19,6 +19,7 @@ object MoviePlaybackHolder {
     var title: String = ""
     var subtitle: String? = null
     var poster: String? = null
+    var headers: Map<String, String>? = null
 }
 
 internal fun NavGraphBuilder.moviesRoutes(
@@ -66,11 +67,12 @@ internal fun NavGraphBuilder.moviesRoutes(
         MovieDetailsScreen(
             type = type,
             id = id,
-            onPlayStream = { url, movieTitle, streamSub, moviePoster ->
+            onPlayStream = { url, movieTitle, streamSub, moviePoster, streamHeaders ->
                 MoviePlaybackHolder.streamUrl = url
                 MoviePlaybackHolder.title = movieTitle
                 MoviePlaybackHolder.subtitle = streamSub
                 MoviePlaybackHolder.poster = moviePoster
+                MoviePlaybackHolder.headers = streamHeaders
                 navController.navigate("movie_player")
             },
             onBack = {
@@ -86,6 +88,7 @@ internal fun NavGraphBuilder.moviesRoutes(
             title = MoviePlaybackHolder.title,
             subtitle = MoviePlaybackHolder.subtitle,
             poster = MoviePlaybackHolder.poster,
+            headers = MoviePlaybackHolder.headers,
             onBack = {
                 navController.popBackStack()
             },

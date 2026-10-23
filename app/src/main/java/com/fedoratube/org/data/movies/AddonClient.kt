@@ -63,6 +63,30 @@ object AddonClient {
         val body = getJson(normalized) ?: return@withContext null
         try {
             val root = json.parseToJsonElement(body).jsonObject
+
+            // Check if this is a Nuvio Plugin Manifest (which has "scrapers")
+            val scrapersArray = root["scrapers"] as? JsonArray
+            if (scrapersArray != null) {
+                val name = root["name"]?.jsonPrimitive?.contentOrNull ?: "Nuvio Plugin"
+                val version = root["version"]?.jsonPrimitive?.contentOrNull ?: "1.0.0"
+                val id = "nuvio_" + name.lowercase().replace(Regex("[^a-z0-9]"), "_")
+                val scraperCount = scrapersArray.size
+                return@withContext StremioAddon(
+                    id = id,
+                    name = name,
+                    version = version,
+                    description = "Nuvio Plugin ($scraperCount scrapers)",
+                    iconUrl = null,
+                    transportUrl = normalized,
+                    types = listOf("movie", "series"),
+                    resources = listOf("stream"),
+                    catalogs = emptyList(),
+                    enabled = true,
+                    isDeletable = true,
+                )
+            }
+
+            // Stremio Addon Manifest
             val id = root["id"]?.jsonPrimitive?.contentOrNull ?: "addon_${System.currentTimeMillis()}"
             val name = root["name"]?.jsonPrimitive?.contentOrNull ?: id
             val version = root["version"]?.jsonPrimitive?.contentOrNull ?: "1.0.0"
@@ -80,6 +104,14 @@ object AddonClient {
                 }
             } ?: listOf("catalog", "meta", "stream")
 
+            val catalogs = (root["catalogs"] as? JsonArray)?.mapNotNull { el ->
+                val obj = el as? JsonObject ?: return@mapNotNull null
+                val cType = obj["type"]?.jsonPrimitive?.contentOrNull ?: return@mapNotNull null
+                val cId = obj["id"]?.jsonPrimitive?.contentOrNull ?: return@mapNotNull null
+                val cName = obj["name"]?.jsonPrimitive?.contentOrNull ?: cId
+                StremioCatalog(cType, cId, cName)
+            }.orEmpty()
+
             StremioAddon(
                 id = id,
                 name = name,
@@ -89,6 +121,7 @@ object AddonClient {
                 transportUrl = normalized,
                 types = types,
                 resources = resources,
+                catalogs = catalogs,
                 enabled = true,
                 isDeletable = true,
             )

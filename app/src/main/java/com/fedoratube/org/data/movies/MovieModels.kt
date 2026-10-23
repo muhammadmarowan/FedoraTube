@@ -3,6 +3,13 @@ package com.fedoratube.org.data.movies
 import kotlinx.serialization.Serializable
 
 @Serializable
+data class StremioCatalog(
+    val type: String,
+    val id: String,
+    val name: String,
+)
+
+@Serializable
 data class StremioAddon(
     val id: String,
     val name: String,
@@ -12,6 +19,7 @@ data class StremioAddon(
     val transportUrl: String,
     val types: List<String> = listOf("movie", "series"),
     val resources: List<String> = listOf("catalog", "meta", "stream"),
+    val catalogs: List<StremioCatalog> = emptyList(),
     val enabled: Boolean = true,
     val isDeletable: Boolean = true,
 )
@@ -85,8 +93,21 @@ data class MovieStream(
             !url.startsWith("magnet:") &&
             !url.startsWith("torrent://")
 
+    val isTorrent: Boolean
+        get() = url.isNullOrBlank() && !infoHash.isNullOrBlank()
+
+    fun getMagnetUri(itemTitle: String? = null): String? {
+        val hash = infoHash?.trim() ?: return null
+        val encodedName = try {
+            java.net.URLEncoder.encode(itemTitle ?: displayTitle, "UTF-8")
+        } catch (_: Exception) {
+            "movie"
+        }
+        return "magnet:?xt=urn:btih:$hash&dn=$encodedName&tr=udp://tracker.opentrackr.org:1337/announce&tr=udp://open.stealth.si:80/announce"
+    }
+
     val playbackUrl: String?
-        get() = if (isDirectPlayable) url else externalUrl
+        get() = if (isDirectPlayable) url else (externalUrl ?: getMagnetUri(displayTitle))
 
     companion object {
         fun extractQuality(text: String): String {

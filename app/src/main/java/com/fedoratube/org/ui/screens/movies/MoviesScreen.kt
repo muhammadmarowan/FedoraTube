@@ -22,23 +22,20 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
+import com.fedoratube.org.R
 import com.fedoratube.org.data.movies.MovieItem
 import com.fedoratube.org.data.movies.MovieRepository
 import com.fedoratube.org.data.movies.MoviesHomeState
 import com.fedoratube.org.ui.components.layout.LocalFlowBottomInsets
+import com.fedoratube.org.ui.components.layout.topbar.FlowTopBar
 import kotlinx.coroutines.launch
 
-private val GENRES = listOf(
-    "Action", "Adventure", "Animation", "Comedy", "Crime",
-    "Drama", "Fantasy", "Horror", "Mystery", "Romance", "Sci-Fi", "Thriller"
-)
-
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MoviesScreen(
     onMovieClick: (type: String, id: String) -> Unit,
@@ -51,18 +48,16 @@ fun MoviesScreen(
     val scope = rememberCoroutineScope()
 
     var state by remember { mutableStateOf(MoviesHomeState()) }
-    var selectedType by remember { mutableStateOf<String?>(null) } // null = All, "movie", "series"
-    var selectedGenre by remember { mutableStateOf<String?>(null) }
 
-    fun loadData(genre: String? = selectedGenre, type: String? = selectedType) {
+    fun loadData() {
         state = state.copy(isLoading = true, errorMessage = null)
         scope.launch {
-            state = repository.getHomeFeed(genre = genre, typeFilter = type)
+            state = repository.getHomeFeed()
         }
     }
 
-    LaunchedEffect(selectedType, selectedGenre) {
-        loadData(selectedGenre, selectedType)
+    LaunchedEffect(Unit) {
+        loadData()
     }
 
     val bottomInsets = LocalFlowBottomInsets.current
@@ -70,18 +65,10 @@ fun MoviesScreen(
     Scaffold(
         modifier = modifier.fillMaxSize(),
         containerColor = MaterialTheme.colorScheme.background,
+        contentWindowInsets = WindowInsets(0.dp),
         topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = "MOVIES & TV",
-                        style = MaterialTheme.typography.titleLarge.copy(
-                            fontWeight = FontWeight.Bold,
-                            letterSpacing = 1.sp,
-                        ),
-                        color = MaterialTheme.colorScheme.onBackground,
-                    )
-                },
+            FlowTopBar(
+                title = stringResource(R.string.screen_title_movies),
                 actions = {
                     IconButton(onClick = onSearchClick) {
                         Icon(
@@ -98,70 +85,14 @@ fun MoviesScreen(
                         )
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.background,
-                ),
             )
         },
     ) { innerPadding ->
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = innerPadding.calculateTopPadding()),
+                .padding(innerPadding),
         ) {
-            // Filter chips (All / Movies / Series + Genres)
-            LazyRow(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 4.dp),
-                contentPadding = PaddingValues(horizontal = 16.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                // Type Filter Chips
-                item {
-                    FilterChip(
-                        selected = selectedType == null && selectedGenre == null,
-                        onClick = {
-                            selectedType = null
-                            selectedGenre = null
-                        },
-                        label = { Text("All") },
-                        shape = RoundedCornerShape(20.dp),
-                    )
-                }
-                item {
-                    FilterChip(
-                        selected = selectedType == "movie",
-                        onClick = {
-                            selectedType = if (selectedType == "movie") null else "movie"
-                        },
-                        label = { Text("Movies") },
-                        shape = RoundedCornerShape(20.dp),
-                    )
-                }
-                item {
-                    FilterChip(
-                        selected = selectedType == "series",
-                        onClick = {
-                            selectedType = if (selectedType == "series") null else "series"
-                        },
-                        label = { Text("TV Series") },
-                        shape = RoundedCornerShape(20.dp),
-                    )
-                }
-                // Genre Chips
-                items(GENRES) { genre ->
-                    FilterChip(
-                        selected = selectedGenre == genre,
-                        onClick = {
-                            selectedGenre = if (selectedGenre == genre) null else genre
-                        },
-                        label = { Text(genre) },
-                        shape = RoundedCornerShape(20.dp),
-                    )
-                }
-            }
-
             when {
                 state.isLoading -> {
                     Box(
@@ -217,7 +148,7 @@ fun MoviesScreen(
                             }
                         }
 
-                        // Catalog Sections (Horizontal Rows)
+                        // Catalog Sections (Horizontal Rows for each installed addon catalog)
                         items(state.sections, key = { it.id }) { section ->
                             Column(
                                 modifier = Modifier.fillMaxWidth(),
@@ -478,4 +409,3 @@ fun MoviePosterCard(
         }
     }
 }
-

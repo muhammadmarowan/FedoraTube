@@ -45,7 +45,7 @@ import kotlinx.coroutines.launch
 fun MovieDetailsScreen(
     type: String,
     id: String,
-    onPlayStream: (streamUrl: String, title: String, subtitle: String?, poster: String?) -> Unit,
+    onPlayStream: (streamUrl: String, title: String, subtitle: String?, poster: String?, headers: Map<String, String>?) -> Unit,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -475,19 +475,19 @@ fun MovieDetailsScreen(
                                 }
                             }
                             else -> {
-                                items(streams, key = { "${it.addonName}_${it.playbackUrl}_${it.displayTitle}" }) { stream ->
+                                items(streams, key = { "${it.addonName}_${it.playbackUrl ?: it.infoHash}_${it.displayTitle}" }) { stream ->
                                     StreamCardItem(
                                         stream = stream,
                                         movieTitle = meta.name,
                                         episodeTitle = selectedEpisode?.title,
                                         posterUrl = meta.poster,
-                                        onPlayStream = { url ->
+                                        onPlayStream = { url, headers ->
                                             val fullTitle = if (selectedEpisode != null) {
                                                 "${meta.name} - S${selectedEpisode?.season ?: 1}E${selectedEpisode?.episode ?: 1} ${selectedEpisode?.title}"
                                             } else {
                                                 meta.name
                                             }
-                                            onPlayStream(url, fullTitle, stream.displayTitle, meta.poster)
+                                            onPlayStream(url, fullTitle, stream.displayTitle, meta.poster, headers)
                                         },
                                     )
                                 }
@@ -506,22 +506,45 @@ private fun StreamCardItem(
     movieTitle: String,
     episodeTitle: String?,
     posterUrl: String?,
-    onPlayStream: (url: String) -> Unit,
+    onPlayStream: (url: String, headers: Map<String, String>?) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
     val quality = stream.displayQuality
     val badgeColor = when {
-        quality.contains("4K") -> Color(0xFFE53935)
+        quality.contains("4K") || quality.contains("2160") -> Color(0xFFE53935)
         quality.contains("1080") -> Color(0xFF1E88E5)
         quality.contains("720") -> Color(0xFF43A047)
         else -> MaterialTheme.colorScheme.secondary
     }
 
+    val magnetOrUrl = if (stream.isTorrent) stream.getMagnetUri(movieTitle) else stream.playbackUrl
+
+    fun handlePlayOrLaunch() {
+        if (stream.isDirectPlayable && !stream.playbackUrl.isNullOrBlank()) {
+            onPlayStream(stream.playbackUrl!!, stream.proxyHeaders)
+        } else {
+            val magnet = stream.getMagnetUri(movieTitle) ?: stream.playbackUrl
+            if (!magnet.isNullOrBlank()) {
+                try {
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(magnet)).apply {
+                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    }
+                    context.startActivity(Intent.createChooser(intent, "Open Torrent With"))
+                } catch (e: Exception) {
+                    Toast.makeText(context, "No torrent app found. Please install Flud, LibreTorrent or TorrServe.", Toast.LENGTH_LONG).show()
+                }
+            } else {
+                Toast.makeText(context, "No stream URL found", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 4.dp),
+            .padding(horizontal = 16.dp, vertical = 4.dp)
+            .clickable { handlePlayOrLaunch() },
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
     ) {
@@ -546,6 +569,20 @@ private fun StreamCardItem(
                 )
             }
 
+            // Direct vs Torrent Badge
+            Surface(
+                shape = RoundedCornerShape(6.dp),
+                color = if (stream.isDirectPlayable) Color(0xFF2E7D32) else Color(0xFFE65100),
+            ) {
+                Text(
+                    text = if (stream.isDirectPlayable) "DIRECT" else "TORRENT",
+                    color = Color.White,
+                    fontSize = 9.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(horizontal = 5.dp, vertical = 2.dp),
+                )
+            }
+
             // Stream Info
             Column(
                 modifier = Modifier.weight(1f),
@@ -566,24 +603,31 @@ private fun StreamCardItem(
             }
 
             // External open button
-            stream.playbackUrl?.let { url ->
+            if (!magnetOrUrl.isNullOrBlank()) {
                 IconButton(
                     onClick = {
                         try {
-                            val intent = Intent(Intent.ACTION_VIEW).apply {
-                                setDataAndType(Uri.parse(url), "video/*")
-                                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                            val uri = Uri.parse(magnetOrUrl)
+                            val intent = if (stream.isTorrent) {
+                                Intent(Intent.ACTION_VIEW, uri).apply {
+                                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                }
+                            } else {
+                                Intent(Intent.ACTION_VIEW).apply {
+                                    setDataAndType(uri, "video/*")
+                                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                }
                             }
-                            context.startActivity(Intent.createChooser(intent, "Play stream with"))
+                            context.startActivity(Intent.createChooser(intent, if (stream.isTorrent) "Open Magnet With" else "Play stream with"))
                         } catch (e: Exception) {
-                            Toast.makeText(context, "Could not open external player", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, if (stream.isTorrent) "No torrent app found (install Flud / LibreTorrent)" else "Could not open external player", Toast.LENGTH_SHORT).show()
                         }
                     },
                     modifier = Modifier.size(36.dp),
                 ) {
                     Icon(
                         imageVector = Icons.Filled.OpenInNew,
-                        contentDescription = "Open in external player",
+                        contentDescription = "Open externally",
                         tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.size(20.dp),
                     )
@@ -593,9 +637,9 @@ private fun StreamCardItem(
                 IconButton(
                     onClick = {
                         val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                        val clip = ClipData.newPlainText("Stream URL", url)
+                        val clip = ClipData.newPlainText("Stream URL", magnetOrUrl)
                         clipboard.setPrimaryClip(clip)
-                        Toast.makeText(context, "Stream link copied", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, if (stream.isTorrent) "Magnet link copied" else "Stream link copied", Toast.LENGTH_SHORT).show()
                     },
                     modifier = Modifier.size(36.dp),
                 ) {
@@ -609,23 +653,20 @@ private fun StreamCardItem(
             }
 
             // Play button
-            val playableUrl = stream.playbackUrl
-            if (!playableUrl.isNullOrBlank()) {
-                Surface(
-                    shape = CircleShape,
-                    color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier
-                        .size(38.dp)
-                        .clickable { onPlayStream(playableUrl) },
-                ) {
-                    Box(contentAlignment = Alignment.Center) {
-                        Icon(
-                            imageVector = Icons.Filled.PlayArrow,
-                            contentDescription = "Play",
-                            tint = MaterialTheme.colorScheme.onPrimary,
-                            modifier = Modifier.size(22.dp),
-                        )
-                    }
+            Surface(
+                shape = CircleShape,
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier
+                    .size(38.dp)
+                    .clickable { handlePlayOrLaunch() },
+            ) {
+                Box(contentAlignment = Alignment.Center) {
+                    Icon(
+                        imageVector = Icons.Filled.PlayArrow,
+                        contentDescription = "Play",
+                        tint = MaterialTheme.colorScheme.onPrimary,
+                        modifier = Modifier.size(22.dp),
+                    )
                 }
             }
         }

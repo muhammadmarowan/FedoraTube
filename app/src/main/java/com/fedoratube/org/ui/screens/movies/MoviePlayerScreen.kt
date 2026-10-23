@@ -79,6 +79,7 @@ fun MoviePlayerScreen(
     title: String,
     subtitle: String? = null,
     poster: String? = null,
+    headers: Map<String, String>? = null,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -104,6 +105,11 @@ fun MoviePlayerScreen(
             .setConnectTimeoutMs(15000)
             .setReadTimeoutMs(20000)
             .setUserAgent("Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36")
+            .apply {
+                if (!headers.isNullOrEmpty()) {
+                    setDefaultRequestProperties(headers)
+                }
+            }
 
         val mediaSourceFactory = DefaultMediaSourceFactory(context)
             .setDataSourceFactory(httpDataSourceFactory)
