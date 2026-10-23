@@ -34,25 +34,20 @@ Get the latest stable build from the releases page and install it on any Android
 <div align="center">
   <table>
     <tr>
-      <td align="center" width="25%">
-        <b>Home Feed</b><br>
-        <sub>Clean subscription and recommendation feed</sub><br><br>
-        <img src="Assets/home.png" width="220" alt="Home Feed">
+      <td align="center" width="33%">
+        <b>Home / Discover</b><br>
+        <sub>Clean movie and media discovery</sub><br><br>
+        <img src="https://raw.githubusercontent.com/muhammadmarowan/FedoraTube/main/Assets/home-discover.png" width="260" alt="FedoraTube home and discover screen">
       </td>
-      <td align="center" width="25%">
-        <b>Music Hub</b><br>
-        <sub>Top charts, artists, and mood playlists</sub><br><br>
-        <img src="Assets/music.png" width="220" alt="Music Hub">
+      <td align="center" width="33%">
+        <b>Music</b><br>
+        <sub>Focused, distraction-free listening</sub><br><br>
+        <img src="https://raw.githubusercontent.com/muhammadmarowan/FedoraTube/main/Assets/music-screen.png" width="260" alt="FedoraTube music screen">
       </td>
-      <td align="center" width="25%">
-        <b>Focus Mode</b><br>
-        <sub>Minimalist search-first experience</sub><br><br>
-        <img src="Assets/focus_mode.png" width="220" alt="Focus Mode">
-      </td>
-      <td align="center" width="25%">
-        <b>Focus Mode Player</b><br>
-        <sub>Distraction-free playback and zero rabbit holes</sub><br><br>
-        <img src="Assets/focus_player.png" width="220" alt="Focus Mode Player">
+      <td align="center" width="33%">
+        <b>Video / Player</b><br>
+        <sub>Minimal player and content experience</sub><br><br>
+        <img src="https://raw.githubusercontent.com/muhammadmarowan/FedoraTube/main/Assets/video-player.png" width="260" alt="FedoraTube video player screen">
       </td>
     </tr>
   </table>
@@ -73,8 +68,9 @@ Get the latest stable build from the releases page and install it on any Android
 * **Search-First Experience:** A clean, distraction-free interface centered on discovery and playback.
 * **No Algorithmic Clutter:** Suppress noisy home feeds and intrusive recommendations.
 
-### Music Player
-* **Full Music Hub:** Explore trending hits, top charts, artist discographies, and mood-based stations.
+### Movies & Music Discovery
+* **Movie-Friendly Discovery Flow:** Browse trending and popular titles alongside your media watchlist.
+* **Full Music Hub:** Explore trending hits, charts, artist discographies, and mood-based stations.
 * **Live Synced Lyrics:** Sing along with dynamic, real-time lyrics and quick album-art flipping.
 
 ### Ad-Free Streaming
