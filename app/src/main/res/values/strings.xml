@@ -2088,7 +2088,7 @@
     <string name="loading_music">Loading music...</string>
     <!-- Enhanced Music Screen -->
     <string name="screen_title_music">MUSIC</string>
-    <string name="screen_title_movies">MOVIES</string>
+    <string name="screen_title_movies">DISCOVER</string>
     <string name="section_listen_again">Listen again</string>
     <string name="section_on_repeat">On Repeat</string>
     <string name="section_daily_mix_title">%1$s Mix</string>
@@ -4397,8 +4397,8 @@
     <string name="auto_clear_cache_7d">7 days</string>
 
     <!-- Movies & Stremio Addons -->
-    <string name="nav_movies">Movies</string>
-    <string name="movies_title">Movies &amp; TV</string>
+    <string name="nav_movies">Discover</string>
+    <string name="movies_title">Discover</string>
     <string name="movies_search_hint">Search movies &amp; series…</string>
     <string name="movies_trending">Trending</string>
     <string name="movies_popular_movies">Popular Movies</string>
