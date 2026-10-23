@@ -1,7 +1,5 @@
 package com.fedoratube.org.data.movies
 
-import java.net.URLEncoder
-
 internal fun normalizeManifestUrl(rawUrl: String): String {
     val trimmed = rawUrl.trim()
     if (trimmed.isEmpty()) return ""
@@ -36,11 +34,12 @@ internal fun buildAddonResourceUrl(
     extraPath: String? = null,
 ): String {
     val baseUrl = addonTransportBaseUrl(manifestUrl)
-    val encodedId = try {
-        URLEncoder.encode(id, "UTF-8").replace("+", "%20")
-    } catch (_: Exception) {
-        id
-    }
+    // Do NOT percent-encode colons in episode IDs (e.g. tt1234:1:1 must stay as-is)
+    // Only encode characters that would break URL path parsing
+    val encodedId = id.trim()
+        .replace(" ", "%20")
+        .replace("#", "%23")
+        .replace("?", "%3F")
     val query = manifestUrl.substringAfter("?", "").let { if (it.isBlank()) "" else "?$it" }
     val resourceUrl = if (extraPath.isNullOrEmpty()) {
         "$baseUrl/$resource/$type/$encodedId.json"

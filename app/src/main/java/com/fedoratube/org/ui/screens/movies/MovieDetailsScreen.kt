@@ -104,7 +104,13 @@ fun MovieDetailsScreen(
                 selectedEpisode = initialEp
                 loadStreamsForId(initialEp.id)
             } else {
-                loadStreamsForId(meta.id)
+                // Prefer IMDb ID (tt...) over TMDB ID for stream addons compatibility
+                val streamId = when {
+                    meta.imdbId?.startsWith("tt") == true -> meta.imdbId!!
+                    meta.id.startsWith("tt") -> meta.id
+                    else -> meta.id
+                }
+                loadStreamsForId(streamId)
             }
         }
     }
@@ -297,7 +303,12 @@ fun MovieDetailsScreen(
                                         } else {
                                             meta.name
                                         }
-                                        val targetId = selectedEpisode?.id ?: meta.id
+                                        val targetId = when {
+                                            selectedEpisode != null -> selectedEpisode!!.id
+                                            meta.imdbId?.startsWith("tt") == true -> meta.imdbId!!
+                                            meta.id.startsWith("tt") -> meta.id
+                                            else -> meta.id
+                                        }
                                         loadStreamsForId(targetId)
                                         showStreamSheet = true
                                     },

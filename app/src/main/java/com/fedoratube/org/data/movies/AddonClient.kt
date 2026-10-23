@@ -38,7 +38,7 @@ object AddonClient {
         try {
             val request = Request.Builder()
                 .url(url)
-                .header("User-Agent", "FedoraTube/1.6.0 (Android; Mobile)")
+                .header("User-Agent", "Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36")
                 .header("Accept", "application/json")
                 .build()
 
@@ -232,7 +232,10 @@ object AddonClient {
                 id = metaId,
                 type = metaType,
                 name = name,
-                imdbId = meta["imdb_id"]?.jsonPrimitive?.contentOrNull,
+                // Parse imdbId: prefer explicit "imdb_id" field, then check if the meta id itself is a tt-format IMDb ID
+                imdbId = meta["imdb_id"]?.jsonPrimitive?.contentOrNull?.takeIf { it.startsWith("tt") }
+                    ?: meta["imdbId"]?.jsonPrimitive?.contentOrNull?.takeIf { it.startsWith("tt") }
+                    ?: metaId.takeIf { it.startsWith("tt") },
                 poster = meta["poster"]?.jsonPrimitive?.contentOrNull,
                 background = meta["background"]?.jsonPrimitive?.contentOrNull,
                 logo = meta["logo"]?.jsonPrimitive?.contentOrNull,
