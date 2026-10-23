@@ -66,19 +66,25 @@ internal fun NavGraphBuilder.moviesRoutes(
     }
 
     composable(
-        route = "movie_detail/{type}/{id}",
+        route = "movie_detail/{type}/{id}?autoPlay={autoPlay}",
         arguments = listOf(
             navArgument("type") { type = NavType.StringType },
             navArgument("id") { type = NavType.StringType },
+            navArgument("autoPlay") {
+                type = NavType.BoolType
+                defaultValue = false
+            },
         ),
     ) { backStackEntry ->
         currentRoute.value = "movie_detail"
         val type = backStackEntry.arguments?.getString("type") ?: "movie"
         val id = backStackEntry.arguments?.getString("id") ?: ""
+        val autoPlay = backStackEntry.arguments?.getBoolean("autoPlay") ?: false
 
         MovieDetailsScreen(
             type = type,
             id = id,
+            autoPlay = autoPlay,
             onPlayStream = { stream, movie, episode, allStreams ->
                 MoviePlaybackHolder.stream = stream
                 MoviePlaybackHolder.isTorrent = stream.isTorrent

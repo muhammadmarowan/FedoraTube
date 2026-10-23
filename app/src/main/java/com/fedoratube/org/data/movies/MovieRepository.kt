@@ -22,7 +22,7 @@ data class PopularAddonPreset(
 
 class MovieRepository private constructor(context: Context) {
     private val appContext = context.applicationContext
-    private val prefs = appContext.getSharedPreferences("fedora_movies_addons_v1", Context.MODE_PRIVATE)
+    private val prefs = appContext.getSharedPreferences("fedora_movies_addons_v3", Context.MODE_PRIVATE)
     private val json = Json { ignoreUnknownKeys = true; isLenient = true }
 
     private val _installedAddons = MutableStateFlow<List<StremioAddon>>(emptyList())
@@ -41,100 +41,57 @@ class MovieRepository private constructor(context: Context) {
             }
         }
 
-        val POPULAR_PRESETS = listOf(
-            PopularAddonPreset(
-                name = "PlavioHD (Direct Streams)",
-                description = "Direct HTTPS & HLS video streams for movies and series (no torrents needed)",
-                manifestUrl = "https://hd.plavio.site/manifest.json",
-                type = "Direct Streams",
-            ),
-            PopularAddonPreset(
-                name = "Cinemeta (Official)",
-                description = "Official catalog for IMDb ratings, posters, movies & series metadata",
-                manifestUrl = "https://v3-cinemeta.strem.io/manifest.json",
-                type = "Catalog & Metadata",
-            ),
-            PopularAddonPreset(
-                name = "Torrentio",
-                description = "High-speed torrent & debrid stream provider for movies and TV series",
-                manifestUrl = "https://torrentio.strem.fun/manifest.json",
-                type = "Torrents & Debrid",
-            ),
-            PopularAddonPreset(
-                name = "Yoru Nuvio Providers",
-                description = "Popular Nuvio community scraper repository for direct streams",
-                manifestUrl = "https://raw.githubusercontent.com/yoruix/nuvio-providers/refs/heads/main/manifest.json",
-                type = "Nuvio Plugin",
-            ),
-            PopularAddonPreset(
-                name = "All-in-One Nuvio",
-                description = "Comprehensive anime, movie and drama scrapers bundle",
-                manifestUrl = "https://raw.githubusercontent.com/NuvioPlugin/All-in-One-Nuvio/refs/heads/main/manifest.json",
-                type = "Nuvio Plugin",
-            ),
-            PopularAddonPreset(
-                name = "OpenSubtitles v3",
-                description = "Multi-language subtitles from OpenSubtitles.org",
-                manifestUrl = "https://opensubtitles-v3.strem.io/manifest.json",
-                type = "Subtitles",
-            ),
-            PopularAddonPreset(
-                name = "Streaming Catalogs",
-                description = "Browse content by streaming platforms and popular networks",
-                manifestUrl = "https://7a82163c306e-stremio-netflix-catalog-addon.baby-beamup.club/manifest.json",
-                type = "Catalog",
-            ),
-            PopularAddonPreset(
-                name = "Anime Kitsu",
-                description = "Kitsu anime catalog, episodes and streaming metadata",
-                manifestUrl = "https://anime-kitsu.strem.fun/manifest.json",
-                type = "Anime",
-            ),
-        )
+        val POPULAR_PRESETS = emptyList<PopularAddonPreset>()
 
         val DEFAULT_ADDONS = listOf(
             StremioAddon(
-                id = "com.linvo.cinemeta",
-                name = "Cinemeta",
-                version = "3.0.12",
-                description = "The official IMDb movie and series catalog addon",
-                iconUrl = "https://v3-cinemeta.strem.io/favicon.ico",
-                transportUrl = "https://v3-cinemeta.strem.io/manifest.json",
+                id = "com.soluserv.streaming-catalog-plus",
+                name = "fedoratube addon",
+                version = "5.1.11",
+                description = "Official FedoraTube movies and series catalogs",
+                iconUrl = "https://scplus.duckdns.org/assets/scplus-stremio-neon-nova-5111.png",
+                transportUrl = "https://scplus.duckdns.org/c.4ac87f9234298a5314277c44b63dd13221c25f82/manifest.json",
                 types = listOf("movie", "series"),
                 resources = listOf("catalog", "meta"),
                 catalogs = listOf(
-                    StremioCatalog("movie", "top", "Trending Movies"),
-                    StremioCatalog("series", "top", "Top TV Series"),
+                    StremioCatalog("movie", "global_movie_in_theaters_50d_global_cv24_da431fd45f", "Movies · Now Playing · GLOBAL"),
+                    StremioCatalog("movie", "global_movie_popular_global_cv24_da431fd45f", "Movies · Popular · GLOBAL"),
+                    StremioCatalog("movie", "global_movie_top_global_cv24_da431fd45f", "Movies · Top Rated · GLOBAL"),
+                    StremioCatalog("series", "global_series_airing_today_global_cv24_da431fd45f", "Series · Airing Today · GLOBAL"),
+                    StremioCatalog("series", "global_series_popular_global_cv24_da431fd45f", "Series · Popular · GLOBAL"),
+                    StremioCatalog("series", "global_series_top_global_cv24_da431fd45f", "Series · Top Rated · GLOBAL"),
+                    StremioCatalog("movie", "local_movie_in_theaters_50d_local_cv24_da431fd45f", "Movies · Now Playing · LOCAL"),
+                    StremioCatalog("movie", "local_movie_popular_local_cv24_da431fd45f", "Movies · Popular · LOCAL"),
+                    StremioCatalog("movie", "local_movie_top_local_cv24_da431fd45f", "Movies · Top Rated · LOCAL"),
+                    StremioCatalog("series", "local_series_airing_today_local_cv24_da431fd45f", "Series · Airing Today · LOCAL"),
+                    StremioCatalog("series", "local_series_popular_local_cv24_da431fd45f", "Series · Popular · LOCAL"),
+                    StremioCatalog("series", "local_series_top_local_cv24_da431fd45f", "Series · Top Rated · LOCAL"),
+                    StremioCatalog("series", "anime_series_airing_today_anime_cv24_da431fd45f", "Series · Airing Today · ANIME"),
+                    StremioCatalog("series", "anime_series_airing_week_anime_cv24_da431fd45f", "Series · On Air This Week · ANIME"),
+                    StremioCatalog("series", "anime_series_new_recent_anime_cv24_da431fd45f", "Series · New Releases · ANIME"),
+                    StremioCatalog("series", "anime_series_miniseries_recent_anime_cv24_da431fd45f", "Series · Recent Miniseries · ANIME"),
+                    StremioCatalog("series", "anime_series_finished_recent_anime_cv24_da431fd45f", "Series · Completed Series · ANIME"),
+                    StremioCatalog("series", "anime_series_popular_anime_cv24_da431fd45f", "Series · Popular · ANIME"),
+                    StremioCatalog("series", "anime_series_top_anime_cv24_da431fd45f", "Series · Top Rated · ANIME"),
+                    StremioCatalog("movie", "provider_nfx_popular_cv24_da431fd45f", "Netflix · Movies · Popular"),
+                    StremioCatalog("movie", "provider_nfx_top_cv24_da431fd45f", "Netflix · Movies · Top Rated"),
+                    StremioCatalog("movie", "provider_nfx_recent_cv24_da431fd45f", "Netflix · Movies · Most Recent"),
+                    StremioCatalog("series", "provider_nfx_popular_cv24_da431fd45f", "Netflix · Series · Popular"),
+                    StremioCatalog("series", "provider_nfx_top_cv24_da431fd45f", "Netflix · Series · Top Rated"),
+                    StremioCatalog("series", "provider_nfx_recent_cv24_da431fd45f", "Netflix · Series · Most Recent"),
+                    StremioCatalog("movie", "provider_nfx_fresh_cv24_da431fd45f", "Netflix · Movies · New This Year"),
+                    StremioCatalog("movie", "provider_nfx_hidden_gems_cv24_da431fd45f", "Netflix · Movies · Hidden Gems"),
+                    StremioCatalog("movie", "provider_nfx_family_cv24_da431fd45f", "Netflix · Movies · Family"),
+                    StremioCatalog("movie", "provider_prv_popular_cv24_da431fd45f", "Amazon Prime Video · Movies · Popular"),
+                    StremioCatalog("movie", "provider_prv_top_cv24_da431fd45f", "Amazon Prime Video · Movies · Top Rated"),
+                    StremioCatalog("series", "provider_prv_popular_cv24_da431fd45f", "Amazon Prime Video · Series · Popular"),
+                    StremioCatalog("movie", "provider_p315_popular_cv24_da431fd45f", "Hoichoi · Movies · Popular"),
+                    StremioCatalog("series", "provider_p315_popular_cv24_da431fd45f", "Hoichoi · Series · Popular"),
+                    StremioCatalog("movie", "provider_p2336_popular_cv24_da431fd45f", "JioHotstar · Movies · Popular"),
+                    StremioCatalog("series", "provider_p2336_popular_cv24_da431fd45f", "JioHotstar · Series · Popular"),
                 ),
                 enabled = true,
                 isDeletable = false,
-            ),
-            StremioAddon(
-                id = "community.plaviohd",
-                name = "PlavioHD (Direct Streams)",
-                version = "1.9.49",
-                description = "Direct HTTPS & HLS movies & TV series streams",
-                iconUrl = "https://hd.plavio.site/logo.png",
-                transportUrl = "https://hd.plavio.site/manifest.json",
-                types = listOf("movie", "series", "tv"),
-                resources = listOf("stream", "catalog", "meta"),
-                catalogs = listOf(
-                    StremioCatalog("tv", "plaviohd-live-tv", "Live TV"),
-                ),
-                enabled = true,
-                isDeletable = false,
-            ),
-            StremioAddon(
-                id = "torrentio",
-                name = "Torrentio",
-                version = "1.0.0",
-                description = "Torrent and streaming provider",
-                iconUrl = null,
-                transportUrl = "https://torrentio.strem.fun/manifest.json",
-                types = listOf("movie", "series"),
-                resources = listOf("stream"),
-                enabled = true,
-                isDeletable = true,
             ),
         )
     }
@@ -190,9 +147,15 @@ class MovieRepository private constructor(context: Context) {
         val fetched = AddonClient.fetchManifest(normalized)
             ?: return@withContext Result.failure(Exception("Could not fetch addon manifest from $normalized"))
 
-        val updated = _installedAddons.value + fetched
+        val fetchedAddon = if (normalized.contains("scplus.duckdns.org") || normalized.contains("4ac87f9234298a5314277c44b63dd13221c25f82")) {
+            fetched.copy(name = "fedoratube addon")
+        } else {
+            fetched
+        }
+
+        val updated = _installedAddons.value + fetchedAddon
         saveAddons(updated)
-        Result.success(fetched)
+        Result.success(fetchedAddon)
     }
 
     fun removeAddon(addonId: String) {
@@ -229,24 +192,22 @@ class MovieRepository private constructor(context: Context) {
                 val sectionDeferredList = mutableListOf<Pair<String, kotlinx.coroutines.Deferred<List<MovieItem>>>>()
 
                 for (addon in catalogAddons) {
-                    if (addon.id == "com.linvo.cinemeta" || addon.catalogs.isEmpty()) {
-                        // Cinemeta or standard addon default catalogs
+                    if (addon.catalogs.isEmpty()) {
                         val moviesDef = async { AddonClient.fetchCatalog(addon.transportUrl, "movie", "top") }
                         val seriesDef = async { AddonClient.fetchCatalog(addon.transportUrl, "series", "top") }
                         sectionDeferredList.add("Trending Movies" to moviesDef)
                         sectionDeferredList.add("Top TV Series" to seriesDef)
                     } else {
-                        // Custom addon catalogs (e.g. Cyberflix, Streaming Catalogs, Live TV)
-                        for (catalog in addon.catalogs.take(4)) {
+                        val browsableCatalogs = addon.catalogs.filter {
+                            !it.id.startsWith("search", ignoreCase = true) &&
+                            !it.id.startsWith("last-", ignoreCase = true) &&
+                            !it.id.startsWith("calendar-", ignoreCase = true)
+                        }
+                        for (catalog in browsableCatalogs.take(35)) {
                             val def = async {
                                 AddonClient.fetchCatalog(addon.transportUrl, catalog.type, catalog.id)
                             }
-                            val sectionTitle = if (catalog.name.contains(addon.name, ignoreCase = true)) {
-                                catalog.name
-                            } else {
-                                "${catalog.name} (${addon.name})"
-                            }
-                            sectionDeferredList.add(sectionTitle to def)
+                            sectionDeferredList.add(catalog.name to def)
                         }
                     }
                 }

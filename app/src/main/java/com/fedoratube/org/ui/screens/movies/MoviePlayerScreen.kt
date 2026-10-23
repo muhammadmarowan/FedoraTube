@@ -244,6 +244,10 @@ fun MoviePlayerScreen(
             if (currentEpisode != null) "${it}_s${currentEpisode.season ?: 1}e${currentEpisode.episode ?: 1}" else it
         } ?: (movieDetails?.name ?: activeTitle)
 
+        val mType = movieDetails?.type ?: "movie"
+        val mId = movieDetails?.id ?: videoId.substringBefore("_")
+        val channelId = "movies:$mType:$mId"
+
         scope.launch(Dispatchers.IO) {
             try {
                 val db = AppDatabase.getDatabase(context)
@@ -256,7 +260,7 @@ fun MoviePlayerScreen(
                         title = activeTitle,
                         thumbnailUrl = poster ?: (movieDetails?.poster ?: ""),
                         channelName = activeSubtitle ?: (movieDetails?.genres?.firstOrNull() ?: "Movie"),
-                        channelId = "movies",
+                        channelId = channelId,
                         isMusic = false,
                         isShort = false,
                         isLocal = false,
@@ -1027,11 +1031,13 @@ fun MoviePlayerScreen(
         ModalBottomSheet(
             onDismissRequest = { showEpisodesSheet = false },
             containerColor = MaterialTheme.colorScheme.surface,
+            contentWindowInsets = { WindowInsets(0.dp) },
         ) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 24.dp),
+                    .navigationBarsPadding()
+                    .padding(bottom = 16.dp),
             ) {
                 Text(
                     text = "Episodes",

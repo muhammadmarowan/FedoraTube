@@ -200,7 +200,14 @@ fun NavGraphBuilder.flowAppGraph(
                 navController.navigate("settings")
             },
             onVideoClick = { video ->
-                navController.openVideoOrShorts(video, disableShortsPlayer) { playerViewModel.playVideo(it) }
+                if (video.channelId.startsWith("movies") || video.channelId == "movies") {
+                    val parts = video.channelId.split(":")
+                    val movieType = if (parts.size >= 2) parts[1] else "movie"
+                    val movieId = if (parts.size >= 3) parts[2] else video.id.substringBefore("_")
+                    navController.navigate("movie_detail/$movieType/$movieId?autoPlay=true")
+                } else {
+                    navController.openVideoOrShorts(video, disableShortsPlayer) { playerViewModel.playVideo(it) }
+                }
             },
             onMusicClick = { track, queue, sourceName ->
                 musicPlayerViewModel.loadAndPlayTrack(track, queue, sourceName)
@@ -234,7 +241,14 @@ fun NavGraphBuilder.flowAppGraph(
         // Search owns the whole screen, the way YouTube's does.
         SearchScreen(
             onVideoClick = { video ->
-                navController.openVideoOrShorts(video, disableShortsPlayer) { playerViewModel.playVideo(it) }
+                if (video.channelId.startsWith("movies") || video.channelId == "movies") {
+                    val parts = video.channelId.split(":")
+                    val movieType = if (parts.size >= 2) parts[1] else "movie"
+                    val movieId = if (parts.size >= 3) parts[2] else video.id.substringBefore("_")
+                    navController.navigate("movie_detail/$movieType/$movieId?autoPlay=true")
+                } else {
+                    navController.openVideoOrShorts(video, disableShortsPlayer) { playerViewModel.playVideo(it) }
+                }
             },
             onShortsQueue = { source ->
                 navController.openShortsOrPlayer(source, disableShortsPlayer)
@@ -260,7 +274,14 @@ fun NavGraphBuilder.flowAppGraph(
         currentRoute.value = "categories"
         com.fedoratube.org.ui.screens.categories.CategoriesScreen(
             onVideoClick = { video ->
-                navController.openVideoOrShorts(video, disableShortsPlayer) { playerViewModel.playVideo(it) }
+                if (video.channelId.startsWith("movies") || video.channelId == "movies") {
+                    val parts = video.channelId.split(":")
+                    val movieType = if (parts.size >= 2) parts[1] else "movie"
+                    val movieId = if (parts.size >= 3) parts[2] else video.id.substringBefore("_")
+                    navController.navigate("movie_detail/$movieType/$movieId?autoPlay=true")
+                } else {
+                    navController.openVideoOrShorts(video, disableShortsPlayer) { playerViewModel.playVideo(it) }
+                }
             },
             onShortClick = { videoId ->
                 navController.openShortsOrPlayer(ShortsQueueSource.SeededFeed(videoId), disableShortsPlayer)
@@ -369,7 +390,14 @@ fun NavGraphBuilder.flowAppGraph(
         ChannelScreen(
             channelUrl = channelUrl,
             onVideoClick = { video ->
-                navController.openVideoOrShorts(video, disableShortsPlayer) { playerViewModel.playVideo(it) }
+                if (video.channelId.startsWith("movies") || video.channelId == "movies") {
+                    val parts = video.channelId.split(":")
+                    val movieType = if (parts.size >= 2) parts[1] else "movie"
+                    val movieId = if (parts.size >= 3) parts[2] else video.id.substringBefore("_")
+                    navController.navigate("movie_detail/$movieType/$movieId?autoPlay=true")
+                } else {
+                    navController.openVideoOrShorts(video, disableShortsPlayer) { playerViewModel.playVideo(it) }
+                }
             },
             onChannelClick = { channelId ->
                 mediaNavigator.openChannel(channelId)
@@ -393,22 +421,29 @@ fun NavGraphBuilder.flowAppGraph(
         val musicPlayerViewModel = sharedMusicPlayerViewModel()
         HistoryScreen(
             onVideoClick = { track ->
-                val deviceFile = LocalMediaIds.videoUri(track.videoId)
-                if (deviceFile != null) {
-                    val video =
-                        com.fedoratube.org.data.model.Video(
-                            id = track.videoId,
-                            title = track.title,
-                            channelName = track.artist,
-                            channelId = "",
-                            thumbnailUrl = deviceFile.toString(),
-                            duration = track.duration,
-                            viewCount = 0,
-                            uploadDate = "",
-                        )
-                    playerViewModel.playLocalVideo(video, deviceFile.toString())
+                if (track.channelId.startsWith("movies") || track.channelId == "movies") {
+                    val parts = track.channelId.split(":")
+                    val movieType = if (parts.size >= 2) parts[1] else "movie"
+                    val movieId = if (parts.size >= 3) parts[2] else track.videoId.substringBefore("_")
+                    navController.navigate("movie_detail/$movieType/$movieId?autoPlay=true")
                 } else {
-                    playerViewModel.playVideo(track.toVideo())
+                    val deviceFile = LocalMediaIds.videoUri(track.videoId)
+                    if (deviceFile != null) {
+                        val video =
+                            com.fedoratube.org.data.model.Video(
+                                id = track.videoId,
+                                title = track.title,
+                                channelName = track.artist,
+                                channelId = "",
+                                thumbnailUrl = deviceFile.toString(),
+                                duration = track.duration,
+                                viewCount = 0,
+                                uploadDate = "",
+                            )
+                        playerViewModel.playLocalVideo(video, deviceFile.toString())
+                    } else {
+                        playerViewModel.playVideo(track.toVideo())
+                    }
                 }
             },
             onShortsQueue = { source ->

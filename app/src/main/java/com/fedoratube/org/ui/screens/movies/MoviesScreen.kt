@@ -35,6 +35,7 @@ import com.fedoratube.org.data.movies.MovieItem
 import com.fedoratube.org.data.movies.MovieRepository
 import com.fedoratube.org.data.movies.MoviesHomeState
 import com.fedoratube.org.ui.components.layout.LocalFlowBottomInsets
+import com.fedoratube.org.ui.components.layout.topbar.FlowGlobalActionsMode
 import com.fedoratube.org.ui.components.layout.topbar.FlowTopBar
 import kotlinx.coroutines.launch
 
@@ -75,6 +76,7 @@ fun MoviesScreen(
             FlowTopBar(
                 title = stringResource(R.string.screen_title_movies),
                 onBack = if (isFocusModeEnabled) onBack else null,
+                globalActions = FlowGlobalActionsMode.None,
                 actions = {
                     IconButton(onClick = onSearchClick) {
                         Icon(

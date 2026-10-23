@@ -51,6 +51,7 @@ import kotlinx.coroutines.launch
 fun MovieDetailsScreen(
     type: String,
     id: String,
+    autoPlay: Boolean = false,
     onPlayStream: (stream: MovieStream, movie: MovieDetails, episode: MovieEpisode?, allStreams: List<MovieStream>) -> Unit,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
@@ -68,6 +69,7 @@ fun MovieDetailsScreen(
 
     var streams by remember { mutableStateOf<List<MovieStream>>(emptyList()) }
     var isLoadingStreams by remember { mutableStateOf(false) }
+    var hasAutoPlayed by remember { mutableStateOf(false) }
 
     var showStreamSheet by remember { mutableStateOf(false) }
     var streamSheetTitle by remember { mutableStateOf("") }
@@ -78,6 +80,13 @@ fun MovieDetailsScreen(
         scope.launch {
             streams = repository.getStreams(type, targetId)
             isLoadingStreams = false
+        }
+    }
+
+    LaunchedEffect(streams, autoPlay, details) {
+        if (autoPlay && !hasAutoPlayed && streams.isNotEmpty() && details != null) {
+            hasAutoPlayed = true
+            onPlayStream(streams.first(), details!!, selectedEpisode, streams)
         }
     }
 
@@ -472,8 +481,7 @@ fun MovieDetailsScreen(
                 shape = CircleShape,
                 color = Color.Black.copy(alpha = 0.65f),
                 modifier = Modifier
-                    .statusBarsPadding()
-                    .padding(start = 16.dp, top = 8.dp)
+                    .padding(start = 16.dp, top = 12.dp)
                     .size(40.dp)
                     .align(Alignment.TopStart),
             ) {
