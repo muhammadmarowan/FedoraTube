@@ -93,5 +93,6 @@ internal object DestinationIndex {
             SettingsDestination.WIDGETS -> R.string.settings_widgets_summary
             SettingsDestination.ABOUT -> R.string.settings_about_summary
             SettingsDestination.DIAGNOSTICS -> R.string.settings_item_diagnostics_subtitle
+            SettingsDestination.ADDONS -> R.string.settings_addons_summary
         }
 }

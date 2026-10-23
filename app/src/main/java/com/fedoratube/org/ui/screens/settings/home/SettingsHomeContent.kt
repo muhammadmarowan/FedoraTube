@@ -77,6 +77,9 @@ internal fun SettingsListScope.homeContent(
     group(key = "home.watching", header = R.string.settings_group_watching) {
         page(SettingsDestination.QUALITY)
     }
+    group(key = "home.movies", header = R.string.settings_group_movies) {
+        page(SettingsDestination.ADDONS)
+    }
     group(key = "home.data", header = R.string.settings_group_data) {
         page(SettingsDestination.BACKUP)
         page(SettingsDestination.HISTORY)

@@ -4394,4 +4394,34 @@
     <string name="auto_clear_cache_24h">24 hours (1 day)</string>
     <string name="auto_clear_cache_3d">3 days</string>
     <string name="auto_clear_cache_7d">7 days</string>
+
+    <!-- Movies & Stremio Addons -->
+    <string name="nav_movies">Movies</string>
+    <string name="movies_title">Movies &amp; TV</string>
+    <string name="movies_search_hint">Search movies &amp; series…</string>
+    <string name="movies_trending">Trending</string>
+    <string name="movies_popular_movies">Popular Movies</string>
+    <string name="movies_popular_series">TV Series</string>
+    <string name="movies_top_rated">Top Rated</string>
+    <string name="movies_genres">Genres</string>
+    <string name="movies_seasons">Seasons</string>
+    <string name="movies_episodes">Episodes</string>
+    <string name="movies_streams">Available Streams</string>
+    <string name="movies_no_streams">No streams found. Install stream addons in Settings.</string>
+    <string name="movies_play_external">Open in External App</string>
+    <string name="movies_copy_stream_url">Copy Stream Link</string>
+    <string name="movies_link_copied">Stream link copied to clipboard</string>
+    <string name="movies_watch_now">Watch Now</string>
+    <string name="settings_group_movies">Movies &amp; TV</string>
+    <string name="settings_addons_title">Addons &amp; Plugins</string>
+    <string name="settings_addons_summary">Manage Stremio and Nuvio media addons and scrapers</string>
+    <string name="addons_installed">Installed Addons</string>
+    <string name="addons_add">Add Addon</string>
+    <string name="addons_add_hint">Addon manifest URL (https://…/manifest.json)</string>
+    <string name="addons_popular">Popular Addons &amp; Catalogs</string>
+    <string name="addons_install">Install</string>
+    <string name="addons_installed_badge">Installed</string>
+    <string name="addons_remove">Remove</string>
+    <string name="addons_error_invalid_url">Invalid addon manifest URL</string>
+    <string name="addons_error_fetch_failed">Failed to fetch addon manifest</string>
 </resources>

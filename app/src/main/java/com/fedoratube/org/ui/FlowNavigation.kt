@@ -517,6 +517,8 @@ fun NavGraphBuilder.flowAppGraph(
 
     musicRoutes(navController, mediaNavigator, currentRoute, playerViewModel, defaultStartRoute, onMusicStarted)
 
+    moviesRoutes(navController, currentRoute)
+
     widgetPlaybackRoutes(navController, currentRoute, defaultStartRoute, playerViewModel, onMusicStarted)
 
     linkPlaybackRoutes(

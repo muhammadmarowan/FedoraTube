@@ -52,6 +52,7 @@ internal fun destinationIcon(destination: SettingsDestination): ImageVector =
         SettingsDestination.WIDGETS -> Icons.Outlined.Widgets
         SettingsDestination.ABOUT -> Icons.Outlined.Info
         SettingsDestination.DIAGNOSTICS -> Icons.Outlined.BugReport
+        SettingsDestination.ADDONS -> Icons.Outlined.Extension
         else -> Icons.Outlined.Settings
     }
 

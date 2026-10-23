@@ -49,6 +49,7 @@ enum class SettingsDestination(
     WELLBEING("wellbeing", R.string.settings_wellbeing_title),
     ABOUT("about", R.string.settings_item_about_flow),
     DIAGNOSTICS("diagnostics", R.string.settings_item_diagnostics),
+    ADDONS("addons", R.string.settings_addons_title),
     ;
 
     /** The top-level destination this page lives under — what the settings list shows as selected. */

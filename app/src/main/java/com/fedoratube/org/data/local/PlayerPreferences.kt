@@ -49,7 +49,7 @@ const val MAX_CONCURRENT_DOWNLOADS = 5
 /** On until turned off, matching NewPipe's default and the Background button (#1298). */
 const val DEFAULT_BACKGROUND_PLAY_ENABLED = true
 
-val DEFAULT_NAV_TAB_ORDER = listOf(0, 1, 2, 3, 4, 5, 6)
+val DEFAULT_NAV_TAB_ORDER = listOf(0, 1, 2, 7, 3, 4, 5, 6)
 
 private const val MAX_UNPLAYABLE_VIDEO_IDS = 300
 
