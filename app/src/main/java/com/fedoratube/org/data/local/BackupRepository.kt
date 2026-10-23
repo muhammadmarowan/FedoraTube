@@ -85,6 +85,7 @@ data class BackupData(
     val likedVideos: List<LikedVideoInfo>? = emptyList(),
     val contentPreferences: ContentPreferencesBackup? = null,
     val settings: SettingsBackup? = null,
+    val movieAddons: List<com.fedoratube.org.data.movies.StremioAddon>? = emptyList(),
 )
 
 private data class FreeTubeHistoryExportEntry(
@@ -295,6 +296,7 @@ class BackupRepository(
             likedVideos = likedVideosRepo.getAllLikedVideos().first(),
             contentPreferences = getContentPreferencesBackup(),
             settings = getMergedSettingsBackup(),
+            movieAddons = com.fedoratube.org.data.movies.MovieRepository.getInstance(context).installedAddons.value,
         )
 
     /** The master backup: app data, the video engine and, when given, the music engine, in one ZIP. */
@@ -1871,6 +1873,11 @@ class BackupRepository(
             val savedIconSuffix = settings.strings["app_icon_suffix"]
             if (!savedIconSuffix.isNullOrEmpty() && AppIcons.ALL_SUFFIXES.contains(savedIconSuffix)) {
                 appIconController.apply(savedIconSuffix)
+            }
+        }
+        backupData.movieAddons?.let { addons ->
+            if (addons.isNotEmpty()) {
+                com.fedoratube.org.data.movies.MovieRepository.getInstance(context).restoreAddons(addons)
             }
         }
     }

@@ -207,6 +207,12 @@ class MovieRepository private constructor(context: Context) {
         saveAddons(updated)
     }
 
+    fun restoreAddons(addons: List<StremioAddon>) {
+        val current = _installedAddons.value
+        val merged = (current.filter { !it.isDeletable } + addons).distinctBy { it.id }
+        saveAddons(merged)
+    }
+
     suspend fun getHomeFeed(): MoviesHomeState = withContext(Dispatchers.IO) {
         val enabledAddons = _installedAddons.value.filter { it.enabled }
         val catalogAddons = enabledAddons.filter { it.resources.contains("catalog") || it.catalogs.isNotEmpty() }

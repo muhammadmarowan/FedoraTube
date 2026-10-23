@@ -68,6 +68,10 @@ fun MovieDetailsScreen(
     var streams by remember { mutableStateOf<List<MovieStream>>(emptyList()) }
     var isLoadingStreams by remember { mutableStateOf(false) }
 
+    var showStreamSheet by remember { mutableStateOf(false) }
+    var streamSheetTitle by remember { mutableStateOf("") }
+    var targetEpisodeForStream by remember { mutableStateOf<MovieEpisode?>(null) }
+
     fun loadStreamsForId(targetId: String) {
         isLoadingStreams = true
         scope.launch {
@@ -173,55 +177,6 @@ fun MovieDetailsScreen(
                                         ),
                                 )
 
-                                // Floating Top Bar (Back button, Share button)
-                                Row(
-                                    modifier = Modifier
-                                        .statusBarsPadding()
-                                        .fillMaxWidth()
-                                        .padding(horizontal = 12.dp, vertical = 6.dp),
-                                    horizontalArrangement = Arrangement.SpaceBetween,
-                                    verticalAlignment = Alignment.CenterVertically,
-                                ) {
-                                    Surface(
-                                        shape = CircleShape,
-                                        color = Color.Black.copy(alpha = 0.65f),
-                                        modifier = Modifier.size(40.dp),
-                                    ) {
-                                        IconButton(onClick = onBack) {
-                                            Icon(
-                                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                                contentDescription = "Back",
-                                                tint = Color.White,
-                                                modifier = Modifier.size(20.dp),
-                                            )
-                                        }
-                                    }
-
-                                    Surface(
-                                        shape = CircleShape,
-                                        color = Color.Black.copy(alpha = 0.65f),
-                                        modifier = Modifier.size(40.dp),
-                                    ) {
-                                        IconButton(onClick = {
-                                            try {
-                                                val shareIntent = Intent(Intent.ACTION_SEND).apply {
-                                                    this.type = "text/plain"
-                                                    putExtra(Intent.EXTRA_SUBJECT, meta.name)
-                                                    putExtra(Intent.EXTRA_TEXT, "${meta.name}\nhttps://www.imdb.com/title/${meta.id}/")
-                                                }
-                                                context.startActivity(Intent.createChooser(shareIntent, "Share"))
-                                            } catch (_: Exception) {}
-                                        }) {
-                                            Icon(
-                                                imageVector = Icons.Filled.Share,
-                                                contentDescription = "Share",
-                                                tint = Color.White,
-                                                modifier = Modifier.size(18.dp),
-                                            )
-                                        }
-                                    }
-                                }
-
                                 // Poster + Title Overlay
                                 Row(
                                     modifier = Modifier
@@ -326,14 +281,15 @@ fun MovieDetailsScreen(
                             ) {
                                 Button(
                                     onClick = {
-                                        val firstStream = streams.firstOrNull()
-                                        if (firstStream != null) {
-                                            onPlayStream(firstStream, meta, selectedEpisode, streams)
+                                        targetEpisodeForStream = selectedEpisode
+                                        streamSheetTitle = if (meta.type == "series" && selectedEpisode != null) {
+                                            "${meta.name} - S${selectedEpisode?.season ?: 1}E${selectedEpisode?.episode ?: 1}: ${selectedEpisode?.title}"
                                         } else {
-                                            scope.launch {
-                                                listState.animateScrollToItem(4)
-                                            }
+                                            meta.name
                                         }
+                                        val targetId = selectedEpisode?.id ?: meta.id
+                                        loadStreamsForId(targetId)
+                                        showStreamSheet = true
                                     },
                                     modifier = Modifier
                                         .fillMaxWidth()
@@ -436,7 +392,10 @@ fun MovieDetailsScreen(
                                         .padding(horizontal = 16.dp, vertical = 4.dp)
                                         .clickable {
                                             selectedEpisode = episode
+                                            targetEpisodeForStream = episode
+                                            streamSheetTitle = "${meta.name} - S${episode.season ?: 1}E${episode.episode ?: 1}: ${episode.title}"
                                             loadStreamsForId(episode.id)
+                                            showStreamSheet = true
                                         },
                                     shape = RoundedCornerShape(12.dp),
                                     colors = CardDefaults.cardColors(
@@ -503,89 +462,131 @@ fun MovieDetailsScreen(
                                 }
                             }
                         }
+                    }
+                }
+            }
 
-                        // Available Streams Section
-                        item(key = "streams_header") {
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 8.dp),
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                            ) {
-                                Text(
-                                    text = "Streams & Sources",
-                                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                                    color = MaterialTheme.colorScheme.onBackground,
-                                )
-                                if (streams.isNotEmpty()) {
-                                    Surface(
-                                        shape = RoundedCornerShape(12.dp),
-                                        color = MaterialTheme.colorScheme.surfaceVariant,
-                                    ) {
-                                        Text(
-                                            text = "${streams.size} available",
-                                            fontSize = 11.sp,
-                                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp),
-                                        )
-                                    }
-                                }
-                            }
+            // Elevated Pinned Back Button
+            Surface(
+                shape = CircleShape,
+                color = Color.Black.copy(alpha = 0.65f),
+                modifier = Modifier
+                    .statusBarsPadding()
+                    .padding(start = 16.dp, top = 8.dp)
+                    .size(40.dp)
+                    .align(Alignment.TopStart),
+            ) {
+                IconButton(onClick = onBack) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Back",
+                        tint = Color.White,
+                        modifier = Modifier.size(20.dp),
+                    )
+                }
+            }
+
+            // Modal Bottom Sheet for Stream Source Selection
+            if (showStreamSheet && details != null) {
+                val currentMeta = details!!
+                ModalBottomSheet(
+                    onDismissRequest = { showStreamSheet = false },
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    dragHandle = { BottomSheetDefaults.DragHandle() },
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 32.dp),
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 20.dp, vertical = 4.dp),
+                            verticalArrangement = Arrangement.spacedBy(4.dp),
+                        ) {
+                            Text(
+                                text = "Select Source",
+                                style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+                                color = MaterialTheme.colorScheme.onSurface,
+                            )
+                            Text(
+                                text = streamSheetTitle,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                            )
                         }
+
+                        HorizontalDivider(modifier = Modifier.padding(vertical = 10.dp))
 
                         when {
                             isLoadingStreams -> {
-                                item(key = "streams_loading") {
-                                    Box(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(32.dp),
-                                        contentAlignment = Alignment.Center,
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(180.dp),
+                                    contentAlignment = Alignment.Center,
+                                ) {
+                                    Column(
+                                        horizontalAlignment = Alignment.CenterHorizontally,
+                                        verticalArrangement = Arrangement.spacedBy(12.dp),
                                     ) {
                                         CircularProgressIndicator(
-                                            modifier = Modifier.size(32.dp),
+                                            modifier = Modifier.size(36.dp),
                                             color = MaterialTheme.colorScheme.primary,
+                                        )
+                                        Text(
+                                            text = "Fetching streams from addons...",
+                                            style = MaterialTheme.typography.bodySmall,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                                         )
                                     }
                                 }
                             }
                             streams.isEmpty() -> {
-                                item(key = "streams_empty") {
-                                    Card(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(horizontal = 16.dp),
-                                        shape = RoundedCornerShape(12.dp),
-                                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f)),
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(28.dp),
+                                    contentAlignment = Alignment.Center,
+                                ) {
+                                    Column(
+                                        horizontalAlignment = Alignment.CenterHorizontally,
+                                        verticalArrangement = Arrangement.spacedBy(6.dp),
                                     ) {
-                                        Column(
-                                            modifier = Modifier.padding(16.dp),
-                                            verticalArrangement = Arrangement.spacedBy(4.dp),
-                                        ) {
-                                            Text(
-                                                text = "No Streams Found",
-                                                style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
-                                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                            )
-                                            Text(
-                                                text = "Add Stremio or Nuvio stream providers in Settings -> Addons.",
-                                                style = MaterialTheme.typography.bodySmall,
-                                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f),
-                                            )
-                                        }
+                                        Text(
+                                            text = "No Streams Found",
+                                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                                            color = MaterialTheme.colorScheme.onSurface,
+                                        )
+                                        Text(
+                                            text = "Add Stremio or Nuvio stream providers in Settings -> Addons.",
+                                            style = MaterialTheme.typography.bodySmall,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        )
                                     }
                                 }
                             }
                             else -> {
-                                items(streams, key = { "${it.addonName}_${it.playbackUrl ?: it.infoHash}_${it.displayTitle}" }) { stream ->
-                                    NuvioStreamCardItem(
-                                        stream = stream,
-                                        movieTitle = meta.name,
-                                        onClick = {
-                                            onPlayStream(stream, meta, selectedEpisode, streams)
-                                        },
-                                    )
+                                LazyColumn(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .heightIn(max = 440.dp),
+                                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 6.dp),
+                                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                                ) {
+                                    items(streams, key = { "${it.addonName}_${it.playbackUrl ?: it.infoHash}_${it.displayTitle}" }) { stream ->
+                                        NuvioStreamCardItem(
+                                            stream = stream,
+                                            movieTitle = currentMeta.name,
+                                            onClick = {
+                                                showStreamSheet = false
+                                                onPlayStream(stream, currentMeta, targetEpisodeForStream, streams)
+                                            },
+                                        )
+                                    }
                                 }
                             }
                         }

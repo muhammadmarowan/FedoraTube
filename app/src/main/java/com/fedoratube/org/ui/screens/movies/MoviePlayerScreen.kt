@@ -64,12 +64,15 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
+import com.fedoratube.org.data.local.AppDatabase
+import com.fedoratube.org.data.local.entity.WatchHistoryEntity
 import com.fedoratube.org.data.movies.MovieDetails
 import com.fedoratube.org.data.movies.MovieEpisode
 import com.fedoratube.org.data.movies.MovieRepository
 import com.fedoratube.org.data.movies.MovieStream
 import com.fedoratube.org.data.movies.TorrentEngineManager
 import com.fedoratube.org.data.movies.TorrentPlaybackStats
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.Locale
@@ -142,7 +145,8 @@ fun MoviePlayerScreen(
 
     var showSourceSheet by remember { mutableStateOf(false) }
     var showEpisodesSheet by remember { mutableStateOf(false) }
-    var showTrackSheet by remember { mutableStateOf(false) }
+    var showAudioSheet by remember { mutableStateOf(false) }
+    var showSubtitleSheet by remember { mutableStateOf(false) }
     var tracksSnapshot by remember { mutableStateOf<Tracks?>(null) }
 
     // Resize modes: FIT, ZOOM, FILL, 16:9
@@ -225,18 +229,54 @@ fun MoviePlayerScreen(
         }
     }
 
+    fun recordWatchHistory(currentPos: Long, totalDuration: Long) {
+        if (activeTitle.isBlank()) return
+        val videoId = movieDetails?.id?.let {
+            if (currentEpisode != null) "${it}_s${currentEpisode.season ?: 1}e${currentEpisode.episode ?: 1}" else it
+        } ?: (movieDetails?.name ?: activeTitle)
+
+        scope.launch(Dispatchers.IO) {
+            try {
+                val db = AppDatabase.getDatabase(context)
+                db.watchHistoryDao().upsert(
+                    WatchHistoryEntity(
+                        videoId = videoId,
+                        position = currentPos,
+                        duration = totalDuration,
+                        timestamp = System.currentTimeMillis(),
+                        title = activeTitle,
+                        thumbnailUrl = poster ?: (movieDetails?.poster ?: ""),
+                        channelName = activeSubtitle ?: (movieDetails?.genres?.firstOrNull() ?: "Movie"),
+                        channelId = "movies",
+                        isMusic = false,
+                        isShort = false,
+                        isLocal = false,
+                    )
+                )
+            } catch (_: Exception) {}
+        }
+    }
+
     DisposableEffect(exoPlayer) {
+        val originalOrientation = activity?.requestedOrientation ?: ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+        activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
+        activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+
         val listener = object : Player.Listener {
             override fun onPlaybackStateChanged(playbackState: Int) {
                 isBuffering = playbackState == Player.STATE_BUFFERING
                 if (playbackState == Player.STATE_READY) {
                     duration = exoPlayer.duration.coerceAtLeast(0L)
                     hasError = false
+                    recordWatchHistory(exoPlayer.currentPosition, exoPlayer.duration)
                 }
             }
 
             override fun onIsPlayingChanged(playing: Boolean) {
                 isPlaying = playing
+                if (!playing) {
+                    recordWatchHistory(exoPlayer.currentPosition, exoPlayer.duration)
+                }
             }
 
             override fun onTracksChanged(tracks: Tracks) {
@@ -252,9 +292,11 @@ fun MoviePlayerScreen(
         exoPlayer.addListener(listener)
 
         onDispose {
+            recordWatchHistory(exoPlayer.currentPosition, exoPlayer.duration)
             exoPlayer.removeListener(listener)
             exoPlayer.release()
-            activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+            activity?.requestedOrientation = originalOrientation
+            activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
             if (activeIsTorrent) {
                 scope.launch {
                     TorrentEngineManager.stopStream()
@@ -264,11 +306,17 @@ fun MoviePlayerScreen(
     }
 
     // Update progress loop
+    var historySaveCounter = 0
     LaunchedEffect(exoPlayer, isPlaying) {
         while (true) {
             if (exoPlayer.isPlaying && !isSeeking) {
                 currentPosition = exoPlayer.currentPosition.coerceAtLeast(0L)
                 duration = exoPlayer.duration.coerceAtLeast(0L)
+                historySaveCounter++
+                if (historySaveCounter >= 20) { // every 10 seconds (with 500ms delay)
+                    historySaveCounter = 0
+                    recordWatchHistory(currentPosition, duration)
+                }
             }
             delay(500)
         }
@@ -639,35 +687,29 @@ fun MoviePlayerScreen(
                         )
                     }
 
-                    // Audio & Subtitles
-                    IconButton(onClick = { showTrackSheet = true }) {
+                    // Audio Tracks
+                    IconButton(onClick = {
+                        tracksSnapshot = exoPlayer.currentTracks
+                        showAudioSheet = true
+                    }) {
                         Icon(
-                            imageVector = Icons.Rounded.Subtitles,
-                            contentDescription = "Subtitles & Audio",
+                            imageVector = Icons.Filled.Audiotrack,
+                            contentDescription = "Audio Tracks",
                             tint = Color.White,
                             modifier = Modifier.size(22.dp),
                         )
                     }
 
-                    // Open external
+                    // Subtitles
                     IconButton(onClick = {
-                        val launchUrl = activeMagnetUri ?: activeStreamUrl
-                        try {
-                            val intent = Intent(Intent.ACTION_VIEW).apply {
-                                val u = Uri.parse(launchUrl)
-                                if (activeIsTorrent) data = u else setDataAndType(u, "video/*")
-                                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                            }
-                            context.startActivity(Intent.createChooser(intent, "Play stream with"))
-                        } catch (_: Exception) {
-                            Toast.makeText(context, "Could not open external player", Toast.LENGTH_SHORT).show()
-                        }
+                        tracksSnapshot = exoPlayer.currentTracks
+                        showSubtitleSheet = true
                     }) {
                         Icon(
-                            imageVector = Icons.AutoMirrored.Filled.OpenInNew,
-                            contentDescription = "External Player",
+                            imageVector = Icons.Rounded.Subtitles,
+                            contentDescription = "Subtitles",
                             tint = Color.White,
-                            modifier = Modifier.size(20.dp),
+                            modifier = Modifier.size(22.dp),
                         )
                     }
                 }
@@ -1055,117 +1097,224 @@ fun MoviePlayerScreen(
         }
     }
 
-    // Audio & Subtitle Tracks Sheet
-    if (showTrackSheet) {
+    // Audio Tracks Sheet
+    if (showAudioSheet) {
         ModalBottomSheet(
-            onDismissRequest = { showTrackSheet = false },
+            onDismissRequest = { showAudioSheet = false },
             containerColor = MaterialTheme.colorScheme.surface,
+            dragHandle = { BottomSheetDefaults.DragHandle() },
         ) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 20.dp)
                     .padding(bottom = 32.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
                 Text(
-                    text = "Audio & Subtitles",
-                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                    text = "Audio Track",
+                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+                    color = MaterialTheme.colorScheme.onSurface,
                 )
 
                 val audioTracks = remember(tracksSnapshot) {
                     tracksSnapshot?.groups?.filter { it.type == C.TRACK_TYPE_AUDIO } ?: emptyList()
                 }
-                val textTracks = remember(tracksSnapshot) {
-                    tracksSnapshot?.groups?.filter { it.type == C.TRACK_TYPE_TEXT } ?: emptyList()
-                }
 
-                Text(
-                    text = "Audio Track",
-                    style = MaterialTheme.typography.labelLarge,
-                    color = MaterialTheme.colorScheme.primary,
-                )
                 if (audioTracks.isEmpty()) {
-                    Text("Default Audio", style = MaterialTheme.typography.bodyMedium)
+                    Text(
+                        text = "Default Audio Stream",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(vertical = 12.dp),
+                    )
                 } else {
-                    audioTracks.forEach { group ->
-                        for (i in 0 until group.length) {
-                            val format = group.getTrackFormat(i)
-                            val isSelected = group.isTrackSelected(i)
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clickable {
-                                        exoPlayer.trackSelectionParameters = exoPlayer.trackSelectionParameters
-                                            .buildUpon()
-                                            .setOverrideForType(TrackSelectionOverride(group.mediaTrackGroup, i))
-                                            .build()
-                                        showTrackSheet = false
+                    LazyColumn(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalArrangement = Arrangement.spacedBy(4.dp),
+                    ) {
+                        audioTracks.forEach { group ->
+                            items(group.length) { i ->
+                                val format = group.getTrackFormat(i)
+                                val isSelected = group.isTrackSelected(i)
+                                val langCode = format.language
+                                val friendlyLang = if (!langCode.isNullOrBlank()) {
+                                    try {
+                                        val loc = Locale.forLanguageTag(langCode)
+                                        val name = loc.getDisplayLanguage(Locale.getDefault())
+                                        if (name.isNotBlank()) name.replaceFirstChar { it.uppercase() } else loc.displayLanguage
+                                    } catch (_: Exception) {
+                                        langCode.uppercase()
                                     }
-                                    .padding(vertical = 8.dp),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                            ) {
-                                Text(
-                                    text = format.label ?: format.language ?: "Audio ${i + 1}",
-                                    style = MaterialTheme.typography.bodyMedium,
-                                )
-                                if (isSelected) {
-                                    Icon(Icons.Filled.Check, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+                                } else null
+
+                                val baseName = format.label ?: friendlyLang ?: "Audio Track ${i + 1}"
+                                val channels = when (format.channelCount) {
+                                    1 -> "Mono"
+                                    2 -> "Stereo"
+                                    6 -> "5.1 Surround"
+                                    8 -> "7.1 Surround"
+                                    else -> null
+                                }
+                                val displayName = if (channels != null) "$baseName • $channels" else baseName
+
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .clip(RoundedCornerShape(8.dp))
+                                        .clickable {
+                                            exoPlayer.trackSelectionParameters = exoPlayer.trackSelectionParameters
+                                                .buildUpon()
+                                                .setOverrideForType(TrackSelectionOverride(group.mediaTrackGroup, i))
+                                                .build()
+                                            tracksSnapshot = exoPlayer.currentTracks
+                                            Toast.makeText(context, "Audio: $baseName", Toast.LENGTH_SHORT).show()
+                                            showAudioSheet = false
+                                        }
+                                        .padding(horizontal = 8.dp, vertical = 12.dp),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically,
+                                ) {
+                                    Text(
+                                        text = displayName,
+                                        style = MaterialTheme.typography.bodyMedium.copy(
+                                            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
+                                        ),
+                                        color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
+                                    )
+                                    if (isSelected) {
+                                        Icon(
+                                            imageVector = Icons.Filled.Check,
+                                            contentDescription = "Selected",
+                                            tint = MaterialTheme.colorScheme.primary,
+                                            modifier = Modifier.size(20.dp),
+                                        )
+                                    }
                                 }
                             }
                         }
                     }
                 }
+            }
+        }
+    }
 
-                HorizontalDivider()
-
+    // Subtitle Tracks Sheet
+    if (showSubtitleSheet) {
+        ModalBottomSheet(
+            onDismissRequest = { showSubtitleSheet = false },
+            containerColor = MaterialTheme.colorScheme.surface,
+            dragHandle = { BottomSheetDefaults.DragHandle() },
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp)
+                    .padding(bottom = 32.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
                 Text(
                     text = "Subtitles",
-                    style = MaterialTheme.typography.labelLarge,
-                    color = MaterialTheme.colorScheme.primary,
+                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+                    color = MaterialTheme.colorScheme.onSurface,
                 )
-                // Option to disable subtitles
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable {
-                            exoPlayer.trackSelectionParameters = exoPlayer.trackSelectionParameters
-                                .buildUpon()
-                                .setIgnoredTextSelectionFlags(C.SELECTION_FLAG_DEFAULT)
-                                .clearOverridesOfType(C.TRACK_TYPE_TEXT)
-                                .build()
-                            showTrackSheet = false
-                        }
-                        .padding(vertical = 8.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                ) {
-                    Text("Off", style = MaterialTheme.typography.bodyMedium)
+
+                val isTextDisabled = C.TRACK_TYPE_TEXT in exoPlayer.trackSelectionParameters.disabledTrackTypes
+                val textTracks = remember(tracksSnapshot) {
+                    tracksSnapshot?.groups?.filter { it.type == C.TRACK_TYPE_TEXT } ?: emptyList()
                 }
 
-                if (textTracks.isNotEmpty()) {
+                LazyColumn(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(4.dp),
+                ) {
+                    // Option to turn subtitles off
+                    item {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(8.dp))
+                                .clickable {
+                                    exoPlayer.trackSelectionParameters = exoPlayer.trackSelectionParameters
+                                        .buildUpon()
+                                        .setTrackTypeDisabled(C.TRACK_TYPE_TEXT, true)
+                                        .clearOverridesOfType(C.TRACK_TYPE_TEXT)
+                                        .build()
+                                    tracksSnapshot = exoPlayer.currentTracks
+                                    Toast.makeText(context, "Subtitles: Off", Toast.LENGTH_SHORT).show()
+                                    showSubtitleSheet = false
+                                }
+                                .padding(horizontal = 8.dp, vertical = 12.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Text(
+                                text = "Off",
+                                style = MaterialTheme.typography.bodyMedium.copy(
+                                    fontWeight = if (isTextDisabled) FontWeight.Bold else FontWeight.Normal,
+                                ),
+                                color = if (isTextDisabled) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
+                            )
+                            if (isTextDisabled) {
+                                Icon(
+                                    imageVector = Icons.Filled.Check,
+                                    contentDescription = "Selected",
+                                    tint = MaterialTheme.colorScheme.primary,
+                                    modifier = Modifier.size(20.dp),
+                                )
+                            }
+                        }
+                    }
+
                     textTracks.forEach { group ->
-                        for (i in 0 until group.length) {
+                        items(group.length) { i ->
                             val format = group.getTrackFormat(i)
-                            val isSelected = group.isTrackSelected(i)
+                            val isSelected = !isTextDisabled && group.isTrackSelected(i)
+                            val langCode = format.language
+                            val friendlyLang = if (!langCode.isNullOrBlank()) {
+                                try {
+                                    val loc = Locale.forLanguageTag(langCode)
+                                    val name = loc.getDisplayLanguage(Locale.getDefault())
+                                    if (name.isNotBlank()) name.replaceFirstChar { it.uppercase() } else loc.displayLanguage
+                                } catch (_: Exception) {
+                                    langCode.uppercase()
+                                }
+                            } else null
+
+                            val displayName = format.label ?: friendlyLang ?: "Subtitle Track ${i + 1}"
+
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
+                                    .clip(RoundedCornerShape(8.dp))
                                     .clickable {
                                         exoPlayer.trackSelectionParameters = exoPlayer.trackSelectionParameters
                                             .buildUpon()
+                                            .setTrackTypeDisabled(C.TRACK_TYPE_TEXT, false)
                                             .setOverrideForType(TrackSelectionOverride(group.mediaTrackGroup, i))
                                             .build()
-                                        showTrackSheet = false
+                                        tracksSnapshot = exoPlayer.currentTracks
+                                        Toast.makeText(context, "Subtitles: $displayName", Toast.LENGTH_SHORT).show()
+                                        showSubtitleSheet = false
                                     }
-                                    .padding(vertical = 8.dp),
+                                    .padding(horizontal = 8.dp, vertical = 12.dp),
                                 horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically,
                             ) {
                                 Text(
-                                    text = format.label ?: format.language ?: "Subtitle ${i + 1}",
-                                    style = MaterialTheme.typography.bodyMedium,
+                                    text = displayName,
+                                    style = MaterialTheme.typography.bodyMedium.copy(
+                                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
+                                    ),
+                                    color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
                                 )
                                 if (isSelected) {
-                                    Icon(Icons.Filled.Check, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+                                    Icon(
+                                        imageVector = Icons.Filled.Check,
+                                        contentDescription = "Selected",
+                                        tint = MaterialTheme.colorScheme.primary,
+                                        modifier = Modifier.size(20.dp),
+                                    )
                                 }
                             }
                         }
