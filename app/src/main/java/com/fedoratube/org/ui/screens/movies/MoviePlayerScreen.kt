@@ -65,6 +65,7 @@ import androidx.media3.common.TrackSelectionOverride
 import androidx.media3.common.Tracks
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DefaultHttpDataSource
+import androidx.media3.exoplayer.DefaultRenderersFactory
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import androidx.media3.ui.AspectRatioFrameLayout
@@ -176,7 +177,12 @@ fun MoviePlayerScreen(
         val mediaSourceFactory = DefaultMediaSourceFactory(context)
             .setDataSourceFactory(httpDataSourceFactory)
 
-        ExoPlayer.Builder(context)
+        val renderersFactory = DefaultRenderersFactory(context).apply {
+            setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER)
+            setEnableAudioTrackPlaybackParams(true)
+        }
+
+        ExoPlayer.Builder(context, renderersFactory)
             .setMediaSourceFactory(mediaSourceFactory)
             .build().apply {
                 playWhenReady = true
@@ -304,6 +310,21 @@ fun MoviePlayerScreen(
             }
 
             override fun onPlayerError(error: androidx.media3.common.PlaybackException) {
+                // If an unsupported audio track was selected, recover automatically
+                val isAudioCodecError = error.errorCode == androidx.media3.common.PlaybackException.ERROR_CODE_DECODER_INIT_FAILED ||
+                    error.message?.contains("MediaCodecAudioRenderer", ignoreCase = true) == true ||
+                    error.message?.contains("NO_UNSUPPORTED_SUBTYPE", ignoreCase = true) == true
+                if (isAudioCodecError && exoPlayer.trackSelectionParameters.overrides.isNotEmpty()) {
+                    exoPlayer.trackSelectionParameters = exoPlayer.trackSelectionParameters
+                        .buildUpon()
+                        .clearOverridesOfType(C.TRACK_TYPE_AUDIO)
+                        .build()
+                    exoPlayer.prepare()
+                    exoPlayer.play()
+                    Toast.makeText(context, "Audio format not supported by device hardware. Restored default audio.", Toast.LENGTH_LONG).show()
+                    return
+                }
+
                 hasError = true
                 isBuffering = false
                 errorMessage = error.localizedMessage ?: "Playback error"
@@ -711,7 +732,6 @@ fun MoviePlayerScreen(
                                 AspectRatioFrameLayout.RESIZE_MODE_FIT
                             }
                         }
-                        Toast.makeText(context, "Aspect: $resizeModeLabel", Toast.LENGTH_SHORT).show()
                     }) {
                         Icon(
                             imageVector = Icons.Rounded.AspectRatio,
@@ -1174,6 +1194,7 @@ fun MoviePlayerScreen(
                                     }
                                 } else null
 
+                                val isSupported = group.isTrackSupported(i)
                                 val baseName = format.label ?: friendlyLang ?: "Audio Track ${i + 1}"
                                 val channels = when (format.channelCount) {
                                     1 -> "Mono"
@@ -1182,13 +1203,21 @@ fun MoviePlayerScreen(
                                     8 -> "7.1 Surround"
                                     else -> null
                                 }
-                                val displayName = if (channels != null) "$baseName • $channels" else baseName
+                                val displayName = buildString {
+                                    append(baseName)
+                                    if (channels != null) append(" • $channels")
+                                    if (!isSupported) append(" (Unsupported)")
+                                }
 
                                 Row(
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .clip(RoundedCornerShape(8.dp))
                                         .clickable {
+                                            if (!isSupported) {
+                                                Toast.makeText(context, "Audio format is not supported by device", Toast.LENGTH_SHORT).show()
+                                                return@clickable
+                                            }
                                             exoPlayer.trackSelectionParameters = exoPlayer.trackSelectionParameters
                                                 .buildUpon()
                                                 .setOverrideForType(TrackSelectionOverride(group.mediaTrackGroup, i))
@@ -1206,7 +1235,11 @@ fun MoviePlayerScreen(
                                         style = MaterialTheme.typography.bodyMedium.copy(
                                             fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
                                         ),
-                                        color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
+                                        color = when {
+                                            isSelected -> MaterialTheme.colorScheme.primary
+                                            !isSupported -> MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f)
+                                            else -> MaterialTheme.colorScheme.onSurface
+                                        },
                                     )
                                     if (isSelected) {
                                         Icon(

@@ -71,7 +71,9 @@ internal object NuvioPluginRunner {
         try {
             val manifestBody = httpGet(manifestUrl) ?: return@withContext emptyList()
             val root = json.parseToJsonElement(manifestBody).jsonObject
-            val scrapersArray = root["scrapers"] as? JsonArray ?: return@withContext emptyList()
+            val scrapersArray = (root["scrapers"] as? JsonArray)
+                ?: (root["providers"] as? JsonArray)
+                ?: return@withContext emptyList()
 
             val baseUrl = manifestUrl.substringBefore("?").removeSuffix("/manifest.json").trimEnd('/')
 
@@ -183,7 +185,7 @@ internal object NuvioPluginRunner {
                     addModule(domBridge)
                 }
 
-                quickJs(pluginDispatcher) {
+                quickJs {
                     evaluationTimeoutMillis = SCRAPER_TIMEOUT_MS
                     hostRegistry.registerAll(this)
 
@@ -220,6 +222,8 @@ internal object NuvioPluginRunner {
                 val obj = el as? JsonObject ?: return@mapNotNull null
 
                 var url = obj["url"]?.jsonPrimitive?.contentOrNull
+                    ?: obj["link"]?.jsonPrimitive?.contentOrNull
+                    ?: obj["streamUrl"]?.jsonPrimitive?.contentOrNull
                 val externalUrl = obj["externalUrl"]?.jsonPrimitive?.contentOrNull
                 var infoHash = obj["infoHash"]?.jsonPrimitive?.contentOrNull
 
@@ -233,10 +237,18 @@ internal object NuvioPluginRunner {
                     return@mapNotNull null
                 }
 
-                val streamName = obj["name"]?.jsonPrimitive?.contentOrNull ?: scraperName
-                val streamTitle = obj["title"]?.jsonPrimitive?.contentOrNull ?: streamName
-                val description = obj["description"]?.jsonPrimitive?.contentOrNull
+                val server = obj["server"]?.jsonPrimitive?.contentOrNull
+                val filename = obj["filename"]?.jsonPrimitive?.contentOrNull
                 val quality = obj["quality"]?.jsonPrimitive?.contentOrNull
+                val size = obj["size"]?.jsonPrimitive?.contentOrNull
+
+                val baseName = obj["name"]?.jsonPrimitive?.contentOrNull ?: server ?: scraperName
+                val baseTitle = obj["title"]?.jsonPrimitive?.contentOrNull ?: filename ?: baseName
+                val streamTitle = buildString {
+                    append(baseTitle)
+                    if (!size.isNullOrBlank()) append(" • $size")
+                }
+                val description = obj["description"]?.jsonPrimitive?.contentOrNull
 
                 val hints = obj["behaviorHints"] as? JsonObject
                 val reqHeaders = (hints?.get("proxyHeaders") as? JsonObject)?.get("request") as? JsonObject
@@ -245,7 +257,7 @@ internal object NuvioPluginRunner {
                 }
 
                 MovieStream(
-                    name = quality?.let { "$streamName $it" } ?: streamName,
+                    name = quality?.let { "$baseName $it" } ?: baseName,
                     title = streamTitle,
                     description = description,
                     url = url,

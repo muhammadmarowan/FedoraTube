@@ -4415,7 +4415,7 @@
     <string name="movies_watch_now">Watch Now</string>
     <string name="settings_group_movies">Movies &amp; TV</string>
     <string name="settings_addons_title">Addons &amp; Plugins</string>
-    <string name="settings_addons_summary">Manage Stremio and Nuvio media addons and scrapers</string>
+    <string name="settings_addons_summary">Manage community media addons and scrapers</string>
     <string name="addons_installed">Installed Addons</string>
     <string name="addons_add">Add Addon</string>
     <string name="addons_add_hint">Addon manifest URL (https://…/manifest.json)</string>

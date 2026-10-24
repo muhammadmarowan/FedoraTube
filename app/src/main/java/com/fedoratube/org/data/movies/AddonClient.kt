@@ -64,18 +64,18 @@ object AddonClient {
         try {
             val root = json.parseToJsonElement(body).jsonObject
 
-            // Check if this is a Nuvio Plugin Manifest (which has "scrapers")
-            val scrapersArray = root["scrapers"] as? JsonArray
+            // Check if this is a Plugin Manifest (which has "scrapers" or "providers")
+            val scrapersArray = (root["scrapers"] as? JsonArray) ?: (root["providers"] as? JsonArray)
             if (scrapersArray != null) {
-                val name = root["name"]?.jsonPrimitive?.contentOrNull ?: "Nuvio Plugin"
+                val name = root["name"]?.jsonPrimitive?.contentOrNull ?: "Media Plugin"
                 val version = root["version"]?.jsonPrimitive?.contentOrNull ?: "1.0.0"
-                val id = "nuvio_" + name.lowercase().replace(Regex("[^a-z0-9]"), "_")
+                val id = "plugin_" + name.lowercase().replace(Regex("[^a-z0-9]"), "_")
                 val scraperCount = scrapersArray.size
                 return@withContext StremioAddon(
                     id = id,
                     name = name,
                     version = version,
-                    description = "Nuvio Plugin ($scraperCount scrapers)",
+                    description = "Media Plugin ($scraperCount scrapers)",
                     iconUrl = null,
                     transportUrl = normalized,
                     types = listOf("movie", "series"),

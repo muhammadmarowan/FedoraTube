@@ -5,6 +5,10 @@ import android.graphics.Bitmap
 import android.net.Uri
 import androidx.media3.common.util.BitmapLoader
 import androidx.media3.common.util.UnstableApi
+import coil3.SingletonImageLoader
+import coil3.request.ImageRequest
+import coil3.request.allowHardware
+import coil3.toBitmap
 import com.google.common.util.concurrent.ListenableFuture
 import com.google.common.util.concurrent.ListeningExecutorService
 import com.google.common.util.concurrent.MoreExecutors
@@ -26,7 +30,24 @@ internal class MediaStoreArtworkBitmapLoader(
     private val executor: ListeningExecutorService = MoreExecutors.listeningDecorator(Executors.newSingleThreadExecutor())
 
     override fun loadBitmap(uri: Uri): ListenableFuture<Bitmap> {
-        if (!MediaStoreThumbnails.isMediaStoreUri(uri)) return delegate.loadBitmap(uri)
+        if (!MediaStoreThumbnails.isMediaStoreUri(uri)) {
+            return executor.submit<Bitmap> {
+                try {
+                    val request = ImageRequest.Builder(context)
+                        .data(uri.toString())
+                        .size(sizePx, sizePx)
+                        .allowHardware(false)
+                        .build()
+                    val result = kotlinx.coroutines.runBlocking {
+                        SingletonImageLoader.get(context).execute(request)
+                    }
+                    val bitmap = result.image?.toBitmap()
+                    if (bitmap != null) return@submit bitmap
+                } catch (_: Exception) {}
+
+                delegate.loadBitmap(uri).get()
+            }
+        }
         return executor.submit<Bitmap> { MediaStoreThumbnails.load(context, uri, sizePx) ?: throw IOException("No artwork for $uri") }
     }
 }

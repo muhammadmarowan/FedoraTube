@@ -107,7 +107,7 @@ fun AddonsSettingsScreen(
                             )
                         }
                         Text(
-                            text = "Add media catalogs, stream scrapers, or subtitle addons using any Stremio or Nuvio manifest URL.",
+                            text = "Add media catalogs, stream scrapers, or subtitle addons using any manifest URL or link.",
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.85f),
                         )

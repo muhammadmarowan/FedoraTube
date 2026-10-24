@@ -287,7 +287,7 @@ class MovieRepository private constructor(context: Context) {
         coroutineScope {
             val deferredList = streamAddons.map { addon ->
                 async {
-                    if (addon.isNuvioPlugin || addon.id.startsWith("nuvio_") || addon.description.contains("Nuvio Plugin")) {
+                    if (addon.isNuvioPlugin || addon.id.startsWith("plugin_") || addon.id.startsWith("nuvio_") || addon.description.contains("scrapers")) {
                         com.fedoratube.org.data.movies.nuvio.NuvioPluginRunner.fetchStreamsForNuvioPlugin(
                             appContext,
                             addon.transportUrl,

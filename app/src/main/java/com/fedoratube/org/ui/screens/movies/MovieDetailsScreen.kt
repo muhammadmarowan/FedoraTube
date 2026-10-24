@@ -636,7 +636,7 @@ fun MovieDetailsScreen(
                                             color = MaterialTheme.colorScheme.onSurface,
                                         )
                                         Text(
-                                            text = "Add Stremio or Nuvio stream providers in Settings -> Addons.",
+                                            text = "Add media addons or stream providers in Settings -> Addons.",
                                             style = MaterialTheme.typography.bodySmall,
                                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                                         )

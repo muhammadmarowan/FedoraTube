@@ -28,7 +28,12 @@ internal object JsBindings {
     val staticCallCode: String = """
             (async function() {
                 try {
-                    var getStreams = module.exports.getStreams || globalThis.getStreams;
+                    var getStreams = (typeof module !== 'undefined' && module.exports && (module.exports.getStreams || (module.exports.default && module.exports.default.getStreams))) ||
+                                     globalThis.getStreams ||
+                                     (globalThis.default && globalThis.default.getStreams);
+                    if (!getStreams && typeof module !== 'undefined' && typeof module.exports === 'function') {
+                        getStreams = module.exports;
+                    }
                     if (!getStreams) {
                         console.error("getStreams function not found on module.exports or globalThis");
                         __capture_result(JSON.stringify([]));
@@ -184,11 +189,12 @@ internal object JsBindings {
 
         var fetch = async function(url, options) {
             options = options || {};
+            var urlStr = (url && typeof url === 'object' && url.href) ? url.href : String(url);
             var method = (options.method || 'GET').toUpperCase();
             var headers = __normalize_fetch_headers(options.headers);
             var body = __normalize_fetch_body(options.body);
             var followRedirects = options.redirect !== 'manual';
-            var result = await __native_fetch(url, method, JSON.stringify(headers), body.kind, body.value, followRedirects);
+            var result = await __native_fetch(urlStr, method, JSON.stringify(headers), body.kind, body.value, followRedirects);
             var parsed = JSON.parse(result);
             var responseBytes = __fetch_base64_to_bytes(parsed.bodyBase64);
             return {
@@ -222,36 +228,55 @@ internal object JsBindings {
     """.trimIndent()
 
     private fun abortControllerPolyfill() = """
-        if (typeof AbortSignal === 'undefined') {
-            var AbortSignal = function() { this.aborted = false; this.reason = undefined; this._listeners = []; };
-            AbortSignal.prototype.addEventListener = function(type, listener) {
-                if (type !== 'abort' || typeof listener !== 'function') return;
-                this._listeners.push(listener);
-            };
-            AbortSignal.prototype.removeEventListener = function(type, listener) {
-                if (type !== 'abort') return;
-                this._listeners = this._listeners.filter(function(l) { return l !== listener; });
-            };
-            AbortSignal.prototype.dispatchEvent = function(event) {
-                if (!event || event.type !== 'abort') return true;
-                for (var i = 0; i < this._listeners.length; i++) {
-                    try { this._listeners[i].call(this, event); } catch (e) {}
-                }
-                return true;
-            };
-            globalThis.AbortSignal = AbortSignal;
-        }
+        var AbortSignal = globalThis.AbortSignal || function() {
+            this.aborted = false;
+            this.reason = undefined;
+            this._listeners = [];
+        };
+        AbortSignal.prototype.addEventListener = AbortSignal.prototype.addEventListener || function(type, listener) {
+            if (type !== 'abort' || typeof listener !== 'function') return;
+            this._listeners = this._listeners || [];
+            this._listeners.push(listener);
+        };
+        AbortSignal.prototype.removeEventListener = AbortSignal.prototype.removeEventListener || function(type, listener) {
+            if (type !== 'abort') return;
+            this._listeners = (this._listeners || []).filter(function(l) { return l !== listener; });
+        };
+        AbortSignal.prototype.dispatchEvent = AbortSignal.prototype.dispatchEvent || function(event) {
+            if (!event || event.type !== 'abort') return true;
+            var list = this._listeners || [];
+            for (var i = 0; i < list.length; i++) {
+                try { list[i].call(this, event); } catch (e) {}
+            }
+            return true;
+        };
+        AbortSignal.abort = function(reason) {
+            var s = new AbortSignal();
+            s.aborted = true;
+            s.reason = reason;
+            return s;
+        };
+        AbortSignal.timeout = function(ms) {
+            var s = new AbortSignal();
+            setTimeout(function() {
+                s.aborted = true;
+                s.reason = new Error('TimeoutError');
+                s.dispatchEvent({ type: 'abort' });
+            }, ms);
+            return s;
+        };
+        globalThis.AbortSignal = AbortSignal;
 
-        if (typeof AbortController === 'undefined') {
-            var AbortController = function() { this.signal = new AbortSignal(); };
-            AbortController.prototype.abort = function(reason) {
-                if (this.signal.aborted) return;
-                this.signal.aborted = true;
-                this.signal.reason = reason;
-                this.signal.dispatchEvent({ type: 'abort' });
-            };
-            globalThis.AbortController = AbortController;
-        }
+        var AbortController = globalThis.AbortController || function() {
+            this.signal = new AbortSignal();
+        };
+        AbortController.prototype.abort = function(reason) {
+            if (this.signal.aborted) return;
+            this.signal.aborted = true;
+            this.signal.reason = reason;
+            this.signal.dispatchEvent({ type: 'abort' });
+        };
+        globalThis.AbortController = AbortController;
     """.trimIndent()
 
     private fun base64Polyfill() = """
@@ -946,6 +971,7 @@ internal object JsBindings {
                 return $;
             }
         };
+        cheerio.default = cheerio;
 
         function createCheerioWrapper(docId, selector) {
             var elementIds;
