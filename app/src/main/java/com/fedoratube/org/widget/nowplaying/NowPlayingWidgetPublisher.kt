@@ -43,7 +43,7 @@ class NowPlayingWidgetPublisher
                 for (snapshot in updateChannel) {
                     try {
                         if (snapshot == null) {
-                            context.clearNowPlayingSnapshot()
+                            context.markNowPlayingStopped()
                         } else {
                             context.writeNowPlayingSnapshot(snapshot)
                         }

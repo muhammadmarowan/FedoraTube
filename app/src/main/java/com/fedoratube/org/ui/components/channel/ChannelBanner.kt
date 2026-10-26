@@ -16,7 +16,7 @@ import coil3.compose.AsyncImage
 import com.fedoratube.org.R
 import com.fedoratube.org.ui.components.shared.thumbnailUrlOrNull
 
-internal const val CHANNEL_BANNER_ASPECT_RATIO = 1060f / 175f
+internal const val CHANNEL_BANNER_ASPECT_RATIO = 16f / 5f
 
 @Composable
 internal fun ChannelBanner(
@@ -25,10 +25,8 @@ internal fun ChannelBanner(
 ) {
     val bannerModifier =
         modifier
-            .padding(start = 16.dp, end = 16.dp, top = 12.dp)
             .fillMaxWidth()
             .aspectRatio(CHANNEL_BANNER_ASPECT_RATIO)
-            .clip(MaterialTheme.shapes.medium)
             .background(MaterialTheme.colorScheme.surfaceVariant)
 
     val bannerUrl = thumbnailUrlOrNull(imageUrl)
@@ -42,7 +40,7 @@ internal fun ChannelBanner(
         model = bannerUrl,
         contentDescription = stringResource(R.string.channel_banner),
         modifier = bannerModifier,
-        contentScale = ContentScale.Fit,
+        contentScale = ContentScale.Crop,
         onError = { result ->
             Log.e(
                 "ChannelBanner",

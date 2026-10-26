@@ -7,6 +7,9 @@ import android.content.Intent
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.common.util.Util
+import com.fedoratube.org.data.local.QueuePersistence
+import com.fedoratube.org.player.restoredMusicQueue
+import com.fedoratube.org.service.musicResumptionItems
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -22,10 +25,26 @@ enum class WidgetPlaybackCommand(
     ;
 
     @OptIn(UnstableApi::class)
-    internal fun run(player: Player) {
+    internal fun run(player: Player, context: Context? = null) {
         when (this) {
             // Prepares from IDLE and restarts from ENDED, where a bare play() does nothing.
-            PLAY_PAUSE -> Util.handlePlayPauseButtonAction(player)
+            PLAY_PAUSE -> {
+                if ((player.currentMediaItem == null || player.mediaItemCount == 0) && context != null) {
+                    try {
+                        val queuePersistence = QueuePersistence.getInstance(context)
+                        val queueState = kotlinx.coroutines.runBlocking { queuePersistence.restoreQueue() }
+                        val restored = queueState?.let(::restoredMusicQueue)
+                        if (restored != null) {
+                            val resumption = musicResumptionItems(restored)
+                            player.setMediaItems(resumption.mediaItems, resumption.startIndex, resumption.startPositionMs)
+                            player.prepare()
+                            player.play()
+                            return
+                        }
+                    } catch (_: Exception) {}
+                }
+                Util.handlePlayPauseButtonAction(player)
+            }
 
             NEXT -> player.seekToNext()
 
@@ -56,7 +75,7 @@ class WidgetPlaybackReceiver : BroadcastReceiver() {
         val pending = goAsync()
         scope.launch {
             try {
-                withMusicController(context) { command.run(it) }
+                withMusicController(context) { command.run(it, context) }
             } finally {
                 pending.finish()
             }

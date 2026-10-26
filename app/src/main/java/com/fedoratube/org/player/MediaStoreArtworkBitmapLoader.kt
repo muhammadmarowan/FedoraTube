@@ -8,6 +8,7 @@ import androidx.media3.common.util.BitmapLoader
 import androidx.media3.common.util.UnstableApi
 import coil3.SingletonImageLoader
 import coil3.request.ImageRequest
+import coil3.request.SuccessResult
 import coil3.request.allowHardware
 import coil3.toBitmap
 import com.google.common.util.concurrent.Futures
@@ -29,7 +30,7 @@ internal class MediaStoreArtworkBitmapLoader(
     private val delegate: BitmapLoader,
     private val sizePx: Int,
 ) : BitmapLoader by delegate {
-    private val executor: ListeningExecutorService = MoreExecutors.listeningDecorator(Executors.newSingleThreadExecutor())
+    private val executor: ListeningExecutorService = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(4))
 
     override fun loadBitmap(uri: Uri): ListenableFuture<Bitmap> {
         if (!MediaStoreThumbnails.isMediaStoreUri(uri)) {
@@ -43,11 +44,15 @@ internal class MediaStoreArtworkBitmapLoader(
                     val result = kotlinx.coroutines.runBlocking {
                         SingletonImageLoader.get(context).execute(request)
                     }
-                    val bitmap = result.image?.toBitmap()
+                    val bitmap = (result as? SuccessResult)?.image?.toBitmap()
                     if (bitmap != null) return@submit bitmap
                 } catch (_: Exception) {}
 
-                delegate.loadBitmap(uri).get()
+                try {
+                    delegate.loadBitmap(uri).get()
+                } catch (e: Exception) {
+                    throw IOException("No artwork for $uri", e)
+                }
             }
         }
         return executor.submit<Bitmap> { MediaStoreThumbnails.load(context, uri, sizePx) ?: throw IOException("No artwork for $uri") }

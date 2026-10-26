@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -30,6 +31,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -119,8 +121,8 @@ private fun PostImages(
         }
 
         Surface(
-            color = MaterialTheme.colorScheme.scrim,
-            shape = MaterialTheme.shapes.large,
+            color = Color.Black.copy(alpha = 0.70f),
+            shape = RoundedCornerShape(16.dp),
             modifier =
                 Modifier
                     .align(Alignment.TopEnd)
@@ -128,8 +130,8 @@ private fun PostImages(
         ) {
             Text(
                 text = stringResource(R.string.channel_post_image_count, pagerState.currentPage + 1, resolved.size),
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.inverseOnSurface,
+                style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
+                color = Color.White,
                 modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
             )
         }

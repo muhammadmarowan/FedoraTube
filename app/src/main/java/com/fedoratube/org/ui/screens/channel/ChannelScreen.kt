@@ -28,6 +28,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.GridView
@@ -44,6 +45,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.ScrollableTabRow
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
@@ -67,6 +69,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
@@ -166,101 +169,133 @@ fun ChannelScreen(
         communityCommentSort = CommentSortFilter.TOP
     }
 
-    Box(modifier = modifier.fillMaxSize()) {
-        Column(
-            modifier =
-                Modifier
-                    .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.background),
+    Box(
+        modifier =
+            modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background),
+    ) {
+        when {
+            uiState.isLoading -> {
+                FlowLoadingIndicator()
+            }
+
+            uiState.error != null -> {
+                FlowErrorState(
+                    error = uiState.error ?: stringResource(R.string.failed_to_load_channel),
+                    onRetry = { viewModel.loadChannel(channelUrl) },
+                    modifier = Modifier.align(Alignment.Center),
+                )
+            }
+
+            uiState.header != null -> {
+                ChannelContent(
+                    uiState = uiState,
+                    communityUiState = communityUiState,
+                    tabStates = tabStates,
+                    showShortsTab = showShortsTab,
+                    onFilterSelected = viewModel::selectTabFilter,
+                    subscribedChannelIds = subscribedChannelIds,
+                    channelNote = channelNote.takeIf { notesEnabled },
+                    onEditNote = { showNoteEditor = true }.takeIf { notesEnabled },
+                    onSubscribeChannel = viewModel::setChannelSubscription,
+                    onVideoClick = onVideoClick,
+                    onChannelClick = onChannelClick,
+                    onShortClick = { videoId ->
+                        onShortClick(videoId, tabStates[ChannelTabKind.Shorts]?.selected?.firstOrNull() ?: 0)
+                    },
+                    onPlaylistClick = onPlaylistClick,
+                    onSubscribeClick = { viewModel.toggleSubscription() },
+                    onUnsubscribeClick = { viewModel.unsubscribe() },
+                    onNotificationChange = { viewModel.setNotificationState(it) },
+                    onManageGroups = { showGroupSheet = true },
+                    onTabSelected = { viewModel.selectTab(it) },
+                    onSearchToggle = { viewModel.setSearchActive(!uiState.searchActive) },
+                    onSearchQueryChange = { viewModel.searchInChannel(it) },
+                    onCommunityPostComments = viewModel::openCommunityPostComments,
+                    onCloseCommunityPostComments = viewModel::closeCommunityPostComments,
+                    onLoadMoreCommunityPostComments = viewModel::loadMoreCommunityPostComments,
+                    onLoadCommunityCommentReplies = { comment, append ->
+                        if (append) {
+                            viewModel.loadMoreCommunityCommentReplies(comment)
+                        } else {
+                            viewModel.loadCommunityCommentReplies(comment)
+                        }
+                    },
+                    communityComments = sortedCommunityComments,
+                    onCommunityPostShare = { post ->
+                        val shareIntent =
+                            Intent(Intent.ACTION_SEND).apply {
+                                type = "text/plain"
+                                putExtra(Intent.EXTRA_TEXT, "https://www.youtube.com/post/${post.id}")
+                            }
+                        context.startActivity(
+                            Intent.createChooser(
+                                shareIntent,
+                                context.getString(R.string.share_community_post),
+                            ),
+                        )
+                    },
+                    onLoadMoreCommunityPosts = viewModel::loadMoreCommunityPosts,
+                    onRetryCommunityPosts = viewModel::retryCommunityPosts,
+                    initialScrollIndex = viewModel.listScrollIndex,
+                    initialScrollOffset = viewModel.listScrollOffset,
+                    onScrollChanged = { idx, off -> viewModel.saveScrollPosition(idx, off) },
+                    onCollapsedTitleVisibilityChange = { showCollapsedChannelTitle = it },
+                )
+            }
+        }
+
+        // When collapsed (scrolled past header) or in loading/error states, show the standard top bar
+        androidx.compose.animation.AnimatedVisibility(
+            visible = (showCollapsedChannelTitle && collapsedChannelTitle.isNotBlank()) || uiState.isLoading || uiState.error != null,
+            enter = androidx.compose.animation.fadeIn(),
+            exit = androidx.compose.animation.fadeOut(),
+            modifier = Modifier.align(Alignment.TopCenter),
         ) {
             FlowTopBar(
                 title = {
-                    androidx.compose.animation.AnimatedVisibility(
-                        visible = showCollapsedChannelTitle && collapsedChannelTitle.isNotBlank(),
-                    ) {
-                        Text(
-                            text = collapsedChannelTitle,
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.SemiBold,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                        )
-                    }
+                    Text(
+                        text = collapsedChannelTitle,
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.SemiBold,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
                 },
                 onBack = onBackClick,
                 actions = {},
             )
+        }
 
-            Box(modifier = Modifier.fillMaxSize()) {
-                when {
-                    uiState.isLoading -> {
-                        FlowLoadingIndicator()
-                    }
-
-                    uiState.error != null -> {
-                        FlowErrorState(
-                            error = uiState.error ?: stringResource(R.string.failed_to_load_channel),
-                            onRetry = { viewModel.loadChannel(channelUrl) },
-                            modifier = Modifier.align(Alignment.Center),
-                        )
-                    }
-
-                    uiState.header != null -> {
-                        ChannelContent(
-                            uiState = uiState,
-                            communityUiState = communityUiState,
-                            tabStates = tabStates,
-                            showShortsTab = showShortsTab,
-                            onFilterSelected = viewModel::selectTabFilter,
-                            subscribedChannelIds = subscribedChannelIds,
-                            channelNote = channelNote.takeIf { notesEnabled },
-                            onEditNote = { showNoteEditor = true }.takeIf { notesEnabled },
-                            onSubscribeChannel = viewModel::setChannelSubscription,
-                            onVideoClick = onVideoClick,
-                            onChannelClick = onChannelClick,
-                            onShortClick = { videoId ->
-                                onShortClick(videoId, tabStates[ChannelTabKind.Shorts]?.selected?.firstOrNull() ?: 0)
-                            },
-                            onPlaylistClick = onPlaylistClick,
-                            onSubscribeClick = { viewModel.toggleSubscription() },
-                            onUnsubscribeClick = { viewModel.unsubscribe() },
-                            onNotificationChange = { viewModel.setNotificationState(it) },
-                            onManageGroups = { showGroupSheet = true },
-                            onTabSelected = { viewModel.selectTab(it) },
-                            onSearchToggle = { viewModel.setSearchActive(!uiState.searchActive) },
-                            onSearchQueryChange = { viewModel.searchInChannel(it) },
-                            onCommunityPostComments = viewModel::openCommunityPostComments,
-                            onCloseCommunityPostComments = viewModel::closeCommunityPostComments,
-                            onLoadMoreCommunityPostComments = viewModel::loadMoreCommunityPostComments,
-                            onLoadCommunityCommentReplies = { comment, append ->
-                                if (append) {
-                                    viewModel.loadMoreCommunityCommentReplies(comment)
-                                } else {
-                                    viewModel.loadCommunityCommentReplies(comment)
-                                }
-                            },
-                            communityComments = sortedCommunityComments,
-                            onCommunityPostShare = { post ->
-                                val shareIntent =
-                                    Intent(Intent.ACTION_SEND).apply {
-                                        type = "text/plain"
-                                        putExtra(Intent.EXTRA_TEXT, "https://www.youtube.com/post/${post.id}")
-                                    }
-                                context.startActivity(
-                                    Intent.createChooser(
-                                        shareIntent,
-                                        context.getString(R.string.share_community_post),
-                                    ),
-                                )
-                            },
-                            onLoadMoreCommunityPosts = viewModel::loadMoreCommunityPosts,
-                            onRetryCommunityPosts = viewModel::retryCommunityPosts,
-                            initialScrollIndex = viewModel.listScrollIndex,
-                            initialScrollOffset = viewModel.listScrollOffset,
-                            onScrollChanged = { idx, off -> viewModel.saveScrollPosition(idx, off) },
-                            onCollapsedTitleVisibilityChange = { showCollapsedChannelTitle = it },
-                        )
-                    }
+        // When at top viewing banner, overlay modern translucent back button
+        androidx.compose.animation.AnimatedVisibility(
+            visible = (!showCollapsedChannelTitle || collapsedChannelTitle.isBlank()) && uiState.header != null && !uiState.isLoading && uiState.error == null,
+            enter = androidx.compose.animation.fadeIn(),
+            exit = androidx.compose.animation.fadeOut(),
+            modifier = Modifier.align(Alignment.TopStart),
+        ) {
+            Surface(
+                onClick = onBackClick,
+                shape = CircleShape,
+                color = Color.Black.copy(alpha = 0.55f),
+                contentColor = Color.White,
+                shadowElevation = 4.dp,
+                modifier =
+                    Modifier
+                        .padding(start = 12.dp, top = 10.dp)
+                        .size(40.dp),
+            ) {
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier.fillMaxSize(),
+                ) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = stringResource(R.string.btn_back),
+                        tint = Color.White,
+                        modifier = Modifier.size(22.dp),
+                    )
                 }
             }
         }
