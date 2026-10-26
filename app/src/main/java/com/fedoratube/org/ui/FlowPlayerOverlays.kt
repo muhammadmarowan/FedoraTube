@@ -188,6 +188,7 @@ internal fun FlowPlayerOverlays(
     miniPlayerShowNextPrevControls: Boolean,
     showMusicSheet: Boolean,
     showVideoBar: Boolean,
+    openMusicLyricsRequest: Int = 0,
     musicPlayerSheetState: MusicPlayerSheetState,
     containerWidth: Dp,
     containerHeight: Dp,
@@ -307,6 +308,7 @@ internal fun FlowPlayerOverlays(
         if (showMusicSheet && track != null) {
             UnifiedMusicPlayerSheet(
                 state = musicPlayerSheetState,
+                openLyricsRequest = openMusicLyricsRequest,
                 containerWidth = containerWidth,
                 containerHeight = containerHeight,
                 miniBounds = miniBarBounds,

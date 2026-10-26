@@ -75,7 +75,7 @@
     <string name="new_update_available">تحديث جديد متاح</string>
     <string name="update_available_template">الإصدار %1$s متاح الأن</string>
     <string name="release_notes">معلومات الإصدار</string>
-    <string name="update_flow">حدث Fedora Tube</string>
+    <string name="update_flow">حدث FedoraTube</string>
     <string name="maybe_later">لاحقا</string>
     <string name="nav_home">المنزل</string>
     <string name="nav_subs">الإشتراكات</string>
@@ -163,10 +163,10 @@
     <string name="clear_all_notifications">مسح كل الإشعارات</string>
     <string name="delete">حذف</string>
     <string name="settings_title">الإعدادات</string>
-    <string name="settings_flow_engine_header">محرك Fedora Tube</string>
+    <string name="settings_flow_engine_header">محرك FedoraTube</string>
     <string name="settings_active_learning">التعلم النشط</string>
-    <string name="settings_reset_brain_title">إعادة ضبط طابع Fedora Tube؟</string>
-    <string name="settings_reset_brain_body">سيؤدي هذا إلى مسح ملفك الشخصي في Fedora Tube Brain.\n\n• سيتم نسيان المواضيع التي تعلّمها.\n• ستُعاد سمات الشخصية إلى الإعدادات الافتراضية.\n• ستعود التوصيات إلى الإعدادات الافتراضية.\n\nلا يمكن التراجع عن هذا الإجراء.</string>
+    <string name="settings_reset_brain_title">إعادة ضبط طابع FedoraTube؟</string>
+    <string name="settings_reset_brain_body">سيؤدي هذا إلى مسح ملفك الشخصي في FedoraTube Brain.\n\n• سيتم نسيان المواضيع التي تعلّمها.\n• ستُعاد سمات الشخصية إلى الإعدادات الافتراضية.\n• ستعود التوصيات إلى الإعدادات الافتراضية.\n\nلا يمكن التراجع عن هذا الإجراء.</string>
     <string name="settings_reset_everything">إعادة ضبط الجميع</string>
     <string name="settings_analyzing_interactions">تحليل تفاعلاتك…</string>
     <string name="settings_view_analytics">عرض التحليلات</string>
@@ -176,7 +176,7 @@
     <string name="settings_header_about">عن</string>
     <string name="settings_header_notifications">الإشعارات</string>
     <string name="settings_item_notifications">تفضيلات الإشعارات</string>
-    <string name="settings_item_notifications_subtitle">تحكم في الإشعارات التي يرسلها Fedora Tube</string>
+    <string name="settings_item_notifications_subtitle">تحكم في الإشعارات التي يرسلها FedoraTube</string>
     <string name="notif_settings_title">تفضيلات الإشعارات</string>
     <string name="notif_type_new_videos">فديوهات جديدة</string>
     <string name="notif_type_new_videos_subtitle">التنبيه عندما تقوم قناة مشترك بها بتحميل فيديوهات جديدة</string>
@@ -185,7 +185,7 @@
     <string name="notif_type_reminders">تذكيرات وقت استخدام الشاشة</string>
     <string name="notif_type_reminders_subtitle">تذكيرات بمواعيد النوم و الإستراحة من إدارة الوقت</string>
     <string name="notif_type_updates">تحديثات التطبيق</string>
-    <string name="notif_type_updates_subtitle">نبهني عندما يتوفر تحديث جديد لFedora Tube</string>
+    <string name="notif_type_updates_subtitle">نبهني عندما يتوفر تحديث جديد لFedoraTube</string>
     <string name="notif_type_general">الإشعارات العامة</string>
     <string name="notif_type_general_subtitle">تنبيهات وإعلانات متنوعة من التطبيق</string>
     <string name="notif_system_settings">إعدادات إشعارات النظام</string>
@@ -193,7 +193,7 @@
     <string name="notif_check_interval">فاصل زمني جديد لفحص الفيديو</string>
     <string name="notif_check_interval_subtitle_template">التحقق كل %s</string>
     <string name="notif_check_interval_dialog_title">التحقق من الفاصل الزمني</string>
-    <string name="notif_check_interval_dialog_body">مدى تكرار تحقّق Fedora Tube من اشتراكاتك بحثًا عن فيديوهات جديدة.</string>
+    <string name="notif_check_interval_dialog_body">مدى تكرار تحقّق FedoraTube من اشتراكاتك بحثًا عن فيديوهات جديدة.</string>
     <string name="notif_interval_15m">15 دقيقة</string>
     <string name="notif_interval_30m">30 دقيقة</string>
     <string name="notif_interval_1h">1 ساعة</string>
@@ -223,15 +223,15 @@
     <string name="settings_item_export_data_subtitle">قم بعمل نسخة احتياطية لبياناتك</string>
     <string name="settings_item_import_data">إسترداد البيانات</string>
     <string name="settings_item_import_data_subtitle">استعادة من نسخة احتياطية أو استيراد من تطبيقات أخرى</string>
-    <string name="settings_item_about_flow">عن Fedora Tube</string>
+    <string name="settings_item_about_flow">عن FedoraTube</string>
     <string name="settings_item_about_flow_subtitle">الإصدار، الترخيص، المساهمون</string>
     <string name="settings_item_support">الدعم و التبرعات</string>
-    <string name="settings_item_support_subtitle">ساهم في دعم تطوير Fedora Tube</string>
+    <string name="settings_item_support_subtitle">ساهم في دعم تطوير FedoraTube</string>
     <string name="settings_region_dialog_title">إختر البلد</string>
     <string name="settings_export_success">تم تصدير البيانات بنجاح</string>
     <string name="settings_export_failed">فشل التصدير: %1$s</string>
     <string name="appearance_title">المظهر</string>
-    <string name="appearance_subtitle">خصّص تجربتك مع Fedora Tube</string>
+    <string name="appearance_subtitle">خصّص تجربتك مع FedoraTube</string>
     <string name="appearance_current_theme">الموضوع الحالي</string>
     <string name="appearance_category_all">الجميع</string>
     <string name="appearance_category_light">فاتح</string>
@@ -239,7 +239,7 @@
     <string name="appearance_category_special">خاص</string>
     <string name="appearance_applied_toast">محدد: %1$s</string>
     <string name="app_icon_picker_subtitle">اختر نمط أيقونة المشغل. سيتم تطبيق التغيير فورًا وسيتم تحديث المشغل لفترة وجيزة.</string>
-    <string name="app_icon_picker_warning">قد يؤدي تغيير الأيقونة إلى إزالة Fedora Tube من الشاشة الرئيسية مؤقتًا. أعد إضافته من درج التطبيقات إذا لزم الأمر.</string>
+    <string name="app_icon_picker_warning">قد يؤدي تغيير الأيقونة إلى إزالة FedoraTube من الشاشة الرئيسية مؤقتًا. أعد إضافته من درج التطبيقات إذا لزم الأمر.</string>
     <string name="icon_name_amoled">مظلم AMOLED</string>
     <string name="icon_name_monochrome">أُحادي اللون</string>
     <string name="icon_name_ghost">شبحي</string>
@@ -269,8 +269,8 @@
     <string name="theme_desc_sky_blue">نسق فاتح وخفيف بدرجات زرقاء مستوحاة من صفاء السماء.</string>
     <string name="theme_name_cream_paper">ورق كريمي</string>
     <string name="theme_desc_cream_paper">درجات ورقية دافئة لقراءة مريحة خلال النهار.</string>
-    <string name="theme_name_classic_dark">الإعداد الافتراضي لـ Fedora Tube</string>
-    <string name="theme_desc_classic_dark">نسق Fedora Tube الأصلي مع لمسات حمراء مستوحاة من يوتيوب.</string>
+    <string name="theme_name_classic_dark">الإعداد الافتراضي لـ FedoraTube</string>
+    <string name="theme_desc_classic_dark">نسق FedoraTube الأصلي مع لمسات حمراء مستوحاة من يوتيوب.</string>
     <string name="theme_name_true_black">أسود نقي</string>
     <string name="theme_desc_true_black">OLED نقي</string>
     <string name="theme_name_midnight">منتصف الليل</string>
@@ -539,7 +539,7 @@
     <string name="desc_unblock_topic">إلغاء حظر %1$s</string>
     <string name="time_management_title">إدارة الوقت</string>
     <string name="time_management_subtitle">تتبع وقت استخدامك للشاشة و تحكم فيه</string>
-    <string name="stats_disclaimer">استنادًا إلى سجل المشاهدة في Fedora Tube. قد يختلف الاستخدام الفعلي.</string>
+    <string name="stats_disclaimer">استنادًا إلى سجل المشاهدة في FedoraTube. قد يختلف الاستخدام الفعلي.</string>
     <string name="tools_to_manage_time">أدوات لإدارة وقتك</string>
     <string name="remind_bedtime">ذكّرني عندما يحين وقت النوم</string>
     <string name="start_time">وقت البدء</string>
@@ -602,12 +602,12 @@
     <string name="period_six_months">6 أشهر</string>
     <string name="period_one_year">1 سنة</string>
     <string name="import_data_title">استيراد البيانات</string>
-    <string name="import_flow_backup_success">تم استيراد النسخة الاحتياطية من Fedora Tube بنجاح</string>
-    <string name="import_flow_backup_failed_template">فشل استيراد نسخة Fedora Tube الاحتياطية: %1$s</string>
+    <string name="import_flow_backup_success">تم استيراد النسخة الاحتياطية من FedoraTube بنجاح</string>
+    <string name="import_flow_backup_failed_template">فشل استيراد نسخة FedoraTube الاحتياطية: %1$s</string>
     <string name="import_newpipe_failed_template">فشل في استرداد نسخة NewPipe الاحتياطية: %1$s</string>
     <string name="import_youtube_failed_template">فشل في استيراد نسخة احتياطية من يوتيوب: %1$s</string>
-    <string name="import_flow_backup_item_title">استيراد نسخة احتياطية من Fedora Tube</string>
-    <string name="import_flow_backup_desc">استرد سجلك، إعداداتك و إشتراكاتك من ملف النسخ الاحتياطي لـ Fedora Tube.</string>
+    <string name="import_flow_backup_item_title">استيراد نسخة احتياطية من FedoraTube</string>
+    <string name="import_flow_backup_desc">استرد سجلك، إعداداتك و إشتراكاتك من ملف النسخ الاحتياطي لـ FedoraTube.</string>
     <string name="import_from_newpipe">استرداد من NewPipe</string>
     <string name="import_from_newpipe_desc">إسترداد الإشتراكات من ملف استرداد NewPipe بصيغة (JSON).</string>
     <string name="import_from_libretube">استيراد من LibreTube</string>
@@ -649,10 +649,10 @@
     <string name="location_dialog_subtitle">اختر مكان حفظ الملفات التي تم تنزيلها على جهازك.</string>
     <string name="location_preset_header">المواقع المحددة مسبقًا</string>
     <string name="location_custom_header">موقع تخزين مخصص</string>
-    <string name="location_downloads_label">Downloads / Fedora Tube</string>
-    <string name="location_movies_label">Movies / Fedora Tube</string>
+    <string name="location_downloads_label">Downloads / FedoraTube</string>
+    <string name="location_movies_label">Movies / FedoraTube</string>
     <string name="location_internal_app_label">التخزين الداخلي للتطبيق</string>
-    <string name="location_internal_app_desc">خاص بـ Fedora Tube. يُحذف عند إلغاء تثبيت التطبيق.</string>
+    <string name="location_internal_app_desc">خاص بـ FedoraTube. يُحذف عند إلغاء تثبيت التطبيق.</string>
     <string name="location_custom_saf_label">تصفح…</string>
     <string name="location_custom_saf_desc">اختر أي مجلد باستخدام أداة اختيار الملفات في النظام</string>
     <string name="location_custom_manual_label">أدخل المسار يدويًا</string>
@@ -664,8 +664,8 @@
     <string name="location_badge_active">نشط</string>
     <string name="select_threads_count_desc">حدد عدد التقسيمات (١-٨):</string>
     <string name="support_donations_title">الدعم والتبرعات</string>
-    <string name="support_flow_dev_title">إدعم تطوير Fedora Tube</string>
-    <string name="support_flow_dev_desc">إذا كان Fedora Tube مفيدًا لك، يمكنك دعمه عبر Open Collective, Patreon أو بالعملات الرقمية أدناه. شكرًا لك!</string>
+    <string name="support_flow_dev_title">إدعم تطوير FedoraTube</string>
+    <string name="support_flow_dev_desc">إذا كان FedoraTube مفيدًا لك، يمكنك دعمه عبر Open Collective, Patreon أو بالعملات الرقمية أدناه. شكرًا لك!</string>
     <string name="thank_you_support_message">شكراً لدعمكم! ❤️</string>
     <string name="address_copied_toast">تم نسخ العنوان إلى الحافظة</string>
     <string name="donation_address_clip_label">عنوان التبرع</string>
@@ -676,7 +676,7 @@
     <string name="newpipe_extractor_subtitle">مكتبة الاستخراج الأساسية</string>
     <string name="about_license">رخصة</string>
     <string name="about_changelog">سجل التغييرات</string>
-    <string name="whats_new_in_flow">ما الجديد في Fedora Tube</string>
+    <string name="whats_new_in_flow">ما الجديد في FedoraTube</string>
     <string name="about_device_info">معلومات الجهاز</string>
     <string name="gnu_license_full_title">رخصة GNU General Public</string>
     <string name="loading_ellipsis">تحميل…</string>
@@ -717,7 +717,7 @@
     <string name="playlist_empty_desc">أضف مقاطع الفيديو من مشغل الفيديو\nلإنشاء قائمة التشغيل الخاصة بك</string>
     <string name="delete_playlist_dialog_title">هل تريد حذف قائمة التشغيل؟</string>
     <string name="delete_playlist_dialog_text">سيؤدي هذا إلى حذف \'%1$s\' وجميع مقاطع الفيديو فيه بشكل دائم.</string>
-    <string name="welcome_to_flow">مرحبا بك في Fedora Tube</string>
+    <string name="welcome_to_flow">مرحبا بك في FedoraTube</string>
     <string name="onboarding_subtitle">أخبرنا بما يثير اهتمامك</string>
     <string name="onboarding_instructions">إختر 3 مواضيع على الأقل لتخصيص تجربتك</string>
     <string name="btn_skip_for_now">تخطي الآن</string>
@@ -734,7 +734,7 @@
     <string name="category_creative">الإبداع</string>
     <string name="category_science_nature">العلوم و الطبيعة</string>
     <string name="category_news_current_events">الأخبار و الأحداث الجارية</string>
-    <string name="flow_control_center">مركز تحكم Fedora Tube</string>
+    <string name="flow_control_center">مركز تحكم FedoraTube</string>
     <string name="action_refresh">إعادة التحميل</string>
     <string name="loading_neural_matrix">جار تحميل دماغ المحتوى…</string>
     <string name="neural_interest_map_subtitle">خريطة إهتماماتك العصبية</string>
@@ -757,7 +757,7 @@
     <string name="stats_topics">المواضيع</string>
     <string name="empty_bubble_cloud_message">شاهد بعض الفيديوهات لتوسيع دائرة اهتمامك!</string>
     <string name="export_profile_data">تصدير بيانات الملف الشخصي</string>
-    <string name="flow_neural_profile_export_subject">تصدير ملف تعريف التدفق العصبي لFedora Tube</string>
+    <string name="flow_neural_profile_export_subject">تصدير ملف تعريف التدفق العصبي لFedoraTube</string>
     <string name="screen_title_music_library">مكتبة الموسيقى</string>
     <string name="header_your_collection">مجموعتك</string>
     <string name="subtitle_liked_music">الأغاني المفضلة لديك</string>
@@ -905,17 +905,17 @@
     <string name="check_for_updates">التحقق من وجود تحديثات</string>
     <string name="check_for_updates_subtitle">انقر للتحقق من أحدث إصدار</string>
     <string name="checking_for_updates">جارٍ التحقق من وجود تحديثات…</string>
-    <string name="flow_is_up_to_date">Fedora Tube محدث لأخر إصدار!</string>
+    <string name="flow_is_up_to_date">FedoraTube محدث لأخر إصدار!</string>
     <string name="update_check_failed">تعذر التحقق من وجود تحديثات. يرجى التحقق من اتصالك بالإنترنت.</string>
     <string name="export_engine_data">تصدير ملف تعريف المحرك</string>
     <string name="export_engine_data_subtitle">قم بعمل نسخة احتياطية من بيانات شخصية الذكاء الاصطناعي وبيانات التعلم الخاصة بك</string>
     <string name="export_engine_success">تم تصدير ملف تعريف المحرك بنجاح</string>
     <string name="export_engine_failed">فشل تصدير ملف تعريف المحرك</string>
-    <string name="import_engine_data">استيراد بيانات محرك Fedora Tube</string>
+    <string name="import_engine_data">استيراد بيانات محرك FedoraTube</string>
     <string name="import_engine_data_desc">استعد ملف تعريف شخصيتك المدعوم بالذكاء الاصطناعي من ملف احتياطي</string>
     <string name="import_engine_success">تمت استعادة ملف تعريف المحرك بنجاح</string>
     <string name="import_engine_failed">فشل استيراد ملف تعريف المحرك</string>
-    <string name="import_engine_section_title">محرك Fedora Tube</string>
+    <string name="import_engine_section_title">محرك FedoraTube</string>
     <string name="import_engine_section_subtitle">استعادة ملف تعريف التعلم بالذكاء الاصطناعي الخاص بك</string>
     <string name="error_age_restricted">محتوى مخصص للبالغين فقط</string>
     <string name="error_age_restricted_hint">هذا الفيديو متاح فقط للمستخدمين المسجلين الذين تم التحقق من أعمارهم.</string>
@@ -934,7 +934,7 @@
     <string name="error_not_available">الفيديو غير متوفر</string>
     <string name="error_not_available_hint">ربما تم حذف هذا الفيديو أو جعله خاصًا أو تمت إزالته بواسطة YouTube.</string>
     <string name="error_not_supported">نوع المحتوى غير مدعوم</string>
-    <string name="error_not_supported_hint">لا يمكن تشغيل هذا التنسيق أو نوع المحتوى هذا في Fedora Tube.</string>
+    <string name="error_not_supported_hint">لا يمكن تشغيل هذا التنسيق أو نوع المحتوى هذا في FedoraTube.</string>
     <string name="error_no_internet">ليس هنالك اتصال بالإنترنت</string>
     <string name="error_no_internet_hint">تحقق من اتصالك بشبكة الWi-Fi أو بيانات الهاتف المحمول وحاول مرة أخرى.</string>
     <string name="error_timeout">انتهت مهلة الاتصال</string>
@@ -952,7 +952,7 @@
     <string name="error_playback_failed">فشل التشغيل</string>
     <string name="error_playback_failed_hint">‍حدث خطأ غير متوقع في المشغل. يرجى المحاولة مرة أخرى.</string>
     <string name="error_extraction_failed">فشل تحليل بيانات الفيديو</string>
-    <string name="error_extraction_failed_hint">ربما قام YouTube بتحديث تنسيقه. سيتم تحديث Fedora Tube قريبًا — يرجى المحاولة مرة أخرى لاحقًا.</string>
+    <string name="error_extraction_failed_hint">ربما قام YouTube بتحديث تنسيقه. سيتم تحديث FedoraTube قريبًا — يرجى المحاولة مرة أخرى لاحقًا.</string>
     <string name="error_generic">فشل تحميل الفيديو</string>
     <string name="error_generic_hint">حدث خطأ غير معروف. يرجى المحاولة مرة أخرى.</string>
     <string name="player_settings_overlay_cast">زر البث</string>
@@ -992,7 +992,7 @@
     <string name="add_all_to_playlist">أضف إلى قائمة التشغيل الخاصة بي</string>
     <string name="merge_playlist_dialog_title">أضف جميع الأغاني إلى…</string>
     <string name="merge_playlist_no_playlists">لا توجد قوائم تشغيل حتى الآن. أنشئ واحدة أولاً!</string>
-    <string name="app_name">Fedora Tube</string>
+    <string name="app_name">FedoraTube</string>
     <string name="library_music_playlists_label">قوائم تشغيل الموسيقى</string>
     <string name="library_music_playlists_subtitle">مجموعات الموسيقى الخاصة بك</string>
     <string name="library_manage_data_subtitle">مسح ذاكرة التخزين المؤقت و التاريخ</string>
@@ -1066,7 +1066,7 @@
     <string name="settings_item_time_management">إدارة الوقت</string>
     <string name="settings_item_time_management_subtitle">إحصائيات الاستخدام، تذكيرات وقت النوم</string>
     <string name="app_icon_apply_toast">تم تحديث الأيقونة - سيتم تحديث مشغل التطبيقات الخاص بك</string>
-    <string name="icon_name_fedora_red">أحمر Fedora Tube</string>
+    <string name="icon_name_fedora_red">أحمر FedoraTube</string>
     <string name="icon_name_dynamic">ألوان ديناميكية</string>
     <string name="player_nav_btn_subtitle">إظهار أزرار الفيديو التالي و السابق في المشغل المصغر</string>
     <string name="lyrics_provider_title">مُقدّم كلمات الأغاني</string>
@@ -1155,7 +1155,7 @@
     <string name="player_settings_shorts_background_play">تشغيل الفيديوهات القصيرة في الخلفية</string>
     <string name="player_settings_shorts_background_play_subtitle">استمر في تشغيل الفيديوهات القصيرة عندما يكون التطبيق في الخلفية</string>
     <string name="content_settings_show_app_logo_title">إظهار أيقونة شعار التطبيق</string>
-    <string name="content_settings_show_app_logo_subtitle">إظهار شعار Fedora Tube في الشريط العلوي للصفحة الرئيسية</string>
+    <string name="content_settings_show_app_logo_subtitle">إظهار شعار FedoraTube في الشريط العلوي للصفحة الرئيسية</string>
     <string name="player_settings_shorts_playback_mode_title">وضع مشغل الفيديوهات القصيرة</string>
     <string name="player_settings_shorts_playback_mode_loop">Loop (تكرار الفيديو القصير الحالي)</string>
     <string name="player_settings_shorts_playback_mode_auto_next">التشغيل التلقائي للتالي (الإنتقال إلي الفيديو القصير التالي)</string>
@@ -1249,7 +1249,7 @@
     <string name="appearance_role_tertiary">مرحلة ثالثة</string>
     <string name="appearance_role_on_tertiary">علي المرحلة الثالثة</string>
     <string name="appearance_role_outline">الخطوط العريضة/الخارجية</string>
-    <string name="deep_flow_mode_title">وضع تعلم Fedora Tube العميق</string>
+    <string name="deep_flow_mode_title">وضع تعلم FedoraTube العميق</string>
     <string name="sb_settings_title">SponsorBlock, DeArrow &amp; RYD</string>
     <string name="sb_settings_subtitle">إجراءات التقسيمات، خيارات DeArrow، و اعدادت عداد عدم الإعجاب</string>
     <string name="sb_settings_general_header">عام</string>
@@ -1273,18 +1273,18 @@
     <string name="player_show_title_subtitle">إعرض عنوان الفيديو أسفل الشريط العلوي أثناء وضع ملء الشاشة</string>
     <string name="deep_flow_duration_never">أبداً</string>
     <string name="player_appearance_volume_gesture_subtitle">إسحب من الحافة اليمنى في وضع ملء الشاشة لضبط مستوى الصوت</string>
-    <string name="deep_flow_active_until_disabled">يبقي تعلم Fedora Tube العميق مفعل حتي تقوم بتعطيله</string>
+    <string name="deep_flow_active_until_disabled">يبقي تعلم FedoraTube العميق مفعل حتي تقوم بتعطيله</string>
     <string name="copy_video_link">انسخ رابط الفيديو</string>
     <string name="player_appearance_brightness_gesture_title">إيماءات السطوع</string>
-    <string name="deep_flow_enabled_message">تعلم Fedora Tube العميق مفعل</string>
+    <string name="deep_flow_enabled_message">تعلم FedoraTube العميق مفعل</string>
     <string name="player_appearance_volume_gesture_title">إيماءات الصوت</string>
     <string name="copy_channel_link">انسخ رابط القناة</string>
     <string name="export_newpipe_subs_failed">فشل تصدير إشتراكات NewPipe</string>
-    <string name="deep_flow_disabled_message">تعلم Fedora Tube العميق معطل</string>
+    <string name="deep_flow_disabled_message">تعلم FedoraTube العميق معطل</string>
     <string name="export_newpipe_subs_desc">ملف JSON من NewPipe. في NewPipe، استخدم «الاستيراد من تصدير سابق».</string>
     <string name="content_settings_video_card_mark_watched_subtitle">زر العين على البطاقات لتحديد الفيديوهات كمُشاهدة</string>
     <string name="export_newpipe_subs_success">تم تصدير إشتراكات NewPipe بنجاح</string>
-    <string name="deep_flow_expired_message">إنتهي مؤقت تعلم Fedora Tube العميق</string>
+    <string name="deep_flow_expired_message">إنتهي مؤقت تعلم FedoraTube العميق</string>
     <string name="content_settings_video_card_mark_watched_title">زر وضع علامة كمشاهدة على بطاقة الفيديو</string>
     <string name="player_appearance_brightness_gesture_subtitle">إسحب من الحافة اليسرى في وضع ملء الشاشة لضبط مستوي السطوع</string>
     <string name="export_newpipe_subs_title">تصدير الإشتراكات (بتنسيق NewPipe)</string>
@@ -1310,7 +1310,7 @@
     <string name="settings_item_app_language_subtitle">استخدم لغة جهازك أو اختر لغة يدويًا</string>
     <string name="settings_language_dialog_title">إختر لغة التطبيق</string>
     <string name="settings_language_system_default">‌الإفتراضي للنظام</string>
-    <string name="support_flow_patreon">إدعم Fedora Tube على Patreon</string>
+    <string name="support_flow_patreon">إدعم FedoraTube على Patreon</string>
     <string name="select_text">حدد النص</string>
     <string name="resume">إستأنف</string>
     <string name="import_playlists_section_title">قوائم التشغيل</string>
@@ -1406,7 +1406,7 @@
     <string name="download_all">تحميل الكل</string>
     <string name="title_copied">تم نسخ العنوان إلى الحافظة</string>
     <string name="notif_master_toggle">تمكين الإشعارات</string>
-    <string name="notif_master_toggle_subtitle">السماح لـ Fedora Tube بالبحث عن فيديوهات جديدة في الخلفية</string>
+    <string name="notif_master_toggle_subtitle">السماح لـ FedoraTube بالبحث عن فيديوهات جديدة في الخلفية</string>
     <string name="notif_check_interval_disabled">تم تعطيل التحقق من الإشعارات في الخلفية</string>
     <string name="player_settings_rytd_title">إرجاع زر عدم الإعجاب</string>
     <string name="player_settings_rytd_subtitle">إظهار عدد عدم الإعجاب من Return YouTube Dislike</string>
@@ -1429,7 +1429,7 @@
     <string name="appearance_system_defaults_subtitle">إختر السمة التي سيتم استخدامها عند تبديل جهازك بين الوضع الفاتح والوضع الداكن.</string>
     <string name="appearance_system_light_theme">الوضع الفاتح</string>
     <string name="appearance_system_dark_theme">الوضع الداكن</string>
-    <string name="icon_name_fedora_light">فاتح Fedora Tube</string>
+    <string name="icon_name_fedora_light">فاتح FedoraTube</string>
     <string name="icon_name_material_sky">سماوي Material</string>
     <string name="icon_name_material_mint">نعناع Material</string>
     <string name="theme_name_material_you">الألوان الديناميكية</string>
@@ -1439,7 +1439,7 @@
     <string name="content_settings_subs_startup_refresh_title">‏تحديث الإشتراكات عند فتح التطبيق</string>
     <string name="content_settings_subs_startup_refresh_subtitle">يتم التحقق من موجز اشتراكاتك عند فتح التطبيق</string>
     <string name="content_settings_nav_order_title">ترتيب علامة التبويب و الإفتراضي</string>
-    <string name="content_settings_nav_order_subtitle">اسحب لإعادة الترتيب. اختر علامة التبويب التي يفتح عليها Fedora Tube.</string>
+    <string name="content_settings_nav_order_subtitle">اسحب لإعادة الترتيب. اختر علامة التبويب التي يفتح عليها FedoraTube.</string>
     <string name="content_settings_comments_enabled_title">التعليقات</string>
     <string name="content_settings_comments_enabled_subtitle">إظهار التعليقات أسفل الفيديوهات</string>
     <string name="content_settings_subs_show_videos_title">فيديوهات في الإشتراكات</string>
@@ -1580,7 +1580,7 @@
     <string name="shorts_playback_speed">سرعة التشغيل</string>
     <string name="speed_normal">عادي</string>
     <string name="export_watch_history_title">سجل المشاهدات</string>
-    <string name="export_watch_history_desc">تصدير كملف JSON لسجل فيديوهات YouTube (يتم استيراده إلى LibreTube و Fedora Tube)</string>
+    <string name="export_watch_history_desc">تصدير كملف JSON لسجل فيديوهات YouTube (يتم استيراده إلى LibreTube و FedoraTube)</string>
     <string name="history_export_failed">فشل تصدير سجل المشاهدة</string>
     <string name="history_delete_shorts">حذف Shorts من السجل</string>
     <string name="history_delete_shorts_title">هل تريد حذف الshorts؟</string>
@@ -1601,7 +1601,7 @@
     <string name="player_appearance_long_press_speed_disabled">معطلة</string>
     <string name="player_settings_video_codec">ترميز الفيديو الافتراضي</string>
     <string name="player_settings_video_codec_dialog_title">برنامج ترميز الفيديو الافتراضي</string>
-    <string name="player_settings_video_codec_dialog_body">برنامج الترميز الذي يختاره Fedora Tube أولًا. يمكنك أيضًا اختيار أي برنامج ترميز من قائمة الجودة. يعمل H.264 بسلاسة أكبر على معظم الأجهزة. يستهلك AV1 وVP9 بيانات أقل، لكنهما يحتاجان إلى طاقة أكبر.</string>
+    <string name="player_settings_video_codec_dialog_body">برنامج الترميز الذي يختاره FedoraTube أولًا. يمكنك أيضًا اختيار أي برنامج ترميز من قائمة الجودة. يعمل H.264 بسلاسة أكبر على معظم الأجهزة. يستهلك AV1 وVP9 بيانات أقل، لكنهما يحتاجان إلى طاقة أكبر.</string>
     <string name="player_settings_video_codec_auto_desc">دع التطبيق يختار (يُفضِل H.264)</string>
     <string name="content_settings_subs_show_checked_count_subtitle">‎إظهار عدد الفيديوهات التي تم التحقق منها عند التحديث</string>
     <string name="subscriptions_last_refreshed_time_only_template">آخر تحديث %1$s</string>
@@ -1612,8 +1612,8 @@
     <string name="live_chat_show">إظهار الدردشة</string>
     <string name="live_chat_hide">إخفاء الدردشة</string>
     <string name="live_chat_jump_to_latest">إنتقل إلى أحدث رسالة دردشة</string>
-    <string name="donation_prompt_title">هل تستمتع بFedora Tube؟</string>
-    <string name="donation_prompt_message">Fedora Tube مجاني ومفتوح المصدر وخالٍ من الإعلانات. إذا كان Fedora Tube يستحق مكانًا على هاتفك، فإن القليل من الدعم يساعد على استمراره.</string>
+    <string name="donation_prompt_title">هل تستمتع بFedoraTube؟</string>
+    <string name="donation_prompt_message">FedoraTube مجاني ومفتوح المصدر وخالٍ من الإعلانات. إذا كان FedoraTube يستحق مكانًا على هاتفك، فإن القليل من الدعم يساعد على استمراره.</string>
     <string name="donation_prompt_methods">Open Collective · Patreon · Bitcoin · Ethereum · Solana · USDT · Monero</string>
     <string name="donation_prompt_support">إدعم التطوير</string>
     <string name="donation_prompt_later">رُبما لاحقاً</string>
@@ -1626,7 +1626,7 @@
     <string name="local_media_empty_title">لا يوجد %1$s</string>
     <string name="local_media_empty_body">سَتظهر هنا مقاطع الفيديو والموسيقى المخزنة على هذا الجهاز.</string>
     <string name="local_media_permission_title">الإذن مطلوب</string>
-    <string name="local_media_permission_body">إسمح بالوصول إلى الوسائط الخاصة بك حتى يتمكن Fedora Tube من العثور على مقاطع الفيديو والموسيقى المحلية وتشغيلها.</string>
+    <string name="local_media_permission_body">إسمح بالوصول إلى الوسائط الخاصة بك حتى يتمكن FedoraTube من العثور على مقاطع الفيديو والموسيقى المحلية وتشغيلها.</string>
     <string name="local_media_grant">منح الوصول</string>
     <string name="history_tab_local_videos">الفيديوهات المحلية</string>
     <string name="history_tab_local_music">الموسيقي المحلية</string>
@@ -1661,7 +1661,7 @@
     <string name="no_match_found">لم يتم العثور على تطابق</string>
     <string name="recognition_error">فشل التعرف</string>
     <string name="try_again">إعادة المحاولة</string>
-    <string name="search_in_flow">ابحث في Fedora Tube</string>
+    <string name="search_in_flow">ابحث في FedoraTube</string>
     <string name="player_appearance_controls_while_loading_title">التحكم أثناء تحميل الفيديو</string>
     <string name="content_settings_watched_threshold_title">وضع علامة تمت مشاهدته عند</string>
     <string name="content_settings_watched_threshold_dialog_body">مقدار ما يجب مشاهدته من الفيديو حتى يُحتسب كمشاهد.</string>
@@ -1737,7 +1737,7 @@
     <string name="sync_error_peer_also_receive">الجهاز الآخر جاهز أيضاً على وضع الاستقبال. قم بضبطه على وضع الإرسال، ثم قم بالمسح الضوئي مرة أخرى.</string>
     <string name="sync_error_qr_expired">انتهت صلاحية هذا الرمز. اطلب من الجهاز الآخر إنشاء رمز جديد. إذا استمرت صلاحية الرموز في الانتهاء على الفور، فتحقق من صحة التاريخ والوقت على كلا الجهازين.</string>
     <string name="sync_error_qr_wrong_version">إصدار التطبيق غير متوافق على الجهاز الآخر.</string>
-    <string name="sync_error_qr_not_flow">هذه ليست بيانات اتصال صالحة لـ Fedora Tube.</string>
+    <string name="sync_error_qr_not_flow">هذه ليست بيانات اتصال صالحة لـ FedoraTube.</string>
     <string name="sync_error_qr_bad_address">بيانات الاتصال تفتقد إلى عنوان شبكة صالح.</string>
     <string name="upcoming_video_starts_in">يبدأ خلال</string>
     <string name="player_settings_header_video">فيديو</string>
@@ -1762,7 +1762,7 @@
     <string name="onboarding_channels_no_results">لم يتم العثور على قنوات لـ \"%1$s\"</string>
     <string name="persona_initiate_description">‏بدأت للتو. لا يزال ملفك الشخصي قيد الإنشاء.</string>
     <string name="persona_audiophile_title">‎عُشاق الصوت</string>
-    <string name="persona_audiophile_description">‎تستخدم تطبيق Fedora Tube في الغالب للموسيقى. فالأجواء هي كل شيء.</string>
+    <string name="persona_audiophile_description">‎تستخدم تطبيق FedoraTube في الغالب للموسيقى. فالأجواء هي كل شيء.</string>
     <string name="persona_binger_title">المُدمن</string>
     <string name="persona_binger_description">بمجرد أن تبدأ، لا يمكنك التوقف. موجات هائلة من المحتوى.</string>
     <string name="persona_scholar_title">الباحث</string>
@@ -1858,7 +1858,7 @@
     <string name="copy_logs">نسخ السجلات</string>
     <string name="logs_copied">تم نسخ السجلات</string>
     <string name="logs_copy_failed">تعذر نسخ السجلات</string>
-    <string name="channel_error_log_clip_label">سجل أخطاء قناة Fedora Tube</string>
+    <string name="channel_error_log_clip_label">سجل أخطاء قناة FedoraTube</string>
     <string name="channel_search_failed">تعذر البحث في هذه القناة</string>
     <string name="add_comment_placeholder">كتابة تعليق…</string>
     <string name="search_empty_prompt">إبحث عن مقاطع الفيديو، الموسيقى والمزيد</string>
@@ -1888,7 +1888,7 @@
     <string name="content_settings_hide_watched_subscriptions_subtitle">إخفاء الفيديوهات التي شاهدتها من الاشتراكات</string>
     <string name="desc_more">المزيد...</string>
     <string name="widget_now_playing_label">يعرض الأن</string>
-    <string name="widget_now_playing_description">تحكم في الموسيقى التي يتم تشغيلها في Fedora Tube</string>
+    <string name="widget_now_playing_description">تحكم في الموسيقى التي يتم تشغيلها في FedoraTube</string>
     <string name="widget_quick_actions_label">الاجراءات السريعة</string>
     <string name="widget_recognize_label">التعرف علي الموسيقى</string>
     <string name="widget_recognize_description">تعرف على الأغنية التي تسمعها من حولك بنقرة واحدة</string>
@@ -1909,7 +1909,7 @@
     <string name="widget_open_history">‎فتح السجل</string>
     <string name="widget_no_recent">ستظهر مقاطع الفيديو التي تشاهدها هنا</string>
     <string name="widget_no_downloads">ستظهر تنزيلاتك هنا</string>
-    <string name="widget_quick_actions_description">إبحث في Fedora Tube و انتقل إلى التنزيلات أو السجل أو التعرف علي الموسيقى</string>
+    <string name="widget_quick_actions_description">إبحث في FedoraTube و انتقل إلى التنزيلات أو السجل أو التعرف علي الموسيقى</string>
     <string name="widget_turntable_label">قرص دوار</string>
     <string name="widget_turntable_description">إجعل موسيقاك كقرص دوار</string>
     <string name="playlist_creation_menu_open">إنشاء قائمة تشغيل</string>
@@ -1927,7 +1927,7 @@
     <string name="ui_in_library">في المكتبة</string>
     <string name="ui_options">الخيارات</string>
     <string name="ui_selected">محدد</string>
-    <string name="ui_flow_logo">شعار Fedora Tube</string>
+    <string name="ui_flow_logo">شعار FedoraTube</string>
     <string name="ui_back">تراجع</string>
     <string name="ui_add_songs">إضافة أغاني</string>
     <string name="ui_close_search">إغلاق البحث</string>
@@ -1955,7 +1955,7 @@
     <string name="ui_custom_interest_hint">إهتمامات خاصة (مثل موسيقى الجاز، الفيزياء الفلكية)</string>
     <string name="ui_add_interest">أضف إهتماماً</string>
     <string name="ui_version">الإصدار %1$s</string>
-    <string name="update_download_prompt">يتوفر إصدار جديد من Fedora Tube (%1$s). هل تريد تنزيل أحدث ملف APK؟</string>
+    <string name="update_download_prompt">يتوفر إصدار جديد من FedoraTube (%1$s). هل تريد تنزيل أحدث ملف APK؟</string>
     <string name="ui_playlist_empty">قائمة التشغيل فارغة</string>
     <string name="ui_playlist_saved_to_library">تم حفظ قائمة التشغيل في المكتبة</string>
     <string name="ui_playlist_removed_from_library">‎تمت إزالة قائمة التشغيل من المكتبة</string>
@@ -1985,7 +1985,7 @@
     <string name="ui_navigate">تنقل</string>
     <string name="ui_list_view">عرض القائمة</string>
     <string name="ui_grid_view">عرض الشبكة</string>
-    <string name="ui_crashed_last_session">تعطل Fedora Tube في الجلسة الأخيرة</string>
+    <string name="ui_crashed_last_session">تعطل FedoraTube في الجلسة الأخيرة</string>
     <string name="toast_sabr_download_started">بدأ طريقة تنزيل SABR</string>
     <string name="toast_sabr_download_started_for_video">‎بدأ طريقة تنزيل SABR: %1$s</string>
     <string name="toast_sabr_download_failed">فشل طريقة تنزيل SABR: %1$s</string>
@@ -2066,9 +2066,9 @@
     <string name="download_failed_audio_length">فشل في الحصول على طول المحتوى الصوتي</string>
     <string name="download_workers_failed">فشل عامل واحد أو أكثر</string>
     <string name="download_block_failed">الكتلة %1$s فشلت: %2$s</string>
-    <string name="import_migrate_description">إنقل اشتراكاتك و سجلّاتك من المنصات الأخرى إلى Fedora Tube بسلاسة.</string>
+    <string name="import_migrate_description">إنقل اشتراكاتك و سجلّاتك من المنصات الأخرى إلى FedoraTube بسلاسة.</string>
     <string name="import_backup_restore">النسخ الاحتياطي و الاستعادة</string>
-    <string name="import_manage_backups">إدارة نُسخ Fedora Tube الإحتياطية</string>
+    <string name="import_manage_backups">إدارة نُسخ FedoraTube الإحتياطية</string>
     <string name="import_external_services">خدمات خارجية</string>
     <string name="import_other_youtube_clients">الاستيراد من تطبيقات YouTube الأخرى</string>
     <string name="imported_successfully">تم استيراد %1$s بنجاح</string>
@@ -2117,7 +2117,7 @@
     <string name="discord_presence_account">حساب Discord</string>
     <string name="discord_presence_privacy_section">الخصوصية ومخاطر الحساب</string>
     <string name="discord_presence_privacy_title">الخصوصية</string>
-    <string name="discord_presence_privacy_body">يشارك Fedora Tube العنوان واسم المنشئ والصورة ومدة التقدم لما تشغّله. يكون معطّلًا افتراضيًا. يتم تشفير رمز Discord الخاص بك ولا يتم تسجيله مطلقًا.</string>
+    <string name="discord_presence_privacy_body">يشارك FedoraTube العنوان واسم المنشئ والصورة ومدة التقدم لما تشغّله. يكون معطّلًا افتراضيًا. يتم تشفير رمز Discord الخاص بك ولا يتم تسجيله مطلقًا.</string>
     <string name="discord_presence_gateway_warning">يستخدم هذا تسجيل الدخول عبر رمز Discord الخاص بك بدلًا من تسجيل الدخول الرسمي. هذا يخالف شروط خدمة Discord وقد يؤدي إلى تقييد حسابك أو حظره.</string>
     <string name="discord_presence_risk_dialog_title">هل تقبل مخاطر استخدام حساب Discord؟</string>
     <string name="about_creator_name">muhammadmarowan</string>
@@ -2125,12 +2125,12 @@
     <string name="about_reddit">Reddit</string>
     <string name="about_reddit_subtitle">GitHub Discussions</string>
     <string name="about_license_name">GNU GPL v3</string>
-    <string name="discord_presence_risk_dialog_body">عند الاتصال، تمنح Fedora Tube رمز Discord الخاص بك. يبقى مشفّرًا على هذا الجهاز ولا يُرسل إلا إلى Discord. تخالف هذه الطريقة شروط خدمة Discord، لذا قد يتم تقييد حسابك أو حظره.</string>
+    <string name="discord_presence_risk_dialog_body">عند الاتصال، تمنح FedoraTube رمز Discord الخاص بك. يبقى مشفّرًا على هذا الجهاز ولا يُرسل إلا إلى Discord. تخالف هذه الطريقة شروط خدمة Discord، لذا قد يتم تقييد حسابك أو حظره.</string>
     <string name="discord_presence_risk_accept">أنا أفهم، اتصل</string>
     <string name="discord_error_not_initialized">لم يتم تهيئة ميزة \"الحضور الغني\" في ديسكورد.</string>
     <string name="discord_error_enable_before_connect">‏قم بتفعيل خاصية \"الحضور الغني\" في ديسكورد قبل ربط الحساب.</string>
     <string name="discord_error_unavailable">خاصية \"الحضور الغني\" في ديسكورد غير متاحة في هذه النسخة.</string>
-    <string name="discord_error_open_flow">افتح تطبيق Fedora Tube قبل الاتصال بـ Discord.</string>
+    <string name="discord_error_open_flow">افتح تطبيق FedoraTube قبل الاتصال بـ Discord.</string>
     <string name="discord_error_connection_in_progress">‎تم بالفعل إنشاء اتصال عبر ديسكورد.</string>
     <string name="discord_error_login_timeout">انتهت مهلة تسجيل الدخول إلى Discord.</string>
     <string name="discord_error_login_cancelled">تم إلغاء اتصال Discord.</string>
@@ -2144,7 +2144,7 @@
     <string name="discord_error_heartbeat_unacknowledged">لم يتم تأكيد Discord Gateway heartbeat.</string>
     <string name="discord_error_heartbeat_failed">فشل Discord Gateway heartbeat.</string>
     <string name="discord_account_fallback">مستخدم Discord</string>
-    <string name="discord_presence_playing_fallback">يلعب علي Fedora Tube</string>
+    <string name="discord_presence_playing_fallback">يلعب علي FedoraTube</string>
     <string name="discord_presence_by_creator">بواسطة %1$s</string>
     <string name="settings_item_interface_mode">وضع الواجهة</string>
     <string name="settings_item_interface_mode_subtitle">‎اختر تخطيط الهاتف، التلفاز أو تلقائياً</string>
@@ -2209,12 +2209,12 @@
     <string name="tv_music_no_lyrics">لم يتم العثور على كلمات</string>
     <string name="tv_music_radio">Radio</string>
     <string name="tv_settings_appearance">المظهر</string>
-    <string name="tv_settings_flow_engine">محرك Fedora Tube</string>
+    <string name="tv_settings_flow_engine">محرك FedoraTube</string>
     <string name="tv_settings_sync">مزامنة الأجهزة</string>
     <string name="tv_player_queue">‪قائمة الانتظار</string>
     <string name="tv_sync_qr_session_active">يبقى هذا الرمز نشطًا طالما أن هذه الشاشة مفتوحة.</string>
     <string name="tv_remote_guide_title">‪دليل جهاز التحكم عن بعد و لوحة المفاتيح</string>
-    <string name="tv_remote_guide_subtitle">دليل سريع للتنقل في تطبيق Fedora Tube من الأريكة</string>
+    <string name="tv_remote_guide_subtitle">دليل سريع للتنقل في تطبيق FedoraTube من الأريكة</string>
     <string name="tv_remote_guide_back">العودة إلى الإعدادات</string>
     <string name="tv_guide_navigation_title">التنقل</string>
     <string name="tv_guide_search_title">بحث و تصفح</string>
@@ -2264,7 +2264,7 @@
     <string name="comment_edited">تم تعديله</string>
     <string name="comment_time_edited_template">%1$s (%2$s)</string>
     <string name="notif_background_restricted_title">تخضع عمليات التحقق من الخلفية لقيود</string>
-    <string name="notif_background_restricted_subtitle">يمنع أندرويد التحقق عند إغلاق Fedora Tube. اضغط للسماح للتطبيق بالعمل في الخلفية.</string>
+    <string name="notif_background_restricted_subtitle">يمنع أندرويد التحقق عند إغلاق FedoraTube. اضغط للسماح للتطبيق بالعمل في الخلفية.</string>
     <string name="audio_track_original">أصلي</string>
     <string name="audio_track_dubbed">مدبلج</string>
     <string name="empty_saved_shorts">لم يتم حفظ أي مقاطع قصيرة حتى الآن</string>
@@ -2294,7 +2294,7 @@
     <string name="player_appearance_seek_gesture_subtitle">اسحب أفقيًا على الفيديو للتقديم أو الترجيع</string>
     <string name="player_settings_subtitle_language">لغة الترجمة المفضلة</string>
     <string name="player_settings_subtitle_language_dialog_title">لغة الترجمة</string>
-    <string name="player_settings_subtitle_language_dialog_body">تُفتح الترجمة بهذا اللغة عند توفرها. وإلا يترجم Fedora Tube مسارًا موجودًا.</string>
+    <string name="player_settings_subtitle_language_dialog_body">تُفتح الترجمة بهذا اللغة عند توفرها. وإلا يترجم FedoraTube مسارًا موجودًا.</string>
     <string name="player_settings_subtitle_language_none">لا يوجد تفضيلات</string>
     <string name="player_settings_subtitle_language_none_desc">‎استخدم مسار الترجمة الأول الذي يقدمه الفيديو</string>
     <string name="player_settings_auto_enable_subtitles">‎تشغيل الترجمة تلقائيًا</string>
@@ -2330,7 +2330,7 @@
     <string name="sync_collection_likes_body">مقاطع الفيديو والموسيقى التي أعجبتني والتي لم تعجبني.</string>
     <string name="sync_collection_subscriptions_body">القنوات التي تتابعها.</string>
     <string name="sync_collection_settings_body">تفضيلات التشغيل والمظهر والتنزيل.</string>
-    <string name="sync_collection_recommendation_profile_body">ما تعلمه تطبيق Fedora Tube عن ما تشاهده.</string>
+    <string name="sync_collection_recommendation_profile_body">ما تعلمه تطبيق FedoraTube عن ما تشاهده.</string>
     <string name="sync_waiting_for_peer">بانتظار اتصال الجهاز الآخر…</string>
     <string name="sync_cancel_session">إلغاء المزامنة</string>
     <string name="sync_expires_label">‎تنتهي صلاحية الرمز خلال</string>
@@ -2347,7 +2347,7 @@
     <string name="download_size_estimate_mb">~%1$s MB</string>
     <string name="download_size_estimate_gb">~%1$s GB</string>
     <string name="subtitle_load_failed">تعذّر تحميل %1$s من ترجمات ‏ — حاول مرة أخرى</string>
-    <string name="notification_channel_downloads_name">تنزيلات Fedora Tube</string>
+    <string name="notification_channel_downloads_name">تنزيلات FedoraTube</string>
     <string name="notification_download_paused">متوقف مؤقتًا — ‏%1$s</string>
     <string name="notification_download_paused_hint">اضغط للاستئناف</string>
     <string name="notification_download_progress">%1$d%% • %2$s / %3$s</string>
@@ -2807,8 +2807,8 @@
         <item quantity="many">تم تحديد %1$d من %2$d</item>
         <item quantity="other">تم تحديد %1$d من %2$d</item>
     </plurals>
-    <string name="sync_collection_music_profile_body">ما تعلّمه Fedora Tube عن ذوقك الموسيقي.</string>
-    <string name="diagnostics_report_subject">تقرير تشخيص Fedora Tube</string>
+    <string name="sync_collection_music_profile_body">ما تعلّمه FedoraTube عن ذوقك الموسيقي.</string>
+    <string name="diagnostics_report_subject">تقرير تشخيص FedoraTube</string>
     <plurals name="merge_playlist_success">
         <item quantity="one">تمت إضافة %1$d أغنية إلى \"%2$s\"</item>
         <item quantity="two">تمت إضافة %1$d أغنية إلى \"%2$s\"</item>
@@ -3015,7 +3015,7 @@
     <string name="content_settings_library_previews_subtitle">إظهار صف من العناصر أسفل كل قسم في المكتبة</string>
     <string name="diagnostics_reset_session">إعادة تعيين جلسة YouTube</string>
     <string name="diagnostics_reset_session_confirm_title">هل تريد إعادة تعيين جلسة يوتيوب؟</string>
-    <string name="diagnostics_reset_session_confirm_body">سيُنشئ Fedora Tube هوية تشغيل جديدة. جرّب هذا الخيار إذا توقفت الفيديوهات بعد دقيقة أو تعذّر تشغيلها.\n\nقد يكون التشغيل غير مستقر لمدة دقيقة أو دقيقتين. لن تتأثر بياناتك المحفوظة.</string>
+    <string name="diagnostics_reset_session_confirm_body">سيُنشئ FedoraTube هوية تشغيل جديدة. جرّب هذا الخيار إذا توقفت الفيديوهات بعد دقيقة أو تعذّر تشغيلها.\n\nقد يكون التشغيل غير مستقر لمدة دقيقة أو دقيقتين. لن تتأثر بياناتك المحفوظة.</string>
     <string name="diagnostics_reset_session_done">تمت إعادة تعيين جلسة يوتيوب. أعد فتح الفيديو للمحاولة مرة أخرى.</string>
     <string name="reset">إعادة تعيين</string>
     <plurals name="library_items_count">
@@ -3068,7 +3068,7 @@
         <item quantity="other">ستتم إزالة %d إشعار. لا يمكنك التراجع عن ذلك.</item>
     </plurals>
     <string name="onboarding_channels_results_header">القنوات</string>
-    <string name="onboarding_import_source_flow">النسخ الاحتياطي لـ Fedora Tube</string>
+    <string name="onboarding_import_source_flow">النسخ الاحتياطي لـ FedoraTube</string>
     <string name="onboarding_import_source_youtube">YouTube</string>
     <string name="onboarding_import_footnote">كل شئ هنا اختياري. تحتوي الإعدادات على نفس خيارات الاستيراد.</string>
     <string name="onboarding_import_done">تم الاستيراد</string>
@@ -3093,7 +3093,7 @@
         <item quantity="many">اختر %d أخرى</item>
         <item quantity="other">اختر %d أخرى</item>
     </plurals>
-    <string name="onboarding_welcome_title">خصّص Fedora Tube كما تريد</string>
+    <string name="onboarding_welcome_title">خصّص FedoraTube كما تريد</string>
     <string name="onboarding_welcome_subtitle">فيديوهات وموسيقى حول ما تحب. يستغرق الإعداد دقيقة واحدة.</string>
     <string name="onboarding_alerts_title">لا تفوّت أي فيديو جديد</string>
     <string name="onboarding_alerts_subtitle">احصل على إشعار عند نشر قنواتك لفيديوهات جديدة.</string>
@@ -3131,7 +3131,7 @@
         <item quantity="many">%d عملية استيراد</item>
         <item quantity="other">%d عملية استيراد</item>
     </plurals>
-    <string name="crash_title">تم إغلاق Fedora Tube بشكل غير متوقع</string>
+    <string name="crash_title">تم إغلاق FedoraTube بشكل غير متوقع</string>
     <string name="crash_subtitle">يبقى هذا التقرير على جهازك حتى تقوم بمشاركته.</string>
     <string name="crash_summary_error">خطأ</string>
     <string name="crash_summary_message">رسالة</string>
@@ -3144,10 +3144,10 @@
     <string name="crash_report">التقرير</string>
     <string name="crash_continue">متابعة</string>
     <string name="crash_report_copied">تم نسخ التقرير الكامل. الصقه في حقل السجلات.</string>
-    <string name="update_downloading_notification">جارٍ تنزيل Fedora Tube %1$s</string>
-    <string name="update_ready_notification">Fedora Tube %1$s جاهز</string>
+    <string name="update_downloading_notification">جارٍ تنزيل FedoraTube %1$s</string>
+    <string name="update_ready_notification">FedoraTube %1$s جاهز</string>
     <string name="update_ready_notification_text">تم التحقق. اضغط للتثبيت.</string>
-    <string name="update_title">وصل Fedora Tube %1$s</string>
+    <string name="update_title">وصل FedoraTube %1$s</string>
     <string name="update_version_change">%1$s → %2$s</string>
     <string name="update_not_now">ليس الآن</string>
     <string name="update_skip_version">تخطّي هذا الإصدار</string>
@@ -3159,11 +3159,11 @@
     <string name="update_action_allow">السماح بالتثبيت</string>
     <string name="update_action_install">تثبيت التحديث</string>
     <string name="update_action_installing">جارٍ التثبيت</string>
-    <string name="update_permission_notice">السماح لـ Fedora Tube بتثبيت التحديثات. سيطلب Android هذا الإذن مرة واحدة.</string>
+    <string name="update_permission_notice">السماح لـ FedoraTube بتثبيت التحديثات. سيطلب Android هذا الإذن مرة واحدة.</string>
     <string name="update_failed_network">توقف التنزيل. تحقق من اتصالك وحاول مرة أخرى.</string>
     <string name="update_failed_storage">لا توجد مساحة كافية للتحديث.</string>
     <string name="update_failed_checksum">لم يتطابق الملف مع الإصدار، لذا تم حذفه. حاول مرة أخرى.</string>
-    <string name="update_failed_package">لم يكن الملف تحديثًا لـ Fedora Tube، لذا تم حذفه.</string>
+    <string name="update_failed_package">لم يكن الملف تحديثًا لـ FedoraTube، لذا تم حذفه.</string>
     <string name="update_failed_install">لم يتمكن Android من تثبيت التحديث. حاول مرة أخرى.</string>
     <string name="settings_navigation_bar_title">شريط التنقل</string>
     <string name="settings_language_region_title">اللغة والمنطقة</string>
@@ -3182,7 +3182,7 @@
     <string name="settings_group_system">النظام</string>
     <string name="settings_appearance_summary">السمة وأيقونة التطبيق والتخطيط وشريط التنقل</string>
     <string name="settings_language_region_summary">لغة التطبيق ولغة المحتوى والبلد</string>
-    <string name="recap_title">ملخص Fedora Tube</string>
+    <string name="recap_title">ملخص FedoraTube</string>
     <string name="recap_summary">ما قمت بمشاهدته واستمعت إليه، شهرًا بعد شهر</string>
     <string name="recap_keywords">مغلف، الإحصائيات، الإحصاءات، الملخص، مراجعة العام، وقت المشاهدة، وقت الاستماع، الأكثر مشاهدة، أفضل الفنانين</string>
     <string name="recap_period_month">الشهر</string>
@@ -3191,7 +3191,7 @@
     <string name="recap_source_all">كل شيء</string>
     <string name="recap_source_video">الفيديوهات</string>
     <string name="recap_source_music">الموسيقى</string>
-    <string name="recap_total_time">الوقت في Fedora Tube</string>
+    <string name="recap_total_time">الوقت في FedoraTube</string>
     <string name="recap_delta_up">أكثر بـ %1$s من الوقت السابق</string>
     <string name="recap_delta_down">أقل بـ %1$s من الوقت السابق</string>
     <string name="recap_delta_same">تقريبًا مماثل كالوقت السابق</string>
@@ -3267,7 +3267,7 @@
     <string name="eq_unit_db">dB</string>
     <string name="eq_edit">تعديل المعادل الصوتي</string>
     <string name="eq_system">المعادل الصوتي للنظام</string>
-    <string name="eq_system_desc">يُضاف إلى المعادل الصوتي الخاص بـ Fedora Tube</string>
+    <string name="eq_system_desc">يُضاف إلى المعادل الصوتي الخاص بـ FedoraTube</string>
     <string name="eq_graph_description">منحنى الاستجابة، يحتوي على %1$d نطاقات ترددية. اسحب أي نقطة لتعديلها.</string>
     <string name="eq_graph_hint">اضغط على المنحنى لإضافة نطاق ترددي</string>
     <string name="eq_name">الاسم</string>
@@ -3340,7 +3340,7 @@
         <item quantity="other">تم إخفاء %1$d ملف</item>
     </plurals>
     <string name="local_manage">إدارة</string>
-    <string name="local_partial_access_title">يمكن لـ Fedora Tube رؤية الفيديوهات التي اخترتها فقط</string>
+    <string name="local_partial_access_title">يمكن لـ FedoraTube رؤية الفيديوهات التي اخترتها فقط</string>
     <string name="local_partial_access_body">اسمح بالوصول إلى جميع الفيديوهات لرؤية البقية.</string>
     <string name="local_open_settings">فتح الإعدادات</string>
     <string name="local_permission_denied_body">‎اسمح بالوصول إلى الفيديوهات والموسيقى من إعدادات التطبيق لعرضها هنا.</string>
@@ -3421,12 +3421,12 @@
     <string name="downloads_sort_largest">الأكبر</string>
     <string name="downloads_sort_title">العنوان</string>
     <string name="downloads_sort_channel">القناة</string>
-    <string name="downloads_storage_used">%1$s في Fedora Tube</string>
+    <string name="downloads_storage_used">%1$s في FedoraTube</string>
     <string name="downloads_storage_free">%1$s متاح</string>
     <string name="downloads_storage_videos">فيديوهات %1$s</string>
     <string name="downloads_storage_music">موسيقى %1$s</string>
     <string name="check_out_short_template">شاهد هذا المقطع القصير: %1$s\nhttps://youtube.com/shorts/%2$s</string>
-    <string name="link_not_supported">لا يمكن لـ Fedora Tube فتح هذا النوع من الروابط</string>
+    <string name="link_not_supported">لا يمكن لـ FedoraTube فتح هذا النوع من الروابط</string>
     <string name="content_settings_hide_watched_shorts_title">‎إخفاء مقاطع Shorts التي تمت مشاهدتها</string>
     <string name="content_settings_hide_watched_shorts_subtitle">إبقاء المقاطع القصيرة التي أكملتها خارج الرفوف وخلاصة المقاطع القصيرة</string>
     <string name="concurrent_downloads_title">عدد التنزيلات المتزامنة</string>
@@ -3576,7 +3576,7 @@
     <string name="widget_week_title">آخر 7 أيام</string>
     <string name="widget_week_top_artist">الفنان الأبرز هذا الشهر</string>
     <string name="settings_widgets_title">الأدوات</string>
-    <string name="settings_widgets_summary">أضف Fedora Tube إلى شاشتك الرئيسية</string>
+    <string name="settings_widgets_summary">أضف FedoraTube إلى شاشتك الرئيسية</string>
     <string name="settings_widgets_add_header">إضافة إلى الشاشة الرئيسية</string>
     <string name="settings_widgets_footer">اضغط على أحدها لوضعه، أو اضغط مطولًا على الشاشة الرئيسية.</string>
     <string name="settings_widgets_unsupported">مشغّل التطبيقات لديك لا يدعم إضافة أدوات التطبيقات. اضغط مطولًا على الشاشة الرئيسية لإضافة أداة.</string>
@@ -3627,7 +3627,7 @@
     <string name="settings_backup_tab_auto">تلقائي</string>
     <string name="settings_backup_full">نسخة احتياطية كاملة</string>
     <string name="settings_backup_individual">عمليات تصدير منفصلة</string>
-    <string name="settings_backup_restore_flow">استعادة من Fedora Tube</string>
+    <string name="settings_backup_restore_flow">استعادة من FedoraTube</string>
     <string name="settings_backup_source_youtube">YouTube و Google Takeout</string>
     <string name="settings_backup_source_newpipe">NewPipe</string>
     <string name="settings_backup_source_libretube">LibreTube</string>
@@ -3643,7 +3643,7 @@
     <string name="settings_storage_access_summary">يتيح أيضًا لقائمة الوسائط المحلية عرض الملفات المحفوظة بواسطة التطبيقات الأخرى</string>
     <string name="settings_storage_usage">%1$s متاحة من %2$s</string>
     <string name="settings_location_default">افتراضي</string>
-    <string name="settings_music_folder_label">الموسيقى / Fedora Tube</string>
+    <string name="settings_music_folder_label">الموسيقى / FedoraTube</string>
     <string name="settings_keywords_downloads">حفظ بلا إنترنت، مجلد، مساحة التخزين، بطاقة SD</string>
     <string name="settings_section_notification_types">أبلغني بشأن</string>
     <string name="settings_keywords_notifications">‎التنبيهات، الإشعارات الفورية، التحميلات الجديدة، التحقق في الخلفية، Shorts</string>
@@ -3675,7 +3675,7 @@
     <string name="settings_changelog_all_releases">جميع الإصدارات على GitHub</string>
     <string name="settings_changelog_expand">عرض التغييرات</string>
     <string name="settings_changelog_collapse">إخفاء التغييرات</string>
-    <string name="settings_creator_role">منشئ ومطوّر Fedora Tube</string>
+    <string name="settings_creator_role">منشئ ومطوّر FedoraTube</string>
     <string name="device_info_section_device">الجهاز</string>
     <string name="device_info_section_system">‎النظام</string>
     <string name="device_info_section_display">العرض</string>
@@ -3726,7 +3726,7 @@
     <string name="settings_custom_theme_start_from">البدء من</string>
     <string name="settings_custom_theme_count">%1$d من أصل %2$d سمة</string>
     <string name="settings_custom_theme_empty">لا توجد سمات مخصّصة بعد</string>
-    <string name="settings_custom_theme_empty_body">ابدأ بأي لوحة ألوان، أو استورد سمة أنشأتها في Fedora Tube Desktop.</string>
+    <string name="settings_custom_theme_empty_body">ابدأ بأي لوحة ألوان، أو استورد سمة أنشأتها في FedoraTube Desktop.</string>
     <string name="settings_custom_theme_import_failed">لا يحتوي هذا الملف على سمات صالحة</string>
     <string name="settings_custom_theme_limit">يمكنك الاحتفاظ بما يصل إلى %1$d سمة</string>
     <string name="settings_custom_theme_exported">تم تصدير السمة</string>
@@ -3761,9 +3761,9 @@
     <string name="settings_custom_theme_in_use">قيد الاستخدام</string>
     <string name="settings_custom_theme_export_failed">تعذّر حفظ السمة</string>
     <string name="taste_title">ذوقك</string>
-    <string name="taste_summary">كيف يراك Fedora Tube وما الذي يشكّل خلاصتك</string>
+    <string name="taste_summary">كيف يراك FedoraTube وما الذي يشكّل خلاصتك</string>
     <string name="taste_keywords">الشخصية، الملف الشخصي، الخوارزمية، التوصيات، الاهتمامات، العقل، المحرك، مركز التحكم</string>
-    <string name="taste_card_hint">تعرّف على نظرة Fedora Tube إليك</string>
+    <string name="taste_card_hint">تعرّف على نظرة FedoraTube إليك</string>
     <string name="taste_card_loading">جارٍ قراءة ملفك الشخصي</string>
     <string name="taste_shape_header">تشكيل الذوق</string>
     <string name="taste_shape_description">ملفك الشخصي مقارنةً بما تشاهده في هذا الوقت من اليوم</string>
@@ -3804,9 +3804,9 @@
     <string name="taste_export_music">تصدير ملف الموسيقى</string>
     <string name="taste_import_music">استيراد ملف الموسيقى</string>
     <string name="taste_reset_music">إعادة ضبط ملف الموسيقى</string>
-    <string name="taste_reset_video_body">ينسى Fedora Tube ما تعلّمه من فيديوهاتك وعمليات بحثك. يظل سجل المشاهدة والإعجابات وقوائم التشغيل والعناصر المخفية محفوظة، وتستمر صفحة «المنزل» في استخدامها.</string>
+    <string name="taste_reset_video_body">ينسى FedoraTube ما تعلّمه من فيديوهاتك وعمليات بحثك. يظل سجل المشاهدة والإعجابات وقوائم التشغيل والعناصر المخفية محفوظة، وتستمر صفحة «المنزل» في استخدامها.</string>
     <string name="taste_reset_music_title">هل تريد إعادة ضبط ملف الموسيقى؟</string>
-    <string name="taste_reset_music_body">‏يمسح هذا ما تعلّمه Fedora Tube من موسيقاك ويبدأ من الصفر. يبقى ملخصك كما هو.</string>
+    <string name="taste_reset_music_body">‏يمسح هذا ما تعلّمه FedoraTube من موسيقاك ويبدأ من الصفر. يبقى ملخصك كما هو.</string>
     <string name="taste_trait_now">الآن %1$s</string>
     <string name="taste_reset_done">تمت إعادة ضبط الملف الشخصي</string>
     <string name="diagnostics_engine_header">تفاصيل المحرك</string>
@@ -3872,7 +3872,7 @@
     <string name="recap_ready_body">تعرّف على ما شاهدته واستمعت إليه، وشاركه إذا أحببت</string>
     <string name="recap_ready_open">فتح</string>
     <string name="recap_ready_dismiss">ليس الآن</string>
-    <string name="recap_story_intro">%1$s الخاص بك في Fedora Tube</string>
+    <string name="recap_story_intro">%1$s الخاص بك في FedoraTube</string>
     <string name="recap_story_top_channel">قناتك المفضلة</string>
     <string name="recap_story_top_channel_body">%1$s، %2$s من وقت المشاهدة</string>
     <string name="recap_story_repeat">على التكرار</string>
@@ -3891,12 +3891,12 @@
     <string name="recap_story_summary">ملخص %1$s، في بطاقة واحدة</string>
     <string name="recap_story_share">‪مشاركة</string>
     <string name="recap_story_share_title">شارك ملخصك</string>
-    <string name="recap_story_share_text">%1$s الخاص بي في Fedora Tube: %2$s</string>
+    <string name="recap_story_share_text">%1$s الخاص بي في FedoraTube: %2$s</string>
     <string name="recap_story_close">إغلاق</string>
     <string name="recap_story_next">التالي</string>
     <string name="recap_story_previous">السابق</string>
     <string name="recap_story_page">الصفحة %1$d من %2$d</string>
-    <string name="recap_story_made_with">صُنع باستخدام Fedora Tube</string>
+    <string name="recap_story_made_with">صُنع باستخدام FedoraTube</string>
     <string name="recap_story_pause">إيقاف مؤقت</string>
     <string name="recap_story_play">تشغيل</string>
     <string name="recap_summary_top_channel">أكثر قناة مشاهدةً</string>
@@ -3910,8 +3910,8 @@
     <string name="playlist_exported">تم حفظ قائمة التشغيل</string>
     <string name="playlist_export_failed">تعذّر حفظ قائمة التشغيل</string>
     <string name="playlist_share_failed">تعذّرت مشاركة قائمة التشغيل</string>
-    <string name="playlist_import_not_a_playlist">هذا الملف ليس قائمة تشغيل لـ Fedora Tube</string>
-    <string name="playlist_import_too_new">تحتاج قائمة التشغيل هذه إلى إصدار أحدث من Fedora Tube</string>
+    <string name="playlist_import_not_a_playlist">هذا الملف ليس قائمة تشغيل لـ FedoraTube</string>
+    <string name="playlist_import_too_new">تحتاج قائمة التشغيل هذه إلى إصدار أحدث من FedoraTube</string>
     <string name="playlist_import_empty">لا توجد فيديوهات في قائمة التشغيل هذه لاستيرادها</string>
     <string name="playlist_import_unreadable">تعذّر قراءة هذا الملف</string>
     <string name="content_settings_remove_watched_watch_later_title">‎إزالة الفيديوهات التي شاهدتها</string>
@@ -3987,7 +3987,7 @@
         <item quantity="other">%d فيديو</item>
     </plurals>
     <string name="recap_empty_title">ملخصك يبدأ الآن</string>
-    <string name="recap_empty_body">يحتفظ Fedora Tube بهذه الإحصائيات على هذا الجهاز فقط. شاهد واستمع لبعض الوقت وستمتلئ.</string>
+    <string name="recap_empty_body">يحتفظ FedoraTube بهذه الإحصائيات على هذا الجهاز فقط. شاهد واستمع لبعض الوقت وستمتلئ.</string>
     <string name="recap_period_empty">لم يتم تسجيل أي شيء لهذه الفترة</string>
     <string name="recap_insights_title">أبرز ما لفت الانتباه</string>
     <string name="recap_insight_night_owl">بومة ليلية</string>
@@ -4115,7 +4115,7 @@
     <string name="content_settings_home_subscriptions_subtitle">عرض فيديوهات القنوات التي تتابعها ضمن الصفحة الرئيسية</string>
     <string name="settings_section_watch_history">سجل المشاهدة</string>
     <string name="pause_watch_history_title">إيقاف سجل المشاهدة مؤقتًا</string>
-    <string name="pause_watch_history_subtitle">‎إيقاف حفظ ما تشاهده. سيؤدي ذلك أيضًا إلى إيقاف تعلّم Fedora Tube مؤقتًا</string>
+    <string name="pause_watch_history_subtitle">‎إيقاف حفظ ما تشاهده. سيؤدي ذلك أيضًا إلى إيقاف تعلّم FedoraTube مؤقتًا</string>
     <string name="shorts_linked_video">فيديو ذو صلة</string>
     <string name="subtitle_forced">إجباري</string>
     <string name="subtitle_track_number">المسار %1$d</string>
@@ -4129,7 +4129,7 @@
     <string name="subtitle_timing_step_template">%1$s ثانية</string>
     <string name="download_subtitle_file">ملف الترجمة</string>
     <string name="download_subtitle_file_subtitle">‎حفظ الترجمة بلغتك بجانب الفيديوهات التي تُنزّل مباشرةً دون عرض القائمة</string>
-    <string name="subtitle_add_file_failed">لا يستطيع Fedora Tube قراءة هذا الملف كترجمة</string>
+    <string name="subtitle_add_file_failed">لا يستطيع FedoraTube قراءة هذا الملف كترجمة</string>
     <string name="subtitle_fullscreen_position_template">الموضع في وضع ملء الشاشة: %1$d</string>
     <string name="subtitle_fullscreen_landscape">الوضع الأفقي</string>
     <string name="subtitle_fullscreen_vertical">الوضع الرأسي</string>
@@ -4281,7 +4281,7 @@
     <string name="scrobbling_send_likes_summary">تظهر الإعجابات كأغانٍ مفضلة على Last.fm وLibre.fm</string>
     <string name="scrobbling_import_summary">إضافة الفنانين الأكثر استماعًا إليهم إلى مفضلاتك</string>
     <string name="scrobbling_import_offer_title">شكّل ذوقك الموسيقي مع %1$s؟</string>
-    <string name="scrobbling_import_offer_body">سيضيف Fedora Tube أكثر 20 فنانًا استمعت إليهم خلال العام الماضي إلى فنانيك المفضّلين. ويمكنك إزالة أيٍّ منهم لاحقًا.</string>
+    <string name="scrobbling_import_offer_body">سيضيف FedoraTube أكثر 20 فنانًا استمعت إليهم خلال العام الماضي إلى فنانيك المفضّلين. ويمكنك إزالة أيٍّ منهم لاحقًا.</string>
     <string name="scrobbling_import_action">استيراد</string>
     <string name="music_home_lastfm_discover">اكتشف مع Last.fm</string>
     <string name="music_home_lastfm_discover_subtitle">اختيارات مستمعي Last.fm من أغانيك الأكثر استماعًا</string>
@@ -4357,7 +4357,7 @@
     <string name="thumbnail_quality_notice">الجودة المنخفضة أو الإيقاف يوفران البيانات في جميع الخلاصات وفي Shorts. أما التنزيلات وملفات الجهاز فتحتفظ بصورها المصغرة.</string>
     <string name="settings_keywords_thumbnails">الصور المصغرة، الصور، توفير البيانات، استهلاك البيانات، إخفاء الصور المصغرة، بدون صور</string>
     <string name="settings_section_links">الروابط</string>
-    <string name="content_settings_open_links_title">فتح روابط YouTube في Fedora Tube</string>
+    <string name="content_settings_open_links_title">فتح روابط YouTube في FedoraTube</string>
     <string name="content_settings_open_links_subtitle">اختر الروابط التي تُفتح هنا</string>
     <string name="content_settings_open_links_all">مفعّل لجميع روابط YouTube</string>
     <string name="content_settings_open_links_some">مفعّل لـ %1$d من أصل %2$d عنوانًا</string>
@@ -4423,9 +4423,9 @@
     <string name="cache_videos_size_title">حجم ذاكرة تخزين الفيديو المؤقتة</string>
     <string name="cache_songs_size_title">حجم ذاكرة تخزين الأغاني المؤقتة</string>
     <string name="cache_artwork_size_title">حجم ذاكرة تخزين الأغلفة الفنية المؤقتة</string>
-    <string name="cache_size_applies_on_restart">يُطبق في المرة التالية التي يبدأ فيها Fedora Tube.</string>
+    <string name="cache_size_applies_on_restart">يُطبق في المرة التالية التي يبدأ فيها FedoraTube.</string>
     <string name="settings_font_title">الخط</string>
-    <string name="settings_font_summary">نوع الخط المستخدم في جميع أنحاء Fedora Tube</string>
+    <string name="settings_font_summary">نوع الخط المستخدم في جميع أنحاء FedoraTube</string>
     <string name="settings_keywords_font">نوع الخط، النص، الحروف، TTF، OTF</string>
     <string name="font_system_default">الافتراضي للنظام</string>
     <string name="font_condensed">مكثّف</string>
@@ -4442,11 +4442,11 @@
     <string name="font_import_not_font">اختر ملف ‎.ttf أو ‎.otf</string>
     <string name="font_import_too_large">يمكن أن يصل حجم ملفات الخطوط إلى %1$d ميغابايت</string>
     <string name="font_import_unreadable">تعذّر قراءة الملف كخط</string>
-    <string name="deep_flow_scrobble_title">تسجيل الاستماع أثناء Deep Fedora Tube</string>
-    <string name="taste_learning_paused">Deep Fedora Tube مفعّل، والتعلّم متوقف مؤقتًا</string>
+    <string name="deep_flow_scrobble_title">تسجيل الاستماع أثناء Deep FedoraTube</string>
+    <string name="taste_learning_paused">Deep FedoraTube مفعّل، والتعلّم متوقف مؤقتًا</string>
     <string name="deep_flow_scrobble_subtitle">الاستمرار في إرسال ما تستمع إليه إلى Last.fm وLibre.fm وListenBrainz</string>
     <string name="downloads_recover_title">البحث عن التنزيلات من تثبيت سابق</string>
-    <string name="downloads_recover_body">يحفظ Fedora Tube التنزيلات في المجلدين Download/Fedora Tube و Music/Fedora Tube. لعرض الملفات التي حفظها إصدار سابق من التطبيق فيهما، اسمح بالوصول إلى ملفات الفيديو والصوت.</string>
+    <string name="downloads_recover_body">يحفظ FedoraTube التنزيلات في المجلدين Download/FedoraTube و Music/FedoraTube. لعرض الملفات التي حفظها إصدار سابق من التطبيق فيهما، اسمح بالوصول إلى ملفات الفيديو والصوت.</string>
     <string name="downloads_recover_allow">السماح بالوصول</string>
     <string name="downloads_recover_dismiss">ليس الآن</string>
     <plurals name="downloads_recovered_count">
@@ -4513,10 +4513,10 @@
     </plurals>
     <string name="mark_as_unwatched_toast">تمت تحديده كغير مشاهد</string>
     <string name="mark_as_unwatched">علّم كغير مشاهَد</string>
-    <string name="sync_error_qr_not_local">يشير هذا الرمز خارج شبكتك المحلية، لذلك Fedora Tube لن يتصل به. استخدم فقط الرموز التي تظهرها أجهزتك الخاصة.</string>
+    <string name="sync_error_qr_not_local">يشير هذا الرمز خارج شبكتك المحلية، لذلك FedoraTube لن يتصل به. استخدم فقط الرموز التي تظهرها أجهزتك الخاصة.</string>
     <string name="sync_error_no_peer">لم يتم توصيل أي جهاز قبل انتهاء صلاحية الرمز. تحقق من أن كلا الجهازين متصلان بنفس شبكة الـ Wi-Fi، ثم حاول مرة أخرى.</string>
     <string name="sync_error_unreachable">تعذّر الوصول لجهاز الآخر. تحقق من أن كلا الجهازين متصلان بنفس شبكة الـ Wi-Fi وأن شبكة الـ VPN أو جدار الحماية لا يعيقان الاتصال.</string>
-    <string name="sync_error_timeout">توقف الجهاز الآخر عن الاستجابة. أبقِ Fedora Tube مفتوحًا على كلا الجهازين وحاول مرة أخرى.</string>
+    <string name="sync_error_timeout">توقف الجهاز الآخر عن الاستجابة. أبقِ FedoraTube مفتوحًا على كلا الجهازين وحاول مرة أخرى.</string>
     <string name="sync_error_peer_closed">أغلق الجهاز الآخر الاتصال. تحقق منه بوجود رسالة، ثم حاول مرة أخرى.</string>
     <string name="sync_error_corrupted">تعرضت البيانات للتلف أثناء النقل. حاول مرة أخرى.</string>
     <string name="sync_error_apply_failed">وصلت البيانات لكن تعذّر حفظها. لم يتم تغيير أي شيء على هذا الجهاز.</string>
@@ -4524,7 +4524,7 @@
     <string name="sync_error_code_not_confirmed">لم يتم تأكيد رموز التحقق، لذلك لم يتم تحويل أي شيء.</string>
     <string name="sync_error_code_rejected">لم يؤكد الجهاز الآخر رمز التحقق، لذلك لم يتم نقل أي شيء.</string>
     <string name="sync_error_declined">تم رفض الدمج. لم يتم نقل أي شيء.</string>
-    <string name="sync_error_protocol">تعذّر على الجهازين الاتفاق على خطوات المزامنة. حدّث Fedora Tube على كلا الجهازين وحاول مرة أخرى.</string>
+    <string name="sync_error_protocol">تعذّر على الجهازين الاتفاق على خطوات المزامنة. حدّث FedoraTube على كلا الجهازين وحاول مرة أخرى.</string>
     <string name="sync_error_peer">أبلغ الجهاز الآخر عن مشكلة: %1$s</string>
     <string name="music_playback_warning_unavailable">لم تعد هذه الأغنية متاحة على YouTube.</string>
     <string name="notif_type_shorts_subtitle">تضمين المقاطع القصيرة في تنبيهات الفيديو الجديد من الاشتراكات</string>
@@ -4537,7 +4537,7 @@
     <string name="taste_evidence_once">شاهدتها مرة أو مرتين</string>
     <string name="taste_evidence_none">لم تشاهدها بعد</string>
     <string name="taste_starter_searches">عمليات بحث مقترحة</string>
-    <string name="taste_starter_searches_detail">%1$s. ستظل مستخدمة إلى أن يتعرّف Fedora Tube على ما تشاهده.</string>
+    <string name="taste_starter_searches_detail">%1$s. ستظل مستخدمة إلى أن يتعرّف FedoraTube على ما تشاهده.</string>
     <string name="details_related_to">مرتبط بـ</string>
     <string name="home_theme_science">العلوم والتقنية</string>
     <string name="home_theme_comedy">الكوميديا</string>
@@ -4596,7 +4596,7 @@
     <string name="settings_keywords_original_titles">غير مترجم، مترجم تلقائيًا، الترجمة، اللغة الأصلية، العناوين، الأوصاف</string>
     <string name="notif_check_interval_off_new_videos">معطّل طالما أن \"الفيديوهات الجديدة\" معطّلة</string>
     <string name="content_settings_shared_links_title">الروابط المشاركة</string>
-    <string name="content_settings_shared_links_subtitle">ما الذي يفعله الفيديو عند مشاركته إلى Fedora Tube</string>
+    <string name="content_settings_shared_links_subtitle">ما الذي يفعله الفيديو عند مشاركته إلى FedoraTube</string>
     <string name="content_settings_shared_links_dialog_body">تشغيل الروابط التي تنقر عليها في التطبيقات الأخرى دائمًا.</string>
     <string name="content_settings_shared_links_play">تشغيل فورًا</string>
     <string name="content_settings_shared_links_ask_while_playing">اسأل أثناء تشغيل شيء ما</string>
@@ -4628,8 +4628,8 @@
     <string name="search_watch_empty_watched">لا توجد مقاطع فيديو تمت مشاهدتها هنا</string>
     <string name="search_watch_empty_unwatched">لا توجد مقاطع فيديو غير مشاهدة هنا</string>
     <string name="deep_flow_on_search_title">إظهار في البحث</string>
-    <string name="deep_flow_on_search_subtitle">مفتاح تبديل Deep Fedora Tube فوق عمليات البحث الأخيرة</string>
-    <string name="support_flow_open_collective">ادعم Fedora Tube على Open Collective</string>
+    <string name="deep_flow_on_search_subtitle">مفتاح تبديل Deep FedoraTube فوق عمليات البحث الأخيرة</string>
+    <string name="support_flow_open_collective">ادعم FedoraTube على Open Collective</string>
     <string name="auto_tab_for_you">مقترح لك</string>
     <string name="auto_tab_queue">قائمة التشغيل</string>
     <string name="taste_unknown_channel">قناة غير معروفة</string>

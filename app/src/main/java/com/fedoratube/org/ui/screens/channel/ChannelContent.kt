@@ -153,18 +153,21 @@ internal fun ChannelContent(
     var headerOffsetPx by rememberSaveable { mutableFloatStateOf(0f) }
 
     val density = LocalDensity.current
-    val collapseTitleThresholdPx = with(density) { 2.dp.toPx() }
+    val topBarHeightDp = 64.dp
+    val topBarHeightPx = with(density) { topBarHeightDp.toPx() }
+    val collapseTitleThresholdPx = with(density) { 6.dp.toPx() }
     val visibleHeaderHeightDp =
         with(density) {
             (collapsingHeaderHeightPx + stickySectionHeightPx + headerOffsetPx)
-                .coerceAtLeast(stickySectionHeightPx)
+                .coerceAtLeast(topBarHeightPx + stickySectionHeightPx)
                 .toDp()
         }
     val headerMeasured by remember { derivedStateOf { collapsingHeaderHeightPx > 0f } }
-    val showCollapsedTopBarTitle by remember(collapseTitleThresholdPx) {
+    val showCollapsedTopBarTitle by remember(collapseTitleThresholdPx, topBarHeightPx) {
         derivedStateOf {
+            val maxOffset = -(collapsingHeaderHeightPx - topBarHeightPx).coerceAtLeast(0f)
             headerMeasured &&
-                headerOffsetPx <= -collapsingHeaderHeightPx + collapseTitleThresholdPx
+                headerOffsetPx <= maxOffset + collapseTitleThresholdPx
         }
     }
 
@@ -176,20 +179,22 @@ internal fun ChannelContent(
         onDispose { onCollapsedTitleVisibilityChange(false) }
     }
 
-    LaunchedEffect(collapsingHeaderHeightPx) {
-        headerOffsetPx = headerOffsetPx.coerceIn(-collapsingHeaderHeightPx, 0f)
+    LaunchedEffect(collapsingHeaderHeightPx, topBarHeightPx) {
+        val maxOffset = -(collapsingHeaderHeightPx - topBarHeightPx).coerceAtLeast(0f)
+        headerOffsetPx = headerOffsetPx.coerceIn(maxOffset, 0f)
     }
 
     val nestedScrollConnection =
-        remember(collapsingHeaderHeightPx) {
+        remember(collapsingHeaderHeightPx, topBarHeightPx) {
             object : NestedScrollConnection {
                 override fun onPreScroll(
                     available: Offset,
                     source: NestedScrollSource,
                 ): Offset {
                     if (available.y >= 0f) return Offset.Zero
+                    val maxOffset = -(collapsingHeaderHeightPx - topBarHeightPx).coerceAtLeast(0f)
                     val previous = headerOffsetPx
-                    val next = (previous + available.y).coerceIn(-collapsingHeaderHeightPx, 0f)
+                    val next = (previous + available.y).coerceIn(maxOffset, 0f)
                     headerOffsetPx = next
                     return Offset(x = 0f, y = next - previous)
                 }
@@ -200,8 +205,9 @@ internal fun ChannelContent(
                     source: NestedScrollSource,
                 ): Offset {
                     if (available.y <= 0f) return Offset.Zero
+                    val maxOffset = -(collapsingHeaderHeightPx - topBarHeightPx).coerceAtLeast(0f)
                     val previous = headerOffsetPx
-                    val next = (previous + available.y).coerceIn(-collapsingHeaderHeightPx, 0f)
+                    val next = (previous + available.y).coerceIn(maxOffset, 0f)
                     headerOffsetPx = next
                     return Offset(x = 0f, y = next - previous)
                 }

@@ -35,6 +35,12 @@ object WidgetDeepLink {
     /** Expands the full music player over whatever screen the app opens on. */
     fun openMusicPlayer(context: Context): Intent = base(context, "music_player").putExtra("open_music_player", true)
 
+    /** Expands the full music player directly to the lyrics sheet. */
+    fun openMusicLyrics(context: Context): Intent =
+        base(context, "music_lyrics")
+            .putExtra("open_music_player", true)
+            .putExtra("open_music_lyrics", true)
+
     /** Navigates to an existing FlowNavigation route (search, downloads, history, …). */
     fun openRoute(
         context: Context,

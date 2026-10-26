@@ -2,13 +2,17 @@ package com.fedoratube.org.ui.components.channel
 
 import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -74,40 +78,81 @@ internal fun ChannelHeaderSection(
                 .background(MaterialTheme.colorScheme.background),
     ) {
         if (!bannerUrl.isNullOrBlank()) {
-            ChannelBanner(imageUrl = bannerUrl)
-        }
+            Box(
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                ChannelBanner(imageUrl = bannerUrl)
 
-        Row(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-                    .padding(top = 14.dp, bottom = 4.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
-            ChannelAvatarImage(
-                url = header.avatarUrl,
-                contentDescription = stringResource(R.string.channel_avatar),
+                Row(
+                    modifier =
+                        Modifier
+                            .align(Alignment.BottomStart)
+                            .offset(y = 38.dp)
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                ) {
+                    ChannelAvatarImage(
+                        url = header.avatarUrl,
+                        contentDescription = stringResource(R.string.channel_avatar),
+                        modifier =
+                            Modifier
+                                .size(76.dp)
+                                .border(3.dp, MaterialTheme.colorScheme.background, CircleShape)
+                                .clip(CircleShape)
+                                .background(MaterialTheme.colorScheme.surfaceVariant)
+                                .clickable(enabled = header.avatarUrl.isNotEmpty()) { showFullSizeAvatar = true },
+                    )
+
+                    Spacer(modifier = Modifier.weight(1f))
+
+                    FlowSubscribeButton(
+                        isSubscribed = isSubscribed,
+                        isNotificationsEnabled = isNotificationsEnabled,
+                        onSubscribeClick = onSubscribeClick,
+                        onUnsubscribeClick = onUnsubscribeClick,
+                        onNotificationChange = onNotificationChange,
+                        onManageGroups = onManageGroups,
+                        onAddNote = onEditNote,
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(44.dp))
+        } else {
+            Row(
                 modifier =
                     Modifier
-                        .size(72.dp)
-                        .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.surfaceVariant)
-                        .clickable(enabled = header.avatarUrl.isNotEmpty()) { showFullSizeAvatar = true },
-            )
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                        .padding(top = 14.dp, bottom = 4.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                ChannelAvatarImage(
+                    url = header.avatarUrl,
+                    contentDescription = stringResource(R.string.channel_avatar),
+                    modifier =
+                        Modifier
+                            .size(72.dp)
+                            .clip(CircleShape)
+                            .background(MaterialTheme.colorScheme.surfaceVariant)
+                            .clickable(enabled = header.avatarUrl.isNotEmpty()) { showFullSizeAvatar = true },
+                )
 
-            Spacer(modifier = Modifier.weight(1f))
+                Spacer(modifier = Modifier.weight(1f))
 
-            FlowSubscribeButton(
-                isSubscribed = isSubscribed,
-                isNotificationsEnabled = isNotificationsEnabled,
-                onSubscribeClick = onSubscribeClick,
-                onUnsubscribeClick = onUnsubscribeClick,
-                onNotificationChange = onNotificationChange,
-                onManageGroups = onManageGroups,
-                onAddNote = onEditNote,
-            )
+                FlowSubscribeButton(
+                    isSubscribed = isSubscribed,
+                    isNotificationsEnabled = isNotificationsEnabled,
+                    onSubscribeClick = onSubscribeClick,
+                    onUnsubscribeClick = onUnsubscribeClick,
+                    onNotificationChange = onNotificationChange,
+                    onManageGroups = onManageGroups,
+                    onAddNote = onEditNote,
+                )
+            }
         }
 
         Column(

@@ -36,6 +36,8 @@ fun FlowPullToRefreshBox(
                 state = state,
                 isRefreshing = isRefreshing,
                 modifier = Modifier.align(Alignment.TopCenter),
+                containerColor = androidx.compose.material3.MaterialTheme.colorScheme.surfaceContainerHigh,
+                color = androidx.compose.material3.MaterialTheme.colorScheme.primary,
             )
         },
         content = content,

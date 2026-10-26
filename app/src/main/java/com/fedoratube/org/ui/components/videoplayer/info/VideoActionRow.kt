@@ -74,7 +74,6 @@ internal fun VideoActionRow(
     onShareClick: () -> Unit,
     onDownloadClick: () -> Unit,
     onSaveClick: () -> Unit,
-    onBackgroundPlayClick: () -> Unit,
     onCopyLinkClick: () -> Unit = {},
     onCopyLinkAtTimeClick: () -> Unit = {},
     isSaved: Boolean = false,
@@ -100,7 +99,7 @@ internal fun VideoActionRow(
         modifier = Modifier.fillMaxWidth(),
     ) {
         if (isDeviceFile) {
-            deviceFileActions(onBackgroundPlayClick, onShareClick)
+            deviceFileActions(onShareClick)
             return@LazyRow
         }
 
@@ -188,29 +187,13 @@ internal fun VideoActionRow(
                 )
             }
         }
-
-        item(key = "action_bg_play") {
-            ActionButton(
-                icon = Icons.Outlined.Headphones,
-                label = stringResource(R.string.player_action_background),
-                onClick = onBackgroundPlayClick,
-            )
-        }
     }
 }
 
-/** A file on the device has no likes, link or download; it can play in the background and be shared. */
+/** A file on the device has no likes, link or download; it can be shared. */
 private fun LazyListScope.deviceFileActions(
-    onBackgroundPlayClick: () -> Unit,
     onShareClick: () -> Unit,
 ) {
-    item {
-        ActionButton(
-            icon = Icons.Outlined.Headphones,
-            label = stringResource(R.string.player_action_background),
-            onClick = onBackgroundPlayClick,
-        )
-    }
     item {
         ActionButton(
             icon = Icons.Outlined.Share,

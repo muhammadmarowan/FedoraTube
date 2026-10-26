@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Fedora Tube</string>
+    <string name="app_name">FedoraTube</string>
     <string name="subscriptions_search_placeholder">Поиск в подписках...</string>
     <string name="top_bar_subscriptions_title">Подписки</string>
     <string name="view_all_button_label">Все</string>
@@ -166,7 +166,7 @@
     <string name="new_update_available">Доступно обновление</string>
     <string name="update_available_template">Версия %1$s уже доступна</string>
     <string name="release_notes">ПРИМЕЧАНИЯ К ВЫПУСКУ</string>
-    <string name="update_flow">Обновить Fedora Tube</string>
+    <string name="update_flow">Обновить FedoraTube</string>
     <string name="maybe_later">Может быть, позже</string>
     <string name="nav_home">Главная</string>
     <string name="nav_shorts">Shorts</string>
@@ -269,10 +269,10 @@
     <string name="peace_and_quiet">Тишина и покой</string>
     <string name="notifications_empty_body">Вы все посмотрели! Здесь появятся новые видео из ваших подписок.</string>
     <string name="settings_title">Настройки</string>
-    <string name="settings_flow_engine_header">Движок Fedora Tube</string>
+    <string name="settings_flow_engine_header">Движок FedoraTube</string>
     <string name="settings_active_learning">АКТИВНОЕ ОБУЧЕНИЕ</string>
-    <string name="settings_reset_brain_title">Сбросить профиль рекомендаций Fedora Tube?</string>
-    <string name="settings_reset_brain_body">Это действие полностью сотрет ваш профиль рекомендаций Fedora Tube.\n\n• Все изученные темы будут забыты.\n• Особенности вашего профиля сбросятся до нейтральных.\n• Рекомендации вернутся к значениям по умолчанию.\n\nЭто действие нельзя отменить.</string>
+    <string name="settings_reset_brain_title">Сбросить профиль рекомендаций FedoraTube?</string>
+    <string name="settings_reset_brain_body">Это действие полностью сотрет ваш профиль рекомендаций FedoraTube.\n\n• Все изученные темы будут забыты.\n• Особенности вашего профиля сбросятся до нейтральных.\n• Рекомендации вернутся к значениям по умолчанию.\n\nЭто действие нельзя отменить.</string>
     <string name="settings_reset_everything">Сбросить все</string>
     <string name="settings_analyzing_interactions">Анализируем ваше взаимодействие...</string>
     <string name="settings_view_analytics">Посмотреть аналитику</string>
@@ -282,7 +282,7 @@
     <string name="settings_header_about">О приложении</string>
     <string name="settings_header_notifications">Уведомления</string>
     <string name="settings_item_notifications">Настройки уведомлений</string>
-    <string name="settings_item_notifications_subtitle">Управляйте тем, какие уведомления может присылать Fedora Tube</string>
+    <string name="settings_item_notifications_subtitle">Управляйте тем, какие уведомления может присылать FedoraTube</string>
     <string name="notif_settings_title">Настройки уведомлений</string>
     <string name="notif_type_new_videos">Новые видео</string>
     <string name="notif_type_new_videos_subtitle">Уведомлять, когда на подписанных каналах выходят новые видео</string>
@@ -291,7 +291,7 @@
     <string name="notif_type_reminders">Напоминания о времени у экрана</string>
     <string name="notif_type_reminders_subtitle">Напоминания о перерывах и сне в Контроле времени</string>
     <string name="notif_type_updates">Обновления приложения</string>
-    <string name="notif_type_updates_subtitle">Узнавайте о выходе новых версий Fedora Tube</string>
+    <string name="notif_type_updates_subtitle">Узнавайте о выходе новых версий FedoraTube</string>
     <string name="notif_type_general">Общие уведомления</string>
     <string name="notif_type_general_subtitle">Различные оповещения и объявления приложения</string>
     <string name="notif_system_settings">Системные настройки уведомлений</string>
@@ -300,7 +300,7 @@
     <string name="notif_check_interval">Интервал проверки новых видео</string>
     <string name="notif_check_interval_subtitle_template">Проверять каждые %s</string>
     <string name="notif_check_interval_dialog_title">Интервал проверки</string>
-    <string name="notif_check_interval_dialog_body">Как часто Fedora Tube проверяет наличие новых видео на ваших подписанных каналах.</string>
+    <string name="notif_check_interval_dialog_body">Как часто FedoraTube проверяет наличие новых видео на ваших подписанных каналах.</string>
     <string name="notif_interval_15m">15 минут</string>
     <string name="notif_interval_30m">30 минут</string>
     <string name="notif_interval_1h">1 час</string>
@@ -333,15 +333,15 @@
     <string name="settings_item_export_data_subtitle">Создать резервную копию данных</string>
     <string name="settings_item_import_data">Импорт данных</string>
     <string name="settings_item_import_data_subtitle">Восстановление из копии или импорт из других приложений</string>
-    <string name="settings_item_about_flow">О Fedora Tube</string>
+    <string name="settings_item_about_flow">О FedoraTube</string>
     <string name="settings_item_about_flow_subtitle">Версия, лицензия, авторы</string>
     <string name="settings_item_support">Поддержка и донаты</string>
-    <string name="settings_item_support_subtitle">Поддержите разработку Fedora Tube</string>
+    <string name="settings_item_support_subtitle">Поддержите разработку FedoraTube</string>
     <string name="settings_region_dialog_title">Выберите регион</string>
     <string name="settings_export_success">Данные успешно экспортированы</string>
     <string name="settings_export_failed">Ошибка экспорта: %1$s</string>
     <string name="appearance_title">Внешний вид</string>
-    <string name="appearance_subtitle">Персонализация интерфейса Fedora Tube</string>
+    <string name="appearance_subtitle">Персонализация интерфейса FedoraTube</string>
     <string name="appearance_current_theme">ТЕКУЩАЯ ТЕМА</string>
     <string name="appearance_category_all">Все</string>
     <string name="appearance_category_light">Светлые</string>
@@ -351,7 +351,7 @@
     <string name="app_icon_picker_subtitle">Выберите стиль значка. Изменения вступят в силу сразу, а рабочий стол перезапустится.</string>
     <string name="app_icon_picker_warning">Внимание: смена значка использует системный механизм Android, который может временно удалить ярлык приложения с главного экрана. Зажмите свободное место на рабочем столе, чтобы добавить его снова при необходимости.</string>
     <string name="app_icon_apply_toast">Иконка обновлена - рабочий стол обновится</string>
-    <string name="icon_name_fedora_red">Fedora Tube Red</string>
+    <string name="icon_name_fedora_red">FedoraTube Red</string>
     <string name="icon_name_amoled">AMOLED Dark</string>
     <string name="icon_name_monochrome">Монохром</string>
     <string name="icon_name_ghost">Призрак</string>
@@ -397,7 +397,7 @@
     <string name="theme_name_cream_paper">Кремовая бумага</string>
     <string name="theme_desc_cream_paper">Теплый и уютный</string>
     <string name="theme_name_classic_dark">Классическая</string>
-    <string name="theme_desc_classic_dark">Оригинальные цвета Fedora Tube</string>
+    <string name="theme_desc_classic_dark">Оригинальные цвета FedoraTube</string>
     <string name="theme_name_true_black">Глубокий черный</string>
     <string name="theme_desc_true_black">Чистый OLED</string>
     <string name="theme_name_midnight">Полночь</string>
@@ -657,7 +657,7 @@
     <string name="interests_tab">Предпочтения</string>
     <string name="blocked_tab">Заблокировано</string>
     <string name="your_interests_title">Ваши предпочтения</string>
-    <string name="your_interests_desc">Выбранные темы помогают Fedora Tube лучше рекомендовать контент. Нажмите на темы ниже, чтобы добавить или удалить их.</string>
+    <string name="your_interests_desc">Выбранные темы помогают FedoraTube лучше рекомендовать контент. Нажмите на темы ниже, чтобы добавить или удалить их.</string>
     <string name="tap_to_remove">Нажмите для удаления</string>
     <string name="add_topics">Добавить темы</string>
     <string name="browse_by_category">Просмотр по категориям</string>
@@ -675,7 +675,7 @@
     <string name="content_settings_video_card_actions_title">Кнопки «Нравится» и «Не нравится» на карточке видео</string>
     <string name="content_settings_video_card_actions_subtitle">Показывать кнопки «Нравится» и «Не нравится» на карточках видео для быстрой настройки рекомендаций</string>
     <string name="content_settings_show_app_logo_title">Отображать логотип приложения</string>
-    <string name="content_settings_show_app_logo_subtitle">Отображать логотип Fedora Tube рядом с названием приложения в верхней панели главного экрана</string>
+    <string name="content_settings_show_app_logo_subtitle">Отображать логотип FedoraTube рядом с названием приложения в верхней панели главного экрана</string>
     <string name="player_settings_shorts_background_play">Фоновое воспроизведение Shorts</string>
     <string name="player_settings_shorts_background_play_subtitle">Продолжать воспроизведение Shorts, когда приложение свернуто</string>
     <string name="currently_following">Текущие подписки</string>
@@ -707,10 +707,10 @@
     <string name="deep_flow_expire_duration_subtitle">Обучение возобновится автоматически через: %s</string>
     <string name="deep_flow_dialog_title">Продолжительность паузы</string>
     <string name="deep_flow_dialog_body">На какое время приостановить обучение?</string>
-    <string name="deep_flow_enabled_message">Включена функция Deep Fedora Tube</string>
-    <string name="deep_flow_disabled_message">Функция Deep Fedora Tube отключена</string>
-    <string name="deep_flow_expired_message">Истекло время таймера Deep Fedora Tube</string>
-    <string name="deep_flow_active_until_disabled">Deep Fedora Tube остается активным, пока вы его не выключите</string>
+    <string name="deep_flow_enabled_message">Включена функция Deep FedoraTube</string>
+    <string name="deep_flow_disabled_message">Функция Deep FedoraTube отключена</string>
+    <string name="deep_flow_expired_message">Истекло время таймера Deep FedoraTube</string>
+    <string name="deep_flow_active_until_disabled">Deep FedoraTube остается активным, пока вы его не выключите</string>
     <string name="deep_flow_duration_never">Никогда</string>
     <string name="deep_flow_duration_1h">1 час</string>
     <string name="deep_flow_duration_2h">2 часа</string>
@@ -720,7 +720,7 @@
     <string name="deep_flow_duration_12h">12 часов</string>
     <string name="deep_flow_duration_24h">24 часа</string>
     <string name="notif_master_toggle">Включить уведомления</string>
-    <string name="notif_master_toggle_subtitle">Разрешить приложению Fedora Tube запускаться в фоновом режиме для проверки уведомлений и оповещений</string>
+    <string name="notif_master_toggle_subtitle">Разрешить приложению FedoraTube запускаться в фоновом режиме для проверки уведомлений и оповещений</string>
     <string name="notif_check_interval_disabled">Проверка уведомлений в фоновом режиме отключена</string>
     <string name="settings_item_proxy">Настройки прокси</string>
     <string name="settings_item_proxy_subtitle">Направлять удаленный трафик через HTTP или SOCKS5</string>
@@ -742,7 +742,7 @@
     <string name="appearance_role_on_background">На фоне</string>
     <string name="appearance_role_surface">Поверхность</string>
     <string name="appearance_role_on_surface">На поверхности</string>
-    <string name="deep_flow_mode_title">Режим Deep Fedora Tube</string>
+    <string name="deep_flow_mode_title">Режим Deep FedoraTube</string>
     <string name="done">Готово</string>
     <string name="next_up">Следующий</string>
     <string name="cast_to_tv">Транслировать на ТВ</string>
@@ -754,7 +754,7 @@
     <string name="export_engine_data_subtitle">Создать резервную копию своей ИИ личности и обучающих данных</string>
     <string name="export_engine_success">Успешно экспортирован профиль движка</string>
     <string name="export_engine_failed">Не удалось экспортировать профиль движка</string>
-    <string name="import_engine_data">Импорт данных движка Fedora Tube</string>
+    <string name="import_engine_data">Импорт данных движка FedoraTube</string>
     <string name="import_engine_data_desc">Восстановите свой профиль личности ИИ из файла резервной копии</string>
     <string name="error_age_restricted">Контент с возрастными ограничениями</string>
     <string name="appearance_role_error">Ошибка</string>
@@ -764,7 +764,7 @@
     <string name="appearance_system_defaults_subtitle">Выберите, какая тема будет использоваться при переключении устройства между светлым и темным режимами.</string>
     <string name="appearance_system_light_theme">Тема в светлом режиме</string>
     <string name="appearance_system_dark_theme">Тема в темном режиме</string>
-    <string name="icon_name_fedora_light">Fedora Tube Light</string>
+    <string name="icon_name_fedora_light">FedoraTube Light</string>
     <string name="icon_name_material_sky">Material Sky</string>
     <string name="icon_name_material_mint">Material Mint</string>
     <string name="player_appearance_brightness_gesture_title">Жест яркости</string>
@@ -1005,7 +1005,7 @@
     <string name="local_media_rescan">Пересканировать</string>
     <string name="local_media_scanning">Сканирование устройства…</string>
     <string name="local_media_empty_title">Медиафайлы не найдены</string>
-    <string name="local_media_permission_body">Разрешите доступ к медиа, чтобы Fedora Tube мог находить и воспроизводить локальные видео и музыку.</string>
+    <string name="local_media_permission_body">Разрешите доступ к медиа, чтобы FedoraTube мог находить и воспроизводить локальные видео и музыку.</string>
     <string name="history_tab_local_videos">Видео на устройстве</string>
     <string name="history_tab_local_music">Музыка на устройстве</string>
     <string name="share_link_only_template">https://youtube.com/watch?v=%1$s</string>
@@ -1053,12 +1053,12 @@
     <string name="period_six_months">6 месяцев</string>
     <string name="period_one_year">1 год</string>
     <string name="import_data_title">Импорт данных</string>
-    <string name="import_flow_backup_success">Резервная копия Fedora Tube импортирована</string>
-    <string name="import_flow_backup_failed_template">Ошибка импорта резервной копии Fedora Tube: %1$s</string>
+    <string name="import_flow_backup_success">Резервная копия FedoraTube импортирована</string>
+    <string name="import_flow_backup_failed_template">Ошибка импорта резервной копии FedoraTube: %1$s</string>
     <string name="import_newpipe_failed_template">Ошибка импорта резервной копии NewPipe: %1$s»</string>
     <string name="import_youtube_failed_template">Ошибка импорта резервной копии YouTube: %1$s»</string>
-    <string name="import_flow_backup_item_title">Импорт резервной копии Fedora Tube</string>
-    <string name="import_flow_backup_desc">Восстановление истории, настроек и подписок из файла резервной копии Fedora Tube.</string>
+    <string name="import_flow_backup_item_title">Импорт резервной копии FedoraTube</string>
+    <string name="import_flow_backup_desc">Восстановление истории, настроек и подписок из файла резервной копии FedoraTube.</string>
     <string name="import_from_newpipe">Импорт из NewPipe</string>
     <string name="import_from_newpipe_desc">Импорт подписок из файла экспорта NewPipe (JSON).</string>
     <string name="import_from_libretube">Импорт из LibreTube</string>
@@ -1130,7 +1130,7 @@
     <string name="category_creative">Творчество</string>
     <string name="category_science_nature">Наука и природа</string>
     <string name="category_news_current_events">Новости и события</string>
-    <string name="flow_control_center">Центр управления Fedora Tube</string>
+    <string name="flow_control_center">Центр управления FedoraTube</string>
     <string name="loading_neural_matrix">Загрузка нейроматрицы...</string>
     <string name="neural_interest_map_subtitle">Ваша нейрокарта предпочтений</string>
     <string name="cognitive_fingerprint">Когнитивный профиль</string>
@@ -1145,7 +1145,7 @@
     <string name="stats_interactions">Взаимодействия</string>
     <string name="stats_topics">Темы</string>
     <string name="empty_bubble_cloud_message">Смотрите видео, чтобы сформировать карту предпочтений!</string>
-    <string name="flow_neural_profile_export_subject">Экспорт нейропрофиля Fedora Tube</string>
+    <string name="flow_neural_profile_export_subject">Экспорт нейропрофиля FedoraTube</string>
     <string name="screen_title_music_library">Музыкальная библиотека</string>
     <string name="header_your_collection">Ваша коллекция</string>
     <string name="subtitle_liked_music">Понравившиеся треки</string>
@@ -1197,7 +1197,7 @@
     <string name="remove_incomplete_downloads">Удалить незавершенные загрузки</string>
     <string name="cast_connected">Трансляция</string>
     <string name="cast_disconnected">Трансляция отключена</string>
-    <string name="flow_is_up_to_date">Установлена последняя версия Fedora Tube!</string>
+    <string name="flow_is_up_to_date">Установлена последняя версия FedoraTube!</string>
     <string name="sync_collection_subscriptions">Подписки</string>
     <string name="sync_collection_settings">Настройки</string>
     <string name="sync_collection_recommendation_profile">Профиль рекомендаций</string>
@@ -1219,7 +1219,7 @@
     <string name="sync_qr_scan_on_target_receiving">Отсканируйте это на отправляющем устройстве</string>
     <string name="sync_confirmation_code">Код подтверждения: %1$s</string>
     <string name="sync_expires_in">Истекает через %1$d с</string>
-    <string name="sync_qr_network_note">Оба устройства должны быть подключены к одной сети Wi-Fi (или к точке доступа одного из устройств). Возможно, вам потребуется разрешить работу Fedora Tube в брандмауэре.</string>
+    <string name="sync_qr_network_note">Оба устройства должны быть подключены к одной сети Wi-Fi (или к точке доступа одного из устройств). Возможно, вам потребуется разрешить работу FedoraTube в брандмауэре.</string>
     <string name="sync_sas_title">Коды совпадают?</string>
     <string name="sync_sas_body">Прежде чем продолжить, убедитесь, что этот 6-значный код совпадает на обоих устройствах.</string>
     <string name="sync_sas_differ">Они отличаются</string>
@@ -1246,7 +1246,7 @@
     <string name="error_channel_terminated_hint">Этот канал больше не существует на YouTube.</string>
     <string name="error_captcha">Требуется пройти капчу YouTube</string>
     <string name="error_captcha_hint">YouTube требует подтвердить, что вы не робот. Откройте YouTube в браузере, пройдите капчу и повторите попытку.</string>
-    <string name="error_not_supported_hint">Этот формат или тип контента не может быть воспроизведен в Fedora Tube.</string>
+    <string name="error_not_supported_hint">Этот формат или тип контента не может быть воспроизведен в FedoraTube.</string>
     <string name="error_no_internet">Нет подключения к интернету</string>
     <string name="error_no_internet_hint">Проверьте подключение к Wi-Fi или мобильной сети и повторите попытку.</string>
     <string name="error_timeout">Превышено время ожидания</string>
@@ -1278,11 +1278,11 @@
     <string name="tap_to_recognize">Нажмите, чтобы распознать</string>
     <string name="no_match_found">Совпадений не найдено</string>
     <string name="try_again">Попробуйте снова</string>
-    <string name="donation_prompt_message">Fedora Tube – бесплатный проект с открытым исходным кодом, без рекламы и трекеров. Если вы пользуетесь им, пожалуйста, поддержите его разработку – это действительно помогает проекту существовать.</string>
+    <string name="donation_prompt_message">FedoraTube – бесплатный проект с открытым исходным кодом, без рекламы и трекеров. Если вы пользуетесь им, пожалуйста, поддержите его разработку – это действительно помогает проекту существовать.</string>
     <string name="sync_consent_note">Перед объединением будет создана резервная копия. Слияние пройдет без конфликтов: данные не будут перезаписаны или дублированы.</string>
     <string name="import_yt_history_empty_error">В этом файле не найдена история просмотра. Убедитесь, что это файл watch-history.html из YouTube Архиватора.</string>
     <string name="import_yt_playlist_empty_error">Файл CSV не содержит данных о видео. Убедитесь, что это CSV-файл плейлиста из YouTube Архиватора.</string>
-    <string name="error_extraction_failed_hint">Возможно, YouTube обновил свой формат. Fedora Tube скоро обновится – попробуйте повторить попытку позже.</string>
+    <string name="error_extraction_failed_hint">Возможно, YouTube обновил свой формат. FedoraTube скоро обновится – попробуйте повторить попытку позже.</string>
     <string name="music_playback_warning_forbidden">Доступ к музыкальному потоку запрещен. Возможно, YouTube ограничил вашу IP-адрес. Попробуйте обновить страницу или сменить сеть/VPN.</string>
     <string name="import_from_metrolist_desc">Импорт музыкальных плейлистов из резервной копии Metrolist (.zip). Плейлисты появятся в вашей музыкальной библиотеке.</string>
     <string name="music_playback_warning_network">Не удалось получить музыкальный поток: проблема с сетью. Проверьте соединение или смените точку доступа.</string>
@@ -1294,7 +1294,7 @@
     <string name="import_yt_music_playlist_desc">Импорт плейлиста из CSV-файла YouTube Music Архиватора. Он отобразится в разделе «Музыкальные плейлисты».</string>
     <string name="import_master_backup_desc">Восстановите данные приложения и движка из единого файла полной резервной копии</string>
     <string name="sync_error_no_network">Нет подключения к Wi-Fi/LAN. Подключите оба устройства к одной сети или точке доступа.</string>
-    <string name="export_watch_history_desc">Экспорт истории просмотра YouTube в JSON-файл (импорт в LibreTube и Fedora Tube)</string>
+    <string name="export_watch_history_desc">Экспорт истории просмотра YouTube в JSON-файл (импорт в LibreTube и FedoraTube)</string>
     <string name="player_appearance_long_press_speed_subtitle">Выберите временную скорость воспроизведения при удержании плеера</string>
     <string name="sync_scan_prompt_receive_code">Наведите камеру на код получения на другом устройстве</string>
     <string name="sync_error_qr_bad_address">Код синхронизации не содержит корректного сетевого адреса.</string>
@@ -1318,9 +1318,9 @@
     <string name="play_next_video_desc">Добавить в начало очереди</string>
     <string name="add_video_to_queue_desc">Добавить в конец очереди</string>
     <string name="support_donations_title">Поддержка и донаты</string>
-    <string name="support_flow_dev_title">Поддержка разработки Fedora Tube</string>
-    <string name="support_flow_dev_desc">Если вам полезен Fedora Tube, вы можете поддержать разработку и сделать пожертвование на Patreon или через указанные ниже криптовалютные адреса. Ваша поддержка помогает проекту оставаться в живых!</string>
-    <string name="support_flow_patreon">Поддержать Fedora Tube на Patreon</string>
+    <string name="support_flow_dev_title">Поддержка разработки FedoraTube</string>
+    <string name="support_flow_dev_desc">Если вам полезен FedoraTube, вы можете поддержать разработку и сделать пожертвование на Patreon или через указанные ниже криптовалютные адреса. Ваша поддержка помогает проекту оставаться в живых!</string>
+    <string name="support_flow_patreon">Поддержать FedoraTube на Patreon</string>
     <string name="thank_you_support_message">Спасибо за вашу поддержку! ❤️</string>
     <string name="deep_flow_save_history_subtitle">Сохранять просмотренные видео в истории, но не обучать движок на их основе. Отключите, чтобы ничего не сохранять.</string>
     <string name="deep_flow_save_history_title">Записывать историю просмотра</string>
@@ -1423,8 +1423,8 @@
     <string name="default_video_quality_label">Качество видео по умолчанию</string>
     <string name="default_download_codec_auto_subtitle">Использует ваш последний выбор или кодек текущего видео</string>
     <string name="download_over_wifi_only">Загрузка только по Wi-Fi</string>
-    <string name="location_downloads_label">Загрузки / Fedora Tube</string>
-    <string name="location_movies_label">Фильмы / Fedora Tube</string>
+    <string name="location_downloads_label">Загрузки / FedoraTube</string>
+    <string name="location_movies_label">Фильмы / FedoraTube</string>
     <string name="location_internal_app_label">Внутреннее хранилище приложения</string>
     <string name="location_custom_saf_label">Просмотр…</string>
     <string name="location_internal_app_desc">Доступно только в приложении – файлы могут быть удалены при удалении приложения</string>
@@ -1463,7 +1463,7 @@
     <string name="playlist_sort_date_published_oldest">Дата публикации (сначала старые)</string>
     <string name="remove_selected_playlist_text">Они будут удалены из этого плейлиста.</string>
     <string name="remove_selected_watch_later_text">Они будут удалены из «Смотреть позже».</string>
-    <string name="welcome_to_flow">Добро пожаловать в Fedora Tube</string>
+    <string name="welcome_to_flow">Добро пожаловать в FedoraTube</string>
     <string name="onboarding_subtitle">Расскажите нам о ваших предпочтениях</string>
     <string name="onboarding_instructions">Выберите как минимум 3 темы для персонализации</string>
     <string name="onboarding_interests_title">Что вам нравится?</string>
@@ -1573,7 +1573,7 @@
     <string name="subtitle_song_prefix">Трек • %1$s</string>
     <string name="recognition_search_history">Поиск распознанных треков</string>
     <string name="daily_discover_sounds_like">Звучит как %1$s</string>
-    <string name="sync_error_qr_not_flow">Это не похоже на код синхронизации Fedora Tube.</string>
+    <string name="sync_error_qr_not_flow">Это не похоже на код синхронизации FedoraTube.</string>
     <string name="appearance_customizer_variant_title">%1$s пользовательская тема</string>
     <string name="appearance_variant_amoled">AMOLED</string>
     <string name="appearance_role_primary_container">Первичный контейнер</string>
@@ -1606,7 +1606,7 @@
     <string name="appearance_color_alpha">Прозрачность</string>
     <string name="appearance_navigate_back">Вернуться назад</string>
     <string name="appearance_selected">Выбрано</string>
-    <string name="icon_name_fedora_play">Fedora Tube Play</string>
+    <string name="icon_name_fedora_play">FedoraTube Play</string>
     <string name="player_fullscreen_seekbar_width_value">%1$d dp</string>
     <string name="lyrics_provider_lyrics_plus">LyricsPlus</string>
     <string name="currently_blocked">В данный момент заблокировано</string>
@@ -1633,14 +1633,14 @@
     <string name="sleep_window">Период сна:</string>
     <string name="frequency_description">Как часто напоминать</string>
     <string name="tools_subtitle">Установите напоминания, чтобы сбалансировать свои зрительские привычки</string>
-    <string name="donation_prompt_title">Нравится Fedora Tube?</string>
+    <string name="donation_prompt_title">Нравится FedoraTube?</string>
     <string name="donation_prompt_methods">Patreon · Bitcoin · Ethereum · Solana · USDT · Monero</string>
     <string name="about_creator">Автор</string>
     <string name="newpipe_extractor_title">NewPipe Extractor</string>
     <string name="newpipe_extractor_subtitle">Основная библиотека парсинга</string>
     <string name="about_license">Лицензия</string>
     <string name="about_changelog">Список изменений</string>
-    <string name="whats_new_in_flow">Что нового в Fedora Tube</string>
+    <string name="whats_new_in_flow">Что нового в FedoraTube</string>
     <string name="about_device_info">Информация об устройстве</string>
     <string name="app_logo_desc">Логотип приложения</string>
     <string name="board_label">Аппаратная платформа: %1$s</string>
@@ -1759,7 +1759,7 @@
     <string name="persona_initiate_title">Новичок</string>
     <string name="persona_initiate_description">Самое начало. Ваш профиль еще только формируется.</string>
     <string name="persona_audiophile_title">Меломан</string>
-    <string name="persona_audiophile_description">Вы используете Fedora Tube в основном для музыки. Атмосфера – это все.</string>
+    <string name="persona_audiophile_description">Вы используете FedoraTube в основном для музыки. Атмосфера – это все.</string>
     <string name="persona_livewire_title">Всегда в эфире</string>
     <string name="persona_night_owl_title">Сова</string>
     <string name="persona_night_owl_description">Тьма – ваша стихия. Чаще всего вы смотрите видео после полуночи.</string>
@@ -1835,7 +1835,7 @@
     <string name="listening">Слушаю…</string>
     <string name="processing">Обработка…</string>
     <string name="recognition_error">Не удалось распознать</string>
-    <string name="search_in_flow">Поиск в Fedora Tube</string>
+    <string name="search_in_flow">Поиск в FedoraTube</string>
     <string name="close_popup_player">Закрыть всплывающий плеер</string>
     <string name="topic_score_prefix">Соответствие теме</string>
     <string name="channel_sort_latest">Новые</string>
@@ -1854,7 +1854,7 @@
     <string name="copy_logs">Скопировать отчет</string>
     <string name="logs_copied">Отчет скопирован</string>
     <string name="logs_copy_failed">Не удалось скопировать отчет</string>
-    <string name="channel_error_log_clip_label">Отчет об ошибке Fedora Tube</string>
+    <string name="channel_error_log_clip_label">Отчет об ошибке FedoraTube</string>
     <string name="add_comment_placeholder">Оставьте комментарий...</string>
     <string name="search_empty_prompt">Поиск видео, музыки и не только</string>
     <string name="channel_search_failed">Не удалось выполнить поиск по каналу</string>
@@ -1884,9 +1884,9 @@
     <string name="content_settings_hide_watched_subscriptions_subtitle">Скрывать просмотренные видео из ленты подписок</string>
     <string name="desc_more">...еще</string>
     <string name="widget_now_playing_label">Сейчас играет</string>
-    <string name="widget_now_playing_description">Управление воспроизведением в Fedora Tube</string>
+    <string name="widget_now_playing_description">Управление воспроизведением в FedoraTube</string>
     <string name="widget_quick_actions_label">Быстрые действия</string>
-    <string name="widget_quick_actions_description">Поиск в Fedora Tube и быстрый переход к загрузкам, истории или распознаванию</string>
+    <string name="widget_quick_actions_description">Поиск в FedoraTube и быстрый переход к загрузкам, истории или распознаванию</string>
     <string name="widget_recognize_label">Распознать музыку</string>
     <string name="widget_recognize_description">Узнайте одним касанием, какая песня играет рядом</string>
     <string name="widget_turntable_description">Ваша музыка в виде вращающейся пластинки</string>
@@ -1943,20 +1943,20 @@
     <string name="discord_presence_disconnect">Отключить и отвязать аккаунт</string>
     <string name="discord_presence_unlink_action">Отвязать</string>
     <string name="discord_presence_retry">Повторить попытку</string>
-    <string name="discord_presence_description">Показывать текущее воспроизведение из Fedora Tube в статусе Discord.</string>
+    <string name="discord_presence_description">Показывать текущее воспроизведение из FedoraTube в статусе Discord.</string>
     <string name="discord_presence_connection_section">Подключение</string>
     <string name="discord_presence_account">Аккаунт Discord</string>
     <string name="discord_presence_privacy_section">Конфиденциальность и риски</string>
     <string name="discord_presence_privacy_title">Конфиденциальность</string>
-    <string name="discord_presence_privacy_body">Если функция включена, Fedora Tube передает в Discord название видео, трансляции или трека, имя автора или исполнителя, обложку и время воспроизведения. По умолчанию настройка отключена. Токен сессии Discord зашифрован через Android Keystore и не попадает в логи приложения.</string>
-    <string name="discord_presence_gateway_warning">Fedora Tube использует неофициальное селф-бот подключение через токен вашего аккаунта Discord, а не OAuth. Это нарушает условия использования Discord и может привести к блокировке или удалению аккаунта. Сторонние клиенты также могут вызывать ложные срабатывания систем безопасности: сброс пароля, капчу, верификацию по номеру телефона или предупреждения об утечке токена.</string>
+    <string name="discord_presence_privacy_body">Если функция включена, FedoraTube передает в Discord название видео, трансляции или трека, имя автора или исполнителя, обложку и время воспроизведения. По умолчанию настройка отключена. Токен сессии Discord зашифрован через Android Keystore и не попадает в логи приложения.</string>
+    <string name="discord_presence_gateway_warning">FedoraTube использует неофициальное селф-бот подключение через токен вашего аккаунта Discord, а не OAuth. Это нарушает условия использования Discord и может привести к блокировке или удалению аккаунта. Сторонние клиенты также могут вызывать ложные срабатывания систем безопасности: сброс пароля, капчу, верификацию по номеру телефона или предупреждения об утечке токена.</string>
     <string name="discord_presence_risk_dialog_title">Принять риски для аккаунта Discord?</string>
-    <string name="discord_presence_risk_dialog_body">При подключении выполняется вход в Discord, а Fedora Tube получает токен вашего аккаунта. Fedora Tube защищает его шифрованием Android Keystore и отправляет только в Discord, но этот неофициальный метод (селф-бот) нарушает условия использования Discord. Ваш аккаунт может быть заблокирован или удален, также возможны требования сброса пароля, капчи или верификации по телефону.</string>
+    <string name="discord_presence_risk_dialog_body">При подключении выполняется вход в Discord, а FedoraTube получает токен вашего аккаунта. FedoraTube защищает его шифрованием Android Keystore и отправляет только в Discord, но этот неофициальный метод (селф-бот) нарушает условия использования Discord. Ваш аккаунт может быть заблокирован или удален, также возможны требования сброса пароля, капчи или верификации по телефону.</string>
     <string name="discord_presence_risk_accept">Я понимаю риски, подключить</string>
     <string name="discord_error_not_initialized">Статус Discord не инициализирован.</string>
     <string name="discord_error_enable_before_connect">Включите статус Discord перед подключением аккаунта.</string>
     <string name="discord_error_unavailable">Статус Discord недоступен в этой сборке.</string>
-    <string name="discord_error_open_flow">Откройте Fedora Tube перед подключением к Discord.</string>
+    <string name="discord_error_open_flow">Откройте FedoraTube перед подключением к Discord.</string>
     <string name="discord_error_connection_in_progress">Подключение к Discord уже выполняется.</string>
     <string name="discord_error_login_timeout">Время авторизации в Discord истекло.</string>
     <string name="discord_error_login_cancelled">Подключение к Discord отменено.</string>
@@ -1970,7 +1970,7 @@
     <string name="discord_error_heartbeat_unacknowledged">Шлюз Discord не ответил на запрос связи.</string>
     <string name="discord_error_heartbeat_failed">Не удалось проверить связь со шлюзом Discord.</string>
     <string name="discord_account_fallback">Пользователь Discord</string>
-    <string name="discord_presence_playing_fallback">Играет в Fedora Tube</string>
+    <string name="discord_presence_playing_fallback">Играет в FedoraTube</string>
     <string name="discord_presence_by_creator">от %1$s</string>
     <string name="settings_item_interface_mode">Режим интерфейса</string>
     <string name="settings_item_interface_mode_subtitle">Мобильный, ТВ или автовыбор</string>
@@ -2034,11 +2034,11 @@
     <string name="tv_music_no_lyrics">Текст песни не найден</string>
     <string name="tv_music_radio">Радио</string>
     <string name="tv_settings_appearance">Внешний вид</string>
-    <string name="tv_settings_flow_engine">Движок Fedora Tube</string>
+    <string name="tv_settings_flow_engine">Движок FedoraTube</string>
     <string name="tv_settings_sync">Синхронизация устройств</string>
     <string name="tv_sync_qr_session_active">Код действителен, пока открыт этот экран.</string>
     <string name="tv_remote_guide_title">Справка по пульту и клавиатуре</string>
-    <string name="tv_remote_guide_subtitle">Краткое руководство по управлению Fedora Tube с пульта</string>
+    <string name="tv_remote_guide_subtitle">Краткое руководство по управлению FedoraTube с пульта</string>
     <string name="tv_remote_guide_back">Вернуться к настройкам</string>
     <string name="tv_guide_navigation_title">Навигация</string>
     <string name="tv_guide_search_title">Поиск и обзор</string>
@@ -2070,7 +2070,7 @@
     <string name="ui_navigate">Навигация</string>
     <string name="ui_selected">Выбрано</string>
     <string name="ui_options">Параметры</string>
-    <string name="ui_flow_logo">Логотип Fedora Tube</string>
+    <string name="ui_flow_logo">Логотип FedoraTube</string>
     <string name="ui_grid_view">Сетка</string>
     <string name="ui_list_view">Список</string>
     <string name="ui_back">Назад</string>
@@ -2091,7 +2091,7 @@
     <string name="ui_no_crash_logs">Журнал ошибок пуст</string>
     <string name="ui_copy_log">Скопировать журнал</string>
     <string name="ui_clear_and_continue">Очистить и продолжить</string>
-    <string name="ui_crashed_last_session">Произошел сбой Fedora Tube во время прошлого сеанса</string>
+    <string name="ui_crashed_last_session">Произошел сбой FedoraTube во время прошлого сеанса</string>
     <string name="ui_copy_log_description">Скопируйте журнал ниже и вставьте в описание проблемы на GitHub, чтобы мы могли ее исправить.</string>
     <string name="ui_search_settings">Поиск настроек…</string>
     <string name="ui_custom_interest_title">Добавить свое предпочтение</string>
@@ -2099,7 +2099,7 @@
     <string name="ui_custom_interest_hint">например: джаз, астрофизика</string>
     <string name="ui_add_interest">Добавить предпочтение</string>
     <string name="ui_version">Версия %1$s</string>
-    <string name="update_download_prompt">Доступна новая версия Fedora Tube (%1$s). Скачать последнюю версию APK?</string>
+    <string name="update_download_prompt">Доступна новая версия FedoraTube (%1$s). Скачать последнюю версию APK?</string>
     <string name="ui_playlist_empty">Плейлист пуст</string>
     <string name="ui_playlist_saved_to_library">Плейлист добавлен в библиотеку</string>
     <string name="ui_playlist_removed_from_library">Плейлист удален из библиотеки</string>
@@ -2206,9 +2206,9 @@
     <string name="download_failed_audio_length">Не удалось определить размер аудио</string>
     <string name="download_workers_failed">Не удалось завершить одну или несколько задач</string>
     <string name="download_block_failed">Не удалось скачать часть %1$s: %2$s</string>
-    <string name="import_migrate_description">Быстрый перенос подписок и истории с других платформ во Fedora Tube.</string>
+    <string name="import_migrate_description">Быстрый перенос подписок и истории с других платформ во FedoraTube.</string>
     <string name="import_backup_restore">Резервное копирование и восстановление</string>
-    <string name="import_manage_backups">Управление резервными копиями Fedora Tube</string>
+    <string name="import_manage_backups">Управление резервными копиями FedoraTube</string>
     <string name="import_external_services">Сторонние сервисы</string>
     <string name="import_other_youtube_clients">Импорт из других клиентов YouTube</string>
     <string name="imported_successfully">Успешно импортировано: %1$s</string>
@@ -2256,7 +2256,7 @@
     <string name="remove_from_queue_confirmation">Вы уверены, что хотите удалить это видео из очереди?</string>
     <string name="reorder_queue_item">Изменение порядка в очереди</string>
     <string name="notif_background_restricted_title">Фоновые проверки ограничены</string>
-    <string name="notif_background_restricted_subtitle">Android блокирует проверку новых видео, когда Fedora Tube закрыт, поэтому уведомления приходят только при открытии приложения. Нажмите, чтобы снять ограничения на фоновую активность.</string>
+    <string name="notif_background_restricted_subtitle">Android блокирует проверку новых видео, когда FedoraTube закрыт, поэтому уведомления приходят только при открытии приложения. Нажмите, чтобы снять ограничения на фоновую активность.</string>
     <string name="subscriptions_failed_channels_more">%1$s и еще %2$d</string>
     <plurals name="subscriptions_failed_channels_title">
         <item quantity="one">Не удалось загрузить %d канал</item>
@@ -2286,7 +2286,7 @@
     <string name="player_appearance_seek_gesture_subtitle">Свайп влево или вправо в полноэкранном режиме для перемотки видео</string>
     <string name="player_settings_subtitle_language">Предпочитаемый язык субтитров</string>
     <string name="player_settings_subtitle_language_dialog_title">Язык субтитров</string>
-    <string name="player_settings_subtitle_language_dialog_body">Субтитры будут запускаться на этом языке. Если такой дорожки нет, Fedora Tube включит автоперевод от YouTube. Выбор субтитров в плеере также изменит эту настройку.</string>
+    <string name="player_settings_subtitle_language_dialog_body">Субтитры будут запускаться на этом языке. Если такой дорожки нет, FedoraTube включит автоперевод от YouTube. Выбор субтитров в плеере также изменит эту настройку.</string>
     <string name="player_settings_subtitle_language_none">Без предпочтений</string>
     <string name="player_settings_subtitle_language_none_desc">Использовать рекомендуемые субтитры из видео</string>
     <string name="player_settings_auto_enable_subtitles">Автоматически включать субтитры</string>
@@ -2327,7 +2327,7 @@
     <string name="sync_collection_likes_body">«Нравится» и «Не нравится» для видео и музыки.</string>
     <string name="sync_collection_subscriptions_body">Каналы, на которые вы подписаны.</string>
     <string name="sync_collection_settings_body">Параметры воспроизведения, внешнего вида и скачивания.</string>
-    <string name="sync_collection_recommendation_profile_body">Данные о ваших предпочтениях, собранные Fedora Tube.</string>
+    <string name="sync_collection_recommendation_profile_body">Данные о ваших предпочтениях, собранные FedoraTube.</string>
     <string name="sync_waiting_for_peer">Ожидание подключения другого устройства…</string>
     <string name="sync_cancel_session">Отменить синхронизацию</string>
     <string name="sync_expires_label">Код истекает</string>
@@ -2566,7 +2566,7 @@
     <string name="lyrics_keep_screen_on_summary">При проигрывании трека со включенным текстом</string>
     <string name="player_appearance_artwork_control_colors_subtitle">Придайте кнопкам и полосе прокрутки оттенок, взятый с обложки</string>
     <string name="player_appearance_sleep_timer_button_title">Кнопка таймера сна</string>
-    <string name="link_not_supported">Fedora Tube не может открыть ссылку такого типа</string>
+    <string name="link_not_supported">FedoraTube не может открыть ссылку такого типа</string>
     <string name="filter_timed">По времени</string>
     <string name="verified">Подтверждено</string>
     <string name="desc_see_more">Смотреть ещё</string>

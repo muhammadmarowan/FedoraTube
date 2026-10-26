@@ -80,6 +80,7 @@ import com.fedoratube.org.ui.utils.LocalWindowSizeClass
 internal fun FullMusicPlayerContent(
     track: MusicTrack,
     isPlayerSheetExpanded: Boolean,
+    openLyricsRequest: Int = 0,
     palette: MediaPalette,
     backdrop: PlayerBackdropColors,
     backgroundStyle: MusicPlayerBackgroundStyle,
@@ -142,6 +143,13 @@ internal fun FullMusicPlayerContent(
     }
 
     var showLyricsSheet by remember { mutableStateOf(false) }
+
+    LaunchedEffect(openLyricsRequest) {
+        if (openLyricsRequest > 0) {
+            uiState.currentTrack?.let { viewModel.ensureLyricsLoaded(it) }
+            showLyricsSheet = true
+        }
+    }
 
     val saveTrack = uiState.currentTrack
     if (showSaveSheet && saveTrack != null) {

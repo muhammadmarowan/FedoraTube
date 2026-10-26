@@ -308,6 +308,7 @@ class MainActivity : ComponentActivity() {
                                 val isDeeplinkShort by links.isShort
                                 val isDeeplinkShared by links.isShared
                                 val openMusicPlayerRequest by links.musicPlayerRequest
+                                val openMusicLyricsRequest by links.musicLyricsRequest
                                 val pendingRoute by links.route
 
                                 if (appUiRoot == AppUiRoot.TV) {
@@ -328,6 +329,7 @@ class MainActivity : ComponentActivity() {
                                             isShort = isDeeplinkShort,
                                             isSharedLink = isDeeplinkShared,
                                             openMusicPlayerRequest = openMusicPlayerRequest,
+                                            openMusicLyricsRequest = openMusicLyricsRequest,
                                             onDeeplinkConsumed = links::consumeVideo,
                                             pendingRoute = pendingRoute,
                                             onPendingRouteConsumed = links::consumeRoute,
@@ -481,6 +483,15 @@ class MainActivity : ComponentActivity() {
         if (linkText != null) {
             val understood = links.openLink(linkText, isShared = intent.action == Intent.ACTION_SEND, isRestoring = isRestoringState)
             if (!understood && !isRestoringState) Toast.makeText(this, R.string.link_not_supported, Toast.LENGTH_LONG).show()
+            return
+        }
+
+        if (intent.getBooleanExtra("open_music_lyrics", false)) {
+            links.openMusicLyrics()
+            intent.removeExtra("open_music_lyrics")
+            intent.removeExtra("open_music_player")
+            intent.removeExtra("notification_video_id")
+            intent.removeExtra("video_id")
             return
         }
 
@@ -684,8 +695,7 @@ class MainActivity : ComponentActivity() {
 
         val isVideoPlaying =
             playerManager.playerState.value.isPlaying &&
-                playerManager.playerState.value.currentVideoId != null &&
-                playerManager.getCurrentPosition() > 500 // At least 0.5s in
+                playerManager.playerState.value.currentVideoId != null
         val isMusicPlaying = musicManager.playerState.value.isPlaying
 
         // Only enter PiP for video, not for music (which uses background service)

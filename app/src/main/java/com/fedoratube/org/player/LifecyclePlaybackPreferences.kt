@@ -14,7 +14,7 @@ import javax.inject.Singleton
  * video, which has to know whether to start before any stream is handed to the player.
  */
 data class LifecyclePlaybackSettings(
-    val autoPipEnabled: Boolean = false,
+    val autoPipEnabled: Boolean = true,
     val backgroundPlayEnabled: Boolean = DEFAULT_BACKGROUND_PLAY_ENABLED,
     val shortsBackgroundPlay: Boolean = false,
     val shortsPipEnabled: Boolean = false,

@@ -13,10 +13,10 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.MusicNote
+import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -221,7 +221,7 @@ internal fun ActiveDownloadRow(
         when {
             stopped -> {
                 MediaRowAction(
-                    icon = Icons.Default.Refresh,
+                    icon = Icons.Rounded.Refresh,
                     contentDescription = stringResource(R.string.retry),
                     onClick = onRetryClick,
                 )

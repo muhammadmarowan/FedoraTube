@@ -87,6 +87,7 @@ fun FlowApp(
     isShort: Boolean = false,
     isSharedLink: Boolean = false,
     openMusicPlayerRequest: Int = 0,
+    openMusicLyricsRequest: Int = 0,
     onDeeplinkConsumed: () -> Unit = {},
     pendingRoute: String? = null,
     onPendingRouteConsumed: () -> Unit = {},
@@ -279,6 +280,7 @@ fun FlowApp(
                 }
             }
         var handledMusicPlayerRequest by remember { mutableIntStateOf(0) }
+        var handledMusicLyricsRequest by remember { mutableIntStateOf(0) }
 
         LaunchedEffect(activeVideo?.id) {
             if (activeVideo != null) {
@@ -318,6 +320,17 @@ fun FlowApp(
         LaunchedEffect(openMusicPlayerRequest, currentMusicTrack?.videoId) {
             if (openMusicPlayerRequest > handledMusicPlayerRequest && currentMusicTrack != null) {
                 handledMusicPlayerRequest = openMusicPlayerRequest
+                suppressMusicMiniAfterVideo = false
+                if (playerVisible) {
+                    playerSheetState.collapse()
+                }
+                musicPlayerSheetState.expand()
+            }
+        }
+
+        LaunchedEffect(openMusicLyricsRequest, currentMusicTrack?.videoId) {
+            if (openMusicLyricsRequest > handledMusicLyricsRequest && currentMusicTrack != null) {
+                handledMusicLyricsRequest = openMusicLyricsRequest
                 suppressMusicMiniAfterVideo = false
                 if (playerVisible) {
                     playerSheetState.collapse()
@@ -558,6 +571,7 @@ fun FlowApp(
             miniPlayerShowNextPrevControls = miniPlayerShowNextPrevControls,
             showMusicSheet = isMusicSheetShown,
             showVideoBar = showVideoBar,
+            openMusicLyricsRequest = openMusicLyricsRequest,
             musicPlayerSheetState = musicPlayerSheetState,
             containerWidth = maxWidth,
             containerHeight = with(density) { screenHeightPx.toDp() },

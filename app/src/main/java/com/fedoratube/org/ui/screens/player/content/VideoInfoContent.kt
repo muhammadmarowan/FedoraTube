@@ -189,7 +189,6 @@ internal fun VideoInfoContent(
         isDownloaded = isVideoDownloaded,
         onNoteClick = { showNoteEditor = true }.takeIf { videoNotesEnabled },
         hasNote = !videoNote.isNullOrBlank(),
-        onBackgroundPlayClick = { viewModel.startBackgroundPlayback() },
         onCopyLinkClick = {
             val url = youtubeWatchUrl(video.id)
             val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager

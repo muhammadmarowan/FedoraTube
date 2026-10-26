@@ -284,8 +284,8 @@ private fun PlayerArtwork(
     WidgetArtwork(
         bitmap = artwork,
         placeholderIcon = R.drawable.ic_music_note,
-        modifier = GlanceModifier.size(size).clickable(actionStartActivity(WidgetDeepLink.openMusicPlayer(context))),
-        contentDescription = context.getString(R.string.widget_open_player),
+        modifier = GlanceModifier.size(size).clickable(actionStartActivity(WidgetDeepLink.openMusicLyrics(context))),
+        contentDescription = context.getString(R.string.lyrics),
     )
 }
 

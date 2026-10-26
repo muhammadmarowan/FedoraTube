@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Fedora Tube</string>
-    <string name="app_launcher_name" translatable="false">Fedora Tube</string>
+    <string name="app_name">FedoraTube</string>
+    <string name="app_launcher_name" translatable="false">FedoraTube</string>
     <string name="subscriptions_search_placeholder">Search subscriptions ...</string>
     <string name="subscriptions_sort_label">Sort channels</string>
     <string name="subscriptions_sort_default">Default</string>
@@ -46,7 +46,7 @@
     <string name="copy_logs">Copy logs</string>
     <string name="logs_copied">Logs copied</string>
     <string name="logs_copy_failed">Couldn\'t copy logs</string>
-    <string name="channel_error_log_clip_label">Fedora Tube channel error log</string>
+    <string name="channel_error_log_clip_label">FedoraTube channel error log</string>
     <string name="shorts">Shorts</string>
     <string name="failed_to_load_channel">Failed to load channel</string>
     <string name="subscribers">Subscribers</string>
@@ -74,7 +74,7 @@
     <string name="local_media_empty_title">No %1$s found</string>
     <string name="local_media_empty_body">Videos and music stored on this device will appear here.</string>
     <string name="local_media_permission_title">Permission needed</string>
-    <string name="local_media_permission_body">Allow access to your media so Fedora Tube can find and play local videos and music.</string>
+    <string name="local_media_permission_body">Allow access to your media so FedoraTube can find and play local videos and music.</string>
     <string name="local_media_grant">Grant access</string>
     <string name="library_settings_data_header"><![CDATA[Settings & Data]]></string>
     <string name="library_manage_data_label">Manage Data</string>
@@ -225,7 +225,7 @@
     <string name="check_out_video_template">Check out this video: %1$s\nhttps://youtube.com/watch?v=%2$s</string>
     <string name="share_link_only_template">https://youtube.com/watch?v=%1$s</string>
     <string name="check_out_short_template">Check out this short: %1$s\nhttps://youtube.com/shorts/%2$s</string>
-    <string name="link_not_supported">Fedora Tube can\'t open this kind of link</string>
+    <string name="link_not_supported">FedoraTube can\'t open this kind of link</string>
     <string name="content_settings_share_without_text_title">Share links without text</string>
     <string name="content_settings_share_without_text_subtitle">Share just the video link, without the “Check out this video” message</string>
     <string name="related_videos">Related Videos</string>
@@ -355,7 +355,7 @@
     <string name="new_update_available">New Update Available</string>
     <string name="update_available_template">%1$s is now available</string>
     <string name="release_notes">RELEASE NOTES</string>
-    <string name="update_flow">Update Fedora Tube</string>
+    <string name="update_flow">Update FedoraTube</string>
     <string name="maybe_later">Maybe later</string>
     <!-- Navigation -->
     <string name="nav_home">Home</string>
@@ -471,7 +471,7 @@
     <string name="you">You</string>
     <string name="empty_downloads">No downloads yet</string>
     <string name="downloads_recover_title">Find downloads from an earlier install</string>
-    <string name="downloads_recover_body">Fedora Tube saves downloads in Download/FedoraTube and Music/FedoraTube. To list the files an earlier install saved there, allow access to videos and audio.</string>
+    <string name="downloads_recover_body">FedoraTube saves downloads in Download/FedoraTube and Music/FedoraTube. To list the files an earlier install saved there, allow access to videos and audio.</string>
     <string name="downloads_recover_allow">Allow access</string>
     <string name="downloads_recover_dismiss">Not now</string>
     <plurals name="downloads_recovered_count">
@@ -675,13 +675,13 @@
     <string name="settings_title">Settings</string>
     <string name="settings_flow_engine_header">Fedora Engine</string>
     <string name="settings_active_learning">ACTIVE LEARNING</string>
-    <string name="settings_reset_brain_title">Reset Fedora Tube Personality?</string>
-    <string name="settings_reset_brain_body">This erases your Fedora Tube Brain profile.\n\n• Learned topics are forgotten.\n• Personality traits reset.\n• Recommendations go back to default.\n\nThis cannot be undone.</string>
+    <string name="settings_reset_brain_title">Reset FedoraTube Personality?</string>
+    <string name="settings_reset_brain_body">This erases your FedoraTube Brain profile.\n\n• Learned topics are forgotten.\n• Personality traits reset.\n• Recommendations go back to default.\n\nThis cannot be undone.</string>
     <string name="settings_reset_everything">Reset Everything</string>
     <string name="settings_analyzing_interactions">Analyzing your interactions...</string>
     <string name="settings_view_analytics">View Analytics</string>
     <!-- Deep Flow Mode -->
-    <string name="deep_flow_mode_title">Deep Fedora Tube Mode</string>
+    <string name="deep_flow_mode_title">Deep FedoraTube Mode</string>
     <string name="deep_flow_mode_subtitle">Pause learning while you browse</string>
     <string name="deep_flow_learning_paused">LEARNING PAUSED</string>
     <string name="deep_flow_expires_in">Expires in %s</string>
@@ -689,17 +689,17 @@
     <string name="deep_flow_expire_duration_subtitle">Learning resumes automatically after %s</string>
     <string name="deep_flow_save_history_title">Save to watch history</string>
     <string name="deep_flow_save_history_subtitle">Keep watch history without teaching recommendations</string>
-    <string name="deep_flow_scrobble_title">Scrobble during Deep Fedora Tube</string>
-    <string name="taste_learning_paused">Deep Fedora Tube is on, learning is paused</string>
+    <string name="deep_flow_scrobble_title">Scrobble during Deep FedoraTube</string>
+    <string name="taste_learning_paused">Deep FedoraTube is on, learning is paused</string>
     <string name="deep_flow_scrobble_subtitle">Keep sending listens to Last.fm, Libre.fm and ListenBrainz</string>
     <string name="deep_flow_on_search_title">Show on search</string>
-    <string name="deep_flow_on_search_subtitle">A Deep Fedora Tube switch above recent searches</string>
+    <string name="deep_flow_on_search_subtitle">A Deep FedoraTube switch above recent searches</string>
     <string name="deep_flow_dialog_title">Pause Duration</string>
     <string name="deep_flow_dialog_body">How long should learning stay paused?</string>
-    <string name="deep_flow_enabled_message">Deep Fedora Tube enabled</string>
-    <string name="deep_flow_disabled_message">Deep Fedora Tube disabled</string>
-    <string name="deep_flow_expired_message">Deep Fedora Tube timer ended</string>
-    <string name="deep_flow_active_until_disabled">Deep Fedora Tube stays active until you turn it off</string>
+    <string name="deep_flow_enabled_message">Deep FedoraTube enabled</string>
+    <string name="deep_flow_disabled_message">Deep FedoraTube disabled</string>
+    <string name="deep_flow_expired_message">Deep FedoraTube timer ended</string>
+    <string name="deep_flow_active_until_disabled">Deep FedoraTube stays active until you turn it off</string>
     <string name="deep_flow_duration_never">Never</string>
     <string name="deep_flow_duration_1h">1 hour</string>
     <string name="deep_flow_duration_2h">2 hours</string>
@@ -718,7 +718,7 @@
     <string name="settings_header_about">About</string>
     <string name="settings_header_notifications">Notifications</string>
     <string name="settings_item_notifications">Notification Preferences</string>
-    <string name="settings_item_notifications_subtitle">Control which notifications Fedora Tube can send</string>
+    <string name="settings_item_notifications_subtitle">Control which notifications FedoraTube can send</string>
     <string name="notif_settings_title">Notification Preferences</string>
     <string name="notif_type_new_videos">New Videos</string>
     <string name="notif_type_new_videos_subtitle">Notify when subscribed channels upload new videos</string>
@@ -729,22 +729,22 @@
     <string name="notif_type_reminders">Screen Time Reminders</string>
     <string name="notif_type_reminders_subtitle">Bedtime and break reminders from Time Management</string>
     <string name="notif_type_updates">App Updates</string>
-    <string name="notif_type_updates_subtitle">Get notified when a new version of Fedora Tube is available</string>
+    <string name="notif_type_updates_subtitle">Get notified when a new version of FedoraTube is available</string>
     <string name="notif_type_general">General Notifications</string>
     <string name="notif_type_general_subtitle">Miscellaneous app alerts and announcements</string>
     <string name="notif_system_settings">System Notification Settings</string>
     <string name="notif_system_settings_subtitle">Open Android settings to manage per-channel permissions</string>
     <string name="notif_check_interval_section_header">Feed Check Schedule</string>
     <string name="notif_master_toggle">Enable notifications</string>
-    <string name="notif_master_toggle_subtitle">Let Fedora Tube check for new videos in the background</string>
+    <string name="notif_master_toggle_subtitle">Let FedoraTube check for new videos in the background</string>
     <string name="notif_background_restricted_title">Background checks are restricted</string>
-    <string name="notif_background_restricted_subtitle">Android blocks checks while Fedora Tube is closed. Tap to allow background activity.</string>
+    <string name="notif_background_restricted_subtitle">Android blocks checks while FedoraTube is closed. Tap to allow background activity.</string>
     <string name="notif_check_interval">New Video Check Interval</string>
     <string name="notif_check_interval_subtitle_template">Check every %s</string>
     <string name="notif_check_interval_disabled">Background notification checks are disabled</string>
     <string name="notif_check_interval_off_new_videos">Off while New Videos is off</string>
     <string name="notif_check_interval_dialog_title">Check Interval</string>
-    <string name="notif_check_interval_dialog_body">How often Fedora Tube checks your subscriptions for new videos.</string>
+    <string name="notif_check_interval_dialog_body">How often FedoraTube checks your subscriptions for new videos.</string>
     <string name="notif_interval_15m">15 minutes</string>
     <string name="notif_interval_30m">30 minutes</string>
     <string name="notif_interval_1h">1 hour</string>
@@ -781,10 +781,10 @@
     <string name="settings_item_export_data_subtitle">Backup your data</string>
     <string name="settings_item_import_data">Import Data</string>
     <string name="settings_item_import_data_subtitle">Restore from backup or import from other apps</string>
-    <string name="settings_item_about_flow">About Fedora Tube</string>
+    <string name="settings_item_about_flow">About FedoraTube</string>
     <string name="settings_item_about_flow_subtitle">Version, License, Contributors</string>
     <string name="settings_item_support">Support &amp; Donations</string>
-    <string name="settings_item_support_subtitle">Help support the development of Fedora Tube</string>
+    <string name="settings_item_support_subtitle">Help support the development of FedoraTube</string>
     <string name="settings_region_dialog_title">Select Region</string>
     <string name="settings_language_dialog_title">Select App Language</string>
     <string name="settings_language_system_default">System default</string>
@@ -792,7 +792,7 @@
     <string name="settings_export_failed">Export failed: %1$s</string>
     <!-- Appearance Screen -->
     <string name="appearance_title">Appearance</string>
-    <string name="appearance_subtitle">Personalize your Fedora Tube experience</string>
+    <string name="appearance_subtitle">Personalize your FedoraTube experience</string>
     <string name="appearance_current_theme">CURRENT THEME</string>
     <string name="appearance_category_all">All</string>
     <string name="appearance_category_light">Light</string>
@@ -864,11 +864,11 @@
     <string name="appearance_system_dark_theme">Dark mode theme</string>
     <!-- App Icon Picker -->
     <string name="app_icon_picker_subtitle">Choose a launcher icon style. The change takes effect immediately and the launcher will briefly refresh.</string>
-    <string name="app_icon_picker_warning">Changing the icon may remove Fedora Tube from your home screen for a moment. Add it back from the app drawer if needed.</string>
+    <string name="app_icon_picker_warning">Changing the icon may remove FedoraTube from your home screen for a moment. Add it back from the app drawer if needed.</string>
     <string name="app_icon_apply_toast">Icon updated - your launcher will refresh</string>
-    <string name="icon_name_fedora_red">Fedora Tube Default</string>
-    <string name="icon_name_fedora_light">Fedora Tube Light</string>
-    <string name="icon_name_fedora_play">Fedora Tube Play</string>
+    <string name="icon_name_fedora_red">FedoraTube Default</string>
+    <string name="icon_name_fedora_light">FedoraTube Light</string>
+    <string name="icon_name_fedora_play">FedoraTube Play</string>
     <string name="icon_name_amoled">AMOLED Dark</string>
     <string name="icon_name_monochrome">Monochrome</string>
     <string name="icon_name_ghost">Ghost</string>
@@ -879,7 +879,7 @@
     <string name="icon_name_expressive_segmented">Segmented F</string>
     <string name="icon_name_expressive_play">Sunny Play</string>
     <string name="icon_name_expressive_sky">Sky Clover</string>
-    <string name="icon_name_expressive_mint">Mint Fedora Tubeer</string>
+    <string name="icon_name_expressive_mint">Mint FedoraTubeer</string>
     <string name="icon_name_expressive_cookie">Night Cookie</string>
     <string name="icon_name_expressive_oval">Oval</string>
     <string name="icon_name_expressive_pill">Pill</string>
@@ -998,8 +998,8 @@
     <string name="theme_desc_sky_blue">A light, airy palette with open sky blues.</string>
     <string name="theme_name_cream_paper">Cream Paper</string>
     <string name="theme_desc_cream_paper">Warm paper tones for cosy daytime reading.</string>
-    <string name="theme_name_classic_dark">Fedora Tube Default</string>
-    <string name="theme_desc_classic_dark">The original Fedora Tube palette with the YouTube red accent.</string>
+    <string name="theme_name_classic_dark">FedoraTube Default</string>
+    <string name="theme_desc_classic_dark">The original FedoraTube palette with the YouTube red accent.</string>
     <string name="theme_name_true_black">True Black</string>
     <string name="theme_desc_true_black">Pure OLED</string>
     <string name="theme_name_monochrome">Monochrome</string>
@@ -1128,9 +1128,9 @@
     <string name="content_settings_home_subscriptions_subtitle">Mix videos from channels you follow into Home</string>
     <string name="settings_section_watch_history">Watch history</string>
     <string name="pause_watch_history_title">Pause watch history</string>
-    <string name="pause_watch_history_subtitle">Stop saving what you watch. Deep Fedora Tube also pauses learning</string>
+    <string name="pause_watch_history_subtitle">Stop saving what you watch. Deep FedoraTube also pauses learning</string>
     <string name="content_settings_show_app_logo_title">Show app logo icon</string>
-    <string name="content_settings_show_app_logo_subtitle">Show the Fedora Tube logo in the Home top bar</string>
+    <string name="content_settings_show_app_logo_subtitle">Show the FedoraTube logo in the Home top bar</string>
     <string name="content_settings_header_shorts">Shorts</string>
     <string name="content_settings_shorts_content_title">Show Shorts</string>
     <string name="content_settings_shorts_content_subtitle">Hide Shorts everywhere. Saved Shorts and history are kept.</string>
@@ -1184,7 +1184,7 @@
     <string name="content_settings_subs_collaborations_title">Collaborations</string>
     <string name="content_settings_subs_collaborations_subtitle">Videos made with channels you follow</string>
     <string name="content_settings_nav_order_title">Tab order and default</string>
-    <string name="content_settings_nav_order_subtitle">Drag to reorder. Choose the tab Fedora Tube opens on.</string>
+    <string name="content_settings_nav_order_subtitle">Drag to reorder. Choose the tab FedoraTube opens on.</string>
     <string name="settings_subs_shorts_shelf_title">Subscriptions shorts shelf</string>
     <string name="settings_subs_shorts_shelf_subtitle">Show a Shorts shelf in the subscription feed</string>
     <string name="settings_home_shorts_shelf_title">Home screen shorts shelf</string>
@@ -1384,14 +1384,14 @@
     <string name="player_settings_audio_original_desc">Uses the video\'s native audio track</string>
     <string name="player_settings_subtitle_language">Preferred Subtitle Language</string>
     <string name="player_settings_subtitle_language_dialog_title">Subtitle Language</string>
-    <string name="player_settings_subtitle_language_dialog_body">Captions open in this language when available. Otherwise Fedora Tube translates an existing track.</string>
+    <string name="player_settings_subtitle_language_dialog_body">Captions open in this language when available. Otherwise FedoraTube translates an existing track.</string>
     <string name="player_settings_subtitle_language_none">No preference</string>
     <string name="player_settings_subtitle_language_none_desc">Use the first caption track the video offers</string>
     <string name="player_settings_auto_enable_subtitles">Turn Captions On Automatically</string>
     <string name="player_settings_auto_enable_subtitles_subtitle">Turn on captions in your preferred language</string>
     <string name="player_settings_video_codec">Default Video Codec</string>
     <string name="player_settings_video_codec_dialog_title">Default Video Codec</string>
-    <string name="player_settings_video_codec_dialog_body">The codec Fedora Tube picks first. You can still choose any codec from the quality menu. H.264 plays smoothest on most devices. AV1 and VP9 use less data but need more power.</string>
+    <string name="player_settings_video_codec_dialog_body">The codec FedoraTube picks first. You can still choose any codec from the quality menu. H.264 plays smoothest on most devices. AV1 and VP9 use less data but need more power.</string>
     <string name="player_settings_video_codec_auto_desc">Let the app choose (prefers H.264)</string>
     <string name="player_settings_video_codec_fallback">Fallback Codec</string>
     <string name="player_settings_video_codec_fallback_auto">Automatic</string>
@@ -1489,7 +1489,7 @@
     <string name="cache_videos_size_title">Video cache size</string>
     <string name="cache_songs_size_title">Song cache size</string>
     <string name="cache_artwork_size_title">Artwork cache size</string>
-    <string name="cache_size_applies_on_restart">Applies the next time Fedora Tube starts.</string>
+    <string name="cache_size_applies_on_restart">Applies the next time FedoraTube starts.</string>
     <string name="btn_back">Back</string>
     <string name="back">Back</string>
     <string name="btn_close">Close</string>
@@ -1557,7 +1557,7 @@
     <!-- Time Management Screen -->
     <string name="time_management_title">Time management</string>
     <string name="time_management_subtitle">Track and control your screen time</string>
-    <string name="stats_disclaimer">Based on your watch history in Fedora Tube. Actual use may differ.</string>
+    <string name="stats_disclaimer">Based on your watch history in FedoraTube. Actual use may differ.</string>
     <string name="tools_to_manage_time">Tools to manage your time</string>
     <string name="remind_bedtime">Remind me when it\'s bedtime</string>
     <string name="start_time">Start time</string>
@@ -1655,12 +1655,12 @@
     </plurals>
     <!-- Import Data Screen -->
     <string name="import_data_title">Import Data</string>
-    <string name="import_flow_backup_success">Fedora Tube backup imported successfully</string>
-    <string name="import_flow_backup_failed_template">Failed to import Fedora Tube backup: %1$s</string>
+    <string name="import_flow_backup_success">FedoraTube backup imported successfully</string>
+    <string name="import_flow_backup_failed_template">Failed to import FedoraTube backup: %1$s</string>
     <string name="import_newpipe_failed_template">Failed to import NewPipe backup: %1$s</string>
     <string name="import_youtube_failed_template">Failed to import YouTube backup: %1$s</string>
-    <string name="import_flow_backup_item_title">Import Fedora Tube Backup</string>
-    <string name="import_flow_backup_desc">Restore your history, settings, and subscriptions from a Fedora Tube backup file.</string>
+    <string name="import_flow_backup_item_title">Import FedoraTube Backup</string>
+    <string name="import_flow_backup_desc">Restore your history, settings, and subscriptions from a FedoraTube backup file.</string>
     <string name="import_from_newpipe">Import from NewPipe</string>
     <string name="import_from_newpipe_desc">Import subscriptions from a NewPipe export file (JSON).</string>
     <string name="import_from_libretube">Import from LibreTube</string>
@@ -1784,9 +1784,9 @@
     <string name="location_preset_header">Preset Locations</string>
     <string name="location_custom_header">Custom Location</string>
     <string name="location_downloads_label">Downloads / FedoraTube</string>
-    <string name="location_movies_label">Movies / Fedora Tube</string>
+    <string name="location_movies_label">Movies / FedoraTube</string>
     <string name="location_internal_app_label">Internal App Storage</string>
-    <string name="location_internal_app_desc">Private to Fedora Tube. Removed if you uninstall.</string>
+    <string name="location_internal_app_desc">Private to FedoraTube. Removed if you uninstall.</string>
     <string name="location_custom_saf_label">Browse…</string>
     <string name="location_custom_saf_desc">Pick any folder using the system file picker</string>
     <string name="download_location_not_writable">Can\'t save there. Using %1$s</string>
@@ -1804,16 +1804,16 @@
     </plurals>
     <!-- Donations Screen -->
     <string name="support_donations_title">Support &amp; Donations</string>
-    <string name="support_flow_dev_title">Support Fedora Tube Development</string>
-    <string name="support_flow_dev_desc">If Fedora Tube is useful to you, you can support it on Open Collective, Patreon or with crypto below. Thank you!</string>
-    <string name="support_flow_open_collective">Support Fedora Tube on Open Collective</string>
-    <string name="support_flow_patreon">Support Fedora Tube on Patreon</string>
+    <string name="support_flow_dev_title">Support FedoraTube Development</string>
+    <string name="support_flow_dev_desc">If FedoraTube is useful to you, you can support it on Open Collective, Patreon or with crypto below. Thank you!</string>
+    <string name="support_flow_open_collective">Support FedoraTube on Open Collective</string>
+    <string name="support_flow_patreon">Support FedoraTube on Patreon</string>
     <string name="thank_you_support_message">Thank you for your support! ❤️</string>
     <string name="address_copied_toast">Address copied to clipboard</string>
     <string name="donation_address_clip_label">Donation Address</string>
     <!-- One-time support prompt -->
-    <string name="donation_prompt_title">Enjoying Fedora Tube?</string>
-    <string name="donation_prompt_message">Fedora Tube is free, open source and ad-free. If it earned a spot on your phone, a little support keeps it going.</string>
+    <string name="donation_prompt_title">Enjoying FedoraTube?</string>
+    <string name="donation_prompt_message">FedoraTube is free, open source and ad-free. If it earned a spot on your phone, a little support keeps it going.</string>
     <string name="donation_method_open_collective" translatable="false">Open Collective</string>
     <string name="donation_method_patreon" translatable="false">Patreon</string>
     <string name="donation_prompt_methods">Open Collective · Patreon · Bitcoin · Ethereum · Solana · USDT · Monero</string>
@@ -1835,7 +1835,7 @@
     <string name="about_notices_summary">Word lists and code from other projects</string>
     <string name="about_license_name">GNU GPL v3</string>
     <string name="about_changelog">Changelog</string>
-    <string name="whats_new_in_flow">What\'s new in Fedora Tube</string>
+    <string name="whats_new_in_flow">What\'s new in FedoraTube</string>
     <string name="about_device_info">Device Info</string>
     <string name="gnu_license_full_title">GNU General Public License</string>
     <string name="loading_ellipsis">Loading...</string>
@@ -1892,7 +1892,7 @@
     <string name="remove_selected_playlist_text">They will be removed from this playlist.</string>
     <string name="remove_selected_watch_later_text">They will be removed from Watch later.</string>
     <!-- Onboarding -->
-    <string name="welcome_to_flow">Welcome to Fedora Tube</string>
+    <string name="welcome_to_flow">Welcome to FedoraTube</string>
     <string name="onboarding_subtitle">Tell us what you\'re interested in</string>
     <string name="onboarding_instructions">Select at least 3 topics to personalize your experience</string>
     <string name="onboarding_interests_title">What do you enjoy?</string>
@@ -1918,7 +1918,7 @@
     <string name="onboarding_topic_not_selected">Not selected</string>
     <string name="onboarding_step_mode">Mode</string>
     <string name="onboarding_mode_title">Choose your experience</string>
-    <string name="onboarding_mode_subtitle">Select how you want to use Fedora Tube. You can change this anytime in Settings.</string>
+    <string name="onboarding_mode_subtitle">Select how you want to use FedoraTube. You can change this anytime in Settings.</string>
     <string name="onboarding_mode_normal_title">Normal Mode</string>
     <string name="onboarding_mode_normal_subtitle">Home feed with recommendations, trending videos, and subscriptions.</string>
     <string name="onboarding_mode_focus_title">Focus Mode</string>
@@ -1926,7 +1926,7 @@
     <string name="onboarding_step_interests">Interests</string>
     <string name="onboarding_step_channels">Channels</string>
     <string name="onboarding_step_import">Import</string>
-    <string name="onboarding_import_source_flow">Fedora Tube backup</string>
+    <string name="onboarding_import_source_flow">FedoraTube backup</string>
     <string name="onboarding_import_source_youtube">YouTube</string>
     <string name="onboarding_import_footnote">Everything here is optional. Settings has the same imports.</string>
     <string name="onboarding_import_done">Imported</string>
@@ -1990,7 +1990,7 @@
     <string name="category_science_nature">Science &amp; Nature</string>
     <string name="category_news_current_events">News &amp; Current Events</string>
     <!-- Flow Personality Screen -->
-    <string name="flow_control_center">Fedora Tube Control Center</string>
+    <string name="flow_control_center">FedoraTube Control Center</string>
     <string name="action_refresh">Refresh</string>
     <string name="loading_neural_matrix">Loading Neural Matrix...</string>
     <string name="neural_interest_map_subtitle">Your neural interest map</string>
@@ -2005,7 +2005,7 @@
     <string name="persona_initiate_title">The Initiate</string>
     <string name="persona_initiate_description">Just getting started. Your profile is still forming.</string>
     <string name="persona_audiophile_title">The Audiophile</string>
-    <string name="persona_audiophile_description">You use Fedora Tube mostly for Music. The vibe is everything.</string>
+    <string name="persona_audiophile_description">You use FedoraTube mostly for Music. The vibe is everything.</string>
     <string name="persona_livewire_title">The Livewire</string>
     <string name="persona_livewire_description">You love the raw energy of Livestreams and premieres.</string>
     <string name="persona_night_owl_title">The Night Owl</string>
@@ -2034,7 +2034,7 @@
     <string name="stats_topics">Topics</string>
     <string name="empty_bubble_cloud_message">Watch some videos to populate your interest nebula!</string>
     <string name="export_profile_data">Export Profile Data</string>
-    <string name="flow_neural_profile_export_subject">Fedora Tube Neural Profile Export</string>
+    <string name="flow_neural_profile_export_subject">FedoraTube Neural Profile Export</string>
     <!-- Music Playlists Screen -->
     <string name="screen_title_music_library">Music Library</string>
     <string name="header_your_collection">Your Collection</string>
@@ -2299,7 +2299,7 @@
     <string name="eq_bass_boost">Bass boost</string>
     <string name="eq_edit">Edit equalizer</string>
     <string name="eq_system">System equalizer</string>
-    <string name="eq_system_desc">Adds to Fedora Tube\'s own equalizer</string>
+    <string name="eq_system_desc">Adds to FedoraTube\'s own equalizer</string>
     <string name="eq_graph_description">Response curve, %1$d bands. Drag a point to change it.</string>
     <string name="eq_graph_hint">Tap the curve to add a band</string>
     <string name="eq_name">Name</string>
@@ -2475,7 +2475,7 @@
     <string name="subtitle_timing_step_template">%1$s s</string>
     <string name="download_subtitle_file">Subtitle file</string>
     <string name="download_subtitle_file_subtitle">Save captions in your subtitle language beside videos downloaded without the menu</string>
-    <string name="subtitle_add_file_failed">Fedora Tube can’t read that file as subtitles</string>
+    <string name="subtitle_add_file_failed">FedoraTube can’t read that file as subtitles</string>
     <string name="off">Off</string>
     <string name="on">On</string>
     <string name="player_settings">Player Settings</string>
@@ -2523,7 +2523,7 @@
     <string name="check_for_updates">Check for Updates</string>
     <string name="check_for_updates_subtitle">Tap to check for the latest version</string>
     <string name="checking_for_updates">Checking for updates…</string>
-    <string name="flow_is_up_to_date">Fedora Tube is up to date!</string>
+    <string name="flow_is_up_to_date">FedoraTube is up to date!</string>
     <string name="update_check_failed">Couldn\'t check for updates. Check your connection.</string>
     <!-- Export / Import Fedora Engine data (Settings + ImportDataScreen) -->
     <string name="export_engine_data">Export Engine Profile</string>
@@ -2613,12 +2613,12 @@
     <string name="sync_error_peer_also_receive">The other device is also set to Receive. Set it to Send, then try again.</string>
     <string name="sync_error_qr_expired">This code has expired. Ask the other device to create a fresh one. If codes keep expiring right away, check that the date and time are correct on both devices.</string>
     <string name="sync_error_qr_wrong_version">Incompatible app version on the other device.</string>
-    <string name="sync_error_qr_not_flow">That doesn\'t look like valid Fedora Tube connection data.</string>
+    <string name="sync_error_qr_not_flow">That doesn\'t look like valid FedoraTube connection data.</string>
     <string name="sync_error_qr_bad_address">The connection data is missing a valid network address.</string>
-    <string name="sync_error_qr_not_local">This code points outside your local network, so Fedora Tube won\'t connect to it. Only use codes shown by your own devices.</string>
+    <string name="sync_error_qr_not_local">This code points outside your local network, so FedoraTube won\'t connect to it. Only use codes shown by your own devices.</string>
     <string name="sync_error_no_peer">No device connected before the code expired. Check that both devices are on the same Wi-Fi, then try again.</string>
     <string name="sync_error_unreachable">Couldn\'t reach the other device. Check that both devices are on the same Wi-Fi and that a VPN or firewall isn\'t blocking the connection.</string>
-    <string name="sync_error_timeout">The other device stopped responding. Keep Fedora Tube open on both devices and try again.</string>
+    <string name="sync_error_timeout">The other device stopped responding. Keep FedoraTube open on both devices and try again.</string>
     <string name="sync_error_peer_closed">The other device closed the connection. Check it for a message, then try again.</string>
     <string name="sync_error_corrupted">The data was damaged on the way. Try again.</string>
     <string name="sync_error_apply_failed">The data arrived but couldn\'t be saved. Nothing on this device was changed.</string>
@@ -2626,7 +2626,7 @@
     <string name="sync_error_code_not_confirmed">The verification codes weren\'t confirmed, so nothing was transferred.</string>
     <string name="sync_error_code_rejected">The other device didn\'t confirm the verification code, so nothing was transferred.</string>
     <string name="sync_error_declined">The merge was declined. Nothing was transferred.</string>
-    <string name="sync_error_protocol">The two devices couldn\'t agree on the sync steps. Update Fedora Tube on both devices and try again.</string>
+    <string name="sync_error_protocol">The two devices couldn\'t agree on the sync steps. Update FedoraTube on both devices and try again.</string>
     <string name="sync_error_peer">The other device reported a problem: %1$s</string>
     <string name="sync_step_title_send">Send</string>
     <string name="sync_step_title_receive">Receive</string>
@@ -2650,8 +2650,8 @@
     <string name="sync_collection_likes_body">Liked and disliked videos and music.</string>
     <string name="sync_collection_subscriptions_body">The channels you follow.</string>
     <string name="sync_collection_settings_body">Playback, appearance and download preferences.</string>
-    <string name="sync_collection_recommendation_profile_body">What Fedora Tube has learned about what you watch.</string>
-    <string name="sync_collection_music_profile_body">What Fedora Tube has learned about what you listen to.</string>
+    <string name="sync_collection_recommendation_profile_body">What FedoraTube has learned about what you watch.</string>
+    <string name="sync_collection_music_profile_body">What FedoraTube has learned about what you listen to.</string>
     <string name="sync_waiting_for_peer">Waiting for the other device to connect…</string>
     <string name="sync_cancel_session">Cancel sync</string>
     <string name="sync_expires_label">QR code expires</string>
@@ -2720,7 +2720,7 @@
     <string name="error_not_available">Video not available</string>
     <string name="error_not_available_hint">This video may have been deleted, made private, or removed by YouTube.</string>
     <string name="error_not_supported">Content type not supported</string>
-    <string name="error_not_supported_hint">This format or content type cannot be played in Fedora Tube.</string>
+    <string name="error_not_supported_hint">This format or content type cannot be played in FedoraTube.</string>
     <string name="error_no_internet">No internet connection</string>
     <string name="error_no_internet_hint">Check your Wi-Fi or mobile data and try again.</string>
     <string name="error_timeout">Connection timed out</string>
@@ -2738,7 +2738,7 @@
     <string name="error_playback_failed">Playback failed</string>
     <string name="error_playback_failed_hint">An unexpected player error occurred. Please try again.</string>
     <string name="error_extraction_failed">Failed to parse video data</string>
-    <string name="error_extraction_failed_hint">YouTube may have updated its format. Fedora Tube will be updated soon — please try again later.</string>
+    <string name="error_extraction_failed_hint">YouTube may have updated its format. FedoraTube will be updated soon — please try again later.</string>
     <string name="error_generic">Failed to load video</string>
     <string name="error_generic_hint">An unknown error occurred. Please try again.</string>
     <string name="music_playback_warning_forbidden">Music stream access was denied. YouTube may be limiting this IP; try reloading or switching network/VPN.</string>
@@ -2792,7 +2792,7 @@
     <string name="settings_item_diagnostics">Diagnostics</string>
     <string name="settings_item_diagnostics_subtitle">View error logs and crash reports</string>
     <string name="diagnostics_title">Diagnostics</string>
-    <string name="diagnostics_report_subject">Fedora Tube Diagnostics Report</string>
+    <string name="diagnostics_report_subject">FedoraTube Diagnostics Report</string>
     <string name="diagnostics_tab_session">Session Logs</string>
     <string name="diagnostics_tab_crashes">Crash Reports</string>
     <string name="diagnostics_copy">Copy report</string>
@@ -2802,7 +2802,7 @@
     <string name="diagnostics_clear_confirm_body">All saved crash reports will be deleted. This cannot be undone.</string>
     <string name="diagnostics_reset_session">Reset YouTube session</string>
     <string name="diagnostics_reset_session_confirm_title">Reset YouTube session?</string>
-    <string name="diagnostics_reset_session_confirm_body">Fedora Tube will build a new playback identity. Try this if videos stop after a minute or won\'t play.\n\nPlayback may be rough for a minute or two. Your saved data is not affected.</string>
+    <string name="diagnostics_reset_session_confirm_body">FedoraTube will build a new playback identity. Try this if videos stop after a minute or won\'t play.\n\nPlayback may be rough for a minute or two. Your saved data is not affected.</string>
     <string name="diagnostics_reset_session_done">YouTube session reset. Reopen the video to try again.</string>
     <string name="reset">Reset</string>
     <string name="diagnostics_no_crashes">No crash reports</string>
@@ -2959,7 +2959,7 @@
     <string name="speed_normal">Normal</string>
     <!-- Export / delete watch history (#507) -->
     <string name="export_watch_history_title">Watch history</string>
-    <string name="export_watch_history_desc">Export as YouTube-history JSON (imports into LibreTube and Fedora Tube)</string>
+    <string name="export_watch_history_desc">Export as YouTube-history JSON (imports into LibreTube and FedoraTube)</string>
     <string name="history_export_failed">Failed to export watch history</string>
     <string name="history_delete_shorts">Delete Shorts from history</string>
     <string name="history_delete_shorts_title">Delete Shorts?</string>
@@ -2973,7 +2973,7 @@
     <string name="no_match_found">No match found</string>
     <string name="recognition_error">Recognition failed</string>
     <string name="try_again">Try again</string>
-    <string name="search_in_flow">Search in Fedora Tube</string>
+    <string name="search_in_flow">Search in FedoraTube</string>
     <string name="recognition_search_history">Search recognized songs</string>
     <string name="recognition_history_empty">Recognized songs will appear here</string>
     <string name="recognition_clear_history">Clear history?</string>
@@ -3004,15 +3004,15 @@
     <string name="discord_presence_account">Discord account</string>
     <string name="discord_presence_privacy_section">Privacy and account risk</string>
     <string name="discord_presence_privacy_title">Privacy</string>
-    <string name="discord_presence_privacy_body">Fedora Tube shares the title, creator, artwork and progress of what you play. Off by default. Your Discord token is encrypted and never logged.</string>
+    <string name="discord_presence_privacy_body">FedoraTube shares the title, creator, artwork and progress of what you play. Off by default. Your Discord token is encrypted and never logged.</string>
     <string name="discord_presence_gateway_warning">This signs in with your Discord token instead of an official login. It breaks Discord\'s Terms of Service and can get your account limited or banned.</string>
     <string name="discord_presence_risk_dialog_title">Accept Discord account risk?</string>
-    <string name="discord_presence_risk_dialog_body">Connecting gives Fedora Tube your Discord token. It stays encrypted on this device and is only sent to Discord. This method breaks Discord\'s Terms of Service, so your account could be limited or banned.</string>
+    <string name="discord_presence_risk_dialog_body">Connecting gives FedoraTube your Discord token. It stays encrypted on this device and is only sent to Discord. This method breaks Discord\'s Terms of Service, so your account could be limited or banned.</string>
     <string name="discord_presence_risk_accept">I understand, connect</string>
     <string name="discord_error_not_initialized">Discord Rich Presence has not initialized.</string>
     <string name="discord_error_enable_before_connect">Enable Discord Rich Presence before connecting an account.</string>
     <string name="discord_error_unavailable">Discord Rich Presence is unavailable in this build.</string>
-    <string name="discord_error_open_flow">Open Fedora Tube before connecting Discord.</string>
+    <string name="discord_error_open_flow">Open FedoraTube before connecting Discord.</string>
     <string name="discord_error_connection_in_progress">A Discord connection is already in progress.</string>
     <string name="discord_error_login_timeout">Discord sign-in timed out.</string>
     <string name="discord_error_login_cancelled">Discord connection was cancelled.</string>
@@ -3026,7 +3026,7 @@
     <string name="discord_error_heartbeat_unacknowledged">Discord Gateway heartbeat was not acknowledged.</string>
     <string name="discord_error_heartbeat_failed">Discord Gateway heartbeat failed.</string>
     <string name="discord_account_fallback">Discord user</string>
-    <string name="discord_presence_playing_fallback">Playing in Fedora Tube</string>
+    <string name="discord_presence_playing_fallback">Playing in FedoraTube</string>
     <string name="discord_presence_by_creator">by %1$s</string>
     <!-- Android TV -->
     <string name="settings_item_interface_mode">Interface mode</string>
@@ -3093,7 +3093,7 @@
     <string name="tv_settings_sync">Sync devices</string>
     <string name="tv_sync_qr_session_active">This code stays active while this screen is open.</string>
     <string name="tv_remote_guide_title">Remote &amp; keypad guide</string>
-    <string name="tv_remote_guide_subtitle">A quick reference for navigating Fedora Tube from the couch</string>
+    <string name="tv_remote_guide_subtitle">A quick reference for navigating FedoraTube from the couch</string>
     <string name="tv_remote_guide_back">Back to settings</string>
     <string name="tv_guide_navigation_title">Navigation</string>
     <string name="tv_guide_search_title">Search &amp; browse</string>
@@ -3139,9 +3139,9 @@
     <string name="tv_about_version">Version %1$s</string>
     <!-- Home-screen widgets -->
     <string name="widget_now_playing_label">Now Playing</string>
-    <string name="widget_now_playing_description">Control the music that\'s playing in Fedora Tube</string>
+    <string name="widget_now_playing_description">Control the music that\'s playing in FedoraTube</string>
     <string name="widget_quick_actions_label">Quick actions</string>
-    <string name="widget_quick_actions_description">Search Fedora Tube and jump to downloads, history, or recognition</string>
+    <string name="widget_quick_actions_description">Search FedoraTube and jump to downloads, history, or recognition</string>
     <string name="widget_recognize_label">Recognize music</string>
     <string name="widget_recognize_description">Identify the song playing around you with one tap</string>
     <string name="widget_turntable_label">Turntable</string>
@@ -3203,7 +3203,7 @@
     <string name="widget_week_title">Last 7 days</string>
     <string name="widget_week_top_artist">Top artist this month</string>
     <string name="settings_widgets_title">Widgets</string>
-    <string name="settings_widgets_summary">Put Fedora Tube on your home screen</string>
+    <string name="settings_widgets_summary">Put FedoraTube on your home screen</string>
     <string name="settings_widgets_add_header">Add to home screen</string>
     <string name="settings_widgets_footer">Tap one to place it, or long-press your home screen.</string>
     <string name="settings_widgets_unsupported">Your launcher can\'t add widgets for apps. Long-press your home screen to add one.</string>
@@ -3220,7 +3220,7 @@
     <string name="ui_navigate">Navigate</string>
     <string name="ui_options">Options</string>
     <string name="ui_selected">Selected</string>
-    <string name="ui_flow_logo">Fedora Tube logo</string>
+    <string name="ui_flow_logo">FedoraTube logo</string>
     <string name="ui_list_view">List view</string>
     <string name="ui_grid_view">Grid view</string>
     <string name="ui_back">Back</string>
@@ -3243,7 +3243,7 @@
     <string name="ui_no_crash_logs">No crash logs</string>
     <string name="ui_copy_log">Copy Log</string>
     <string name="ui_clear_and_continue">Clear &amp; Continue</string>
-    <string name="crash_title">Fedora Tube closed unexpectedly</string>
+    <string name="crash_title">FedoraTube closed unexpectedly</string>
     <string name="crash_subtitle">This report stays on your device until you share it.</string>
     <string name="crash_summary_error">Error</string>
     <string name="crash_summary_message">Message</string>
@@ -3256,7 +3256,7 @@
     <string name="crash_report">Report</string>
     <string name="crash_continue">Continue</string>
     <string name="crash_report_copied">Full report copied. Paste it into the Logs field.</string>
-    <string name="ui_crashed_last_session">Fedora Tube crashed last session</string>
+    <string name="ui_crashed_last_session">FedoraTube crashed last session</string>
     <string name="ui_copy_log_description">Copy the log below and paste it into a GitHub issue so it can be fixed.</string>
     <string name="ui_search_settings">Search settings…</string>
     <string name="ui_custom_interest_title">Add Custom Interest</string>
@@ -3264,7 +3264,7 @@
     <string name="ui_custom_interest_hint">Custom interest (e.g. Jazz, Astrophysics)</string>
     <string name="ui_add_interest">Add interest</string>
     <string name="ui_version">Version %1$s</string>
-    <string name="update_download_prompt">A new version of Fedora Tube is available (%1$s). Download the latest APK?</string>
+    <string name="update_download_prompt">A new version of FedoraTube is available (%1$s). Download the latest APK?</string>
     <string name="ui_instrumental">I N S T R U M E N T A L</string>
     <string name="ui_playlist_empty">Playlist is empty</string>
     <plurals name="ui_downloading_videos">
@@ -3329,7 +3329,7 @@
     <string name="notification_downloading">Downloading: %1$s</string>
     <string name="notification_download_complete">Download complete</string>
     <string name="notification_download_failed">Download failed</string>
-    <string name="notification_channel_downloads_name">Fedora Tube Downloads</string>
+    <string name="notification_channel_downloads_name">FedoraTube Downloads</string>
     <!-- Download notification subtitle while paused; %1$s is the reason or a hint -->
     <string name="notification_download_paused">Paused — %1$s</string>
     <string name="notification_download_paused_hint">tap to resume</string>
@@ -3351,10 +3351,10 @@
     </plurals>
     <string name="notification_update_available">Update Available: %1$s</string>
     <string name="notification_tap_to_update">Tap to update to the latest version.</string>
-    <string name="update_downloading_notification">Downloading Fedora Tube %1$s</string>
-    <string name="update_ready_notification">Fedora Tube %1$s is ready</string>
+    <string name="update_downloading_notification">Downloading FedoraTube %1$s</string>
+    <string name="update_ready_notification">FedoraTube %1$s is ready</string>
     <string name="update_ready_notification_text">Verified. Tap to install.</string>
-    <string name="update_title">Fedora Tube %1$s is here</string>
+    <string name="update_title">FedoraTube %1$s is here</string>
     <string name="update_version_change">%1$s → %2$s</string>
     <string name="update_not_now">Not now</string>
     <string name="update_skip_version">Skip this version</string>
@@ -3366,11 +3366,11 @@
     <string name="update_action_allow">Allow installs</string>
     <string name="update_action_install">Install update</string>
     <string name="update_action_installing">Installing</string>
-    <string name="update_permission_notice">Allow Fedora Tube to install updates. Android asks for this once.</string>
+    <string name="update_permission_notice">Allow FedoraTube to install updates. Android asks for this once.</string>
     <string name="update_failed_network">The download stopped. Check your connection and try again.</string>
     <string name="update_failed_storage">There is not enough space for the update.</string>
     <string name="update_failed_checksum">The file did not match the release, so it was deleted. Try again.</string>
-    <string name="update_failed_package">The file was not a Fedora Tube update, so it was deleted.</string>
+    <string name="update_failed_package">The file was not a FedoraTube update, so it was deleted.</string>
     <string name="update_failed_install">Android could not install the update. Try again.</string>
     <string name="notification_watch_later_reminder">Watch Later Reminder</string>
     <string name="notification_video_live">Video is live</string>
@@ -3446,7 +3446,7 @@
         <item quantity="other">%1$d files hidden</item>
     </plurals>
     <string name="local_manage">Manage</string>
-    <string name="local_partial_access_title">Fedora Tube can see only the videos you picked</string>
+    <string name="local_partial_access_title">FedoraTube can see only the videos you picked</string>
     <string name="local_partial_access_body">Allow access to all videos to see the rest.</string>
     <string name="local_open_settings">Open settings</string>
     <string name="local_permission_denied_body">Allow access to videos and music in the app settings to see them here.</string>
@@ -3503,7 +3503,7 @@
     <string name="downloads_sort_largest">Largest</string>
     <string name="downloads_sort_title">Title</string>
     <string name="downloads_sort_channel">Channel</string>
-    <string name="downloads_storage_used">%1$s in Fedora Tube</string>
+    <string name="downloads_storage_used">%1$s in FedoraTube</string>
     <string name="downloads_storage_free">%1$s free</string>
     <string name="downloads_storage_videos">Videos %1$s</string>
     <string name="downloads_storage_music">Music %1$s</string>
@@ -3554,9 +3554,9 @@
     <string name="download_failed_audio_length">Failed to get audio content length</string>
     <string name="download_workers_failed">One or more workers failed</string>
     <string name="download_block_failed">Block %1$s failed: %2$s</string>
-    <string name="import_migrate_description">Migrate your subscriptions and history from other platforms to Fedora Tube seamlessly.</string>
+    <string name="import_migrate_description">Migrate your subscriptions and history from other platforms to FedoraTube seamlessly.</string>
     <string name="import_backup_restore">Backup &amp; Restore</string>
-    <string name="import_manage_backups">Manage your Fedora Tube backups</string>
+    <string name="import_manage_backups">Manage your FedoraTube backups</string>
     <string name="import_external_services">External Services</string>
     <string name="import_other_youtube_clients">Import from other YouTube clients</string>
     <string name="imported_successfully">%1$s imported successfully</string>
@@ -3638,7 +3638,7 @@
     <string name="settings_about_summary">Version, licence and links</string>
     <string name="settings_theme_summary">Palette and light or dark style</string>
     <string name="settings_font_title">Font</string>
-    <string name="settings_font_summary">The typeface used across Fedora Tube</string>
+    <string name="settings_font_summary">The typeface used across FedoraTube</string>
     <string name="settings_keywords_font">typeface, text, letters, ttf, otf</string>
     <string name="font_system_default">System default</string>
     <string name="font_condensed">Condensed</string>
@@ -3747,14 +3747,14 @@
     <string name="settings_section_watched">Watched videos</string>
     <string name="settings_section_sharing">Sharing</string>
     <string name="settings_section_links">Links</string>
-    <string name="content_settings_open_links_title">Open YouTube links in Fedora Tube</string>
+    <string name="content_settings_open_links_title">Open YouTube links in FedoraTube</string>
     <string name="content_settings_open_links_subtitle">Choose which links open here</string>
     <string name="content_settings_open_links_all">On for every YouTube address</string>
     <string name="content_settings_open_links_some">On for %1$d of %2$d addresses</string>
     <string name="content_settings_open_links_off">Off. Links open in another app</string>
     <string name="content_settings_open_links_system_asks">Android asks which app to use</string>
     <string name="content_settings_shared_links_title">Shared links</string>
-    <string name="content_settings_shared_links_subtitle">What a video shared to Fedora Tube does</string>
+    <string name="content_settings_shared_links_subtitle">What a video shared to FedoraTube does</string>
     <string name="content_settings_shared_links_dialog_body">Links you tap in other apps always play.</string>
     <string name="content_settings_shared_links_play">Play right away</string>
     <string name="content_settings_shared_links_ask_while_playing">Ask while something plays</string>
@@ -3791,7 +3791,7 @@
     <string name="settings_backup_tab_auto">Automatic</string>
     <string name="settings_backup_full">Full backup</string>
     <string name="settings_backup_individual">Individual exports</string>
-    <string name="settings_backup_restore_flow">Restore from Fedora Tube</string>
+    <string name="settings_backup_restore_flow">Restore from FedoraTube</string>
     <string name="settings_backup_source_youtube">YouTube and Google Takeout</string>
     <string name="settings_backup_source_newpipe">NewPipe</string>
     <string name="settings_backup_source_libretube">LibreTube</string>
@@ -3858,7 +3858,7 @@
     <string name="settings_changelog_all_releases">All releases on GitHub</string>
     <string name="settings_changelog_expand">Show changes</string>
     <string name="settings_changelog_collapse">Hide changes</string>
-    <string name="settings_creator_role">Creator and developer of Fedora Tube</string>
+    <string name="settings_creator_role">Creator and developer of FedoraTube</string>
     <string name="device_info_section_device">Device</string>
     <string name="device_info_section_system">System</string>
     <string name="device_info_section_display">Display</string>
@@ -3910,7 +3910,7 @@
     <string name="settings_custom_theme_start_from">Start from</string>
     <string name="settings_custom_theme_count">%1$d of %2$d themes</string>
     <string name="settings_custom_theme_empty">No custom themes yet</string>
-    <string name="settings_custom_theme_empty_body">Start from any palette, or import one made in Fedora Tube Desktop.</string>
+    <string name="settings_custom_theme_empty_body">Start from any palette, or import one made in FedoraTube Desktop.</string>
     <string name="settings_custom_theme_import_failed">No valid themes in that file</string>
     <string name="settings_custom_theme_limit">You can keep up to %1$d themes</string>
     <string name="settings_custom_theme_exported">Theme exported</string>
@@ -3944,9 +3944,9 @@
 
     <!-- Your taste -->
     <string name="taste_title">Your taste</string>
-    <string name="taste_summary">How Fedora Tube sees you, and what shapes your feed</string>
+    <string name="taste_summary">How FedoraTube sees you, and what shapes your feed</string>
     <string name="taste_keywords">persona, profile, algorithm, recommendations, interests, brain, engine, control center</string>
-    <string name="taste_card_hint">See how Fedora Tube sees you</string>
+    <string name="taste_card_hint">See how FedoraTube sees you</string>
     <string name="taste_card_loading">Reading your profile</string>
     <string name="taste_shape_header">Taste shape</string>
     <string name="taste_shape_description">Your profile against what you watch at this time of day</string>
@@ -3990,18 +3990,18 @@
     <string name="taste_export_music">Export music profile</string>
     <string name="taste_import_music">Import music profile</string>
     <string name="taste_reset_music">Reset music profile</string>
-    <string name="taste_reset_video_body">Fedora Tube forgets what it learned from your videos and searches. History, likes, playlists and hidden items stay, and Home still uses them.</string>
+    <string name="taste_reset_video_body">FedoraTube forgets what it learned from your videos and searches. History, likes, playlists and hidden items stay, and Home still uses them.</string>
     <string name="taste_reset_music_title">Reset music profile?</string>
-    <string name="taste_reset_music_body">This clears what Fedora Tube learned from your music and starts again from zero. Your recap stays.</string>
+    <string name="taste_reset_music_body">This clears what FedoraTube learned from your music and starts again from zero. Your recap stays.</string>
     <string name="taste_trait_now">Now %1$s</string>
     <string name="taste_reset_done">Profile reset</string>
     <string name="diagnostics_engine_header">Engine details</string>
     <string name="diagnostics_engine_queries_none">None yet</string>
     <string name="taste_starter_searches">Starter searches</string>
-    <string name="taste_starter_searches_detail">%1$s. Used until Fedora Tube learns what you watch.</string>
+    <string name="taste_starter_searches_detail">%1$s. Used until FedoraTube learns what you watch.</string>
 
     <!-- Flow Recap -->
-    <string name="recap_title">Fedora Tube Recap</string>
+    <string name="recap_title">FedoraTube Recap</string>
     <string name="recap_summary">What you watched and listened to, month by month</string>
     <string name="recap_keywords">wrapped, stats, statistics, recap, year in review, watch time, listening time, most watched, top artists</string>
     <string name="recap_period_month">Month</string>
@@ -4010,7 +4010,7 @@
     <string name="recap_source_all">Everything</string>
     <string name="recap_source_video">Videos</string>
     <string name="recap_source_music">Music</string>
-    <string name="recap_total_time">Time in Fedora Tube</string>
+    <string name="recap_total_time">Time in FedoraTube</string>
     <string name="recap_delta_up">%1$s more than the time before</string>
     <string name="recap_delta_down">%1$s less than the time before</string>
     <string name="recap_delta_same">About the same as the time before</string>
@@ -4088,7 +4088,7 @@
         <item quantity="other">%d videos</item>
     </plurals>
     <string name="recap_empty_title">Your recap starts now</string>
-    <string name="recap_empty_body">Fedora Tube keeps these stats on this device only. Watch and listen for a while and they fill in.</string>
+    <string name="recap_empty_body">FedoraTube keeps these stats on this device only. Watch and listen for a while and they fill in.</string>
     <string name="recap_period_empty">Nothing recorded for this period</string>
     <string name="recap_insights_title">What stood out</string>
     <string name="recap_insight_night_owl">Night owl</string>
@@ -4110,7 +4110,7 @@
     <string name="recap_ready_body">See what you watched and listened to, and share it if you like</string>
     <string name="recap_ready_open">Open</string>
     <string name="recap_ready_dismiss">Not now</string>
-    <string name="recap_story_intro">Your %1$s in Fedora Tube</string>
+    <string name="recap_story_intro">Your %1$s in FedoraTube</string>
     <plurals name="recap_story_intro_body">
         <item quantity="one">Spread over %d day</item>
         <item quantity="other">Spread over %d days</item>
@@ -4133,12 +4133,12 @@
     <string name="recap_story_summary">Your %1$s, in one card</string>
     <string name="recap_story_share">Share</string>
     <string name="recap_story_share_title">Share your recap</string>
-    <string name="recap_story_share_text">My %1$s in Fedora Tube: %2$s</string>
+    <string name="recap_story_share_text">My %1$s in FedoraTube: %2$s</string>
     <string name="recap_story_close">Close</string>
     <string name="recap_story_next">Next</string>
     <string name="recap_story_previous">Previous</string>
     <string name="recap_story_page">Page %1$d of %2$d</string>
-    <string name="recap_story_made_with">Made with Fedora Tube</string>
+    <string name="recap_story_made_with">Made with FedoraTube</string>
     <string name="recap_story_pause">Pause</string>
     <string name="recap_story_play">Play</string>
     <string name="recap_summary_top_channel">Top channel</string>
@@ -4153,8 +4153,8 @@
     <string name="playlist_exported">Playlist saved</string>
     <string name="playlist_export_failed">Couldn\'t save the playlist</string>
     <string name="playlist_share_failed">Couldn\'t share the playlist</string>
-    <string name="playlist_import_not_a_playlist">This file isn\'t a Fedora Tube playlist</string>
-    <string name="playlist_import_too_new">This playlist needs a newer version of Fedora Tube</string>
+    <string name="playlist_import_not_a_playlist">This file isn\'t a FedoraTube playlist</string>
+    <string name="playlist_import_too_new">This playlist needs a newer version of FedoraTube</string>
     <string name="playlist_import_empty">This playlist has no videos to import</string>
     <string name="playlist_import_unreadable">Couldn\'t read this file</string>
     <plurals name="playlist_imported">
@@ -4361,7 +4361,7 @@
     <string name="scrobbling_import">Import your top artists</string>
     <string name="scrobbling_import_summary">Adds your most played artists to your favourites</string>
     <string name="scrobbling_import_offer_title">Shape your music with %1$s?</string>
-    <string name="scrobbling_import_offer_body">Fedora Tube adds your 20 most played artists of the past year to your favourite artists. You can remove any of them later.</string>
+    <string name="scrobbling_import_offer_body">FedoraTube adds your 20 most played artists of the past year to your favourite artists. You can remove any of them later.</string>
     <string name="scrobbling_import_action">Import</string>
     <string name="scrobbling_import_later">Not now</string>
     <plurals name="scrobbling_import_done">
@@ -4382,7 +4382,7 @@
     <string name="focus_mode_prompt_desc">Would you like to enter Focus Mode for distraction-free video and music browsing, or continue in Normal Mode?</string>
     <string name="focus_mode_enable_action">Focus Mode</string>
     <string name="focus_mode_normal_action">Normal Mode</string>
-    <string name="home_search_placeholder">Search Fedora Tube…</string>
+    <string name="home_search_placeholder">Search FedoraTube…</string>
     <string name="nav_music_shortcut">Music</string>
 
     <!-- Auto Clear Cache -->

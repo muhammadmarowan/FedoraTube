@@ -96,6 +96,7 @@ internal fun UnifiedMusicPlayerSheet(
     miniBounds: MediaMiniBarBounds,
     restingBottomPx: () -> Float,
     track: MusicTrack,
+    openLyricsRequest: Int = 0,
     swipeLeftAction: MiniBarSwipeAction,
     swipeRightAction: MiniBarSwipeAction,
     onDismiss: () -> Unit,
@@ -468,6 +469,7 @@ internal fun UnifiedMusicPlayerSheet(
                     ) {
                         FullMusicPlayerContent(
                             track = displayTrack,
+                            openLyricsRequest = openLyricsRequest,
                             isPlayerSheetExpanded = state.isExpanded,
                             palette = palette,
                             backdrop = backdrop,

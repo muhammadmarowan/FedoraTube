@@ -9,8 +9,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.outlined.AutoAwesome
+import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -60,7 +60,7 @@ internal fun FlowFeedFooter(
             modifier = Modifier.padding(top = 8.dp),
         ) {
             Icon(
-                imageVector = Icons.Default.Refresh,
+                imageVector = Icons.Rounded.Refresh,
                 contentDescription = null,
                 modifier = Modifier.size(18.dp),
             )
@@ -103,7 +103,7 @@ internal fun HomeLoadMoreFailed(
             }
             FilledTonalButton(onClick = onRetry) {
                 Icon(
-                    imageVector = Icons.Default.Refresh,
+                    imageVector = Icons.Rounded.Refresh,
                     contentDescription = null,
                     modifier = Modifier.size(18.dp),
                 )

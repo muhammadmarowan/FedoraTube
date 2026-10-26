@@ -23,6 +23,9 @@ internal class IncomingLinks {
     private val _musicPlayerRequest = mutableIntStateOf(0)
     val musicPlayerRequest: State<Int> = _musicPlayerRequest
 
+    private val _musicLyricsRequest = mutableIntStateOf(0)
+    val musicLyricsRequest: State<Int> = _musicLyricsRequest
+
     private val _route = mutableStateOf<String?>(null)
     val route: State<String?> = _route
 
@@ -43,6 +46,12 @@ internal class IncomingLinks {
     fun openMusicPlayer() {
         consumeVideo()
         _musicPlayerRequest.intValue += 1
+    }
+
+    fun openMusicLyrics() {
+        consumeVideo()
+        _musicPlayerRequest.intValue += 1
+        _musicLyricsRequest.intValue += 1
     }
 
     fun consumeVideo() {
