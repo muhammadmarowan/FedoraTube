@@ -258,43 +258,6 @@
             android:enabled="true"
             android:exported="false" />
 
-        <!-- Home-screen widgets (Jetpack Glance) -->
-        <receiver
-            android:name=".widget.core.action.WidgetPlaybackReceiver"
-            android:exported="false" />
-        <activity
-            android:name=".widget.config.WidgetConfigActivity"
-            android:exported="true"
-            android:excludeFromRecents="true"
-            android:taskAffinity=""
-            android:theme="@style/Theme.Flow">
-            <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
-            </intent-filter>
-        </activity>
-        <receiver
-            android:name=".widget.nowplaying.NowPlayingWidgetReceiver"
-            android:exported="true"
-            android:label="@string/widget_now_playing_label">
-            <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-            </intent-filter>
-            <meta-data
-                android:name="android.appwidget.provider"
-                android:resource="@xml/widget_now_playing_info" />
-        </receiver>
-        <receiver
-            android:name=".widget.quickactions.QuickActionsWidgetReceiver"
-            android:exported="true"
-            android:label="@string/widget_quick_actions_label">
-            <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-            </intent-filter>
-            <meta-data
-                android:name="android.appwidget.provider"
-                android:resource="@xml/widget_quick_actions_info" />
-        </receiver>
-
         <!-- App Icon Variants (via activity-alias)                          -->
         <!-- Default: Flow Red -->
         <activity-alias

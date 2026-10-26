@@ -27,7 +27,7 @@ import androidx.compose.ui.window.Dialog
 import com.fedoratube.org.R
 import com.fedoratube.org.ui.screens.sync.QrCodeImage
 
-private const val APP_DOWNLOAD_URL = "https://github.com/muhammadmarowan/FedoraTube/releases/download/v1.5.2/FedoraTube-v1.5.2-universal.apk"
+private const val APP_DOWNLOAD_URL = "https://github.com/muhammadmarowan/FedoraTube/releases/latest/download/app-github-universal-release.apk"
 
 @Composable
 fun ShareAppQrDialog(
@@ -53,14 +53,7 @@ fun ShareAppQrDialog(
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface,
                 )
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = stringResource(R.string.share_app_qr_subtitle),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    textAlign = TextAlign.Center,
-                )
-                Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(16.dp))
                 Box(
                     modifier =
                         Modifier
@@ -75,7 +68,7 @@ fun ShareAppQrDialog(
                         modifier = Modifier.fillMaxSize(),
                     )
                 }
-                Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(20.dp))
                 FilledTonalButton(
                     onClick = onDismiss,
                     modifier = Modifier.fillMaxWidth(),

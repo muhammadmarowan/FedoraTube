@@ -210,9 +210,6 @@ class Media3MusicService : MediaLibraryService() {
     lateinit var legacySongs: LegacySongDownloads
 
     @Inject
-    lateinit var widgetPublisher: com.fedoratube.org.widget.nowplaying.NowPlayingWidgetPublisher
-
-    @Inject
     lateinit var musicBrain: MusicBrainEngine
 
     @Inject
@@ -222,9 +219,6 @@ class Media3MusicService : MediaLibraryService() {
     lateinit var videoSwitch: MusicVideoSwitch
 
     private val prefs by lazy { PlayerPreferences(this) }
-
-    @Inject
-    lateinit var widgetContentSync: dagger.Lazy<com.fedoratube.org.widget.core.refresh.WidgetContentSync>
 
     @Inject
     lateinit var equalizerRepository: EqualizerRepository
@@ -279,7 +273,6 @@ class Media3MusicService : MediaLibraryService() {
         lifecycleScope.launch {
             com.fedoratube.org.player.EnhancedMusicPlayerManager.isLiked.collectLatest {
                 updateNotification()
-                if (::player.isInitialized) widgetPublisher.publish(player)
             }
         }
 
@@ -495,7 +488,6 @@ class Media3MusicService : MediaLibraryService() {
                         }
                     }
 
-                    widgetPublisher.publish(player)
                     updateNotification()
                 }
 
@@ -525,7 +517,6 @@ class Media3MusicService : MediaLibraryService() {
 
                 override fun onPlaybackStateChanged(playbackState: Int) {
                     updateLocks(isPlaybackActive())
-                    widgetPublisher.publish(player)
                     if (playbackState == Player.STATE_ENDED || playbackState == Player.STATE_IDLE) {
                         // ENDED: the queue ran out — no transition fires for the last track.
                         // IDLE: player.stop() from a dismiss/stop path — same deal.
@@ -594,7 +585,6 @@ class Media3MusicService : MediaLibraryService() {
 
                 override fun onIsPlayingChanged(isPlaying: Boolean) {
                     updateLocks(isPlaybackActive())
-                    widgetPublisher.publish(player)
                     if (isPlaying) {
                         val playingId = player.currentMediaItem?.mediaId
                         if (learnMediaId == null) learnMediaId = playingId?.let(videoSwitch::listenId)
@@ -610,20 +600,6 @@ class Media3MusicService : MediaLibraryService() {
 
                 override fun onMediaMetadataChanged(mediaMetadata: androidx.media3.common.MediaMetadata) {
                     updateNotification()
-                    widgetPublisher.publish(player)
-                }
-
-                override fun onEvents(player: Player, events: Player.Events) {
-                    if (events.containsAny(
-                            Player.EVENT_PLAYBACK_STATE_CHANGED,
-                            Player.EVENT_IS_PLAYING_CHANGED,
-                            Player.EVENT_MEDIA_METADATA_CHANGED,
-                            Player.EVENT_MEDIA_ITEM_TRANSITION,
-                            Player.EVENT_PLAY_WHEN_READY_CHANGED,
-                        )
-                    ) {
-                        widgetPublisher.publish(player)
-                    }
                 }
             },
         )
@@ -1287,8 +1263,6 @@ class Media3MusicService : MediaLibraryService() {
         currentAudioSessionId = 0
         Log.i(TAG, "Audio session destroyed")
 
-        widgetPublisher.publishStopped()
-
         lockReleaseJob?.cancel()
         lockReleaseJob = null
 
@@ -1747,7 +1721,6 @@ class Media3MusicService : MediaLibraryService() {
                 val newLike = !com.fedoratube.org.player.EnhancedMusicPlayerManager.isLiked.value
                 com.fedoratube.org.player.EnhancedMusicPlayerManager.setLiked(newLike)
                 if (::player.isInitialized) {
-                    widgetPublisher.publish(player)
                     updateNotification()
                 }
                 if (currentTrack != null && !com.fedoratube.org.data.localmedia.LocalMediaIds.isLocal(currentTrack.videoId)) {

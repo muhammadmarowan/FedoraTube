@@ -146,3 +146,13 @@ internal fun linkedVideo(videoId: String) =
         description = "",
         channelThumbnailUrl = "",
     )
+
+internal fun NavHostController.popTransientRouteOrNavigateStart(defaultStartRoute: String) {
+    if (previousBackStackEntry != null) {
+        popBackStack()
+    } else {
+        navigate(defaultStartRoute) {
+            launchSingleTop = true
+        }
+    }
+}

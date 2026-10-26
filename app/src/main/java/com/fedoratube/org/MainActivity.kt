@@ -119,12 +119,6 @@ class MainActivity : ComponentActivity() {
     lateinit var videoPlayerManager: dagger.Lazy<EnhancedPlayerManager>
 
     @Inject
-    lateinit var widgetContentSync: dagger.Lazy<com.fedoratube.org.widget.core.refresh.WidgetContentSync>
-
-    @Inject
-    lateinit var nowPlayingWidgetPublisher: dagger.Lazy<com.fedoratube.org.widget.nowplaying.NowPlayingWidgetPublisher>
-
-    @Inject
     lateinit var mediaCacheRepository: dagger.Lazy<com.fedoratube.org.data.repository.MediaCacheRepository>
 
     // A recreated activity gets its launch intent again; a playlist file in it was already imported.
@@ -194,7 +188,10 @@ class MainActivity : ComponentActivity() {
         )
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             window.isNavigationBarContrastEnforced = false
-            window.isStatusBarContrastEnforced = false
+            if (Build.VERSION.SDK_INT < 35) {
+                @Suppress("DEPRECATION")
+                window.isStatusBarContrastEnforced = false
+            }
         }
 
         // Player setup reads DataStore and opens the media cache index, so it runs off the main
@@ -211,15 +208,6 @@ class MainActivity : ComponentActivity() {
         }
 
         val dataManager = LocalDataManager(applicationContext)
-
-        lifecycleScope.launch {
-            com.fedoratube.org.widget.core.FlowWidgets
-                .observeThemeChanges(applicationContext)
-        }
-        lifecycleScope.launch(Dispatchers.Default) {
-            widgetContentSync.get().startIfPlaced()
-            nowPlayingWidgetPublisher.get().repairStalePlayback()
-        }
 
         isRestoringState = savedInstanceState != null
         handleIntent(intent)
@@ -468,16 +456,6 @@ class MainActivity : ComponentActivity() {
             return
         }
         val notificationVideoId = intent.getStringExtra("notification_video_id") ?: intent.getStringExtra("video_id")
-
-        val widgetRoute =
-            intent.getStringExtra(
-                com.fedoratube.org.widget.core.action.WidgetDeepLink.EXTRA_WIDGET_ROUTE,
-            )
-        if (widgetRoute != null) {
-            intent.removeExtra(com.fedoratube.org.widget.core.action.WidgetDeepLink.EXTRA_WIDGET_ROUTE)
-            links.openRoute(widgetRoute)
-            return
-        }
 
         val linkText = linkTextOf(intent)
         if (linkText != null) {

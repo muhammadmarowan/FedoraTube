@@ -286,8 +286,7 @@ fun ChannelScreen(
                 shadowElevation = 4.dp,
                 modifier =
                     Modifier
-                        .statusBarsPadding()
-                        .padding(start = 14.dp, top = 8.dp)
+                        .padding(start = 12.dp, top = 8.dp)
                         .size(38.dp),
             ) {
                 Box(

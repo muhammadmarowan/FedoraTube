@@ -35,7 +35,6 @@ import com.fedoratube.org.ui.screens.settings.taste.HiddenContentScreen
 import com.fedoratube.org.ui.screens.settings.taste.TasteScreen
 import com.fedoratube.org.ui.screens.settings.topics.TopicPreferencesScreen
 import com.fedoratube.org.ui.screens.settings.wellbeing.WellbeingScreen
-import com.fedoratube.org.ui.screens.settings.widgets.WidgetsSettingsScreen
 import com.fedoratube.org.ui.screens.sync.SyncScreen
 
 /**
@@ -183,7 +182,7 @@ internal fun SettingsDetail(
         }
 
         SettingsDestination.WIDGETS -> {
-            WidgetsSettingsScreen(onBack = onBack, highlight = target.highlight)
+            // Widgets removed
         }
 
         SettingsDestination.ABOUT -> {

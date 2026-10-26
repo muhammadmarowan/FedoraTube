@@ -70,6 +70,7 @@ internal fun ChannelFilterBar(
                 query = searchQuery,
                 onQueryChange = onSearchQueryChange,
                 placeholder = stringResource(R.string.channel_search_hint),
+                showClearButton = false,
                 modifier =
                     Modifier
                         .weight(1f)

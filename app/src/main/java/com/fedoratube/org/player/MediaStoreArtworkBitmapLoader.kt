@@ -10,6 +10,8 @@ import coil3.SingletonImageLoader
 import coil3.request.ImageRequest
 import coil3.request.SuccessResult
 import coil3.request.allowHardware
+import coil3.size.Precision
+import coil3.size.Scale
 import coil3.toBitmap
 import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
@@ -39,6 +41,8 @@ internal class MediaStoreArtworkBitmapLoader(
                     val request = ImageRequest.Builder(context)
                         .data(uri.toString())
                         .size(sizePx, sizePx)
+                        .scale(Scale.FIT)
+                        .precision(Precision.INEXACT)
                         .allowHardware(false)
                         .build()
                     val result = kotlinx.coroutines.runBlocking {

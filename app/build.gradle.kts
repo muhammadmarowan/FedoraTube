@@ -56,8 +56,8 @@ android {
         applicationId = "com.fedoratube.org"
         minSdk = 26
         targetSdk = 36
-        versionCode = 21
-        versionName = "1.7.2"
+        versionCode = 22
+        versionName = "1.7.3"
 
         buildConfigField("int", "NIGHTLY_RUN", "0")
         buildConfigField("String", "APP_LANGUAGE_TAGS", "\"${(listOf("en") + translatedLocaleTags()).joinToString(",")}\"")
@@ -366,9 +366,6 @@ dependencies {
     implementation(libs.androidx.datastore.preferences)
     // implementation(libs.androidx.datastore) // In TOML if needed
 
-    // --- Home-screen widgets (Jetpack Glance) ---
-    implementation(libs.androidx.glance.appwidget)
-    implementation(libs.androidx.glance.material3)
     implementation(libs.androidx.graphics.shapes)
 
     // --- Async & Utils ---
@@ -398,7 +395,6 @@ dependencies {
     testImplementation(libs.mockk)
     testImplementation(libs.truth)
     testImplementation(libs.turbine)
-    testImplementation(libs.androidx.glance.appwidget.testing)
     testImplementation(libs.hilt.android.testing)
     kspTest(libs.hilt.android.compiler)
 

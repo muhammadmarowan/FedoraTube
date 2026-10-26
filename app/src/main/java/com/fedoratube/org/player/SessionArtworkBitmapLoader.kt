@@ -36,7 +36,7 @@ internal fun sessionArtworkBitmapLoader(context: Context): BitmapLoader {
             .build()
     // Media3 wraps this loader in its own SizeLimitedBitmapLoader(makeShared = true); sharing here too
     // would just copy the pixels into ashmem twice.
-    return SizeLimitedBitmapLoader(MediaStoreArtworkBitmapLoader(context.applicationContext, decoder, limit), limit, false)
+    return SizeLimitedBitmapLoader(MediaStoreArtworkBitmapLoader(context.applicationContext, decoder, limit), limit, true)
 }
 
 @SuppressLint("DiscouragedApi")
