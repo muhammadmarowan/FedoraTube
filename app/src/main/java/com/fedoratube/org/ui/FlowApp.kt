@@ -40,7 +40,6 @@ import com.fedoratube.org.player.EnhancedMusicPlayerManager
 import com.fedoratube.org.player.EnhancedPlayerManager
 import com.fedoratube.org.player.GlobalPlayerState
 import com.fedoratube.org.player.SleepTimerManager
-import com.fedoratube.org.ui.components.donation.DonationPromptHost
 import com.fedoratube.org.ui.components.equalizer.LocalEqualizerState
 import com.fedoratube.org.ui.components.layout.FlowBottomInsets
 import com.fedoratube.org.ui.components.layout.LocalFlowBottomInsets
@@ -583,10 +582,5 @@ fun FlowApp(
         )
 
         UpdateLaunchEffect(needsOnboarding = needsOnboarding, onOpenUpdate = { navController.navigate(UPDATE_ROUTE) })
-
-        DonationPromptHost(
-            enabled = needsOnboarding == false && !isInPipMode && !playerVisible,
-            onNavigateToDonations = { navController.navigate("donations") },
-        )
     }
 }

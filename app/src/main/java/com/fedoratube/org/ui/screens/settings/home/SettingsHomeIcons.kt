@@ -52,7 +52,6 @@ internal fun destinationIcon(destination: SettingsDestination): ImageVector =
         SettingsDestination.WIDGETS -> Icons.Outlined.Widgets
         SettingsDestination.ABOUT -> Icons.Outlined.Info
         SettingsDestination.DIAGNOSTICS -> Icons.Outlined.BugReport
-        SettingsDestination.ADDONS -> Icons.Outlined.Extension
         else -> Icons.Outlined.Settings
     }
 
@@ -63,5 +62,4 @@ internal object HomeRowIcons {
     val DeepFlowScrobble: ImageVector = Icons.Outlined.CloudUpload
     val DeepFlowOnSearch: ImageVector = Icons.AutoMirrored.Outlined.ManageSearch
     val Updates: ImageVector = Icons.Outlined.Update
-    val Support: ImageVector = Icons.Outlined.VolunteerActivism
 }

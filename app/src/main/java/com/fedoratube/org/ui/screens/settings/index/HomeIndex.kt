@@ -65,14 +65,6 @@ internal object HomeIndex {
             destination = home,
             availability = SettingAvailability.GithubOnly,
         )
-    val support =
-        SettingEntry(
-            key = "home.support",
-            title = R.string.settings_item_support,
-            summary = R.string.settings_item_support_subtitle,
-            section = R.string.settings_header_about,
-            destination = home,
-        )
 
     val focusMode =
         SettingEntry(
@@ -83,6 +75,5 @@ internal object HomeIndex {
             destination = home,
         )
 
-    /** The persona card is found through Your taste's own destination entry, not listed twice. */
     val all = listOf(focusMode, checkForUpdates)
 }

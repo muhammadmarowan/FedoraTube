@@ -1635,7 +1635,6 @@ class Media3MusicService : MediaLibraryService() {
                 .build()
 
         mediaLibrarySession.setCustomLayout(listOf(likeButton, shuffleButton, repeatButton, closeButton))
-        triggerNotificationUpdate()
     }
 
     @OptIn(UnstableApi::class)

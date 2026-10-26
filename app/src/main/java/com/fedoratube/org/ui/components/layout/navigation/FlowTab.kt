@@ -37,7 +37,6 @@ enum class FlowTab(
     Library(4, "library", R.string.nav_library),
     Search(5, "search", R.string.nav_search),
     Explore(6, "categories", R.string.nav_explore),
-    Movies(7, "movies", R.string.nav_movies),
     ;
 
     companion object {
@@ -51,7 +50,6 @@ fun FlowTab.icon(selected: Boolean): ImageVector =
         FlowTab.Home -> if (selected) Icons.Filled.Home else Icons.Outlined.Home
         FlowTab.Shorts -> ImageVector.vectorResource(if (selected) R.drawable.ic_shorts_filled else R.drawable.ic_shorts)
         FlowTab.Music -> if (selected) Icons.Filled.MusicNote else Icons.Outlined.MusicNote
-        FlowTab.Movies -> ImageVector.vectorResource(if (selected) R.drawable.ic_movie_filled else R.drawable.ic_movie)
         FlowTab.Subscriptions -> if (selected) Icons.Filled.Subscriptions else Icons.Outlined.Subscriptions
         FlowTab.Library -> if (selected) Icons.Filled.VideoLibrary else Icons.Outlined.VideoLibrary
         FlowTab.Search -> if (selected) Icons.Filled.Search else Icons.Outlined.Search
@@ -62,7 +60,6 @@ data class NavigationVisibility(
     val home: Boolean = true,
     val shorts: Boolean = false,
     val music: Boolean = true,
-    val movies: Boolean = true,
     val search: Boolean = false,
     val categories: Boolean = false,
 )
@@ -79,23 +76,12 @@ fun visibleFlowTabs(
         buildSet {
             if (visibility.home) add(FlowTab.Home)
             if (visibility.music) add(FlowTab.Music)
-            if (visibility.movies) add(FlowTab.Movies)
             add(FlowTab.Subscriptions)
             add(FlowTab.Library)
             if (visibility.search) add(FlowTab.Search)
             if (visibility.categories) add(FlowTab.Explore)
         }
-    val effectiveOrder = if (FlowTab.Movies.id !in order) {
-        val musicIdx = order.indexOf(FlowTab.Music.id)
-        if (musicIdx >= 0) {
-            order.toMutableList().apply { add(musicIdx + 1, FlowTab.Movies.id) }
-        } else {
-            order + FlowTab.Movies.id
-        }
-    } else {
-        order
-    }
-    return (effectiveOrder + DEFAULT_NAV_TAB_ORDER)
+    return (order + DEFAULT_NAV_TAB_ORDER)
         .distinct()
         .mapNotNull(FlowTab::fromId)
         .filter { it != FlowTab.Shorts && enabled.contains(it) }

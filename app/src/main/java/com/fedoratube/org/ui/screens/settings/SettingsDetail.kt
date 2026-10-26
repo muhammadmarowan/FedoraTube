@@ -193,9 +193,5 @@ internal fun SettingsDetail(
         SettingsDestination.DIAGNOSTICS -> {
             DiagnosticsScreen(onBack = onBack, highlight = target.highlight)
         }
-
-        SettingsDestination.ADDONS -> {
-            com.fedoratube.org.ui.screens.movies.AddonsSettingsScreen(onBack = onBack)
-        }
     }
 }

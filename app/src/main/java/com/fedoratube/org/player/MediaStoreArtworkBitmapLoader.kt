@@ -3,12 +3,14 @@ package com.fedoratube.org.player
 import android.content.Context
 import android.graphics.Bitmap
 import android.net.Uri
+import androidx.media3.common.MediaMetadata
 import androidx.media3.common.util.BitmapLoader
 import androidx.media3.common.util.UnstableApi
 import coil3.SingletonImageLoader
 import coil3.request.ImageRequest
 import coil3.request.allowHardware
 import coil3.toBitmap
+import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
 import com.google.common.util.concurrent.ListeningExecutorService
 import com.google.common.util.concurrent.MoreExecutors
@@ -49,5 +51,15 @@ internal class MediaStoreArtworkBitmapLoader(
             }
         }
         return executor.submit<Bitmap> { MediaStoreThumbnails.load(context, uri, sizePx) ?: throw IOException("No artwork for $uri") }
+    }
+
+    override fun loadBitmapFromMetadata(metadata: MediaMetadata): ListenableFuture<Bitmap>? {
+        if (metadata.artworkData != null) {
+            return decodeBitmap(metadata.artworkData!!)
+        }
+        if (metadata.artworkUri != null) {
+            return loadBitmap(metadata.artworkUri!!)
+        }
+        return null
     }
 }

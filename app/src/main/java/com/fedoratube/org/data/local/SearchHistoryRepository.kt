@@ -33,7 +33,6 @@ enum class SearchType {
 enum class SearchHistoryScope {
     VIDEO,
     MUSIC,
-    MOVIES,
 }
 
 data class SearchSuggestion(
@@ -59,7 +58,6 @@ class SearchHistoryRepository
         companion object {
             private val SEARCH_HISTORY_KEY = stringPreferencesKey("search_history")
             private val MUSIC_SEARCH_HISTORY_KEY = stringPreferencesKey("music_search_history")
-            private val MOVIES_SEARCH_HISTORY_KEY = stringPreferencesKey("movies_search_history")
             private val SEARCH_HISTORY_ENABLED_KEY = booleanPreferencesKey("search_history_enabled")
             private val SEARCH_SUGGESTIONS_ENABLED_KEY = booleanPreferencesKey("search_suggestions_enabled")
             private val MAX_HISTORY_SIZE_KEY = intPreferencesKey("max_history_size")
@@ -73,7 +71,6 @@ class SearchHistoryRepository
                 when (scope) {
                     SearchHistoryScope.VIDEO -> SEARCH_HISTORY_KEY
                     SearchHistoryScope.MUSIC -> MUSIC_SEARCH_HISTORY_KEY
-                    SearchHistoryScope.MOVIES -> MOVIES_SEARCH_HISTORY_KEY
                 }
         }
 

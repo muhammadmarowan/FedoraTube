@@ -116,7 +116,6 @@ fun HomeScreen(
     onNavigateToSettings: () -> Unit = {},
     onNavigateToMusic: () -> Unit = {},
     onNavigateToDownloads: () -> Unit = {},
-    onNavigateToMovies: () -> Unit = {},
     onNotificationClick: () -> Unit = {},
     onNavigateToHistory: () -> Unit = {},
     onOpenShortsFeed: () -> Unit = {},
@@ -246,7 +245,6 @@ fun HomeScreen(
                 onMusicClick = onNavigateToMusic,
                 onNavigateToSettings = onNavigateToSettings,
                 onNavigateToDownloads = onNavigateToDownloads,
-                onNavigateToMovies = onNavigateToMovies,
                 modifier = Modifier.fillMaxSize().padding(padding),
             )
         } else {
@@ -325,7 +323,6 @@ private fun FocusModeContent(
     onMusicClick: () -> Unit,
     onNavigateToSettings: () -> Unit,
     onNavigateToDownloads: () -> Unit,
-    onNavigateToMovies: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var showQrDialog by rememberSaveable { mutableStateOf(false) }
@@ -430,22 +427,6 @@ private fun FocusModeContent(
                     Icon(
                         imageVector = Icons.Outlined.FileDownload,
                         contentDescription = stringResource(R.string.library_downloads_label),
-                        modifier = Modifier.size(24.dp),
-                    )
-                }
-
-                FilledTonalIconButton(
-                    onClick = onNavigateToMovies,
-                    modifier = Modifier.size(52.dp),
-                    colors =
-                        IconButtonDefaults.filledTonalIconButtonColors(
-                            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
-                            contentColor = MaterialTheme.colorScheme.onSurface,
-                        ),
-                ) {
-                    Icon(
-                        imageVector = Icons.Outlined.Movie,
-                        contentDescription = stringResource(R.string.screen_title_movies),
                         modifier = Modifier.size(24.dp),
                     )
                 }

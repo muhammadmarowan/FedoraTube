@@ -311,11 +311,6 @@ class PlayerPreferences(
         val SUBS_SHOW_CHECKED_VIDEO_COUNT = booleanPreferencesKey("subs_show_checked_video_count")
         val SHOW_CHANNEL_GROUP_BADGES = booleanPreferencesKey("show_channel_group_badges")
 
-        // Donation / support prompt
-        val DONATION_FIRST_LAUNCH_TIME = longPreferencesKey("donation_first_launch_time")
-        val DONATION_PROMPT_LAST_SHOWN = longPreferencesKey("donation_prompt_last_shown")
-        val DONATION_PROMPT_DISABLED = booleanPreferencesKey("donation_prompt_disabled")
-
         // Navigation tab preferences
         val NAV_TAB_ORDER = stringPreferencesKey("nav_tab_order")
         val DEFAULT_NAV_TAB_INDEX = intPreferencesKey("default_nav_tab_index")
@@ -2448,37 +2443,6 @@ class PlayerPreferences(
         context.playerPreferencesDataStore.edit { preferences ->
             preferences[Keys.SUBS_LAST_REFRESH_TIME] = timeMillis
             preferences[Keys.SUBS_LAST_REFRESHED_COUNT] = count
-        }
-    }
-
-    // ── Donation / support prompt ───────────────────────────────────────────
-    val donationFirstLaunchTime: Flow<Long> =
-        context.playerPreferencesDataStore.data
-            .map { preferences -> preferences[Keys.DONATION_FIRST_LAUNCH_TIME] ?: 0L }
-
-    val donationPromptLastShownTime: Flow<Long> =
-        context.playerPreferencesDataStore.data
-            .map { preferences -> preferences[Keys.DONATION_PROMPT_LAST_SHOWN] ?: 0L }
-
-    val donationPromptDisabled: Flow<Boolean> =
-        context.playerPreferencesDataStore.data
-            .map { preferences -> preferences[Keys.DONATION_PROMPT_DISABLED] ?: false }
-
-    suspend fun setDonationFirstLaunchTime(timeMillis: Long) {
-        context.playerPreferencesDataStore.edit { preferences ->
-            preferences[Keys.DONATION_FIRST_LAUNCH_TIME] = timeMillis
-        }
-    }
-
-    suspend fun setDonationPromptShown(timeMillis: Long) {
-        context.playerPreferencesDataStore.edit { preferences ->
-            preferences[Keys.DONATION_PROMPT_LAST_SHOWN] = timeMillis
-        }
-    }
-
-    suspend fun setDonationPromptDisabled(disabled: Boolean) {
-        context.playerPreferencesDataStore.edit { preferences ->
-            preferences[Keys.DONATION_PROMPT_DISABLED] = disabled
         }
     }
 

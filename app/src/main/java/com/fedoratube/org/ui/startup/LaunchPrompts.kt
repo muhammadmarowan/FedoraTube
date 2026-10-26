@@ -1,8 +1,6 @@
 package com.fedoratube.org.ui.startup
 
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.withTimeoutOrNull
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -24,11 +22,5 @@ class LaunchPrompts
         fun updateCheckFinished(shownUpdate: Boolean) {
             updateShown = updateShown || shownUpdate
             updateSettled.value = true
-        }
-
-        /** Waits for the launch update check (at most [waitMs]), then says whether a donation prompt may show. */
-        suspend fun donationMayShow(waitMs: Long = UPDATE_WAIT_MS): Boolean {
-            withTimeoutOrNull(waitMs) { updateSettled.first { it } }
-            return !updateShown
         }
     }

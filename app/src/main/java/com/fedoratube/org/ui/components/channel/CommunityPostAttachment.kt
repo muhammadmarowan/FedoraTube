@@ -71,7 +71,7 @@ private fun PostImages(
 
     var fullSizeIndex by rememberSaveable { mutableIntStateOf(-1) }
     if (fullSizeIndex in resolved.indices) {
-        FullSizeImageDialog(imageUrl = resolved[fullSizeIndex], onDismiss = { fullSizeIndex = -1 })
+        FullSizeImageDialog(imageUrls = resolved, initialIndex = fullSizeIndex, onDismiss = { fullSizeIndex = -1 })
     }
 
     // A lone image runs edge to edge; a gallery insets so the next page peeks, which is the only cue
@@ -124,7 +124,7 @@ private fun PostImages(
             modifier =
                 Modifier
                     .align(Alignment.TopEnd)
-                    .padding(end = GalleryPeek + 12.dp, top = 12.dp),
+                    .padding(end = 12.dp, top = 12.dp),
         ) {
             Text(
                 text = stringResource(R.string.channel_post_image_count, pagerState.currentPage + 1, resolved.size),

@@ -4,7 +4,7 @@
 
 # FedoraTube
 
-**A fast, elegant, and distraction-free YouTube, Music, and Movies streaming client designed for Android.**
+**A fast, elegant, and distraction-free YouTube and Music streaming client designed for Android.**
 
 <br>
 
@@ -24,22 +24,17 @@
 <div align="center">
   <table>
     <tr>
-      <td align="center" width="25%">
+      <td align="center" width="33%">
         <b>Home Feed</b><br>
         <sub>Clean subscription & recommendation feed</sub><br><br>
         <img src="Assets/home.png" width="220" alt="Home Feed">
       </td>
-      <td align="center" width="25%">
+      <td align="center" width="33%">
         <b>Music Hub</b><br>
         <sub>Top charts, artists & mood playlists</sub><br><br>
         <img src="Assets/music.png" width="220" alt="Music Hub">
       </td>
-      <td align="center" width="25%">
-        <b>Discover Movies & TV</b><br>
-        <sub>Trending movies, series & direct streams</sub><br><br>
-        <img src="Assets/discover.png" width="220" alt="Discover Movies & TV">
-      </td>
-      <td align="center" width="25%">
+      <td align="center" width="33%">
         <b>Focus Mode</b><br>
         <sub>Minimalist search-first canvas</sub><br><br>
         <img src="Assets/focus_mode.png" width="220" alt="Focus Mode">
@@ -53,12 +48,6 @@
 ---
 
 ## ✨ Highlights & Key Features
-
-### 🎬 Discover Movies & TV Series
-* **Browse Endless Catalogs:** Explore Trending Movies, Top Rated, Now Playing, and TV Series directly in the Discover tab.
-* **Stremio & Nuvio Plugin Support:** Native support for Stremio media addons and complete in-app Nuvio JavaScript scraper runtime.
-* **Torrent & Direct Streams:** High-speed direct HTTPS/HLS video playback along with a built-in libtorrent streaming engine.
-* **Instant Source Search & Multi-Track Audio:** Search and filter sources instantly (4K, 1080p, languages), with dedicated landscape player, audio track selector, and watch history integration.
 
 ### 🚫 100% Shorts-Free & Anti-Doomscroll
 * **Zero Shorts Feeds:** YouTube Shorts are permanently disabled and stripped out across the entire application.
