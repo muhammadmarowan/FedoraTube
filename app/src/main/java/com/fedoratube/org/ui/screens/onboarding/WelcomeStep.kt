@@ -2,12 +2,16 @@
 
 package com.fedoratube.org.ui.screens.onboarding
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
@@ -16,15 +20,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.fedoratube.org.R
 import com.fedoratube.org.ui.components.shared.FedoraThumbnailsWallpaper
 
 private val TextSpacing = 10.dp
+private val BrandSpacing = 8.dp
 
 @Composable
-internal fun WelcomeStep(contentPadding: PaddingValues) {
+internal fun WelcomeStep(
+    hero: HeroSlot,
+    contentPadding: PaddingValues,
+) {
     Box(
         modifier = Modifier.fillMaxSize(),
     ) {
@@ -48,11 +58,25 @@ internal fun WelcomeStep(contentPadding: PaddingValues) {
                     ),
         )
 
-        Box(
-            modifier = Modifier.fillMaxSize().padding(contentPadding),
-            contentAlignment = Alignment.CenterStart,
+        BookendLayout(
+            contentPadding = contentPadding,
+            stage = { hero(HeroLarge) },
         ) {
-            Column(verticalArrangement = Arrangement.spacedBy(TextSpacing)) {
+            Column(
+                modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp),
+                verticalArrangement = Arrangement.spacedBy(TextSpacing),
+            ) {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(BrandSpacing),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Image(
+                        painter = painterResource(R.drawable.ic_fedora_tube_wordmark),
+                        contentDescription = stringResource(R.string.app_name),
+                        modifier = Modifier.height(34.dp),
+                        contentScale = ContentScale.FillHeight,
+                    )
+                }
                 Text(
                     text = stringResource(R.string.onboarding_welcome_title),
                     style = MaterialTheme.typography.displaySmallEmphasized,

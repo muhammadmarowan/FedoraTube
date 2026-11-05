@@ -100,6 +100,15 @@ fun EnhancedMusicScreen(
         }
     val musicListState = rememberLazyListState()
     val quickPicksGridState = rememberLazyGridState()
+    var musicFirstScrollFixed by androidx.compose.runtime.saveable.rememberSaveable { androidx.compose.runtime.mutableStateOf(false) }
+    LaunchedEffect(uiState.trendingSongs.isNotEmpty() || uiState.dynamicSections.isNotEmpty()) {
+        if ((uiState.trendingSongs.isNotEmpty() || uiState.dynamicSections.isNotEmpty()) && !musicFirstScrollFixed) {
+            musicFirstScrollFixed = true
+            if (musicListState.firstVisibleItemIndex != 0 || musicListState.firstVisibleItemScrollOffset != 0) {
+                musicListState.scrollToItem(0, 0)
+            }
+        }
+    }
 
     // Planner-lite: the brain's maturity decides which sections lead the page —
     // a cold brain has nothing personal to say, a mature one leads with taste.

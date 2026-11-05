@@ -100,12 +100,15 @@ internal fun ChannelSearchResults(
                         )
                     }
                 LazyVerticalGrid(
-                    columns = if (feedLayout.isCompact) GridCells.Fixed(2) else GridCells.Adaptive(minSize = 160.dp),
+                    columns = GridCells.Fixed(1),
                     state = listState,
                     modifier = Modifier.fillMaxSize(),
-                    contentPadding = padding,
-                    horizontalArrangement = Arrangement.spacedBy(10.dp),
-                    verticalArrangement = Arrangement.spacedBy(14.dp),
+                    contentPadding = PaddingValues(
+                        top = contentPadding.calculateTopPadding(),
+                        bottom = contentPadding.calculateBottomPadding(),
+                    ),
+                    horizontalArrangement = Arrangement.spacedBy(0.dp),
+                    verticalArrangement = Arrangement.spacedBy(0.dp),
                 ) {
                     itemsIndexed(
                         items = uiState.searchResults,
@@ -115,10 +118,9 @@ internal fun ChannelSearchResults(
                     ) { index, video ->
                         MediaVideoCard(
                             video = video,
-                            layout = VideoCardLayout.Stacked,
+                            layout = VideoCardLayout.Row,
                             showChannel = false,
                             onClick = { onVideoClick(video) },
-                            useInternalPadding = false,
                         )
                     }
                     item(key = "bottom_gap", span = { GridItemSpan(maxLineSpan) }) { Spacer(Modifier.height(16.dp)) }

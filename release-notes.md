@@ -1,3 +1,17 @@
+# Fedora Tube v1.7.6
+
+**Release date:** 2026-11-06
+**Status:** Stable
+
+## Highlights
+
+- Removed `ci/` signing keystore from the public repo - the release key now lives only in the GitHub `RELEASE_KEYSTORE_BASE64` secret and local `release.keystore`
+- Onboarding "Make yours" shows the FedoraTube wordmark and hero again, with its text back at the bottom above "Get started"
+- Fixed Home and Music feeds starting slightly scrolled - they now open at the very top (first item fully visible)
+- Bottom navigation bar hides while scrolling on Home again (when "Hide nav bar on scroll" is on), alongside the top app bar
+- Channel Videos and in-channel search use the YouTube-style thumbnail-left list (title, views and time beside the thumbnail, like v1.7.4)
+- YouTube links are App Links again (`autoVerify`) so Android 12+ can make FedoraTube the default handler for youtube.com, youtu.be and youtube-nocookie.com via Settings > Open links in this app
+
 # Fedora Tube v1.7.5
 
 **Release date:** 2026-11-05

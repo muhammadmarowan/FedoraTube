@@ -133,6 +133,15 @@ fun HomeScreen(
     val deepFlowActive by preferences.deepFlowActive.collectAsStateWithLifecycle(initialValue = false)
 
     val gridState = rememberLazyGridState()
+    var homeFirstScrollFixed by rememberSaveable { mutableStateOf(false) }
+    LaunchedEffect(uiState.videos.isNotEmpty()) {
+        if (uiState.videos.isNotEmpty() && !homeFirstScrollFixed) {
+            homeFirstScrollFixed = true
+            if (gridState.firstVisibleItemIndex != 0 || gridState.firstVisibleItemScrollOffset != 0) {
+                gridState.scrollToItem(0, 0)
+            }
+        }
+    }
     val coroutineScope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
     val refreshFailed = stringResource(R.string.home_refresh_failed)

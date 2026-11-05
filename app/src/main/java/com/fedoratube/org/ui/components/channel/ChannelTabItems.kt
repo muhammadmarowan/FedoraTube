@@ -94,9 +94,10 @@ internal fun ChannelTabItems(
                 itemsKey = pagingItems.itemSnapshotList,
                 compactRowSpacing = feedLayout.cardSpacing,
             )
+        val useRowCards = isVideos || isLive
         val sidePadding =
             when {
-                isVideos || isLive -> 10.dp
+                isVideos || isLive -> 0.dp
                 isShorts -> ShortCardDefaults.gridPadding(feedLayout)
                 else -> plan.horizontalPadding
             }
@@ -116,7 +117,7 @@ internal fun ChannelTabItems(
         val gridColumns =
             when {
                 isShorts -> GridCells.Adaptive(minSize = 120.dp)
-                isVideos || isLive -> if (feedLayout.isCompact) GridCells.Fixed(2) else GridCells.Adaptive(minSize = 160.dp)
+                isVideos || isLive -> GridCells.Fixed(1)
                 else -> GridCells.Fixed(1)
             }
 
@@ -125,8 +126,8 @@ internal fun ChannelTabItems(
             state = listState,
             modifier = Modifier.fillMaxSize(),
             contentPadding = padding,
-            horizontalArrangement = Arrangement.spacedBy(if (isVideos || isLive || isShorts) 10.dp else 0.dp),
-            verticalArrangement = Arrangement.spacedBy(if (isVideos || isLive || isShorts) 14.dp else 16.dp),
+            horizontalArrangement = Arrangement.spacedBy(if (isShorts) 10.dp else 0.dp),
+            verticalArrangement = Arrangement.spacedBy(if (useRowCards) 0.dp else if (isShorts) 14.dp else 16.dp),
         ) {
             if (topGap != null) {
                 fullSpanItem(key = "top_gap") { Spacer(Modifier.height(topGap)) }
@@ -145,13 +146,22 @@ internal fun ChannelTabItems(
             ) { index ->
                 when (val item = pagingItems[index]) {
                     is FeedItem.VideoItem -> {
-                        MediaVideoCard(
-                            video = item.video,
-                            layout = VideoCardLayout.Stacked,
-                            showChannel = false,
-                            onClick = { onVideoClick(item.video) },
-                            useInternalPadding = false,
-                        )
+                        if (useRowCards) {
+                            MediaVideoCard(
+                                video = item.video,
+                                layout = VideoCardLayout.Row,
+                                showChannel = false,
+                                onClick = { onVideoClick(item.video) },
+                            )
+                        } else {
+                            MediaVideoCard(
+                                video = item.video,
+                                layout = VideoCardLayout.Stacked,
+                                showChannel = false,
+                                onClick = { onVideoClick(item.video) },
+                                useInternalPadding = false,
+                            )
+                        }
                     }
 
                     is FeedItem.ShortItem -> {

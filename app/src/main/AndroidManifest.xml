@@ -99,8 +99,11 @@
             android:windowSoftInputMode="adjustResize"
             android:windowLayoutInDisplayCutoutMode="shortEdges">
 
-            <!-- Deep Links for YouTube URLs -->
-            <intent-filter>
+            <!-- Deep Links for YouTube URLs. autoVerify marks these as App Links so Android 12+
+                 lets the user pick FedoraTube as the default app under "Open by default",
+                 even though youtube.com itself stays owned by Google (verified domains fail,
+                 the one-time LinkHandling prompt points at the system toggle). -->
+            <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
@@ -126,7 +129,7 @@
                 <data android:pathPrefix="/" />
             </intent-filter>
 
-            <intent-filter>
+            <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
@@ -139,7 +142,7 @@
                 <data android:pathPrefix="/" />
             </intent-filter>
 
-            <intent-filter>
+            <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
@@ -147,11 +150,12 @@
                 <data android:scheme="http" />
                 <data android:scheme="https" />
                 <data android:host="youtu.be" />
+                <data android:host="www.youtu.be" />
                 <data android:pathPrefix="/" />
             </intent-filter>
 
             <!-- Piped frontend links (same video IDs as YouTube) -->
-            <intent-filter>
+            <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />

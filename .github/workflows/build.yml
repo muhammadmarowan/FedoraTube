@@ -70,13 +70,6 @@ jobs:
             echo "$RELEASE_KEYSTORE_BASE64" | base64 --decode > release.keystore
             echo "signed=true" >> "$GITHUB_OUTPUT"
             echo "Release keystore decoded from secret."
-          elif [ -f "ci/release-keystore.b64" ]; then
-            base64 --decode ci/release-keystore.b64 > release.keystore
-            echo "STORE_PASSWORD=android" >> "$GITHUB_ENV"
-            echo "KEY_ALIAS=flow" >> "$GITHUB_ENV"
-            echo "KEY_PASSWORD=android" >> "$GITHUB_ENV"
-            echo "signed=generated" >> "$GITHUB_OUTPUT"
-            echo "Release keystore decoded from repository stable key."
           else
             echo "Generating release keystore for repository build..."
             keytool -genkeypair -v -keystore release.keystore -alias flow -keyalg RSA -keysize 2048 -validity 10000 -storepass android -keypass android -dname "CN=Flow, OU=Flow Android, O=Flow, L=San Francisco, ST=California, C=US"

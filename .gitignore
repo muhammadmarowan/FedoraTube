@@ -13,6 +13,7 @@ algo.md
 newpipe-dev
 # Signing keystore - NEVER COMMIT THIS FILE!
 release.keystore
+/ci/
 generate_key.ps1
 generate_key.sh
 generate_key.bat
