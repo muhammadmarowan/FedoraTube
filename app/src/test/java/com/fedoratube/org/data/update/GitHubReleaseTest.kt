@@ -71,35 +71,22 @@ class GitHubReleaseTest {
     }
 
     @Test
-    fun `a newer nightly run is offered with its own apk`() {
-        val nightly = GitHubRelease(tagName = "nightly", assets = listOf(asset("flow-nightly-1430.apk"), asset("checksums.txt")))
-
-        val release = nightly.toNightlyReleaseIfNewer(currentRun = 1428)
-
-        assertThat(release?.version).isEqualTo("nightly.1430")
-        assertThat(release?.apk?.name).isEqualTo("flow-nightly-1430.apk")
+    fun `a release tagged nightly is hidden from the updater`() {
+        assertThat(GitHubRelease(tagName = "nightly").isNightlyRelease()).isTrue()
     }
 
     @Test
-    fun `the running nightly or an older one is not an update`() {
-        val nightly = GitHubRelease(tagName = "nightly", assets = listOf(asset("flow-nightly-1428.apk")))
+    fun `a release carrying a nightly apk is hidden from the updater`() {
+        val legacy = GitHubRelease(tagName = "v1.6.0", assets = listOf(asset("flow-nightly-1430.apk")))
 
-        assertThat(nightly.toNightlyReleaseIfNewer(currentRun = 1428)).isNull()
-        assertThat(nightly.toNightlyReleaseIfNewer(currentRun = 1500)).isNull()
+        assertThat(legacy.isNightlyRelease()).isTrue()
     }
 
     @Test
-    fun `a local nightly build never offers an update`() {
-        val nightly = GitHubRelease(tagName = "nightly", assets = listOf(asset("flow-nightly-1430.apk")))
+    fun `a stable release is not hidden`() {
+        val stable = GitHubRelease(tagName = "v1.7.5", assets = listOf(asset("flow.apk")))
 
-        assertThat(nightly.toNightlyReleaseIfNewer(currentRun = 0)).isNull()
-    }
-
-    @Test
-    fun `a nightly release without a nightly apk offers nothing`() {
-        val nightly = GitHubRelease(tagName = "nightly", assets = listOf(asset("flow.apk"), asset("flow-arm64-v8a.apk")))
-
-        assertThat(nightly.toNightlyReleaseIfNewer(currentRun = 1)).isNull()
+        assertThat(stable.isNightlyRelease()).isFalse()
     }
 
     @Test

@@ -1,4 +1,3 @@
-import com.android.build.api.variant.BuildConfigField
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import java.util.Properties
 
@@ -56,10 +55,9 @@ android {
         applicationId = "com.fedoratube.org"
         minSdk = 26
         targetSdk = 36
-        versionCode = 23
-        versionName = "1.7.4"
+        versionCode = 24
+        versionName = "1.7.5"
 
-        buildConfigField("int", "NIGHTLY_RUN", "0")
         buildConfigField("String", "APP_LANGUAGE_TAGS", "\"${(listOf("en") + translatedLocaleTags()).joinToString(",")}\"")
         // Last.fm keys come from the CI secrets; builds without them ask the viewer for their own key.
         buildConfigField("String", "LASTFM_API_KEY", "\"${secretValue("lastfmApiKey", "lastfm.apiKey", "LASTFM_API_KEY")}\"")
@@ -135,25 +133,16 @@ android {
             enableV3Signing = true
             enableV4Signing = true
         }
-        // One long-lived key for every nightly, so each build installs over the last one.
-        create("nightly") {
-            storeFile = rootDir.resolve("nightly.keystore")
-            storePassword = System.getenv("NIGHTLY_STORE_PASSWORD") ?: localProperties.getProperty("nightlyStorePassword") ?: ""
-            keyAlias = System.getenv("NIGHTLY_KEY_ALIAS") ?: localProperties.getProperty("nightlyKeyAlias") ?: ""
-            keyPassword = System.getenv("NIGHTLY_KEY_PASSWORD") ?: localProperties.getProperty("nightlyKeyPassword") ?: ""
-        }
     }
 
     buildTypes {
         debug {
             versionNameSuffix = "-debug"
-            buildConfigField("String", "UPDATE_CHANNEL", "\"stable\"")
             isDebuggable = true
             isMinifyEnabled = false
             isShrinkResources = false
         }
         release {
-            buildConfigField("String", "UPDATE_CHANNEL", "\"stable\"")
             isDebuggable = false
             isMinifyEnabled = true
             isShrinkResources = true
@@ -175,17 +164,6 @@ android {
                 signingConfig = null // Let Gradle build an unsigned APK for IzzyOnDroid/F-Droid
                 println("WARNING: Release keystore not found. Building UNSIGNED release APK.")
             }
-        }
-        // Nightly: release-level performance under its own app id. It must come after release,
-        // because initWith copies release as it stands at this point.
-        create("nightly") {
-            initWith(getByName("release"))
-            applicationIdSuffix = ".nightly"
-            versionNameSuffix = "-nightly"
-            matchingFallbacks += "release"
-            buildConfigField("String", "UPDATE_CHANNEL", "\"nightly\"")
-            val nightlyKey = signingConfigs.getByName("nightly")
-            signingConfig = if (nightlyKey.storeFile?.exists() == true) nightlyKey else signingConfigs.getByName("debug")
         }
     }
 
@@ -224,33 +202,6 @@ android {
     }
 }
 
-
-// CI nightlies are numbered by workflow run: versionCode = run, versionName = <next>-nightly.<run>+<sha>.
-// Local nightly builds keep defaultConfig's version, so they never replace a CI nightly.
-androidComponents {
-    onVariants(selector().withBuildType("nightly")) { variant ->
-        val run = providers.environmentVariable("GITHUB_RUN_NUMBER").map(String::toInt)
-        val sha = providers.environmentVariable("GITHUB_SHA").map { it.take(7) }
-        val base = providers.gradleProperty("flow.nightlyBaseVersion")
-        variant.outputs.forEach { output ->
-            val localCode = output.versionCode.get()
-            val localName = output.versionName.get()
-            output.versionCode.set(run.orElse(localCode))
-            output.versionName.set(
-                base
-                    .zip(run) { name, number -> "$name-nightly.$number" }
-                    .zip(sha) { name, commit -> "$name+$commit" }
-                    .orElse(localName),
-            )
-        }
-        variant.buildConfigFields?.put(
-            "NIGHTLY_RUN",
-            run
-                .map { BuildConfigField("int", it.toString(), null) }
-                .orElse(BuildConfigField("int", "0", null)),
-        )
-    }
-}
 
 room {
     schemaDirectory("$projectDir/schemas")

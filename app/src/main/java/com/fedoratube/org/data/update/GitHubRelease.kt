@@ -10,7 +10,8 @@ private const val SHA256_PREFIX = "sha256:"
 private const val FOSS_PREFIX = "flow-foss"
 private const val UNIVERSAL_APK = "flow.apk"
 private const val APK_SUFFIX = ".apk"
-private val NightlyApk = Regex("""flow-nightly-(\d+)\.apk""", RegexOption.IGNORE_CASE)
+private const val NIGHTLY_TAG = "nightly"
+private const val NIGHTLY_MARKER = "nightly"
 
 @Serializable
 data class GitHubRelease(
@@ -55,27 +56,10 @@ internal fun GitHubRelease.toAppReleaseIfNewer(
     )
 }
 
-/**
- * The rolling nightly release as an [AppRelease] when its build is newer than [currentRun]. Nightly
- * builds are told apart by their CI run number, which the APK's name carries, so a local build
- * (run 0) never offers one.
- */
-internal fun GitHubRelease.toNightlyReleaseIfNewer(currentRun: Int): AppRelease? {
-    if (currentRun <= 0) return null
-    val (apk, run) =
-        assets
-            .firstNotNullOfOrNull { asset -> NightlyApk.matchEntire(asset.name)?.let { asset to it.groupValues[1].toInt() } }
-            ?: return null
-    if (run <= currentRun) return null
-    return AppRelease(
-        version = "nightly.$run",
-        tag = tagName,
-        notes = body.orEmpty(),
-        publishedAt = publishedAt?.let { runCatching { Instant.parse(it) }.getOrNull() },
-        pageUrl = htmlUrl,
-        apk = apk.toReleaseApk(),
-    )
-}
+/** The retired rolling nightly release, or any old tag that still carries nightly APKs. */
+internal fun GitHubRelease.isNightlyRelease(): Boolean =
+    tagName.equals(NIGHTLY_TAG, ignoreCase = true) ||
+        assets.any { it.name.contains(NIGHTLY_MARKER, ignoreCase = true) }
 
 /**
  * The github-flavour APK for this device: the split build for its preferred ABI, else the universal
@@ -87,7 +71,9 @@ internal fun selectApk(
 ): GitHubAsset? {
     val github =
         assets.filter {
-            it.name.endsWith(APK_SUFFIX, ignoreCase = true) && !it.name.startsWith(FOSS_PREFIX, ignoreCase = true)
+            it.name.endsWith(APK_SUFFIX, ignoreCase = true) &&
+                !it.name.startsWith(FOSS_PREFIX, ignoreCase = true) &&
+                !it.name.contains(NIGHTLY_MARKER, ignoreCase = true)
         }
     val matchesAbi = { asset: GitHubAsset, abi: String ->
         asset.name.equals("flow-$abi.apk", ignoreCase = true) ||

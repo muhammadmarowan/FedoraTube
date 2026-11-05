@@ -96,8 +96,7 @@ internal fun ChannelTabItems(
             )
         val sidePadding =
             when {
-                (isVideos || isLive) && isGridView -> 10.dp
-                isVideos || isLive -> 12.dp
+                isVideos || isLive -> 10.dp
                 isShorts -> ShortCardDefaults.gridPadding(feedLayout)
                 else -> plan.horizontalPadding
             }
@@ -117,8 +116,7 @@ internal fun ChannelTabItems(
         val gridColumns =
             when {
                 isShorts -> GridCells.Adaptive(minSize = 120.dp)
-                (isVideos || isLive) && isGridView -> if (feedLayout.isCompact) GridCells.Fixed(2) else GridCells.Adaptive(minSize = 160.dp)
-                isVideos || isLive -> GridCells.Fixed(1)
+                isVideos || isLive -> if (feedLayout.isCompact) GridCells.Fixed(2) else GridCells.Adaptive(minSize = 160.dp)
                 else -> GridCells.Fixed(1)
             }
 
@@ -127,8 +125,8 @@ internal fun ChannelTabItems(
             state = listState,
             modifier = Modifier.fillMaxSize(),
             contentPadding = padding,
-            horizontalArrangement = Arrangement.spacedBy(if ((isVideos || isLive) && isGridView) 10.dp else if (isShorts) 10.dp else 0.dp),
-            verticalArrangement = Arrangement.spacedBy(if ((isVideos || isLive) && isGridView) 14.dp else if (isVideos || isLive) 8.dp else if (isShorts) 14.dp else 16.dp),
+            horizontalArrangement = Arrangement.spacedBy(if (isVideos || isLive || isShorts) 10.dp else 0.dp),
+            verticalArrangement = Arrangement.spacedBy(if (isVideos || isLive || isShorts) 14.dp else 16.dp),
         ) {
             if (topGap != null) {
                 fullSpanItem(key = "top_gap") { Spacer(Modifier.height(topGap)) }

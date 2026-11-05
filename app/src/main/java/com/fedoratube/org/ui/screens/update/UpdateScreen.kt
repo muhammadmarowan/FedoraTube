@@ -14,8 +14,6 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -36,13 +34,11 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -72,7 +68,6 @@ import com.fedoratube.org.ui.components.shared.FedoraThumbnailsWallpaper
 import com.fedoratube.org.ui.components.shared.FlowEmptyState
 import com.fedoratube.org.ui.components.shared.FlowErrorState
 import com.fedoratube.org.ui.components.shared.FlowLoadingIndicator
-import com.fedoratube.org.ui.components.shared.FlowLogo
 import com.fedoratube.org.ui.components.shared.FlowMaxContentWidth
 import com.fedoratube.org.ui.components.shared.FlowSectionHeader
 import java.time.ZoneId
@@ -80,8 +75,6 @@ import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 
 private val ContentPadding = PaddingValues(start = 20.dp, end = 20.dp, bottom = 24.dp)
-private val HeroSize = 96.dp
-private val HeroLogoWidth = 44.dp
 private val HeaderSpacing = 12.dp
 private val FactSpacing = 8.dp
 private val NoticePadding = 16.dp
@@ -224,13 +217,6 @@ fun UpdateScreen(
 @Composable
 private fun UpToDateHeader(currentVersion: String) {
     Column(verticalArrangement = Arrangement.spacedBy(HeaderSpacing), modifier = Modifier.padding(bottom = HeaderSpacing)) {
-        Surface(
-            shape = MaterialShapes.SoftBurst.toShape(),
-            color = MaterialTheme.colorScheme.primaryContainer,
-            modifier = Modifier.size(HeroSize),
-        ) {
-            Box(contentAlignment = Alignment.Center) { FlowLogo(Modifier.width(HeroLogoWidth)) }
-        }
         Text(
             text = stringResource(R.string.flow_is_up_to_date),
             style = MaterialTheme.typography.headlineMediumEmphasized,
@@ -309,13 +295,6 @@ private fun ReleaseHeader(release: AppRelease) {
     val context = LocalContext.current
     val dateFormatter = remember { DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM) }
     Column(verticalArrangement = Arrangement.spacedBy(HeaderSpacing), modifier = Modifier.padding(bottom = HeaderSpacing)) {
-        Surface(
-            shape = MaterialShapes.SoftBurst.toShape(),
-            color = MaterialTheme.colorScheme.primaryContainer,
-            modifier = Modifier.size(HeroSize),
-        ) {
-            Box(contentAlignment = Alignment.Center) { FlowLogo(Modifier.width(HeroLogoWidth)) }
-        }
         Text(
             text = stringResource(R.string.update_title, release.version),
             style = MaterialTheme.typography.headlineMediumEmphasized,

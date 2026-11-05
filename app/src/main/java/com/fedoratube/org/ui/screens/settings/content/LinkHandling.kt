@@ -7,6 +7,9 @@ import android.content.pm.verify.domain.DomainVerificationUserState
 import android.net.Uri
 import android.os.Build
 import android.provider.Settings
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -52,9 +55,9 @@ internal fun linkHandling(
 @Composable
 internal fun rememberLinkHandlingLabel(): String {
     val context = LocalContext.current
-    var handling by remember { mutableStateOf(readLinkHandling(context)) }
+    var handling by remember { mutableStateOf(currentLinkHandling(context)) }
     LifecycleResumeEffect(context) {
-        handling = readLinkHandling(context)
+        handling = currentLinkHandling(context)
         onPauseOrDispose { }
     }
     return when (val current = handling) {
@@ -78,7 +81,7 @@ internal fun openLinkSettings(context: Context) {
         .onFailure { runCatching { context.startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, packageUri)) } }
 }
 
-private fun readLinkHandling(context: Context): LinkHandling {
+internal fun currentLinkHandling(context: Context): LinkHandling {
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) return LinkHandling.SystemAsks
     val state =
         runCatching {
@@ -92,5 +95,43 @@ private fun readLinkHandling(context: Context): LinkHandling {
         allowed = state.isLinkHandlingAllowed,
         enabledAddresses = addresses.count { it != DomainVerificationUserState.DOMAIN_STATE_NONE },
         totalAddresses = addresses.size,
+    )
+}
+
+/**
+ * One-time nudge shown after onboarding while Android still sends YouTube links elsewhere. Flow
+ * cannot prove it owns youtube.com, so the system has to be pointed at it by hand.
+ */
+@Composable
+internal fun LinkHandlingPrompt(
+    enabled: Boolean,
+    prompted: Boolean,
+    onPrompted: () -> Unit,
+) {
+    val context = LocalContext.current
+    var handling by remember { mutableStateOf(currentLinkHandling(context)) }
+    LifecycleResumeEffect(context) {
+        handling = currentLinkHandling(context)
+        onPauseOrDispose { }
+    }
+    val needsPermission =
+        handling is LinkHandling.Off || handling is LinkHandling.Some
+    if (!enabled || prompted || !needsPermission) return
+
+    AlertDialog(
+        onDismissRequest = onPrompted,
+        title = { Text(stringResource(R.string.link_handling_prompt_title)) },
+        text = { Text(stringResource(R.string.link_handling_prompt_body)) },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    onPrompted()
+                    openLinkSettings(context)
+                },
+            ) { Text(stringResource(R.string.link_handling_prompt_open)) }
+        },
+        dismissButton = {
+            TextButton(onClick = onPrompted) { Text(stringResource(R.string.link_handling_prompt_later)) }
+        },
     )
 }

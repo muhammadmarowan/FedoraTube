@@ -83,7 +83,7 @@ internal fun SharedTransitionScope.OnboardingSteps(
         }
         when {
             step == OnboardingStep.WELCOME -> {
-                Readable { WelcomeStep(hero = hero, contentPadding = StepPadding) }
+                Readable { WelcomeStep(contentPadding = StepPadding) }
             }
 
             step == OnboardingStep.READY -> {

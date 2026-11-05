@@ -104,6 +104,7 @@ class PlayerPreferences(
         val AUTO_PIP_ENABLED = booleanPreferencesKey("auto_pip_enabled")
         val MANUAL_PIP_BUTTON_ENABLED = booleanPreferencesKey("manual_pip_button_enabled")
         val STABLE_VOLUME_ENABLED = booleanPreferencesKey("stable_volume_enabled")
+        val LINK_HANDLING_PROMPTED = booleanPreferencesKey("link_handling_prompted")
 
         // Buffer settings
         val MIN_BUFFER_MS = intPreferencesKey("min_buffer_ms")
@@ -1564,6 +1565,17 @@ class PlayerPreferences(
     suspend fun setMusicAudioQuality(quality: MusicAudioQuality) {
         context.playerPreferencesDataStore.edit { preferences ->
             preferences[Keys.MUSIC_AUDIO_QUALITY] = quality.label
+        }
+    }
+
+    // Link handling
+    val linkHandlingPrompted: Flow<Boolean> =
+        context.playerPreferencesDataStore.data
+            .map { preferences -> preferences[Keys.LINK_HANDLING_PROMPTED] ?: false }
+
+    suspend fun setLinkHandlingPrompted(prompted: Boolean) {
+        context.playerPreferencesDataStore.edit { preferences ->
+            preferences[Keys.LINK_HANDLING_PROMPTED] = prompted
         }
     }
 

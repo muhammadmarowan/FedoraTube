@@ -1,3 +1,16 @@
+# Fedora Tube v1.7.5
+
+**Release date:** 2026-11-05
+**Status:** Stable
+
+## Highlights
+
+- Update screen: removed the logo above "FedoraTube is up to date" so the message sits directly under the back button
+- Channel Videos and in-channel search use the channel grid again instead of the full-width Home-style list
+- Onboarding "Make yours" no longer shows the logo or hero, and its text is centred instead of stranded at the bottom
+- Nightly builds and their GitHub Actions steps are gone; only stable releases are built and published
+- The link-handling setting now clearly explains how to let YouTube links open in FedoraTube
+
 # Fedora Tube v1.7.4
 
 **Release date:** 2026-11-05
