@@ -75,6 +75,7 @@ class UpdateCheckWorker(
             if (!BackgroundCheckScheduler.updateCheckWanted(
                     preferences.notificationsEnabled.first(),
                     preferences.notifUpdatesEnabled.first(),
+                    preferences.focusModeEnabled.first(),
                 )
             ) {
                 Log.d(TAG, "Update notifications are off, skipping update check")

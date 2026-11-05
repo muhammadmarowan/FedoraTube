@@ -106,7 +106,9 @@ internal fun EnhancedVideoPlayerScreen(
                 isFullscreen = isFullscreenShown,
                 isInPipMode = isInPipMode,
             )
-        val isWideLayout = layoutMode == PlayerLayoutMode.WIDE
+        // Focus mode hides the supporting pane, so a wide window falls back to the single-column
+        // layout instead of leaving an empty reserved column beside the video.
+        val isWideLayout = layoutMode == PlayerLayoutMode.WIDE && !isFocusModeEnabled
         val isMediumLayout = layoutMode == PlayerLayoutMode.MEDIUM
 
         val queueVideos by EnhancedPlayerManager.getInstance().queueVideos.collectAsStateWithLifecycle(initialValue = emptyList())
@@ -165,6 +167,7 @@ internal fun EnhancedVideoPlayerScreen(
                                 scope = scope,
                                 snackbarHostState = snackbarHostState,
                                 onChannelClick = onChannelClick,
+                                isFocusMode = isFocusModeEnabled,
                             )
                         }
                     }

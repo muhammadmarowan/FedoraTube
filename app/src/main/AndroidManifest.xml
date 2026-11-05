@@ -100,7 +100,7 @@
             android:windowLayoutInDisplayCutoutMode="shortEdges">
 
             <!-- Deep Links for YouTube URLs -->
-            <intent-filter android:autoVerify="true">
+            <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
@@ -123,6 +123,7 @@
                 <data android:pathPrefix="/c" />
                 <data android:pathPrefix="/user" />
                 <data android:pathPrefix="/@" />
+                <data android:pathPrefix="/" />
             </intent-filter>
 
             <intent-filter>
@@ -135,9 +136,10 @@
                 <data android:host="www.youtube-nocookie.com" />
                 <data android:host="youtube-nocookie.com" />
                 <data android:pathPrefix="/embed" />
+                <data android:pathPrefix="/" />
             </intent-filter>
 
-            <intent-filter android:autoVerify="true">
+            <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
@@ -145,6 +147,7 @@
                 <data android:scheme="http" />
                 <data android:scheme="https" />
                 <data android:host="youtu.be" />
+                <data android:pathPrefix="/" />
             </intent-filter>
 
             <!-- Piped frontend links (same video IDs as YouTube) -->

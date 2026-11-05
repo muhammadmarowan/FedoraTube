@@ -92,6 +92,7 @@ internal fun VideoActionRow(
     collaborators: List<VideoCollaborator> = emptyList(),
     subscribedCollaboratorIds: Set<String> = emptySet(),
     onCollaboratorsClick: () -> Unit = {},
+    isFocusMode: Boolean = false,
 ) {
     LazyRow(
         horizontalArrangement = Arrangement.spacedBy(ActionSpacing),
@@ -121,34 +122,38 @@ internal fun VideoActionRow(
             }
         }
 
-        item(key = "action_subscribe") {
-            if (collaborators.size > 1) {
-                FlowSubscribeButton(
-                    size = FlowSubscribeButtonSize.Compact,
-                    isSubscribed = collaborators.any { it.channelId in subscribedCollaboratorIds },
-                    onSubscribeClick = onCollaboratorsClick,
-                    onSubscribedClick = onCollaboratorsClick,
-                )
-            } else {
-                FlowSubscribeButton(
-                    size = FlowSubscribeButtonSize.Compact,
-                    isSubscribed = isSubscribed,
-                    isNotificationsEnabled = isNotificationsEnabled,
-                    onSubscribeClick = onSubscribeClick,
-                    onUnsubscribeClick = onUnsubscribeClick,
-                    onNotificationChange = onNotificationChange,
+        // Focus mode strips the engagement actions and leaves only the things a viewer acts on
+        // while watching: share, download, save and notes.
+        if (!isFocusMode) {
+            item(key = "action_subscribe") {
+                if (collaborators.size > 1) {
+                    FlowSubscribeButton(
+                        size = FlowSubscribeButtonSize.Compact,
+                        isSubscribed = collaborators.any { it.channelId in subscribedCollaboratorIds },
+                        onSubscribeClick = onCollaboratorsClick,
+                        onSubscribedClick = onCollaboratorsClick,
+                    )
+                } else {
+                    FlowSubscribeButton(
+                        size = FlowSubscribeButtonSize.Compact,
+                        isSubscribed = isSubscribed,
+                        isNotificationsEnabled = isNotificationsEnabled,
+                        onSubscribeClick = onSubscribeClick,
+                        onUnsubscribeClick = onUnsubscribeClick,
+                        onNotificationChange = onNotificationChange,
+                    )
+                }
+            }
+
+            item(key = "action_like_dislike") {
+                SegmentedLikeDislikeButton(
+                    likeState = likeState,
+                    likeCount = likeCount,
+                    dislikeCount = dislikeCount,
+                    onLikeClick = onLikeClick,
+                    onDislikeClick = onDislikeClick,
                 )
             }
-        }
-
-        item(key = "action_like_dislike") {
-            SegmentedLikeDislikeButton(
-                likeState = likeState,
-                likeCount = likeCount,
-                dislikeCount = dislikeCount,
-                onLikeClick = onLikeClick,
-                onDislikeClick = onDislikeClick,
-            )
         }
 
         item(key = "action_share") {

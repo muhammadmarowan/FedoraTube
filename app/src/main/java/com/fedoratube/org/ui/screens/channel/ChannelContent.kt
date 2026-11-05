@@ -63,6 +63,7 @@ import com.fedoratube.org.ui.components.channel.ChannelRow
 import com.fedoratube.org.ui.components.channel.ChannelTabItems
 import com.fedoratube.org.ui.components.channel.ChannelTabRow
 import com.fedoratube.org.ui.components.channel.CommunityPostCard
+import com.fedoratube.org.ui.components.channel.CommunityPostInlineComments
 import com.fedoratube.org.ui.components.channel.PostsPaneMaxWidth
 import com.fedoratube.org.ui.components.layout.flowBottomContentPadding
 import com.fedoratube.org.ui.components.shared.FeedShelfActions
@@ -364,10 +365,36 @@ internal fun ChannelContent(
                                     CommunityPostCard(
                                         post = post,
                                         onAuthorClick = { onChannelClick(header.id) },
-                                        onCommentsClick = { onCommunityPostComments(post) },
+                                        onCommentsClick = {
+                                            if (communityUiState.activePost?.id == post.id) {
+                                                onCloseCommunityPostComments()
+                                            } else {
+                                                onCommunityPostComments(post)
+                                            }
+                                        },
                                         onShareClick = { onCommunityPostShare(post) },
                                         showDivider = !compact,
                                         compact = compact,
+                                        commentsContent =
+                                            if (communityUiState.activePost?.id == post.id) {
+                                                {
+                                                    CommunityPostInlineComments(
+                                                        comments = communityComments,
+                                                        isLoading = communityUiState.isLoadingComments,
+                                                        onClose = onCloseCommunityPostComments,
+                                                        totalText = post.commentCountText,
+                                                        isLoadingMore = communityUiState.isLoadingMoreComments,
+                                                        onLoadMore = onLoadMoreCommunityPostComments,
+                                                        hasMore = communityUiState.commentsContinuation != null,
+                                                        onLoadReplies = { comment -> onLoadCommunityCommentReplies(comment, false) },
+                                                        onLoadMoreReplies = { comment -> onLoadCommunityCommentReplies(comment, true) },
+                                                        onAuthorClick = onChannelClick,
+                                                        onAvatarClick = onChannelClick,
+                                                    )
+                                                }
+                                            } else {
+                                                null
+                                            },
                                         modifier = if (compact) Modifier.padding(bottom = 4.dp) else Modifier,
                                     )
                                 },

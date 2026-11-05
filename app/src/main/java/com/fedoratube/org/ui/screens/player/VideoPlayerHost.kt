@@ -92,6 +92,7 @@ fun VideoPlayerHost(
     val commentsUiState = rememberPlayerCommentsUiState(playerViewModel)
 
     val prefs = rememberVideoPlayerPreferences(context)
+    val focusModeEnabled by prefs.preferences.focusModeEnabled.collectAsStateWithLifecycle(initialValue = false)
     val rememberSubtitleLanguage: (String) -> Unit = { language ->
         scope.launch { prefs.preferences.setPreferredSubtitleLanguage(language) }
     }
@@ -117,7 +118,7 @@ fun VideoPlayerHost(
     val isLandscapeWindow = LocalWindowIsLandscape.current
     val windowLayoutMode = playerWindowLayoutModeFor(windowSizeClass, isLandscapeWindow)
     val isLargeWindow = windowLayoutMode != PlayerLayoutMode.COMPACT
-    val isTwoPaneWindow = windowLayoutMode == PlayerLayoutMode.WIDE
+    val isTwoPaneWindow = windowLayoutMode == PlayerLayoutMode.WIDE && !focusModeEnabled
     val paneScaffoldDirective = calculatePaneScaffoldDirective(currentWindowAdaptiveInfo())
     val detailPaneWidth = if (isTwoPaneWindow) paneScaffoldDirective.supportingPaneReserve() else 0.dp
     val playerLayoutMode =

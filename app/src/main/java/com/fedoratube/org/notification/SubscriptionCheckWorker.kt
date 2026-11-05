@@ -150,6 +150,7 @@ class SubscriptionCheckWorker(
             if (!BackgroundCheckScheduler.subscriptionCheckWanted(
                     preferences.notificationsEnabled.first(),
                     preferences.notifNewVideosEnabled.first(),
+                    preferences.focusModeEnabled.first(),
                 )
             ) {
                 Log.d(TAG, "New video notifications are off, skipping subscription check")

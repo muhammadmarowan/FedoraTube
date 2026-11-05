@@ -60,7 +60,6 @@ internal fun SettingsListScope.homeContent(
         )
 
     group(key = "home.engine", header = R.string.settings_flow_engine_header) {
-        page(SettingsDestination.TASTE)
         row(HomeIndex.focusMode.key) { shape ->
             FlowSwitchRow(
                 title = stringResource(HomeIndex.focusMode.title),

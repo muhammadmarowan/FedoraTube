@@ -18,12 +18,14 @@ internal object BackgroundCheckScheduler {
     fun subscriptionCheckWanted(
         notificationsEnabled: Boolean,
         newVideosEnabled: Boolean,
-    ): Boolean = notificationsEnabled && newVideosEnabled
+        focusModeEnabled: Boolean = false,
+    ): Boolean = notificationsEnabled && newVideosEnabled && !focusModeEnabled
 
     fun updateCheckWanted(
         notificationsEnabled: Boolean,
         updatesEnabled: Boolean,
-    ): Boolean = notificationsEnabled && updatesEnabled
+        focusModeEnabled: Boolean = false,
+    ): Boolean = notificationsEnabled && updatesEnabled && !focusModeEnabled
 
     /**
      * Runs for the life of the process. The first value only confirms the schedule a previous
@@ -34,11 +36,19 @@ internal object BackgroundCheckScheduler {
         preferences: PlayerPreferences,
     ) = coroutineScope {
         launch {
+            preferences.focusModeEnabled
+                .distinctUntilChanged()
+                .collect { enabled -> if (enabled) NotificationHelper.cancelNonPlaybackNotifications(context) }
+        }
+        launch {
             combine(
                 preferences.notificationsEnabled,
                 preferences.notifNewVideosEnabled,
                 preferences.subscriptionCheckIntervalMinutes,
-            ) { enabled, newVideos, minutes -> if (subscriptionCheckWanted(enabled, newVideos)) minutes else null }
+                preferences.focusModeEnabled,
+            ) { enabled, newVideos, minutes, focusMode ->
+                if (subscriptionCheckWanted(enabled, newVideos, focusMode)) minutes else null
+            }
                 .distinctUntilChanged()
                 .collectIndexed { index, minutes ->
                     if (minutes == null) {
@@ -50,8 +60,12 @@ internal object BackgroundCheckScheduler {
         }
         if (BuildConfig.UPDATER_ENABLED) {
             launch {
-                combine(preferences.notificationsEnabled, preferences.notifUpdatesEnabled, ::updateCheckWanted)
-                    .distinctUntilChanged()
+                combine(
+                    preferences.notificationsEnabled,
+                    preferences.notifUpdatesEnabled,
+                    preferences.focusModeEnabled,
+                    ::updateCheckWanted,
+                ).distinctUntilChanged()
                     .collectIndexed { index, wanted ->
                         if (wanted) {
                             UpdateCheckWorker.schedulePeriodicCheck(context, reschedule = index > 0)

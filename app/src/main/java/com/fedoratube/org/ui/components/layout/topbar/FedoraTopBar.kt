@@ -4,13 +4,15 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarColors
+import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -38,6 +40,8 @@ fun FedoraTopBar(
     globalActions: FlowGlobalActionsMode = FlowGlobalActionsMode.Auto,
     globalActionsShowSettings: Boolean = false,
     windowInsets: WindowInsets = FlowTopBarDefaults.WindowInsets,
+    scrollBehavior: TopAppBarScrollBehavior? = null,
+    colors: TopAppBarColors = FlowTopBarDefaults.colors(),
 ) {
     FedoraTopBar(
         modifier = modifier,
@@ -50,6 +54,8 @@ fun FedoraTopBar(
         globalActions = globalActions,
         globalActionsShowSettings = globalActionsShowSettings,
         windowInsets = windowInsets,
+        scrollBehavior = scrollBehavior,
+        colors = colors,
     )
 }
 
@@ -64,6 +70,8 @@ fun FedoraTopBar(
     globalActions: FlowGlobalActionsMode = FlowGlobalActionsMode.Auto,
     globalActionsShowSettings: Boolean = false,
     windowInsets: WindowInsets = FlowTopBarDefaults.WindowInsets,
+    scrollBehavior: TopAppBarScrollBehavior? = null,
+    colors: TopAppBarColors = FlowTopBarDefaults.colors(),
 ) {
     val showGlobalActions =
         when (globalActions) {
@@ -84,7 +92,7 @@ fun FedoraTopBar(
                 onBack != null -> {
                     IconButton(onClick = onBack) {
                         Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
                             contentDescription = stringResource(R.string.btn_back),
                         )
                     }
@@ -97,11 +105,13 @@ fun FedoraTopBar(
                 FlowGlobalActionsRow(showSettings = globalActionsShowSettings)
             }
         },
-        colors = FlowTopBarDefaults.colors(),
+        colors = colors,
         windowInsets = windowInsets,
+        scrollBehavior = scrollBehavior,
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FlowTopBar(
     title: String,
@@ -113,8 +123,11 @@ fun FlowTopBar(
     globalActions: FlowGlobalActionsMode = FlowGlobalActionsMode.Auto,
     globalActionsShowSettings: Boolean = false,
     windowInsets: WindowInsets = FlowTopBarDefaults.WindowInsets,
-) = FedoraTopBar(title, modifier, subtitle, onBack, leading, actions, globalActions, globalActionsShowSettings, windowInsets)
+    scrollBehavior: TopAppBarScrollBehavior? = null,
+    colors: TopAppBarColors = FlowTopBarDefaults.colors(),
+) = FedoraTopBar(title, modifier, subtitle, onBack, leading, actions, globalActions, globalActionsShowSettings, windowInsets, scrollBehavior, colors)
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FlowTopBar(
     title: @Composable () -> Unit,
@@ -125,7 +138,9 @@ fun FlowTopBar(
     globalActions: FlowGlobalActionsMode = FlowGlobalActionsMode.Auto,
     globalActionsShowSettings: Boolean = false,
     windowInsets: WindowInsets = FlowTopBarDefaults.WindowInsets,
-) = FedoraTopBar(title, modifier, onBack, leading, actions, globalActions, globalActionsShowSettings, windowInsets)
+    scrollBehavior: TopAppBarScrollBehavior? = null,
+    colors: TopAppBarColors = FlowTopBarDefaults.colors(),
+) = FedoraTopBar(title, modifier, onBack, leading, actions, globalActions, globalActionsShowSettings, windowInsets, scrollBehavior, colors)
 
 @Composable
 private fun FedoraTopBarTitle(

@@ -212,9 +212,14 @@ object NotificationHelper {
      * Check if notification permission is granted (Android 13+)
      */
     fun hasNotificationPermission(context: Context): Boolean {
-        if (!runBlocking { PlayerPreferences(context).notificationsEnabled.first() }) {
-            return false
-        }
+        val prefs = PlayerPreferences(context)
+        val allowed =
+            runBlocking {
+                // Focus mode silences every app notification. Playback artwork and controls do not
+                // go through this gate, so a foreground playback notification keeps working.
+                prefs.notificationsEnabled.first() && !prefs.focusModeEnabled.first()
+            }
+        if (!allowed) return false
 
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             ContextCompat.checkSelfPermission(
@@ -918,6 +923,19 @@ object NotificationHelper {
      */
     fun cancelAllNotifications(context: Context) {
         NotificationManagerCompat.from(context).cancelAll()
+    }
+
+    /**
+     * Cancel every posted notification except video and music playback. Used when focus mode
+     * turns on so the silence starts immediately instead of at the next background check.
+     */
+    fun cancelNonPlaybackNotifications(context: Context) {
+        val manager = NotificationManagerCompat.from(context)
+        manager.activeNotifications
+            .filterNot {
+                it.notification.channelId == CHANNEL_PLAYBACK ||
+                    it.notification.channelId == CHANNEL_MUSIC_PLAYBACK
+            }.forEach { manager.cancel(it.id) }
     }
 
     /**

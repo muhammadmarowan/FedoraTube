@@ -119,7 +119,6 @@ fun FlowApp(
     val navTabOrder by preferences.navTabOrder.collectAsState(initial = com.fedoratube.org.data.local.DEFAULT_NAV_TAB_ORDER)
     val defaultNavTabIndex by preferences.defaultNavTabIndex.collectAsState(initial = 0)
     val subscriptionRefreshOnStartup by preferences.subscriptionRefreshOnStartup.collectAsState(initial = false)
-    val bottomNavHideOnScroll by preferences.bottomNavHideOnScroll.collectAsState(initial = true)
     val isFocusModeEnabled by preferences.focusModeEnabled.collectAsState(initial = false)
     val sleepTimerCloseAppOnExpiry by preferences.sleepTimerCloseAppOnExpiry.collectAsState(
         initial = SleepTimerManager.preferredCloseAppOnExpiry,
@@ -193,12 +192,11 @@ fun FlowApp(
         needsOnboarding = needsOnboarding,
     )
 
-    val isHomeRoute = currentRoute.value == "home"
     val navScrollState =
         rememberFlowNavigationScrollState(
-            hideOnScroll = bottomNavHideOnScroll && isHomeRoute && !isFocusModeEnabled,
+            hideOnScroll = false,
             routeKey = currentRoute.value,
-            locked = (!isHomeRoute) || isFocusModeEnabled || currentRoute.value == SHORTS_ROUTE_KEY,
+            locked = true,
         )
 
     val isInPipMode by GlobalPlayerState.isInPipMode.collectAsState()

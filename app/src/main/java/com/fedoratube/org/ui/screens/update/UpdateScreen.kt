@@ -21,6 +21,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.OpenInNew
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.outlined.CalendarToday
 import androidx.compose.material.icons.outlined.Download
 import androidx.compose.material.icons.outlined.ErrorOutline
@@ -32,6 +33,7 @@ import androidx.compose.material.icons.outlined.Verified
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialShapes
@@ -39,6 +41,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -116,42 +119,59 @@ fun UpdateScreen(
         Scaffold(
             containerColor = Color.Transparent,
             contentWindowInsets = WindowInsets(0.dp),
-        topBar = {
-            FlowTopBar(
-                title = "",
-                onBack = onClose,
-                actions = {
-                    if (release != null) {
-                        UpdateMenu(
-                            onSkip = {
-                                viewModel.skip()
-                                onClose()
-                            },
-                            onOpenGitHub = { uriHandler.openUri(release.pageUrl) },
-                        )
-                    } else {
-                        IconButton(onClick = { uriHandler.openUri("https://github.com/muhammadmarowan/FedoraTube/releases") }) {
-                            Icon(Icons.AutoMirrored.Outlined.OpenInNew, contentDescription = stringResource(R.string.update_open_github))
-                        }
-                    }
-                },
-            )
-        },
-        bottomBar = {
-            if (release != null) {
-                UpdateActionBar(
-                    stage = state.stage,
-                    onPrimary = {
-                        if (state.stage == UpdateStage.NeedsPermission) {
-                            runCatching { context.startActivity(viewModel.installPermissionIntent()) }
-                        } else {
-                            viewModel.primaryAction()
+            topBar = {
+                FlowTopBar(
+                    title = "",
+                    onBack = onClose,
+                    colors =
+                        TopAppBarDefaults.topAppBarColors(
+                            containerColor = Color.Transparent,
+                            scrolledContainerColor = Color.Transparent,
+                        ),
+                    leading = {
+                        // Raised tonal circle so the way back is obvious over the wallpaper.
+                        FilledTonalIconButton(
+                            onClick = onClose,
+                            modifier = Modifier.padding(start = 8.dp),
+                        ) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
+                                contentDescription = stringResource(R.string.btn_back),
+                            )
                         }
                     },
-                    onSecondary = { if (state.stage is UpdateStage.Downloading) viewModel.cancelDownload() else onClose() },
+                    actions = {
+                        if (release != null) {
+                            UpdateMenu(
+                                onSkip = {
+                                    viewModel.skip()
+                                    onClose()
+                                },
+                                onOpenGitHub = { uriHandler.openUri(release.pageUrl) },
+                            )
+                        } else {
+                            IconButton(onClick = { uriHandler.openUri("https://github.com/muhammadmarowan/FedoraTube/releases") }) {
+                                Icon(Icons.AutoMirrored.Outlined.OpenInNew, contentDescription = stringResource(R.string.update_open_github))
+                            }
+                        }
+                    },
                 )
-            }
-        },
+            },
+            bottomBar = {
+                if (release != null) {
+                    UpdateActionBar(
+                        stage = state.stage,
+                        onPrimary = {
+                            if (state.stage == UpdateStage.NeedsPermission) {
+                                runCatching { context.startActivity(viewModel.installPermissionIntent()) }
+                            } else {
+                                viewModel.primaryAction()
+                            }
+                        },
+                        onSecondary = { if (state.stage is UpdateStage.Downloading) viewModel.cancelDownload() else onClose() },
+                    )
+                }
+            },
     ) { padding ->
         Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.TopCenter) {
             when {

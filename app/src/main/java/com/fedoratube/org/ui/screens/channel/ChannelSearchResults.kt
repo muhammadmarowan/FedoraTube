@@ -99,13 +99,19 @@ internal fun ChannelSearchResults(
                             bottom = contentPadding.calculateBottomPadding(),
                         )
                     }
+                val gridColumns =
+                    if (isGridView) {
+                        if (feedLayout.isCompact) GridCells.Fixed(2) else GridCells.Adaptive(minSize = 160.dp)
+                    } else {
+                        GridCells.Fixed(1)
+                    }
                 LazyVerticalGrid(
-                    columns = if (feedLayout.isCompact) GridCells.Fixed(2) else GridCells.Adaptive(minSize = 160.dp),
+                    columns = gridColumns,
                     state = listState,
                     modifier = Modifier.fillMaxSize(),
                     contentPadding = padding,
-                    horizontalArrangement = Arrangement.spacedBy(10.dp),
-                    verticalArrangement = Arrangement.spacedBy(14.dp),
+                    horizontalArrangement = Arrangement.spacedBy(if (isGridView) 10.dp else 0.dp),
+                    verticalArrangement = Arrangement.spacedBy(if (isGridView) 14.dp else 8.dp),
                 ) {
                     itemsIndexed(
                         items = uiState.searchResults,

@@ -16,6 +16,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -24,6 +25,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -150,7 +152,10 @@ fun EnhancedMusicScreen(
     val preferences = remember(context) { com.fedoratube.org.data.local.PlayerPreferences(context) }
     val isFocusModeEnabled by preferences.focusModeEnabled.collectAsStateWithLifecycle(initialValue = false)
 
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+
     Scaffold(
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             FlowTopBar(
                 title = stringResource(R.string.screen_title_music),
@@ -160,6 +165,7 @@ fun EnhancedMusicScreen(
                         Icon(Icons.Outlined.Search, stringResource(R.string.search))
                     }
                 },
+                scrollBehavior = scrollBehavior,
             )
         },
         containerColor = MaterialTheme.colorScheme.background,

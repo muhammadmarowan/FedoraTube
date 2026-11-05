@@ -200,8 +200,10 @@ fun HomeScreen(
         coroutineScope.launch { DeepFlowManager.toggle(context) }
     }
 
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+
     Scaffold(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize().nestedScroll(scrollBehavior.nestedScrollConnection),
         contentWindowInsets = WindowInsets(0.dp),
         snackbarHost = {
             SnackbarHost(snackbarHostState, Modifier.floatAboveBottomChrome(LocalFlowBottomInsets.current))
@@ -236,6 +238,7 @@ fun HomeScreen(
                     }
                 },
                 globalActions = FlowGlobalActionsMode.None,
+                scrollBehavior = scrollBehavior,
             )
         },
     ) { padding ->

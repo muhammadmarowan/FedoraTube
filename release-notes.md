@@ -1,3 +1,18 @@
+# Fedora Tube v1.7.4
+
+**Release date:** 2026-11-05
+**Status:** Stable
+
+## Highlights
+
+- YouTube links shared by others now open and play inside Fedora Tube
+- Channel posts show comments inline, and the channel Videos tab uses a full-width YouTube-style card list
+- The bottom navigation bar stays put; the app-name bar now hides on scroll on Home, Music and Subscriptions
+- Focus mode hides subscribe and like/dislike actions while watching, and silences all app notifications
+- Your taste is hidden from Settings and Settings search
+- Onboarding "Make yours" fills the empty top space with the animated hero
+- Check Update loses its black top bar and gets a raised, prominent back button
+
 # Fedora Tube v1.5.0
 
 **Release date:** 2026-10-22

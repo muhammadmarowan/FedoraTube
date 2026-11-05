@@ -203,6 +203,7 @@ internal fun VideoInfoContent(
             Toast.makeText(context, context.getString(R.string.link_with_timestamp_copied), Toast.LENGTH_SHORT).show()
         },
         onDescriptionClick = { screenState.open(PlayerSheet.Description) },
+        isFocusMode = isFocusMode,
     )
 
     if (uiState.isLiveChatAvailable) {

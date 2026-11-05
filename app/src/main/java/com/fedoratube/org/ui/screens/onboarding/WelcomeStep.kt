@@ -58,12 +58,9 @@ internal fun WelcomeStep(
                     ),
         )
 
-        Box(
-            modifier =
-                Modifier
-                    .fillMaxSize()
-                    .padding(contentPadding),
-            contentAlignment = Alignment.BottomStart,
+        BookendLayout(
+            contentPadding = contentPadding,
+            stage = { hero(HeroLarge) },
         ) {
             Column(
                 modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp),

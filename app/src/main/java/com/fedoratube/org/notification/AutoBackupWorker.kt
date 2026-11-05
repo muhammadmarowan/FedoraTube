@@ -118,10 +118,11 @@ class AutoBackupWorker(
             }
         }
 
-    private fun showNotification(
+    private suspend fun showNotification(
         context: Context,
         success: Boolean,
     ) {
+        if (PlayerPreferences(context).focusModeEnabled.first()) return
         val nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         if (nm.getNotificationChannel(NOTIFICATION_CHANNEL_ID) == null) {

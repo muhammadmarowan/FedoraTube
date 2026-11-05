@@ -6,7 +6,6 @@ import com.fedoratube.org.ui.components.settings.SettingEntry
 internal object SettingsIndex {
     val all: List<SettingEntry> by lazy {
         HomeIndex.all +
-            TasteIndex.all +
             DestinationIndex.all +
             LanguageRegionIndex.all +
             QualityIndex.all +

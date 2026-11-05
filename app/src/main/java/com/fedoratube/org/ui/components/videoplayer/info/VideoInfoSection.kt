@@ -72,6 +72,7 @@ internal fun VideoInfoSection(
     onNoteClick: (() -> Unit)? = null,
     hasNote: Boolean = false,
     isDeviceFile: Boolean = false,
+    isFocusMode: Boolean = false,
     modifier: Modifier = Modifier,
 ) {
     var showCollaborators by remember { mutableStateOf(false) }
@@ -230,6 +231,7 @@ internal fun VideoInfoSection(
             collaborators = collaborators,
             subscribedCollaboratorIds = subscribedCollaboratorIds,
             onCollaboratorsClick = { showCollaborators = true },
+            isFocusMode = isFocusMode,
         )
     }
 
