@@ -1,8 +1,10 @@
 package com.fedoratube.org.ui.components.layout.navigation
 
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
@@ -20,6 +22,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateMapOf
@@ -106,20 +109,31 @@ fun FlowTopCategoryBar(
     val density = LocalDensity.current
     val indicatorWidthPx = with(density) { 28.dp.toPx() }
     val indicatorHeight = 3.dp
-    // tab id -> distance (px) from bar left to indicator left
-    val indicatorLeft = remember { mutableStateMapOf<Int, Float>() }
+    // YouTube-style stretch: left/right edges spring independently, the leading
+    // edge runs fast and the trailing edge lags, so the pill stretches across
+    // the gap while moving and contracts on arrival (like the reference video).
+    val indicatorBounds = remember { mutableStateMapOf<Int, Pair<Float, Float>>() }
     var barRootX by remember { mutableFloatStateOf(0f) }
-    val targetLeft = indicatorLeft[selectedTab?.id] ?: 0f
-    val animatedLeft by
-        animateFloatAsState(
-            targetValue = targetLeft,
-            animationSpec =
-                spring(
-                    dampingRatio = Spring.DampingRatioNoBouncy,
-                    stiffness = Spring.StiffnessMediumLow,
-                ),
-            label = "categoryIndicatorLeft",
+    val targetBounds = indicatorBounds[selectedTab?.id] ?: Pair(0f, indicatorWidthPx)
+    val targetLeft = targetBounds.first
+    val targetRight = targetBounds.second
+    var lastTargetLeft by remember { mutableFloatStateOf(targetLeft) }
+    val movingRight = targetLeft >= lastTargetLeft
+    LaunchedEffect(targetLeft) { lastTargetLeft = targetLeft }
+    val leftSpec =
+        spring<Float>(
+            dampingRatio = Spring.DampingRatioNoBouncy,
+            stiffness = if (movingRight) 150f else 420f,
         )
+    val rightSpec =
+        spring<Float>(
+            dampingRatio = Spring.DampingRatioNoBouncy,
+            stiffness = if (movingRight) 420f else 150f,
+        )
+    val animatedLeft by animateFloatAsState(targetLeft, animationSpec = leftSpec, label = "categoryIndicatorLeft")
+    val animatedRight by animateFloatAsState(targetRight, animationSpec = rightSpec, label = "categoryIndicatorRight")
+    val animatedWidthPx = (animatedRight - animatedLeft).coerceAtLeast(indicatorWidthPx)
+    val animatedWidthDp = with(density) { animatedWidthPx.toDp() }
 
     Box(
         modifier =
@@ -137,6 +151,17 @@ fun FlowTopCategoryBar(
         ) {
             tabs.forEach { tab ->
                 val selected = tab == selectedTab
+                val textColor by
+                    animateColorAsState(
+                        targetValue =
+                            if (selected) {
+                                MaterialTheme.colorScheme.onSurface
+                            } else {
+                                MaterialTheme.colorScheme.onSurfaceVariant
+                            },
+                        animationSpec = tween(200),
+                        label = "categoryTextColor",
+                    )
                 Column(
                     modifier =
                         Modifier
@@ -144,26 +169,23 @@ fun FlowTopCategoryBar(
                             .padding(horizontal = 12.dp, vertical = 10.dp)
                             .onGloballyPositioned { coordinates ->
                                 val centerX = coordinates.positionInRoot().x + coordinates.size.width / 2f
-                                indicatorLeft[tab.id] = centerX - barRootX - indicatorWidthPx / 2f
+                                val left = centerX - barRootX - indicatorWidthPx / 2f
+                                val right = centerX - barRootX + indicatorWidthPx / 2f
+                                indicatorBounds[tab.id] = Pair(left, right)
                             },
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     Text(
                         text = stringResource(tab.labelRes),
                         style = MaterialTheme.typography.titleSmall,
-                        color =
-                            if (selected) {
-                                MaterialTheme.colorScheme.onSurface
-                            } else {
-                                MaterialTheme.colorScheme.onSurfaceVariant
-                            },
+                        color = textColor,
                     )
                     // Keep the same visual footprint as the old per-tab box so the row height doesn't jump.
                     Box(modifier = Modifier.padding(top = 6.dp).width(28.dp).height(indicatorHeight))
                 }
             }
         }
-        // Sliding indicator (single pill, YouTube-style)
+        // Sliding + stretching indicator (single pill, YouTube-style)
         Box(
             modifier =
                 Modifier
@@ -172,7 +194,7 @@ fun FlowTopCategoryBar(
                         ComposeIntOffset(animatedLeft.roundToInt(), 0)
                     }
                     .padding(bottom = 8.dp)
-                    .width(28.dp)
+                    .width(animatedWidthDp)
                     .height(indicatorHeight)
                     .clip(RoundedCornerShape(50))
                     .background(MaterialTheme.colorScheme.primary),
