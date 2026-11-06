@@ -61,12 +61,11 @@ internal object ShortsPlayback {
                 dashDataSourceFactory = dataSourceFactory,
                 progressiveDataSourceFactory = dataSourceFactory,
             )
-        // One best stream, not an adaptive ladder: building a ladder manifest per Short was
-        // the main source of the atke-atke (stuttering) playback. The resolver still wraps
-        // progressive streams into a DASH manifest, so throttling is avoided.
-        val best = ladder.maxByOrNull { VideoCodecUtils.qualityHeightFromStream(it) }
+        // The resolver picks the best stream from the capped ladder and wraps it into a
+        // DASH manifest (no progressive throttling). Passing the whole ladder — rather
+        // than one pre-picked stream — lets the resolver fall back if one manifest fails.
         return resolver.resolve(
-            videoStreams = listOfNotNull(best),
+            videoStreams = ladder,
             audioStream = audioStream,
             dashManifestUrl = null,
             hlsUrl = null,

@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -24,8 +23,6 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.VolumeOff
-import androidx.compose.material.icons.automirrored.filled.VolumeUp
 import androidx.compose.material.icons.automirrored.outlined.Comment
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Share
@@ -52,16 +49,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -86,17 +79,17 @@ import com.fedoratube.org.ui.screens.shorts.ShortsPlayback.resolveMediaSource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
-import kotlin.math.roundToInt
 
 /**
  * YouTube-Shorts-style vertical pager.
  *
- * Two things keep it from stuttering (atke-atke jawa):
- * - ONE [PlayerView] lives outside the pager pages and is translated with the pager offset,
- *   so swiping never detaches/reattaches the surface or recreates the view.
+ * What keeps it from stuttering (atke-atke jawa):
  * - The progress ticker owns its own state inside [ShortsProgressBar], so it never
- *   recomposes the pager, and the next/previous Short's media source is pre-resolved
- *   into [sourceCache] while the current one plays.
+ *   recomposes the pager.
+ * - The next/previous Short's media source is pre-resolved into [sourceCache] while the
+ *   current one plays, and overlays are enriched only for the visible Short.
+ * - The [PlayerView] sits inside its page with the overlay above it in the same page, so
+ *   like/dislike/comment/share are always visible and tappable — never under the surface.
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -155,7 +148,6 @@ fun ShortsScreen(
         onStopOrDispose { player.pause() }
     }
 
-    var muted by remember { mutableStateOf(false) }
     var paused by remember { mutableStateOf(false) }
     var playerReady by remember { mutableStateOf(false) }
     val likedIds = remember { mutableStateOf(setOf<String>()) }
@@ -191,7 +183,7 @@ fun ShortsScreen(
         viewModel.enrichItem(item.videoId)
         playerReady = false
         paused = false
-        player.volume = if (muted) 0f else 1f
+        player.volume = 1f
         player.repeatMode = Player.REPEAT_MODE_ALL
         player.setVideoScalingMode(androidx.media3.common.C.VIDEO_SCALING_MODE_SCALE_TO_FIT)
         val cached = sourceCache[item.videoId]
@@ -209,10 +201,6 @@ fun ShortsScreen(
                 playerReady = true
             }
         }
-    }
-
-    LaunchedEffect(muted) {
-        player.volume = if (muted) 0f else 1f
     }
 
     Column(
@@ -253,10 +241,7 @@ fun ShortsScreen(
                 }
 
                 else -> {
-                    val density = LocalDensity.current
-                    val bottomPad = flowBottomContentPadding()
-                    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-                        val pageHeightPx = with(density) { maxHeight.toPx() - bottomPad.toPx() }
+                    Box(modifier = Modifier.fillMaxSize()) {
                         VerticalPager(
                             state = pagerState,
                             modifier =
@@ -292,13 +277,41 @@ fun ShortsScreen(
                                         portrait = true,
                                     )
                                 }
+                                // The PlayerView lives INSIDE its page, under the overlay in
+                                // the same page — a hoisted PlayerView sat above every page's
+                                // overlay, hiding the like rail and going black on scroll.
                                 if (isCurrent) {
+                                    AndroidView(
+                                        factory = { ctx ->
+                                            PlayerView(ctx).apply {
+                                                useController = false
+                                                resizeMode = androidx.media3.ui.AspectRatioFrameLayout.RESIZE_MODE_ZOOM
+                                                setShutterBackgroundColor(Color.Black.toArgb())
+                                                this.player = player
+                                            }
+                                        },
+                                        onRelease = { view -> view.player = null },
+                                        modifier = Modifier.fillMaxSize(),
+                                    )
+                                    if (!playerReady) {
+                                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                                            CircularProgressIndicator(color = Color.White)
+                                        }
+                                    }
+                                    if (paused && playerReady) {
+                                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                                            Icon(
+                                                imageVector = Icons.Filled.PlayArrow,
+                                                contentDescription = stringResource(R.string.play),
+                                                tint = Color.White.copy(alpha = 0.85f),
+                                                modifier = Modifier.size(72.dp),
+                                            )
+                                        }
+                                    }
                                     ShortsOverlay(
                                         item = item,
-                                        muted = muted,
                                         liked = item.videoId in likedIds.value,
                                         disliked = item.videoId in dislikedIds.value,
-                                        onMuteToggle = { muted = !muted },
                                         onLike = {
                                             val nowLiked = item.videoId !in likedIds.value
                                             likedIds.value = if (nowLiked) likedIds.value + item.videoId else likedIds.value - item.videoId
@@ -330,41 +343,6 @@ fun ShortsScreen(
                                         modifier = Modifier.fillMaxSize(),
                                     )
                                 }
-                            }
-                        }
-
-                        // The one and only PlayerView: it rides the pager offset, so it is
-                        // never recreated or reattached while swiping.
-                        val offsetPx =
-                            ((pagerState.currentPage + pagerState.currentPageOffsetFraction) * pageHeightPx).roundToInt()
-                        AndroidView(
-                            factory = { ctx ->
-                                PlayerView(ctx).apply {
-                                    useController = false
-                                    resizeMode = androidx.media3.ui.AspectRatioFrameLayout.RESIZE_MODE_ZOOM
-                                    setShutterBackgroundColor(Color.Black.toArgb())
-                                    this.player = player
-                                }
-                            },
-                            modifier =
-                                Modifier
-                                    .fillMaxSize()
-                                    .padding(bottom = flowBottomContentPadding())
-                                    .offset { IntOffset(0, offsetPx) },
-                        )
-                        if (!playerReady) {
-                            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                                CircularProgressIndicator(color = Color.White)
-                            }
-                        }
-                        if (paused && playerReady) {
-                            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                                Icon(
-                                    imageVector = Icons.Filled.PlayArrow,
-                                    contentDescription = stringResource(R.string.play),
-                                    tint = Color.White.copy(alpha = 0.85f),
-                                    modifier = Modifier.size(72.dp),
-                                )
                             }
                         }
                         ShortsProgressBar(
@@ -434,20 +412,6 @@ private fun ShortsTopBar(
             modifier = Modifier.height(28.dp),
             contentScale = ContentScale.FillHeight,
         )
-        Spacer(modifier = Modifier.width(10.dp))
-        Icon(
-            imageVector = ImageVector.vectorResource(R.drawable.ic_shorts_filled),
-            contentDescription = null,
-            tint = Color.White,
-            modifier = Modifier.size(22.dp),
-        )
-        Spacer(modifier = Modifier.width(4.dp))
-        Text(
-            text = stringResource(R.string.shorts),
-            color = Color.White,
-            style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.Bold,
-        )
         Spacer(modifier = Modifier.weight(1f))
         IconButton(onClick = onSearchClick) {
             Icon(Icons.Outlined.Search, contentDescription = stringResource(R.string.search), tint = Color.White)
@@ -488,10 +452,8 @@ private fun ShortsProgressBar(
 @Composable
 private fun ShortsOverlay(
     item: ShortItem,
-    muted: Boolean,
     liked: Boolean,
     disliked: Boolean,
-    onMuteToggle: () -> Unit,
     onLike: () -> Unit,
     onDislike: () -> Unit,
     onComments: () -> Unit,
@@ -556,13 +518,14 @@ private fun ShortsOverlay(
             }
         }
 
+        // Rail sits at the bottom, directly above the timeline progress bar.
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(4.dp),
             modifier =
                 Modifier
-                    .align(Alignment.CenterEnd)
-                    .padding(end = 8.dp, bottom = 40.dp),
+                    .align(Alignment.BottomEnd)
+                    .padding(end = 8.dp, bottom = 16.dp),
         ) {
             ShortsRailButton(
                 label = item.likeCountText,
@@ -592,13 +555,6 @@ private fun ShortsOverlay(
                 Icon(
                     imageVector = Icons.Filled.Share,
                     contentDescription = stringResource(R.string.share),
-                    tint = Color.White,
-                )
-            }
-            ShortsRailButton(label = null, onClick = onMuteToggle) {
-                Icon(
-                    imageVector = if (muted) Icons.AutoMirrored.Filled.VolumeOff else Icons.AutoMirrored.Filled.VolumeUp,
-                    contentDescription = "Mute",
                     tint = Color.White,
                 )
             }
