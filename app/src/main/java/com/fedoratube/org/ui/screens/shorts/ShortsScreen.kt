@@ -4,6 +4,8 @@ import android.content.Intent
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -48,6 +50,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -376,6 +379,12 @@ fun ShortsScreen(
             }
         }
 
+    // YouTube-Shorts style: comments slide up over the video (75% of the window, drag
+    // handle + count header, video paused underneath) instead of navigating away.
+    LaunchedEffect(showComments) {
+        if (showComments) player.pause() else if (playerReady) player.play()
+    }
+
     if (showComments && commentsState.videoId.isNotBlank()) {
         FlowCommentsBottomSheet(
             comments = commentsState.comments,
@@ -394,34 +403,100 @@ fun ShortsScreen(
     }
 }
 
-/** Owns its ticker state, so the pager above never recomposes for the progress bar. */
+/**
+ * The timeline, seekable like YouTube Shorts: press or drag anywhere on it to jump
+ * forward/backward, with a time tooltip while scrubbing. Owns its ticker state, so the
+ * pager above never recomposes for the progress bar.
+ */
 @Composable
 private fun ShortsProgressBar(
     player: ExoPlayer,
     modifier: Modifier = Modifier,
 ) {
     var progress by remember { androidx.compose.runtime.mutableFloatStateOf(0f) }
+    var scrubbing by remember { mutableStateOf(false) }
+    var scrubFraction by remember { androidx.compose.runtime.mutableFloatStateOf(0f) }
     LaunchedEffect(player) {
         while (true) {
             val duration = player.duration
-            progress =
-                if (duration > 0) {
-                    (player.currentPosition.toFloat() / duration.toFloat()).coerceIn(0f, 1f)
-                } else {
-                    0f
-                }
+            if (!scrubbing) {
+                progress =
+                    if (duration > 0) {
+                        (player.currentPosition.toFloat() / duration.toFloat()).coerceIn(0f, 1f)
+                    } else {
+                        0f
+                    }
+            }
             delay(150)
         }
     }
-    LinearProgressIndicator(
-        progress = { progress },
+    Box(
         modifier =
             modifier
                 .fillMaxWidth()
-                .height(3.dp),
-        color = Color.White,
-        trackColor = Color.White.copy(alpha = 0.25f),
-    )
+                .height(28.dp)
+                .pointerInput(player) {
+                    detectTapGestures { offset ->
+                        val fraction = (offset.x / size.width.toFloat().coerceAtLeast(1f)).coerceIn(0f, 1f)
+                        val duration = player.duration
+                        if (duration > 0) player.seekTo((duration * fraction).toLong())
+                    }
+                }
+                .pointerInput(player) {
+                    detectDragGestures(
+                        onDragStart = {
+                            scrubbing = true
+                            scrubFraction = (it.x / size.width.toFloat().coerceAtLeast(1f)).coerceIn(0f, 1f)
+                            progress = scrubFraction
+                        },
+                        onDragEnd = {
+                            scrubbing = false
+                            val duration = player.duration
+                            if (duration > 0) player.seekTo((duration * scrubFraction).toLong())
+                        },
+                        onDrag = { change, _ ->
+                            change.consume()
+                            scrubFraction = (change.position.x / size.width.toFloat().coerceAtLeast(1f)).coerceIn(0f, 1f)
+                            progress = scrubFraction
+                        },
+                    )
+                },
+        contentAlignment = Alignment.Center,
+    ) {
+        LinearProgressIndicator(
+            progress = { progress },
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .height(if (scrubbing) 5.dp else 3.dp),
+            color = Color.White,
+            trackColor = Color.White.copy(alpha = 0.25f),
+        )
+        if (scrubbing) {
+            val duration = player.duration.coerceAtLeast(0L)
+            val position = (duration * scrubFraction).toLong()
+            Text(
+                text = "${formatShortsTime(position)} / ${formatShortsTime(duration)}",
+                color = Color.White,
+                style = MaterialTheme.typography.labelLarge,
+                fontWeight = FontWeight.Bold,
+                modifier =
+                    Modifier
+                        .align(Alignment.BottomCenter)
+                        .padding(bottom = 20.dp)
+                        .clip(CircleShape)
+                        .background(Color.Black.copy(alpha = 0.7f))
+                        .padding(horizontal = 10.dp, vertical = 4.dp),
+            )
+        }
+    }
+}
+
+private fun formatShortsTime(ms: Long): String {
+    val totalSeconds = (ms / 1000).toInt()
+    val minutes = totalSeconds / 60
+    val seconds = totalSeconds % 60
+    return "%d:%02d".format(minutes, seconds)
 }
 
 @Composable

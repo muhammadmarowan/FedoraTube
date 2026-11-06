@@ -487,6 +487,10 @@ fun NavGraphBuilder.flowAppGraph(
                     val tracks = videos.filter { it.isMusic }.map { it.toMusicTrack() }
                     musicPlayerViewModel.loadAndPlayTrack(start.toMusicTrack(), tracks, title)
                     onMusicStarted()
+                } else if (start.isShort && !disableShortsPlayer) {
+                    // A Short saved to Watch Later (or any playlist) opens in the Shorts
+                    // player, not the long-form player.
+                    navController.openShorts(ShortsQueueSource.SeededFeed(start.id))
                 } else {
                     playerViewModel.playPlaylist(videos, index, title, shuffle)
                 }

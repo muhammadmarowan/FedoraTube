@@ -18,7 +18,10 @@ data class VideoEntity(
     val channelThumbnailUrl: String,
     val timestamp: Long = System.currentTimeMillis(),
     val savedAt: Long = System.currentTimeMillis(), // For ordering in generic lists
-    val isMusic: Boolean = false
+    val isMusic: Boolean = false,
+    // Persisted so a Short saved to Watch Later still opens in the Shorts player.
+    @androidx.room.ColumnInfo(defaultValue = "0")
+    val isShort: Boolean = false
 ) {
     fun toDomain(): Video {
         return Video(
@@ -33,7 +36,8 @@ data class VideoEntity(
             description = description,
             channelThumbnailUrl = channelThumbnailUrl,
             timestamp = timestamp,
-            isMusic = isMusic
+            isMusic = isMusic,
+            isShort = isShort
         )
     }
 
@@ -51,7 +55,8 @@ data class VideoEntity(
                 description = video.description,
                 channelThumbnailUrl = video.channelThumbnailUrl,
                 timestamp = video.timestamp,
-                isMusic = video.isMusic
+                isMusic = video.isMusic,
+                isShort = video.isShort
             )
         }
     }
