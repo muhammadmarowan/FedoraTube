@@ -75,6 +75,8 @@ fun SubscriptionsScreen(
     onVideoClick: (Video) -> Unit,
     onShortClick: (ShortsQueueSource) -> Unit = {},
     onChannelClick: (Channel) -> Unit = {},
+    topCategoryTabs: List<com.fedoratube.org.ui.components.layout.navigation.FlowTab> = emptyList(),
+    onCategorySelected: (com.fedoratube.org.ui.components.layout.navigation.FlowTab) -> Unit = {},
     modifier: Modifier = Modifier,
     openMusicSubscriptions: Boolean = false,
     onMusicSubscriptionsOpened: () -> Unit = {},
@@ -224,21 +226,30 @@ fun SubscriptionsScreen(
                     },
                 )
             } else {
-                FlowTopBar(
-                    title = stringResource(R.string.top_bar_subscriptions_title),
-                    actions = {
-                        IconButton(onClick = {
-                            manageShowsMusic = false
-                            isManagingSubs = true
-                        }) {
-                            Icon(
-                                imageVector = Icons.Outlined.Search,
-                                contentDescription = stringResource(R.string.search_subscriptions),
-                            )
-                        }
-                    },
-                    scrollBehavior = scrollBehavior,
-                )
+                androidx.compose.foundation.layout.Column {
+                    FlowTopBar(
+                        title = stringResource(R.string.top_bar_subscriptions_title),
+                        actions = {
+                            IconButton(onClick = {
+                                manageShowsMusic = false
+                                isManagingSubs = true
+                            }) {
+                                Icon(
+                                    imageVector = Icons.Outlined.Search,
+                                    contentDescription = stringResource(R.string.search_subscriptions),
+                                )
+                            }
+                        },
+                        scrollBehavior = scrollBehavior,
+                    )
+                    if (topCategoryTabs.isNotEmpty()) {
+                        com.fedoratube.org.ui.components.layout.navigation.FlowTopCategoryBar(
+                            tabs = topCategoryTabs,
+                            selectedTab = com.fedoratube.org.ui.components.layout.navigation.FlowTab.Subscriptions,
+                            onCategorySelected = onCategorySelected,
+                        )
+                    }
+                }
             }
         },
         snackbarHost = {

@@ -31,6 +31,8 @@ internal fun NavGraphBuilder.musicRoutes(
     playerViewModel: VideoPlayerViewModel,
     defaultStartRoute: String,
     onMusicStarted: () -> Unit,
+    topCategoryTabs: List<com.fedoratube.org.ui.components.layout.navigation.FlowTab> = emptyList(),
+    onCategorySelected: (com.fedoratube.org.ui.components.layout.navigation.FlowTab) -> Unit = {},
 ) {
     composable("music") {
         currentRoute.value = "music"
@@ -78,6 +80,8 @@ internal fun NavGraphBuilder.musicRoutes(
                     navController.navigate("moodsAndGenres")
                 }
             },
+            topCategoryTabs = topCategoryTabs,
+            onCategorySelected = onCategorySelected,
         )
     }
 

@@ -50,6 +50,7 @@ import com.fedoratube.org.ui.components.layout.navigation.NavigationVisibility
 import com.fedoratube.org.ui.components.layout.navigation.flowUsesNavigationRail
 import com.fedoratube.org.ui.components.layout.navigation.rememberFlowNavigationScrollState
 import com.fedoratube.org.ui.components.layout.navigation.resolveDefaultFlowTab
+import com.fedoratube.org.ui.components.layout.navigation.topCategoryTabs
 import com.fedoratube.org.ui.components.layout.navigation.visibleFlowTabs
 import com.fedoratube.org.ui.components.layout.topbar.ProvideFlowGlobalActions
 import com.fedoratube.org.ui.components.music.common.ProvideMusicPlaybackState
@@ -137,6 +138,7 @@ fun FlowApp(
             categories = isCategoriesNavigationEnabled,
         )
     val navigationTabs = remember(navTabOrder, navigationVisibility) { visibleFlowTabs(navTabOrder, navigationVisibility) }
+    val topCategoryTabs = remember(navigationVisibility) { topCategoryTabs(navigationVisibility) }
     val defaultTab = resolveDefaultFlowTab(defaultNavTabIndex, navTabOrder, navigationVisibility)
     val defaultStartRoute = defaultTab.route
 
@@ -150,6 +152,15 @@ fun FlowApp(
 
     // Offline Monitoring
     val currentRoute = remember { mutableStateOf(defaultStartRoute) }
+    val onTopCategorySelected: (com.fedoratube.org.ui.components.layout.navigation.FlowTab) -> Unit = { tab ->
+        // Same reselect semantics as the bottom bar: tap the active chip to scroll to top.
+        if (currentRoute.value == tab.route) {
+            TabScrollEventBus.emitScrollToTop(tab.route)
+        } else {
+            currentRoute.value = tab.route
+            navController.navigateToTab(tab, defaultStartRoute)
+        }
+    }
 
     // Onboarding check
     var needsOnboarding by remember { mutableStateOf<Boolean?>(null) }
@@ -543,6 +554,8 @@ fun FlowApp(
                                             disableShortsPlayer = disableShortsPlayer,
                                             defaultStartRoute = defaultStartRoute,
                                             onMusicStarted = onMusicStarted,
+                                            topCategoryTabs = topCategoryTabs,
+                                            onCategorySelected = onTopCategorySelected,
                                         )
                                     }
                                 }

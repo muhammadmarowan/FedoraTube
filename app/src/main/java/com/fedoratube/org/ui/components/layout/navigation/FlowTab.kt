@@ -65,8 +65,10 @@ data class NavigationVisibility(
 )
 
 /**
- * The tabs to show, in the user's order. Subscriptions and Library cannot be hidden: every root
+ * The bottom-bar tabs, in the user's order. Library cannot be hidden: every root
  * destination carries Notifications and Settings in its top bar, so one must always exist.
+ * Subscriptions and Music live in the top category chips (see [topCategoryTabs]) and are
+ * intentionally absent here, YouTube-style.
  */
 fun visibleFlowTabs(
     order: List<Int>,
@@ -75,8 +77,6 @@ fun visibleFlowTabs(
     val enabled =
         buildSet {
             if (visibility.home) add(FlowTab.Home)
-            if (visibility.music) add(FlowTab.Music)
-            add(FlowTab.Subscriptions)
             add(FlowTab.Library)
             if (visibility.search) add(FlowTab.Search)
             if (visibility.categories) add(FlowTab.Explore)
@@ -86,6 +86,17 @@ fun visibleFlowTabs(
         .mapNotNull(FlowTab::fromId)
         .filter { it != FlowTab.Shorts && enabled.contains(it) }
 }
+
+/**
+ * The three top chips under the app wordmark, YouTube-style: Home, Subscriptions, Music.
+ * Respects the Home/Music toggles; Subscriptions is always present.
+ */
+fun topCategoryTabs(visibility: NavigationVisibility): List<FlowTab> =
+    buildList {
+        if (visibility.home) add(FlowTab.Home)
+        add(FlowTab.Subscriptions)
+        if (visibility.music) add(FlowTab.Music)
+    }
 
 fun resolveDefaultFlowTab(
     preferredId: Int,

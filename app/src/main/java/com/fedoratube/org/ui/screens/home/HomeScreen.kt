@@ -120,6 +120,8 @@ fun HomeScreen(
     onNavigateToHistory: () -> Unit = {},
     onOpenShortsFeed: () -> Unit = {},
     onPlayMix: (videos: List<Video>, title: String) -> Unit = { _, _ -> },
+    topCategoryTabs: List<com.fedoratube.org.ui.components.layout.navigation.FlowTab> = emptyList(),
+    onCategorySelected: (com.fedoratube.org.ui.components.layout.navigation.FlowTab) -> Unit = {},
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
@@ -218,17 +220,18 @@ fun HomeScreen(
             SnackbarHost(snackbarHostState, Modifier.floatAboveBottomChrome(LocalFlowBottomInsets.current))
         },
         topBar = {
-            FlowTopBar(
-                title = {
-                    if (!isFocusModeEnabled) {
-                        Image(
-                            painter = painterResource(R.drawable.ic_fedora_tube_wordmark),
-                            contentDescription = stringResource(R.string.app_name),
-                            modifier = Modifier.height(28.dp),
-                            contentScale = ContentScale.FillHeight,
-                        )
-                    }
-                },
+            Column {
+                FlowTopBar(
+                    title = {
+                        if (!isFocusModeEnabled) {
+                            Image(
+                                painter = painterResource(R.drawable.ic_fedora_tube_wordmark),
+                                contentDescription = stringResource(R.string.app_name),
+                                modifier = Modifier.height(28.dp),
+                                contentScale = ContentScale.FillHeight,
+                            )
+                        }
+                    },
                 leading = null,
                 actions = {
                     if (!isFocusModeEnabled) {
@@ -247,8 +250,16 @@ fun HomeScreen(
                     }
                 },
                 globalActions = FlowGlobalActionsMode.None,
-                scrollBehavior = scrollBehavior,
-            )
+                    scrollBehavior = scrollBehavior,
+                )
+                if (!isFocusModeEnabled && topCategoryTabs.isNotEmpty()) {
+                    com.fedoratube.org.ui.components.layout.navigation.FlowTopCategoryBar(
+                        tabs = topCategoryTabs,
+                        selectedTab = com.fedoratube.org.ui.components.layout.navigation.FlowTab.Home,
+                        onCategorySelected = onCategorySelected,
+                    )
+                }
+            }
         },
     ) { padding ->
         if (isFocusModeEnabled) {

@@ -66,6 +66,8 @@ fun EnhancedMusicScreen(
     onAllPlaylistsClick: () -> Unit = {},
     onAllSubscriptionsClick: () -> Unit = {},
     onBack: (() -> Unit)? = null,
+    topCategoryTabs: List<com.fedoratube.org.ui.components.layout.navigation.FlowTab> = emptyList(),
+    onCategorySelected: (com.fedoratube.org.ui.components.layout.navigation.FlowTab) -> Unit = {},
     viewModel: MusicViewModel = sharedMusicViewModel(),
     libraryViewModel: MusicHomeLibraryViewModel = hiltViewModel(),
 ) {
@@ -166,16 +168,25 @@ fun EnhancedMusicScreen(
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            FlowTopBar(
-                title = stringResource(R.string.screen_title_music),
-                onBack = if (isFocusModeEnabled) onBack else null,
-                actions = {
-                    IconButton(onClick = onSearchClick) {
-                        Icon(Icons.Outlined.Search, stringResource(R.string.search))
-                    }
-                },
-                scrollBehavior = scrollBehavior,
-            )
+            androidx.compose.foundation.layout.Column {
+                FlowTopBar(
+                    title = stringResource(R.string.screen_title_music),
+                    onBack = if (isFocusModeEnabled) onBack else null,
+                    actions = {
+                        IconButton(onClick = onSearchClick) {
+                            Icon(Icons.Outlined.Search, stringResource(R.string.search))
+                        }
+                    },
+                    scrollBehavior = scrollBehavior,
+                )
+                if (topCategoryTabs.isNotEmpty()) {
+                    com.fedoratube.org.ui.components.layout.navigation.FlowTopCategoryBar(
+                        tabs = topCategoryTabs,
+                        selectedTab = com.fedoratube.org.ui.components.layout.navigation.FlowTab.Music,
+                        onCategorySelected = onCategorySelected,
+                    )
+                }
+            }
         },
         containerColor = MaterialTheme.colorScheme.background,
         contentWindowInsets = WindowInsets(0.dp),

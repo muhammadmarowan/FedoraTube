@@ -1,3 +1,13 @@
+# Fedora Tube v1.7.8 (Prerelease)
+
+**Release date:** 2026-11-07
+**Status:** Prerelease
+
+## Highlights
+
+- YouTube-style top categories: Home, Subscriptions, Music chips under the FedoraTube wordmark. Subscriptions and Music left the bottom navigation bar (bottom bar is now Home/Library only)
+- Search is context-aware: Music search opens from Music, Subscription search from Subscriptions, normal search from Home. Tapping Home chip from Subscriptions/Music returns to Home; tapping the active chip scrolls to top
+
 # Fedora Tube v1.7.7
 
 **Release date:** 2026-11-07

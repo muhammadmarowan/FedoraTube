@@ -62,6 +62,8 @@ fun NavGraphBuilder.flowAppGraph(
     disableShortsPlayer: Boolean = false,
     defaultStartRoute: String = "home",
     onMusicStarted: () -> Unit = {},
+    topCategoryTabs: List<com.fedoratube.org.ui.components.layout.navigation.FlowTab> = emptyList(),
+    onCategorySelected: (com.fedoratube.org.ui.components.layout.navigation.FlowTab) -> Unit = {},
 ) {
     // =============================================
     // ONBOARDING (First-time user experience)
@@ -110,6 +112,8 @@ fun NavGraphBuilder.flowAppGraph(
             },
             onOpenShortsFeed = {},
             onPlayMix = { videos, title -> playerViewModel.playPlaylist(videos, 0, title, false) },
+            topCategoryTabs = topCategoryTabs,
+            onCategorySelected = onCategorySelected,
             viewModel = homeViewModel,
         )
     }
@@ -156,6 +160,8 @@ fun NavGraphBuilder.flowAppGraph(
                     mediaNavigator.openChannel(channel.url.ifBlank { channel.id })
                 }
             },
+            topCategoryTabs = topCategoryTabs,
+            onCategorySelected = onCategorySelected,
         )
     }
 
@@ -507,7 +513,16 @@ fun NavGraphBuilder.flowAppGraph(
         )
     }
 
-    musicRoutes(navController, mediaNavigator, currentRoute, playerViewModel, defaultStartRoute, onMusicStarted)
+    musicRoutes(
+        navController = navController,
+        mediaNavigator = mediaNavigator,
+        currentRoute = currentRoute,
+        playerViewModel = playerViewModel,
+        defaultStartRoute = defaultStartRoute,
+        onMusicStarted = onMusicStarted,
+        topCategoryTabs = topCategoryTabs,
+        onCategorySelected = onCategorySelected,
+    )
 
     linkPlaybackRoutes(
         navController = navController,
