@@ -1,8 +1,8 @@
 package com.fedoratube.org.ui.components.layout.navigation
 
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -24,10 +24,7 @@ import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateMapOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -39,6 +36,8 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset as ComposeIntOffset
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 /** Swipe on any content: drag left = next category, drag right = previous (Home→Subs→Music). */
@@ -76,14 +75,29 @@ fun rememberCategorySwipe(
 }
 
 /**
+ * Cross-screen memory so the underline animates FROM the previous tab
+ * (YouTube-style) instead of restarting from the left edge on every screen.
+ * Home/Subs/Music are separate NavHost destinations, so each bar instance
+ * would otherwise start fresh at 0. The shared animatables carry the last
+ * settled position across destinations.
+ */
+private object CategoryIndicatorMemory {
+    val bounds = mutableStateMapOf<Int, Pair<Float, Float>>()
+    var barRootX: Float = 0f
+    var initialized: Boolean = false
+    val leftAnimatable = Animatable(0f)
+    val rightAnimatable = Animatable(0f)
+}
+
+/**
  * YouTube-style top tabs under the app wordmark: Home, Subscriptions, Music.
  * Plain text tabs with a thick theme-blue underline on the selected tab
  * (YouTube's red line, themed here) — no pill/box backgrounds. Selecting a
  * tab switches the root destination; re-selecting the active tab scrolls
  * that screen to the top via [onCategorySelected]. The row hides on scroll
  * together with the top bar when [scrollBehavior] is in use.
- * The underline is a single pill that spring-slides between tabs (YouTube-style)
- * instead of popping in place.
+ * The underline is a single pill that stretches while moving between tabs
+ * and springs into place, continuing from the previous tab's position.
  */
 @Composable
 fun FlowTopCategoryBar(
@@ -109,31 +123,39 @@ fun FlowTopCategoryBar(
     val density = LocalDensity.current
     val indicatorWidthPx = with(density) { 28.dp.toPx() }
     val indicatorHeight = 3.dp
-    // YouTube-style stretch: left/right edges spring independently, the leading
-    // edge runs fast and the trailing edge lags, so the pill stretches across
-    // the gap while moving and contracts on arrival (like the reference video).
-    val indicatorBounds = remember { mutableStateMapOf<Int, Pair<Float, Float>>() }
-    var barRootX by remember { mutableFloatStateOf(0f) }
-    val targetBounds = indicatorBounds[selectedTab?.id] ?: Pair(0f, indicatorWidthPx)
-    val targetLeft = targetBounds.first
-    val targetRight = targetBounds.second
-    var lastTargetLeft by remember { mutableFloatStateOf(targetLeft) }
-    val movingRight = targetLeft >= lastTargetLeft
-    LaunchedEffect(targetLeft) { lastTargetLeft = targetLeft }
-    val leftSpec =
-        spring<Float>(
-            dampingRatio = Spring.DampingRatioNoBouncy,
-            stiffness = if (movingRight) 150f else 420f,
-        )
-    val rightSpec =
-        spring<Float>(
-            dampingRatio = Spring.DampingRatioNoBouncy,
-            stiffness = if (movingRight) 420f else 150f,
-        )
-    val animatedLeft by animateFloatAsState(targetLeft, animationSpec = leftSpec, label = "categoryIndicatorLeft")
-    val animatedRight by animateFloatAsState(targetRight, animationSpec = rightSpec, label = "categoryIndicatorRight")
+
+    val targetBounds = CategoryIndicatorMemory.bounds[selectedTab?.id]
+    val animatedLeft = CategoryIndicatorMemory.leftAnimatable.value
+    val animatedRight = CategoryIndicatorMemory.rightAnimatable.value
     val animatedWidthPx = (animatedRight - animatedLeft).coerceAtLeast(indicatorWidthPx)
     val animatedWidthDp = with(density) { animatedWidthPx.toDp() }
+
+    if (targetBounds != null) {
+        LaunchedEffect(targetBounds) {
+            val (targetLeft, targetRight) = targetBounds
+            if (!CategoryIndicatorMemory.initialized) {
+                CategoryIndicatorMemory.leftAnimatable.snapTo(targetLeft)
+                CategoryIndicatorMemory.rightAnimatable.snapTo(targetRight)
+                CategoryIndicatorMemory.initialized = true
+            } else {
+                val movingRight = targetLeft > CategoryIndicatorMemory.leftAnimatable.value
+                val leftSpec =
+                    spring<Float>(
+                        dampingRatio = Spring.DampingRatioNoBouncy,
+                        stiffness = if (movingRight) 150f else 420f,
+                    )
+                val rightSpec =
+                    spring<Float>(
+                        dampingRatio = Spring.DampingRatioNoBouncy,
+                        stiffness = if (movingRight) 420f else 150f,
+                    )
+                coroutineScope {
+                    launch { CategoryIndicatorMemory.leftAnimatable.animateTo(targetLeft, leftSpec) }
+                    launch { CategoryIndicatorMemory.rightAnimatable.animateTo(targetRight, rightSpec) }
+                }
+            }
+        }
+    }
 
     Box(
         modifier =
@@ -141,7 +163,7 @@ fun FlowTopCategoryBar(
                 .fillMaxWidth()
                 .height(fullHeight * fraction)
                 .alpha(fraction)
-                .onGloballyPositioned { barRootX = it.positionInRoot().x }
+                .onGloballyPositioned { CategoryIndicatorMemory.barRootX = it.positionInRoot().x }
                 .clip(androidx.compose.ui.graphics.RectangleShape),
     ) {
         Row(
@@ -169,9 +191,9 @@ fun FlowTopCategoryBar(
                             .padding(horizontal = 12.dp, vertical = 10.dp)
                             .onGloballyPositioned { coordinates ->
                                 val centerX = coordinates.positionInRoot().x + coordinates.size.width / 2f
-                                val left = centerX - barRootX - indicatorWidthPx / 2f
-                                val right = centerX - barRootX + indicatorWidthPx / 2f
-                                indicatorBounds[tab.id] = Pair(left, right)
+                                val left = centerX - CategoryIndicatorMemory.barRootX - indicatorWidthPx / 2f
+                                val right = centerX - CategoryIndicatorMemory.barRootX + indicatorWidthPx / 2f
+                                CategoryIndicatorMemory.bounds[tab.id] = Pair(left, right)
                             },
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
@@ -185,19 +207,22 @@ fun FlowTopCategoryBar(
                 }
             }
         }
-        // Sliding + stretching indicator (single pill, YouTube-style)
-        Box(
-            modifier =
-                Modifier
-                    .align(Alignment.BottomStart)
-                    .offset {
-                        ComposeIntOffset(animatedLeft.roundToInt(), 0)
-                    }
-                    .padding(bottom = 8.dp)
-                    .width(animatedWidthDp)
-                    .height(indicatorHeight)
-                    .clip(RoundedCornerShape(50))
-                    .background(MaterialTheme.colorScheme.primary),
-        )
+        // Sliding + stretching indicator (single pill, YouTube-style).
+        // Hidden until the selected tab is first measured so it never flashes at x=0.
+        if (targetBounds != null) {
+            Box(
+                modifier =
+                    Modifier
+                        .align(Alignment.BottomStart)
+                        .offset {
+                            ComposeIntOffset(animatedLeft.roundToInt(), 0)
+                        }
+                        .padding(bottom = 8.dp)
+                        .width(animatedWidthDp)
+                        .height(indicatorHeight)
+                        .clip(RoundedCornerShape(50))
+                        .background(MaterialTheme.colorScheme.primary),
+            )
+        }
     }
 }
