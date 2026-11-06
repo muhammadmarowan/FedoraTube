@@ -202,10 +202,12 @@ fun ShortsScreen(
                 }
         if (mediaSource != null) {
             sourceCache[item.videoId] = mediaSource
-            player.setMediaSource(mediaSource)
-            player.prepare()
-            player.playWhenReady = true
-            playerReady = true
+            runCatching {
+                player.setMediaSource(mediaSource)
+                player.prepare()
+                player.playWhenReady = true
+                playerReady = true
+            }
         }
     }
 
@@ -262,9 +264,11 @@ fun ShortsScreen(
                                     .fillMaxSize()
                                     .padding(bottom = flowBottomContentPadding()),
                             beyondViewportPageCount = 1,
-                            key = { index -> items[index].videoId },
+                            // Index-safe: the pager can ask for a key/content while a fresh
+                            // page list is still settling (1-item first page -> append).
+                            key = { index -> items.getOrNull(index)?.videoId ?: "page-$index" },
                         ) { page ->
-                            val item = items[page]
+                            val item = items.getOrNull(page) ?: return@VerticalPager
                             val isCurrent = page == currentIndex
                             Box(
                                 modifier =

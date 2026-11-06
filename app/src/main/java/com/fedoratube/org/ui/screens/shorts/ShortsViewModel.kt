@@ -162,7 +162,13 @@ class ShortsViewModel
                     val seed = overlayItem(src.startVideoId)
                     val page = YouTube.shortsFromVideo(src.startVideoId).getOrThrow()
                     continuation = page.continuation
-                    (listOfNotNull(seed) + page.entries.map { it.toItem() }).distinctBy { it.videoId }
+                    var items = (listOfNotNull(seed) + page.entries.map { it.toItem() }).distinctBy { it.videoId }
+                    while (items.size < MIN_INITIAL_ITEMS && continuation != null) {
+                        val next = YouTube.shorts(continuation!!).getOrThrow()
+                        continuation = next.continuation
+                        items = (items + next.entries.map { it.toItem() }).distinctBy { it.videoId }
+                    }
+                    items
                 }
 
                 is ShortsQueueSource.Saved -> {
@@ -185,7 +191,15 @@ class ShortsViewModel
         private suspend fun feedPage(sequenceParams: String?): List<ShortItem> {
             val page = YouTube.shorts(sequenceParams).getOrThrow()
             continuation = page.continuation
-            return page.entries.map { it.toItem() }.distinctBy { it.videoId }
+            var items = page.entries.map { it.toItem() }.distinctBy { it.videoId }
+            // The seedless first page carries a single entry; exposing a 1-item pager and then
+            // appending crashes the pager while it settles. Fill to a usable minimum first.
+            while (items.size < MIN_INITIAL_ITEMS && continuation != null) {
+                val next = YouTube.shorts(continuation!!).getOrThrow()
+                continuation = next.continuation
+                items = (items + next.entries.map { it.toItem() }).distinctBy { it.videoId }
+            }
+            return items
         }
 
         private suspend fun nextPage(
@@ -420,5 +434,6 @@ class ShortsViewModel
         companion object {
             private const val TAG = "ShortsViewModel"
             private const val MAX_SUBSCRIPTION_CHANNELS = 20
+            private const val MIN_INITIAL_ITEMS = 5
         }
     }
