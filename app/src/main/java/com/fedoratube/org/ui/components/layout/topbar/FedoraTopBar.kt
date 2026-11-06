@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -42,6 +43,7 @@ fun FedoraTopBar(
     windowInsets: WindowInsets = FlowTopBarDefaults.WindowInsets,
     scrollBehavior: TopAppBarScrollBehavior? = null,
     colors: TopAppBarColors = FlowTopBarDefaults.colors(),
+    centeredTitle: Boolean = false,
 ) {
     FedoraTopBar(
         modifier = modifier,
@@ -56,6 +58,7 @@ fun FedoraTopBar(
         windowInsets = windowInsets,
         scrollBehavior = scrollBehavior,
         colors = colors,
+        centeredTitle = centeredTitle,
     )
 }
 
@@ -72,6 +75,7 @@ fun FedoraTopBar(
     windowInsets: WindowInsets = FlowTopBarDefaults.WindowInsets,
     scrollBehavior: TopAppBarScrollBehavior? = null,
     colors: TopAppBarColors = FlowTopBarDefaults.colors(),
+    centeredTitle: Boolean = false,
 ) {
     val showGlobalActions =
         when (globalActions) {
@@ -80,35 +84,54 @@ fun FedoraTopBar(
             FlowGlobalActionsMode.Auto -> onBack == null
         }
 
-    TopAppBar(
-        modifier = modifier,
-        title = title,
-        navigationIcon = {
-            when {
-                leading != null -> {
-                    leading()
-                }
+    val navigationIcon: @Composable () -> Unit = {
+        when {
+            leading != null -> {
+                leading()
+            }
 
-                onBack != null -> {
-                    IconButton(onClick = onBack) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
-                            contentDescription = stringResource(R.string.btn_back),
-                        )
-                    }
+            onBack != null -> {
+                IconButton(onClick = onBack) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
+                        contentDescription = stringResource(R.string.btn_back),
+                    )
                 }
             }
-        },
-        actions = {
-            actions()
-            if (showGlobalActions) {
-                FlowGlobalActionsRow(showSettings = globalActionsShowSettings)
-            }
-        },
-        colors = colors,
-        windowInsets = windowInsets,
-        scrollBehavior = scrollBehavior,
-    )
+        }
+    }
+
+    if (centeredTitle) {
+        CenterAlignedTopAppBar(
+            modifier = modifier,
+            title = title,
+            navigationIcon = navigationIcon,
+            actions = {
+                actions()
+                if (showGlobalActions) {
+                    FlowGlobalActionsRow(showSettings = globalActionsShowSettings)
+                }
+            },
+            colors = colors,
+            windowInsets = windowInsets,
+            scrollBehavior = scrollBehavior,
+        )
+    } else {
+        TopAppBar(
+            modifier = modifier,
+            title = title,
+            navigationIcon = navigationIcon,
+            actions = {
+                actions()
+                if (showGlobalActions) {
+                    FlowGlobalActionsRow(showSettings = globalActionsShowSettings)
+                }
+            },
+            colors = colors,
+            windowInsets = windowInsets,
+            scrollBehavior = scrollBehavior,
+        )
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -125,7 +148,8 @@ fun FlowTopBar(
     windowInsets: WindowInsets = FlowTopBarDefaults.WindowInsets,
     scrollBehavior: TopAppBarScrollBehavior? = null,
     colors: TopAppBarColors = FlowTopBarDefaults.colors(),
-) = FedoraTopBar(title, modifier, subtitle, onBack, leading, actions, globalActions, globalActionsShowSettings, windowInsets, scrollBehavior, colors)
+    centeredTitle: Boolean = false,
+) = FedoraTopBar(title, modifier, subtitle, onBack, leading, actions, globalActions, globalActionsShowSettings, windowInsets, scrollBehavior, colors, centeredTitle)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -140,7 +164,8 @@ fun FlowTopBar(
     windowInsets: WindowInsets = FlowTopBarDefaults.WindowInsets,
     scrollBehavior: TopAppBarScrollBehavior? = null,
     colors: TopAppBarColors = FlowTopBarDefaults.colors(),
-) = FedoraTopBar(title, modifier, onBack, leading, actions, globalActions, globalActionsShowSettings, windowInsets, scrollBehavior, colors)
+    centeredTitle: Boolean = false,
+) = FedoraTopBar(title, modifier, onBack, leading, actions, globalActions, globalActionsShowSettings, windowInsets, scrollBehavior, colors, centeredTitle)
 
 @Composable
 private fun FedoraTopBarTitle(

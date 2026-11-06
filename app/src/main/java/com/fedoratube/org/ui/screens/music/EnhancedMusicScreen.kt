@@ -19,6 +19,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
@@ -44,6 +45,7 @@ import com.fedoratube.org.ui.components.layout.LocalFlowBottomInsets
 import com.fedoratube.org.ui.components.layout.floatAboveBottomChrome
 import com.fedoratube.org.ui.components.layout.flowBottomContentPadding
 import com.fedoratube.org.ui.components.layout.topbar.FlowTopBar
+import com.fedoratube.org.ui.components.layout.topbar.FlowTopBarDefaults
 import com.fedoratube.org.ui.components.music.section.HomeSectionType
 import com.fedoratube.org.ui.components.music.section.MusicHomeLibrary
 import com.fedoratube.org.ui.components.music.section.musicHomeFeed
@@ -182,7 +184,14 @@ fun EnhancedMusicScreen(
             androidx.compose.foundation.layout.Column {
                 FlowTopBar(
                     title = {
-                        if (!isFocusModeEnabled) {
+                        if (isFocusModeEnabled) {
+                            Text(
+                                text = stringResource(R.string.nav_music),
+                                style = FlowTopBarDefaults.titleStyle,
+                                maxLines = 1,
+                                overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
+                            )
+                        } else {
                             Image(
                                 painter = painterResource(R.drawable.ic_fedora_tube_wordmark),
                                 contentDescription = stringResource(R.string.app_name),
@@ -191,6 +200,7 @@ fun EnhancedMusicScreen(
                             )
                         }
                     },
+                    centeredTitle = isFocusModeEnabled,
                     onBack = if (isFocusModeEnabled) onBack else null,
                     actions = {
                         if (!isFocusModeEnabled) {
@@ -205,7 +215,7 @@ fun EnhancedMusicScreen(
                     globalActions = com.fedoratube.org.ui.components.layout.topbar.FlowGlobalActionsMode.None,
                     scrollBehavior = scrollBehavior,
                 )
-                if (topCategoryTabs.isNotEmpty()) {
+                if (!isFocusModeEnabled && topCategoryTabs.isNotEmpty()) {
                     com.fedoratube.org.ui.components.layout.navigation.FlowTopCategoryBar(
                         tabs = topCategoryTabs,
                         selectedTab = com.fedoratube.org.ui.components.layout.navigation.FlowTab.Music,
@@ -218,18 +228,18 @@ fun EnhancedMusicScreen(
         containerColor = MaterialTheme.colorScheme.background,
         contentWindowInsets = WindowInsets(0.dp),
     ) { paddingValues ->
+        val categorySwipeModifier =
+            com.fedoratube.org.ui.components.layout.navigation.rememberCategorySwipe(
+                tabs = topCategoryTabs,
+                selectedTab = com.fedoratube.org.ui.components.layout.navigation.FlowTab.Music,
+                onCategorySelected = onCategorySelected,
+            )
         Box(
             modifier =
                 Modifier
                     .fillMaxSize()
                     .padding(paddingValues)
-                    .then(
-                        com.fedoratube.org.ui.components.layout.navigation.rememberCategorySwipe(
-                            tabs = topCategoryTabs,
-                            selectedTab = com.fedoratube.org.ui.components.layout.navigation.FlowTab.Music,
-                            onCategorySelected = onCategorySelected,
-                        ),
-                    ),
+                    .then(if (!isFocusModeEnabled) categorySwipeModifier else Modifier),
         ) {
             val isInitialLoading = uiState.isLoading && uiState.trendingSongs.isEmpty() && uiState.dynamicSections.isEmpty()
 
