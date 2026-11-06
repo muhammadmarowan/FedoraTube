@@ -43,6 +43,7 @@ import com.fedoratube.org.ui.screens.recap.RecapScreen
 import com.fedoratube.org.ui.screens.recap.story.RecapStoryScreen
 import com.fedoratube.org.ui.screens.search.SearchScreen
 import com.fedoratube.org.ui.screens.settings.SettingsHost
+import com.fedoratube.org.ui.screens.shorts.ShortsScreen
 import com.fedoratube.org.ui.screens.subscriptions.SubscriptionsScreen
 import com.fedoratube.org.ui.screens.update.UPDATE_ROUTE
 import com.fedoratube.org.ui.screens.update.UpdateScreen
@@ -115,6 +116,29 @@ fun NavGraphBuilder.flowAppGraph(
             topCategoryTabs = topCategoryTabs,
             onCategorySelected = onCategorySelected,
             viewModel = homeViewModel,
+        )
+    }
+
+    composable(
+        route = SHORTS_ROUTE_PATTERN,
+        arguments =
+            listOf(
+                navArgument(SHORTS_ROUTE_ARG) {
+                    type = NavType.StringType
+                    nullable = true
+                    defaultValue = ""
+                },
+            ),
+    ) { backStackEntry ->
+        currentRoute.value = SHORTS_ROUTE_KEY
+        val source = ShortsQueueSource.decode(backStackEntry.arguments?.getString(SHORTS_ROUTE_ARG))
+        val isTabRoot = source == ShortsQueueSource.Feed
+        ShortsScreen(
+            source = source,
+            isTabRoot = isTabRoot,
+            onBack = { navController.popBackStack() },
+            onChannelClick = { channelId -> mediaNavigator.openChannel(channelId) },
+            onOpenVideo = { videoId -> navController.navigateToPlayer(videoId) },
         )
     }
 

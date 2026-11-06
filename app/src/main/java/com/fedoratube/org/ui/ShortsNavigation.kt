@@ -23,21 +23,31 @@ fun NavController.openShorts(
 
 /**
  * Opens [source] in the Shorts player, or the tapped reel in the video player when the user has
- * switched the Shorts player off. Every Shorts entry point takes this one decision.
+ * switched the Shorts player off (or Focus mode is on, which passes the same flag). Every Shorts
+ * entry point takes this one decision. A feed with no single tapped video cannot play in the
+ * regular player, so it still opens the Shorts feed.
  */
 internal fun NavHostController.openShortsOrPlayer(
     source: ShortsQueueSource,
     disableShortsPlayer: Boolean = true,
 ) {
     val tappedId = source.openAtVideoId
-    if (tappedId != null) navigateToPlayer(tappedId)
+    if (disableShortsPlayer && tappedId != null) {
+        navigateToPlayer(tappedId)
+    } else {
+        openShorts(source)
+    }
 }
 
-/** All videos always go to [playVideo], with Shorts player removed. */
+/** A Short opens in the Shorts player; anything else goes straight to [playVideo]. */
 internal fun NavHostController.openVideoOrShorts(
     video: Video,
     disableShortsPlayer: Boolean = true,
     playVideo: (Video) -> Unit,
 ) {
-    playVideo(video)
+    if (video.isShort && !disableShortsPlayer) {
+        openShorts(ShortsQueueSource.SeededFeed(video.id))
+    } else {
+        playVideo(video)
+    }
 }

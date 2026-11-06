@@ -133,7 +133,10 @@ fun rememberSearchState(viewModel: SearchViewModel): SearchScreenState {
     val allHistory = historyRepository.getSearchHistoryFlow().collectAsStateWithLifecycle(emptyList())
     val suggestionsEnabled = historyRepository.isSearchSuggestionsEnabledFlow().collectAsStateWithLifecycle(true)
     val gridMode = preferences.searchIsGridMode.collectAsStateWithLifecycle(false)
-    val shortsEnabled = preferences.shortsContentEnabled.collectAsStateWithLifecycle(true)
+    val shortsEnabled =
+        remember(preferences) {
+            combine(preferences.shortsContentEnabled, preferences.focusModeEnabled) { master, focus -> master && !focus }
+        }.collectAsStateWithLifecycle(true)
     val feedColumns = preferences.homeFeedColumns.collectAsStateWithLifecycle(HomeFeedColumns.AUTO)
     val deepFlow =
         remember(preferences) {

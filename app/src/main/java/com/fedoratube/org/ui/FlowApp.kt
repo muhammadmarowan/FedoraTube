@@ -122,13 +122,16 @@ fun FlowApp(
     val subscriptionRefreshOnStartup by preferences.subscriptionRefreshOnStartup.collectAsState(initial = false)
     val bottomNavHideOnScroll by preferences.bottomNavHideOnScroll.collectAsState(initial = true)
     val isFocusModeEnabled by preferences.focusModeEnabled.collectAsState(initial = false)
+    // Focus mode has no Shorts anywhere: no tab, no Shorts player, no shelves.
+    val effectiveShortsNavEnabled = isShortsNavigationEnabled && !isFocusModeEnabled
+    val effectiveDisableShortsPlayer = disableShortsPlayer || isFocusModeEnabled
     val sleepTimerCloseAppOnExpiry by preferences.sleepTimerCloseAppOnExpiry.collectAsState(
         initial = SleepTimerManager.preferredCloseAppOnExpiry,
     )
     val navigationVisibility =
         NavigationVisibility(
             home = isHomeNavigationEnabled,
-            shorts = isShortsNavigationEnabled,
+            shorts = effectiveShortsNavEnabled,
             music = isMusicNavigationEnabled,
             search = isSearchNavigationEnabled,
             categories = isCategoriesNavigationEnabled,
@@ -547,7 +550,7 @@ fun FlowApp(
                                             playerViewModel = playerViewModel,
                                             playerUiStateResult = playerUiStateResult,
                                             playerVisibleState = playerVisibleState,
-                                            disableShortsPlayer = disableShortsPlayer,
+                                            disableShortsPlayer = effectiveDisableShortsPlayer,
                                             defaultStartRoute = defaultStartRoute,
                                             onMusicStarted = onMusicStarted,
                                             topCategoryTabs = topCategoryTabs,

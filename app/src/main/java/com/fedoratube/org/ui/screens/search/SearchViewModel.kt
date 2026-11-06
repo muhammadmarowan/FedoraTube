@@ -109,7 +109,11 @@ class SearchViewModel
         fun shortsShelfSource(
             shelf: List<Video>,
             tapped: Video,
-        ): ShortsQueueSource = ShortsQueueSource.Saved(tapped.id)
+        ): ShortsQueueSource =
+            ShortsQueueSource.Snapshot(
+                token = com.fedoratube.org.data.feed.ShortsSnapshotStore.register(shelf),
+                startVideoId = tapped.id,
+            )
 
         fun search(
             query: String,

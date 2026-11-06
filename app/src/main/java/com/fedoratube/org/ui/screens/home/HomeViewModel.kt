@@ -105,7 +105,11 @@ class HomeViewModel
         fun shortsShelfSource(
             shelf: List<com.fedoratube.org.data.model.Video>,
             tapped: com.fedoratube.org.data.model.Video,
-        ): com.fedoratube.org.data.feed.ShortsQueueSource = com.fedoratube.org.data.feed.ShortsQueueSource.Saved(tapped.id)
+        ): com.fedoratube.org.data.feed.ShortsQueueSource =
+            com.fedoratube.org.data.feed.ShortsQueueSource.Snapshot(
+                token = com.fedoratube.org.data.feed.ShortsSnapshotStore.register(shelf),
+                startVideoId = tapped.id,
+            )
 
         companion object {
             private const val TAG = "HomeViewModel"

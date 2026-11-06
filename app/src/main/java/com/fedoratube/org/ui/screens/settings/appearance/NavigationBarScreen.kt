@@ -7,7 +7,6 @@ import androidx.compose.material.icons.outlined.Explore
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.MusicNote
 import androidx.compose.material.icons.outlined.Search
-import androidx.compose.material.icons.outlined.Slideshow
 import androidx.compose.material.icons.outlined.UnfoldLess
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -55,7 +54,7 @@ internal fun NavigationBarScreen(
                 onCheckedChange = viewModel::setShortsTab,
                 enabled = shortsContent,
                 summary = if (shortsContent) null else shortsHiddenSummary,
-                icon = Icons.Outlined.Slideshow,
+                iconRes = R.drawable.ic_shorts,
             )
             switch(NavigationBarIndex.music, visibility.music, viewModel::setMusicTab, icon = Icons.Outlined.MusicNote)
             switch(NavigationBarIndex.search, visibility.search, viewModel::setSearchTab, icon = Icons.Outlined.Search)

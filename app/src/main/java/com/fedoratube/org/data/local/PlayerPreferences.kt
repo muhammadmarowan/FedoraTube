@@ -951,6 +951,12 @@ class PlayerPreferences(
     val effectiveVideoNotesEnabled: Flow<Boolean> =
         combine(notesEnabled, videoNotesEnabled) { master, own -> master && own }
 
+    val focusModeEnabled: Flow<Boolean> =
+        context.playerPreferencesDataStore.data
+            .map { preferences ->
+                preferences[Keys.FOCUS_MODE_ENABLED] ?: false
+            }
+
     /**
      * Master switch for Shorts (reels) as content. When OFF the app hides every reel surface and the
      * five granular Shorts toggles below are overridden — read the `effective*` flows, never the raw
@@ -978,7 +984,9 @@ class PlayerPreferences(
             }
 
     val effectiveChannelShortsTabEnabled: Flow<Boolean> =
-        combine(shortsContentEnabled, channelShortsTabWhenHidden) { master, keep -> master || keep }
+        combine(shortsContentEnabled, channelShortsTabWhenHidden, focusModeEnabled) { master, keep, focus ->
+            (master || keep) && !focus
+        }
 
     suspend fun setChannelShortsTabWhenHidden(enabled: Boolean) {
         context.playerPreferencesDataStore.edit { preferences ->
@@ -1056,7 +1064,9 @@ class PlayerPreferences(
             }
 
     val effectiveShortsShelfEnabled: Flow<Boolean> =
-        combine(shortsContentEnabled, shortsShelfEnabled) { master, own -> master && own }
+        combine(shortsContentEnabled, shortsShelfEnabled, focusModeEnabled) { master, own, focus ->
+            master && own && !focus
+        }
 
     suspend fun setShortsShelfEnabled(enabled: Boolean) {
         context.playerPreferencesDataStore.edit { preferences ->
@@ -1072,7 +1082,9 @@ class PlayerPreferences(
             }
 
     val effectiveHomeShortsShelfEnabled: Flow<Boolean> =
-        combine(shortsContentEnabled, homeShortsShelfEnabled) { master, own -> master && own }
+        combine(shortsContentEnabled, homeShortsShelfEnabled, focusModeEnabled) { master, own, focus ->
+            master && own && !focus
+        }
 
     suspend fun setHomeShortsShelfEnabled(enabled: Boolean) {
         context.playerPreferencesDataStore.edit { preferences ->
@@ -1174,7 +1186,9 @@ class PlayerPreferences(
             }
 
     val effectiveShortsNavigationEnabled: Flow<Boolean> =
-        combine(shortsContentEnabled, shortsNavigationEnabled) { master, own -> master && own }
+        combine(shortsContentEnabled, shortsNavigationEnabled, focusModeEnabled) { master, own, focus ->
+            master && own && !focus
+        }
 
     suspend fun setShortsNavigationEnabled(enabled: Boolean) {
         context.playerPreferencesDataStore.edit { preferences ->
@@ -1194,12 +1208,6 @@ class PlayerPreferences(
             preferences[Keys.BOTTOM_NAV_HIDE_ON_SCROLL] = enabled
         }
     }
-
-    val focusModeEnabled: Flow<Boolean> =
-        context.playerPreferencesDataStore.data
-            .map { preferences ->
-                preferences[Keys.FOCUS_MODE_ENABLED] ?: false
-            }
 
     suspend fun setFocusModeEnabled(enabled: Boolean) {
         context.playerPreferencesDataStore.edit { preferences ->
@@ -2530,7 +2538,9 @@ class PlayerPreferences(
             .map { preferences -> preferences[Keys.SUBSCRIPTION_SHOW_SHORTS] ?: true }
 
     val effectiveSubscriptionShowShorts: Flow<Boolean> =
-        combine(shortsContentEnabled, subscriptionShowShorts) { master, own -> master && own }
+        combine(shortsContentEnabled, subscriptionShowShorts, focusModeEnabled) { master, own, focus ->
+            master && own && !focus
+        }
 
     suspend fun setSubscriptionShowShorts(enabled: Boolean) {
         context.playerPreferencesDataStore.edit { preferences ->

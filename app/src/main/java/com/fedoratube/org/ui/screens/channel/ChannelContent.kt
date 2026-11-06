@@ -117,6 +117,7 @@ internal fun ChannelContent(
                 .PlayerPreferences(context)
         }
     val isGridView by preferences.channelIsGridView.collectAsState(initial = false)
+    val isFocusModeEnabled by preferences.focusModeEnabled.collectAsState(initial = false)
     val columnPreference by preferences.homeFeedColumns.collectAsState(initial = HomeFeedColumns.AUTO)
     val coroutineScope = rememberCoroutineScope()
 
@@ -335,6 +336,7 @@ internal fun ChannelContent(
                         columnPreference = columnPreference,
                         contentPadding = listPadding,
                         topInset = visibleHeaderHeightDp,
+                        showShorts = !isFocusModeEnabled,
                         actions =
                             FeedShelfActions(
                                 onVideoClick = onVideoClick,

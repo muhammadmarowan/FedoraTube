@@ -33,6 +33,8 @@ import com.fedoratube.org.R
 import com.fedoratube.org.data.model.Video
 import com.fedoratube.org.data.paging.SearchResultItem
 import com.fedoratube.org.data.paging.SearchShelfKind
+import com.fedoratube.org.ui.components.shared.MediaShortCard
+import com.fedoratube.org.ui.components.shared.ShortCardDefaults
 import com.fedoratube.org.ui.components.shared.card.MediaVideoCard
 import com.fedoratube.org.ui.components.shared.card.VideoCardDefaults
 import com.fedoratube.org.ui.components.shared.card.VideoCardLayout
@@ -57,13 +59,13 @@ fun SearchShelf(
     modifier: Modifier = Modifier,
     thumbnailWidth: Dp = VideoCardDefaults.RowThumbnailWidth,
 ) {
-    if (shelf.kind == SearchShelfKind.SHORTS) return
-
     Column(modifier = modifier.fillMaxWidth().padding(vertical = SectionSpacing)) {
         HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
         shelf.title?.let { ShelfTitle(it) }
         when (shelf.kind) {
-            SearchShelfKind.SHORTS -> Unit
+            SearchShelfKind.SHORTS -> {
+                ShortsStrip(shelf, onShortsClick)
+            }
 
             SearchShelfKind.VIDEOS -> {
                 VideoStrip(shelf, asThumbnailRows, thumbnailWidth, onVideoClick)
@@ -74,6 +76,24 @@ fun SearchShelf(
             }
         }
         HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+    }
+}
+
+@Composable
+private fun ShortsStrip(
+    shelf: SearchResultItem.ShelfResult,
+    onShortsClick: (shelf: List<Video>, tapped: Video) -> Unit,
+) {
+    LazyRow(
+        contentPadding = PaddingValues(horizontal = StripHorizontalPadding, vertical = StripVerticalPadding),
+        horizontalArrangement = Arrangement.spacedBy(ShortCardDefaults.StripSpacing),
+    ) {
+        items(shelf.videos, key = { it.id }) { video ->
+            MediaShortCard(
+                video = video,
+                onClick = { onShortsClick(shelf.videos, video) },
+            )
+        }
     }
 }
 

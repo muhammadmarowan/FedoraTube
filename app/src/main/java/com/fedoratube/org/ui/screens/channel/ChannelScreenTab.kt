@@ -29,7 +29,9 @@ internal fun channelScreenTabs(
 ): List<ChannelScreenTab> {
     val tabs =
         descriptors.mapNotNull { descriptor ->
-            if (descriptor.kind in HIDDEN_TABS || descriptor.kind == ChannelTabKind.Shorts) return@mapNotNull null
+            if (descriptor.kind in HIDDEN_TABS) return@mapNotNull null
+            // The Shorts tab is the channel's own Shorts grid; Focus mode turns it off upstream.
+            if (descriptor.kind == ChannelTabKind.Shorts && !showShortsTab) return@mapNotNull null
             val params = descriptor.params ?: descriptor.kind.defaultParams ?: return@mapNotNull null
             val title = descriptor.title.takeIf(String::isNotBlank) ?: return@mapNotNull null
             ChannelScreenTab(kind = descriptor.kind, title = title, params = params)

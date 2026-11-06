@@ -4,6 +4,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -104,6 +105,7 @@ fun FeedShelfSections(
     actions: FeedShelfActions,
     slots: FeedShelfSlots = FeedShelfSlots(),
     showChannelInfo: Boolean = false,
+    showShorts: Boolean = true,
 ) {
     val renderable = remember(sections, slots) { sections.filter { it.hasRenderableItems(slots) } }
     if (renderable.isEmpty()) {
@@ -143,6 +145,7 @@ fun FeedShelfSections(
                     actions = actions,
                     slots = slots,
                     showChannelInfo = showChannelInfo,
+                    showShorts = showShorts,
                 )
             }
             fullSpanItem(key = "bottom_gap") { Spacer(Modifier.height(16.dp)) }
@@ -168,6 +171,7 @@ private fun LazyGridScope.shelfSection(
     actions: FeedShelfActions,
     slots: FeedShelfSlots,
     showChannelInfo: Boolean,
+    showShorts: Boolean = true,
 ) {
     val columns = layout.columns
     val rowThumbnailWidth = if (layout.isCompact) VideoCardDefaults.RowThumbnailWidth else layout.thumbnailWidth
@@ -193,8 +197,24 @@ private fun LazyGridScope.shelfSection(
         return
     }
 
-    // Shorts removed completely
+    // A shelf of only Shorts is a portrait strip of its own, never mixed with long-form cards.
+    // Focus mode hides it like every other Shorts surface.
     if (section.items.isNotEmpty() && section.items.all { it is FeedItem.ShortItem }) {
+        if (!showShorts) return
+        val shorts = section.items.filterIsInstance<FeedItem.ShortItem>().map { it.video }
+        fullSpanItem(key = "${section.id}:shorts") {
+            Column {
+                ShelfHeader(
+                    title = section.title,
+                    hasMore = actions.canOpenSection(section),
+                    onClick = { actions.onSectionMore(section) },
+                )
+                ShortsShelfStrip(
+                    videos = shorts,
+                    onShortClick = actions.onShortClick,
+                )
+            }
+        }
         return
     }
 
@@ -214,8 +234,9 @@ private fun LazyGridScope.shelfSection(
         return
     }
 
-    val previewCount = feedShelfPreviewCount(columns, section.items.size)
-    val visible = if (isExpanded) section.items else section.items.take(previewCount)
+    val shelfItems = if (showShorts) section.items else section.items.filterNot { it is FeedItem.ShortItem }
+    val previewCount = feedShelfPreviewCount(columns, shelfItems.size)
+    val visible = if (isExpanded) shelfItems else shelfItems.take(previewCount)
     val partialRows = partialRowIndices(visible.map { it is FeedItem.PostItem }, columns)
     itemsIndexed(
         items = visible,
@@ -241,7 +262,7 @@ private fun LazyGridScope.shelfSection(
         }
     }
 
-    if (section.items.size > previewCount) {
+    if (shelfItems.size > previewCount) {
         item(key = "${section.id}:expander", span = { GridItemSpan(maxLineSpan) }) {
             Box(modifier = shelfItemMotion()) {
                 ShelfExpander(isExpanded = isExpanded, onClick = onToggleExpanded)
@@ -266,3 +287,21 @@ private fun FeedItem.shelfKey(): String =
         is FeedItem.RelatedChannelItem -> "c_${channel.id}"
         is FeedItem.PostItem -> "b_${post.id}"
     }
+
+@Composable
+private fun ShortsShelfStrip(
+    videos: List<Video>,
+    onShortClick: (String) -> Unit,
+) {
+    androidx.compose.foundation.lazy.LazyRow(
+        contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp),
+        horizontalArrangement = Arrangement.spacedBy(ShortCardDefaults.StripSpacing),
+    ) {
+        items(videos.size, key = { index -> videos[index].id }) { index ->
+            MediaShortCard(
+                video = videos[index],
+                onClick = { onShortClick(videos[index].id) },
+            )
+        }
+    }
+}

@@ -5,13 +5,17 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.items as lazyItems
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
@@ -35,6 +39,8 @@ import com.fedoratube.org.ui.components.channel.CommunityPostCard
 import com.fedoratube.org.ui.components.channel.CommunityPostInlineComments
 import com.fedoratube.org.ui.components.layout.flowBottomContentPadding
 import com.fedoratube.org.ui.components.shared.FlowPullToRefreshBox
+import com.fedoratube.org.ui.components.shared.MediaShortCard
+import com.fedoratube.org.ui.components.shared.ShortCardDefaults
 import com.fedoratube.org.ui.components.shared.card.MediaVideoCard
 import com.fedoratube.org.ui.components.shared.card.VideoCardLayout
 
@@ -157,6 +163,35 @@ internal fun SubscriptionsFeedContent(
                                     vertical = ErrorCardPadding,
                                 ),
                         )
+
+                        // Subscribed channels' Shorts (latest one per channel). Focus mode turns
+                        // the shelf off upstream, so it never appears there.
+                        if (state.isShortsShelfEnabled && state.showSubscriptionShorts && state.shorts.isNotEmpty()) {
+                            Text(
+                                text = stringResource(R.string.tab_shorts),
+                                style = MaterialTheme.typography.titleMedium,
+                                modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+                            )
+                            LazyRow(
+                                contentPadding = PaddingValues(horizontal = 12.dp),
+                                horizontalArrangement = Arrangement.spacedBy(ShortCardDefaults.StripSpacing),
+                            ) {
+                                lazyItems(state.shorts, key = { it.id }) { short ->
+                                    MediaShortCard(
+                                        video = short,
+                                        onClick = {
+                                            onShortClick(
+                                                ShortsQueueSource.Snapshot(
+                                                    token = com.fedoratube.org.data.feed.ShortsSnapshotStore.register(state.shorts),
+                                                    startVideoId = short.id,
+                                                ),
+                                            )
+                                        },
+                                    )
+                                }
+                            }
+                            Spacer(modifier = Modifier.height(4.dp))
+                        }
                     }
                 }
 

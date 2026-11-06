@@ -68,7 +68,8 @@ data class NavigationVisibility(
  * The bottom-bar tabs, in the user's order. Library cannot be hidden: every root
  * destination carries Notifications and Settings in its top bar, so one must always exist.
  * Subscriptions and Music live in the top category chips (see [topCategoryTabs]) and are
- * intentionally absent here, YouTube-style.
+ * intentionally absent here, YouTube-style. Shorts always sits directly after Home,
+ * whatever order was persisted before the tab existed.
  */
 fun visibleFlowTabs(
     order: List<Int>,
@@ -77,14 +78,24 @@ fun visibleFlowTabs(
     val enabled =
         buildSet {
             if (visibility.home) add(FlowTab.Home)
+            if (visibility.shorts) add(FlowTab.Shorts)
             add(FlowTab.Library)
             if (visibility.search) add(FlowTab.Search)
             if (visibility.categories) add(FlowTab.Explore)
         }
-    return (order + DEFAULT_NAV_TAB_ORDER)
-        .distinct()
-        .mapNotNull(FlowTab::fromId)
-        .filter { it != FlowTab.Shorts && enabled.contains(it) }
+    val tabs =
+        (order + DEFAULT_NAV_TAB_ORDER)
+            .distinct()
+            .mapNotNull(FlowTab::fromId)
+            .filter { enabled.contains(it) }
+    if (FlowTab.Shorts !in tabs) return tabs
+    val withoutShorts = tabs - FlowTab.Shorts
+    val homeIndex = withoutShorts.indexOf(FlowTab.Home)
+    return if (homeIndex >= 0) {
+        withoutShorts.toMutableList().apply { add(homeIndex + 1, FlowTab.Shorts) }
+    } else {
+        listOf(FlowTab.Shorts) + withoutShorts
+    }
 }
 
 /**
