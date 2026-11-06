@@ -72,6 +72,7 @@ import com.fedoratube.org.data.local.PlayerPreferences
 import com.fedoratube.org.player.config.VideoSizeCap
 import com.fedoratube.org.player.datasource.YouTubeHttpDataSource
 import com.fedoratube.org.player.factory.PlayerFactory
+import com.fedoratube.org.ui.OnTabReselected
 import com.fedoratube.org.ui.components.shared.FlowCommentsBottomSheet
 import com.fedoratube.org.ui.components.shared.FlowErrorState
 import com.fedoratube.org.ui.components.shared.VideoThumbnailImage
@@ -158,6 +159,12 @@ fun ShortsScreen(
     val pagerState = rememberPagerState(pageCount = { items.size })
     val currentIndex = pagerState.currentPage
     val currentItem = items.getOrNull(currentIndex)
+
+    // Tapping the already-selected Shorts nav icon refreshes the feed and jumps to the top.
+    OnTabReselected("shorts") {
+        if (pagerState.currentPage != 0) pagerState.animateScrollToPage(0)
+        viewModel.load(source, force = true)
+    }
 
     LaunchedEffect(currentIndex, items.size) {
         if (items.isNotEmpty() && currentIndex >= items.size - 3) viewModel.loadMore()
@@ -532,7 +539,7 @@ private fun ShortsOverlay(
                 Modifier
                     .align(Alignment.BottomStart)
                     .fillMaxWidth(fraction = 0.78f)
-                    .padding(start = 12.dp, bottom = 16.dp, end = 8.dp),
+                    .padding(start = 12.dp, bottom = 8.dp, end = 8.dp),
         ) {
             if (item.channelName.isNotBlank()) {
                 Row(
@@ -565,7 +572,7 @@ private fun ShortsOverlay(
                 }
             }
             if (item.title.isNotBlank()) {
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(6.dp))
                 Text(
                     text = item.title,
                     color = Color.White,
@@ -575,7 +582,7 @@ private fun ShortsOverlay(
                 )
             }
             if (!item.soundTitle.isNullOrBlank()) {
-                Spacer(modifier = Modifier.height(6.dp))
+                Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = item.soundTitle,
                     color = Color.White.copy(alpha = 0.85f),
@@ -589,11 +596,11 @@ private fun ShortsOverlay(
         // Rail sits at the bottom, directly above the timeline progress bar.
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(10.dp),
+            verticalArrangement = Arrangement.spacedBy(6.dp),
             modifier =
                 Modifier
                     .align(Alignment.BottomEnd)
-                    .padding(end = 10.dp, bottom = 16.dp),
+                    .padding(end = 10.dp, bottom = 8.dp),
         ) {
             // YouTube-Shorts style: plain outline icons, no circles. Love (heart) means
             // like; below the comment bubble sits the Save bookmark for Watch Later.
@@ -651,7 +658,7 @@ private fun ShortsRailButton(
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         IconButton(
             onClick = onClick,
-            modifier = Modifier.size(48.dp),
+            modifier = Modifier.size(44.dp),
         ) {
             content()
         }

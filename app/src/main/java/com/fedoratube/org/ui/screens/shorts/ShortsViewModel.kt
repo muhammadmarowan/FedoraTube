@@ -94,8 +94,11 @@ class ShortsViewModel
         private var loadJob: Job? = null
         private var exhausted = false
 
-        fun load(newSource: ShortsQueueSource) {
-            if (loadJob?.isActive == true && source == newSource && _uiState.value.items.isNotEmpty()) return
+        fun load(
+            newSource: ShortsQueueSource,
+            force: Boolean = false,
+        ) {
+            if (!force && loadJob?.isActive == true && source == newSource && _uiState.value.items.isNotEmpty()) return
             source = newSource
             continuation = null
             exhausted = false
