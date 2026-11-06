@@ -257,6 +257,7 @@ fun HomeScreen(
                         tabs = topCategoryTabs,
                         selectedTab = com.fedoratube.org.ui.components.layout.navigation.FlowTab.Home,
                         onCategorySelected = onCategorySelected,
+                        scrollBehavior = scrollBehavior,
                     )
                 }
             }

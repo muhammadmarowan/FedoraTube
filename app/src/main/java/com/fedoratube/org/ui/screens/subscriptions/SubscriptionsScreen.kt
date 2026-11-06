@@ -266,6 +266,7 @@ fun SubscriptionsScreen(
                             tabs = topCategoryTabs,
                             selectedTab = com.fedoratube.org.ui.components.layout.navigation.FlowTab.Subscriptions,
                             onCategorySelected = onCategorySelected,
+                            scrollBehavior = scrollBehavior,
                         )
                     }
                 }

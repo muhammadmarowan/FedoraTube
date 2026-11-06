@@ -68,7 +68,6 @@ import com.fedoratube.org.ui.screens.equalizer.EqualizerViewModel
 import com.fedoratube.org.ui.screens.home.HomeViewModel
 import com.fedoratube.org.ui.screens.notifications.NotificationViewModel
 import com.fedoratube.org.ui.screens.player.VideoPlayerViewModel
-import com.fedoratube.org.ui.screens.settings.content.LinkHandlingPrompt
 import com.fedoratube.org.ui.screens.update.UPDATE_ROUTE
 import com.fedoratube.org.ui.screens.update.UpdateLaunchEffect
 import com.fedoratube.org.ui.theme.ThemeMode
@@ -76,7 +75,6 @@ import com.fedoratube.org.ui.theme.ThemeVariant
 import com.fedoratube.org.ui.utils.LocalWindowSizeClass
 import com.fedoratube.org.ui.utils.isMediumWidth
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 @UnstableApi
@@ -109,8 +107,6 @@ fun FlowApp(
     val playerUiState by playerUiStateResult
 
     val preferences = remember { PlayerPreferences(context) }
-    val coroutineScope = rememberCoroutineScope()
-    val linkHandlingPrompted by preferences.linkHandlingPrompted.collectAsState(initial = true)
     val isHomeNavigationEnabled by preferences.homeNavigationEnabled.collectAsState(initial = true)
     val isShortsNavigationEnabled by preferences.effectiveShortsNavigationEnabled.collectAsState(initial = true)
     val isMusicNavigationEnabled by preferences.musicNavigationEnabled.collectAsState(initial = true)
@@ -613,10 +609,8 @@ fun FlowApp(
         )
 
         UpdateLaunchEffect(needsOnboarding = needsOnboarding, onOpenUpdate = { navController.navigate(UPDATE_ROUTE) })
-        LinkHandlingPrompt(
-            enabled = needsOnboarding == false,
-            prompted = linkHandlingPrompted,
-            onPrompted = { coroutineScope.launch { preferences.setLinkHandlingPrompted(true) } },
-        )
+        // No in-app link-handling popup: it interrupted the first-run flow and
+        // could never complete (youtube.com can never verify). Users who want
+        // link handling can enable it from Settings instead.
     }
 }

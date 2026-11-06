@@ -204,6 +204,7 @@ fun EnhancedMusicScreen(
                         tabs = topCategoryTabs,
                         selectedTab = com.fedoratube.org.ui.components.layout.navigation.FlowTab.Music,
                         onCategorySelected = onCategorySelected,
+                        scrollBehavior = scrollBehavior,
                     )
                 }
             }
