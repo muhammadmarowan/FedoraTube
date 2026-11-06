@@ -108,7 +108,10 @@ fun EnhancedMusicScreen(
         }
     val musicListState = rememberLazyListState()
     val quickPicksGridState = rememberLazyGridState()
-    var musicFirstScrollFixed by androidx.compose.runtime.saveable.rememberSaveable { androidx.compose.runtime.mutableStateOf(false) }
+    // Reset on every Music entry (not saveable) so re-entering Music always
+    // lands at the top with Trending first instead of a restored scroll offset.
+    var musicFirstScrollFixed by remember { androidx.compose.runtime.mutableStateOf(false) }
+    LaunchedEffect(Unit) { musicListState.scrollToItem(0, 0) }
     LaunchedEffect(uiState.trendingSongs.isNotEmpty() || uiState.dynamicSections.isNotEmpty()) {
         if ((uiState.trendingSongs.isNotEmpty() || uiState.dynamicSections.isNotEmpty()) && !musicFirstScrollFixed) {
             musicFirstScrollFixed = true
@@ -150,7 +153,9 @@ fun EnhancedMusicScreen(
                     }
                 }
             val dynamicPool = defaultOrder - anchored
-            anchored + dynamicPool.shuffled(Random(uiState.sessionSeed))
+            // Trending (CHARTS) always leads when entering Music.
+            val ordered = (anchored + dynamicPool.shuffled(Random(uiState.sessionSeed))).distinct()
+            (listOf(HomeSectionType.CHARTS) + ordered).distinct()
         }
 
     // Scroll to top and refresh when tapping the music tab while already on this screen
@@ -197,6 +202,7 @@ fun EnhancedMusicScreen(
                             Icon(Icons.Outlined.Search, stringResource(R.string.search))
                         }
                     },
+                    globalActions = com.fedoratube.org.ui.components.layout.topbar.FlowGlobalActionsMode.None,
                     scrollBehavior = scrollBehavior,
                 )
                 if (topCategoryTabs.isNotEmpty()) {
@@ -216,14 +222,7 @@ fun EnhancedMusicScreen(
             modifier =
                 Modifier
                     .fillMaxSize()
-                    .padding(paddingValues)
-                    .then(
-                        com.fedoratube.org.ui.components.layout.navigation.rememberCategorySwipe(
-                            tabs = topCategoryTabs,
-                            selectedTab = com.fedoratube.org.ui.components.layout.navigation.FlowTab.Music,
-                            onCategorySelected = onCategorySelected,
-                        ),
-                    ),
+                    .padding(paddingValues),
         ) {
             val isInitialLoading = uiState.isLoading && uiState.trendingSongs.isEmpty() && uiState.dynamicSections.isEmpty()
 

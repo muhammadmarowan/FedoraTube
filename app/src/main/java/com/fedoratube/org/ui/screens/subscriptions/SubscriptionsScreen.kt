@@ -259,6 +259,7 @@ fun SubscriptionsScreen(
                                 )
                             }
                         },
+                        globalActions = com.fedoratube.org.ui.components.layout.topbar.FlowGlobalActionsMode.None,
                         scrollBehavior = scrollBehavior,
                     )
                     if (topCategoryTabs.isNotEmpty()) {
@@ -282,15 +283,7 @@ fun SubscriptionsScreen(
             modifier =
                 modifier
                     .fillMaxSize()
-                    .padding(padding)
-                    .then(
-                        com.fedoratube.org.ui.components.layout.navigation.rememberCategorySwipe(
-                            tabs = topCategoryTabs,
-                            selectedTab = com.fedoratube.org.ui.components.layout.navigation.FlowTab.Subscriptions,
-                            onCategorySelected = onCategorySelected,
-                            enabled = !isManagingSubs,
-                        ),
-                    ),
+                    .padding(padding),
         ) {
             AnimatedContent(targetState = isManagingSubs, label = "subscriptionsMode") { manageMode ->
                 if (manageMode) {

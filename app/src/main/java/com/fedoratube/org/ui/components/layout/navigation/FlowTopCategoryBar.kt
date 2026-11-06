@@ -1,16 +1,17 @@
 package com.fedoratube.org.ui.components.layout.navigation
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -29,18 +30,14 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 
-/** Full-screen YouTube-style swipe: drag left = next category, drag right = previous. */
-@Composable
-fun rememberCategorySwipe(
+/** Category swipe modifier for the tabs row only (cheap — no full-screen pointer input). */
+fun categorySwipe(
     tabs: List<FlowTab>,
     selectedTab: FlowTab?,
     onCategorySelected: (FlowTab) -> Unit,
-    enabled: Boolean = true,
-): Modifier {
-    val density = LocalDensity.current
-    val thresholdPx = with(density) { 72.dp.toPx() }
-    if (!enabled || tabs.size < 2) return Modifier
-    return Modifier.pointerInput(tabs, selectedTab, thresholdPx) {
+    thresholdPx: Float,
+): Modifier =
+    Modifier.pointerInput(tabs, selectedTab, thresholdPx) {
         var totalDragPx = 0f
         detectHorizontalDragGestures(
             onHorizontalDrag = { _, dragAmount -> totalDragPx += dragAmount },
@@ -55,15 +52,14 @@ fun rememberCategorySwipe(
             },
         )
     }
-}
 
 /**
- * YouTube-style top chips under the app wordmark: Home, Subscriptions, Music.
- * Borderless pills (not boxed/outlined): selected = solid onSurface, rest =
- * surfaceVariant — like YouTube's top filters. Selecting a chip switches the
- * root destination; re-selecting the active chip scrolls that screen to the
- * top via [onCategorySelected]. The row hides on scroll together with the
- * top bar when [scrollBehavior] is in use.
+ * YouTube-style top tabs under the app wordmark: Home, Subscriptions, Music.
+ * Plain text tabs with a thick theme-blue underline on the selected tab
+ * (YouTube's red line, themed here) — no pill/box backgrounds. Selecting a
+ * tab switches the root destination; re-selecting the active tab scrolls
+ * that screen to the top via [onCategorySelected]. The row hides on scroll
+ * together with the top bar when [scrollBehavior] is in use.
  */
 @Composable
 fun FlowTopCategoryBar(
@@ -77,42 +73,54 @@ fun FlowTopCategoryBar(
     val collapsed by remember(scrollBehavior) {
         derivedStateOf { (scrollBehavior?.state?.contentOffset ?: 0f) < -8f }
     }
+    // Fade-only hide to avoid expand/shrink layout thrash on every scroll frame (lag).
+    val density = LocalDensity.current
+    val swipeThresholdPx = with(density) { 72.dp.toPx() }
     AnimatedVisibility(
         visible = !collapsed,
-        enter = fadeIn() + expandVertically(),
-        exit = fadeOut() + shrinkVertically(),
+        enter = fadeIn(),
+        exit = fadeOut(),
         modifier = modifier,
     ) {
         LazyRow(
-            contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = categorySwipe(tabs, selectedTab, onCategorySelected, swipeThresholdPx),
+            contentPadding = PaddingValues(horizontal = 8.dp),
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
         ) {
             items(tabs, key = { it.id }) { tab ->
                 val selected = tab == selectedTab
-                Box(
+                Column(
                     modifier =
                         Modifier
-                            .clip(RoundedCornerShape(50))
-                            .background(
-                                if (selected) {
-                                    MaterialTheme.colorScheme.onSurface
-                                } else {
-                                    MaterialTheme.colorScheme.surfaceVariant
-                                },
-                            )
                             .clickable { onCategorySelected(tab) }
-                            .padding(horizontal = 14.dp, vertical = 7.dp),
+                            .padding(horizontal = 12.dp, vertical = 10.dp),
+                    horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally,
                 ) {
                     Text(
                         text = stringResource(tab.labelRes),
-                        style = MaterialTheme.typography.labelLarge,
+                        style = MaterialTheme.typography.titleSmall,
                         color =
                             if (selected) {
-                                MaterialTheme.colorScheme.surface
+                                MaterialTheme.colorScheme.onSurface
                             } else {
                                 MaterialTheme.colorScheme.onSurfaceVariant
                             },
                     )
+                    Box(
+                        modifier =
+                            Modifier
+                                .padding(top = 6.dp)
+                                .clip(RoundedCornerShape(50))
+                                .background(
+                                    if (selected) {
+                                        MaterialTheme.colorScheme.primary
+                                    } else {
+                                        androidx.compose.ui.graphics.Color.Transparent
+                                    },
+                                ),
+                    ) {
+                        Box(modifier = Modifier.width(28.dp).height(3.dp))
+                    }
                 }
             }
         }
