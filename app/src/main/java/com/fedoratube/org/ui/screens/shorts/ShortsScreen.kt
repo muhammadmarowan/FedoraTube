@@ -2,7 +2,6 @@ package com.fedoratube.org.ui.screens.shorts
 
 import android.content.Intent
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -51,7 +50,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -71,7 +69,6 @@ import com.fedoratube.org.data.local.PlayerPreferences
 import com.fedoratube.org.player.config.VideoSizeCap
 import com.fedoratube.org.player.datasource.YouTubeHttpDataSource
 import com.fedoratube.org.player.factory.PlayerFactory
-import com.fedoratube.org.ui.components.layout.flowBottomContentPadding
 import com.fedoratube.org.ui.components.shared.FlowCommentsBottomSheet
 import com.fedoratube.org.ui.components.shared.FlowErrorState
 import com.fedoratube.org.ui.components.shared.VideoThumbnailImage
@@ -203,23 +200,16 @@ fun ShortsScreen(
         }
     }
 
-    Column(
+    // Full-bleed video: from the very top of the screen down to the navigation bar.
+    // No app-name bar here; only an overlay search (and back, when not the tab) floats
+    // over the video at the top, like YouTube Shorts.
+    val navigationBottom = com.fedoratube.org.ui.components.layout.LocalFlowBottomInsets.current.navigationBottom
+    Box(
         modifier =
             Modifier
                 .fillMaxSize()
                 .background(Color.Black),
     ) {
-        ShortsTopBar(
-            isTabRoot = isTabRoot,
-            onBack = onBack,
-            onSearchClick = onSearchClick,
-        )
-        Box(
-            modifier =
-                Modifier
-                    .weight(1f)
-                    .fillMaxWidth(),
-        ) {
             when {
                 uiState.isLoading && items.isEmpty() -> {
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -247,7 +237,7 @@ fun ShortsScreen(
                             modifier =
                                 Modifier
                                     .fillMaxSize()
-                                    .padding(bottom = flowBottomContentPadding()),
+                                    .padding(bottom = navigationBottom),
                             beyondViewportPageCount = 1,
                             // Index-safe: the pager can ask for a key/content while a fresh
                             // page list is still settling (1-item first page -> append).
@@ -351,8 +341,33 @@ fun ShortsScreen(
                                 Modifier
                                     .align(Alignment.BottomCenter)
                                     .fillMaxWidth()
-                                    .padding(bottom = flowBottomContentPadding()),
+                                    .padding(bottom = navigationBottom),
                         )
+                        // Floating top controls over the video (no app-name bar).
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier =
+                                Modifier
+                                    .align(Alignment.TopCenter)
+                                    .fillMaxWidth()
+                                    .background(
+                                        androidx.compose.ui.graphics.Brush.verticalGradient(
+                                            listOf(Color.Black.copy(alpha = 0.45f), Color.Transparent),
+                                        ),
+                                    )
+                                    .statusBarsPadding()
+                                    .padding(horizontal = 4.dp, vertical = 2.dp),
+                        ) {
+                            if (!isTabRoot) {
+                                IconButton(onClick = onBack) {
+                                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back), tint = Color.White)
+                                }
+                            }
+                            Spacer(modifier = Modifier.weight(1f))
+                            IconButton(onClick = onSearchClick) {
+                                Icon(Icons.Outlined.Search, contentDescription = stringResource(R.string.search), tint = Color.White)
+                            }
+                        }
                         if (uiState.isLoadingMore) {
                             Box(
                                 modifier = Modifier.align(Alignment.BottomCenter),
@@ -365,7 +380,6 @@ fun ShortsScreen(
                 }
             }
         }
-    }
 
     if (showComments && commentsState.videoId.isNotBlank()) {
         FlowCommentsBottomSheet(
@@ -382,40 +396,6 @@ fun ShortsScreen(
             onAuthorClick = { channelId -> onChannelClick(channelId) },
             onAvatarClick = { channelId -> onChannelClick(channelId) },
         )
-    }
-}
-
-/** The app-name bar that stays on top of Shorts, like on every other screen. */
-@Composable
-private fun ShortsTopBar(
-    isTabRoot: Boolean,
-    onBack: () -> Unit,
-    onSearchClick: () -> Unit,
-) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .background(Color.Black)
-                .statusBarsPadding()
-                .padding(horizontal = 4.dp, vertical = 6.dp),
-    ) {
-        if (!isTabRoot) {
-            IconButton(onClick = onBack) {
-                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back), tint = Color.White)
-            }
-        }
-        Image(
-            painter = painterResource(R.drawable.ic_fedora_tube_wordmark),
-            contentDescription = stringResource(R.string.app_name),
-            modifier = Modifier.height(28.dp),
-            contentScale = ContentScale.FillHeight,
-        )
-        Spacer(modifier = Modifier.weight(1f))
-        IconButton(onClick = onSearchClick) {
-            Icon(Icons.Outlined.Search, contentDescription = stringResource(R.string.search), tint = Color.White)
-        }
     }
 }
 
@@ -462,12 +442,25 @@ private fun ShortsOverlay(
     modifier: Modifier = Modifier,
 ) {
     Box(modifier = modifier) {
+        // Bottom scrim: keeps title, channel and rail readable on any bright video.
+        Box(
+            modifier =
+                Modifier
+                    .align(Alignment.BottomCenter)
+                    .fillMaxWidth()
+                    .height(220.dp)
+                    .background(
+                        androidx.compose.ui.graphics.Brush.verticalGradient(
+                            listOf(Color.Transparent, Color.Black.copy(alpha = 0.65f)),
+                        ),
+                    ),
+        )
         Column(
             modifier =
                 Modifier
                     .align(Alignment.BottomStart)
                     .fillMaxWidth(fraction = 0.78f)
-                    .padding(start = 12.dp, bottom = 28.dp, end = 8.dp),
+                    .padding(start = 12.dp, bottom = 16.dp, end = 8.dp),
         ) {
             if (item.channelName.isNotBlank()) {
                 Row(
@@ -480,7 +473,10 @@ private fun ShortsOverlay(
                             contentDescription = null,
                             modifier =
                                 Modifier
-                                    .size(32.dp)
+                                    .size(34.dp)
+                                    .clip(CircleShape)
+                                    .background(Color.White.copy(alpha = 0.85f))
+                                    .padding(1.5.dp)
                                     .clip(CircleShape),
                             contentScale = ContentScale.Crop,
                         )
@@ -521,14 +517,15 @@ private fun ShortsOverlay(
         // Rail sits at the bottom, directly above the timeline progress bar.
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(4.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp),
             modifier =
                 Modifier
                     .align(Alignment.BottomEnd)
-                    .padding(end = 8.dp, bottom = 16.dp),
+                    .padding(end = 10.dp, bottom = 16.dp),
         ) {
             ShortsRailButton(
                 label = item.likeCountText,
+                selected = liked,
                 onClick = onLike,
             ) {
                 Icon(
@@ -537,7 +534,7 @@ private fun ShortsOverlay(
                     tint = Color.White,
                 )
             }
-            ShortsRailButton(label = null, onClick = onDislike) {
+            ShortsRailButton(label = null, selected = disliked, onClick = onDislike) {
                 Icon(
                     imageVector = if (disliked) Icons.Filled.ThumbDown else Icons.Outlined.ThumbDown,
                     contentDescription = "Dislike",
@@ -562,9 +559,15 @@ private fun ShortsOverlay(
     }
 }
 
+/**
+ * Professional rail button matching the app theme: a frosted dark circle with a hairline
+ * border that reads on any video, the theme primary filling it when selected (liked /
+ * disliked), and a bold label underneath with its own scrim-darkened pill.
+ */
 @Composable
 private fun ShortsRailButton(
     label: String?,
+    selected: Boolean = false,
     onClick: () -> Unit,
     content: @Composable () -> Unit,
 ) {
@@ -573,9 +576,15 @@ private fun ShortsRailButton(
             onClick = onClick,
             modifier =
                 Modifier
-                    .size(48.dp)
+                    .size(54.dp)
                     .clip(CircleShape)
-                    .background(Color.White.copy(alpha = 0.15f)),
+                    .background(
+                        if (selected) {
+                            MaterialTheme.colorScheme.primary
+                        } else {
+                            Color.Black.copy(alpha = 0.52f)
+                        },
+                    ),
         ) {
             content()
         }
@@ -583,8 +592,15 @@ private fun ShortsRailButton(
             Text(
                 text = label,
                 color = Color.White,
-                style = MaterialTheme.typography.labelSmall,
+                style = MaterialTheme.typography.labelMedium,
+                fontWeight = FontWeight.Bold,
                 maxLines = 1,
+                modifier =
+                    Modifier
+                        .padding(top = 2.dp, bottom = 2.dp)
+                        .clip(CircleShape)
+                        .background(Color.Black.copy(alpha = 0.45f))
+                        .padding(horizontal = 7.dp, vertical = 1.dp),
             )
         }
     }
