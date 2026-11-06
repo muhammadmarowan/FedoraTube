@@ -90,6 +90,30 @@ class GitHubReleaseTest {
     }
 
     @Test
+    fun `a prerelease never becomes an update`() {
+        val pre = GitHubRelease(tagName = "v1.7.7", prerelease = true)
+
+        assertThat(pre.isStableRelease()).isFalse()
+        assertThat(pre.toAppReleaseIfNewer("1.7.6", listOf("arm64-v8a"))).isNull()
+    }
+
+    @Test
+    fun `a draft never becomes an update`() {
+        val draft = GitHubRelease(tagName = "v1.7.8", draft = true)
+
+        assertThat(draft.isStableRelease()).isFalse()
+        assertThat(draft.toAppReleaseIfNewer("1.7.6", listOf("arm64-v8a"))).isNull()
+    }
+
+    @Test
+    fun `a stable release stays an update`() {
+        val stable = GitHubRelease(tagName = "v1.7.7", prerelease = false, draft = false)
+
+        assertThat(stable.isStableRelease()).isTrue()
+        assertThat(stable.toAppReleaseIfNewer("1.7.6", listOf("arm64-v8a"))?.version).isEqualTo("1.7.7")
+    }
+
+    @Test
     fun `the stable updater never picks a nightly apk`() {
         assertThat(selectApk(listOf(asset("flow-nightly-1430.apk")), listOf("arm64-v8a"))).isNull()
     }

@@ -99,8 +99,10 @@ internal fun currentLinkHandling(context: Context): LinkHandling {
 }
 
 /**
- * One-time nudge shown after onboarding while Android still sends YouTube links elsewhere. Flow
- * cannot prove it owns youtube.com, so the system has to be pointed at it by hand.
+ * Nudge shown after onboarding while Android still sends YouTube links elsewhere. Flow cannot
+ * prove it owns youtube.com, so the system has to be pointed at it by hand. It reappears on
+ * every launch until every declared host is on, so no user is left with browser links;
+ * "Not now" only hides it for the current session.
  */
 @Composable
 internal fun LinkHandlingPrompt(
@@ -110,28 +112,42 @@ internal fun LinkHandlingPrompt(
 ) {
     val context = LocalContext.current
     var handling by remember { mutableStateOf(currentLinkHandling(context)) }
+    var dismissed by remember { mutableStateOf(false) }
     LifecycleResumeEffect(context) {
         handling = currentLinkHandling(context)
         onPauseOrDispose { }
     }
     val needsPermission =
         handling is LinkHandling.Off || handling is LinkHandling.Some
-    if (!enabled || prompted || !needsPermission) return
+    // `prompted` is kept for call-site compatibility; dismissal is session-only on purpose
+    // so the prompt reaches every user until links are actually turned on.
+    @Suppress("UNUSED_PARAMETER")
+    val promptedUnused = prompted
+    if (!enabled || dismissed || !needsPermission) return
 
     AlertDialog(
-        onDismissRequest = onPrompted,
+        onDismissRequest = {
+            dismissed = true
+            onPrompted()
+        },
         title = { Text(stringResource(R.string.link_handling_prompt_title)) },
         text = { Text(stringResource(R.string.link_handling_prompt_body)) },
         confirmButton = {
             TextButton(
                 onClick = {
+                    dismissed = true
                     onPrompted()
                     openLinkSettings(context)
                 },
             ) { Text(stringResource(R.string.link_handling_prompt_open)) }
         },
         dismissButton = {
-            TextButton(onClick = onPrompted) { Text(stringResource(R.string.link_handling_prompt_later)) }
+            TextButton(
+                onClick = {
+                    dismissed = true
+                    onPrompted()
+                },
+            ) { Text(stringResource(R.string.link_handling_prompt_later)) }
         },
     )
 }

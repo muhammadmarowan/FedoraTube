@@ -1,3 +1,15 @@
+# Fedora Tube v1.7.7
+
+**Release date:** 2026-11-07
+**Status:** Stable
+
+## Highlights
+
+- Onboarding welcome no longer shows the large hero logo - only the FedoraTube wordmark, "Make yours" and subtitle on the wallpaper
+- YouTube App Links now cover gaming.youtube.com and studio.youtube.com too, and the link prompt keeps asking on every launch until every address is turned on ("0 verified links" is normal - Google owns youtube.com)
+- Update checker only offers stable releases - prereleases and drafts never reach users
+- Home top bar order swapped: notification icon on the left, search icon on the right
+
 # Fedora Tube v1.7.6
 
 **Release date:** 2026-11-06

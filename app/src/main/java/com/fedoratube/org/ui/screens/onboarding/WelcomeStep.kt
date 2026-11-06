@@ -32,7 +32,6 @@ private val BrandSpacing = 8.dp
 
 @Composable
 internal fun WelcomeStep(
-    hero: HeroSlot,
     contentPadding: PaddingValues,
 ) {
     Box(
@@ -58,9 +57,9 @@ internal fun WelcomeStep(
                     ),
         )
 
-        BookendLayout(
-            contentPadding = contentPadding,
-            stage = { hero(HeroLarge) },
+        Box(
+            modifier = Modifier.fillMaxSize().padding(contentPadding),
+            contentAlignment = Alignment.BottomStart,
         ) {
             Column(
                 modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp),

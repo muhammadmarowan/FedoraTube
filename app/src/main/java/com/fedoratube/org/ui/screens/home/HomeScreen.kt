@@ -232,16 +232,16 @@ fun HomeScreen(
                 leading = null,
                 actions = {
                     if (!isFocusModeEnabled) {
-                        IconButton(onClick = onSearchClick) {
-                            Icon(
-                                Icons.Outlined.Search,
-                                contentDescription = stringResource(R.string.search),
-                            )
-                        }
                         IconButton(onClick = onNotificationClick) {
                             Icon(
                                 Icons.Outlined.Notifications,
                                 contentDescription = stringResource(R.string.notifications),
+                            )
+                        }
+                        IconButton(onClick = onSearchClick) {
+                            Icon(
+                                Icons.Outlined.Search,
+                                contentDescription = stringResource(R.string.search),
                             )
                         }
                     }

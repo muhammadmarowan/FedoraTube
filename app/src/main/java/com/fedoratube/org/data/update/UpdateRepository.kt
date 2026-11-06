@@ -109,8 +109,8 @@ class UpdateRepository
                     if (allResponse != null && allResponse.isSuccessful) {
                         val body = allResponse.body.string()
                         allResponse.close()
-                        // Nightlies are retired; hide any release still tagged or carrying one.
-                        val releases = parseGitHubReleases(body).filterNot(GitHubRelease::isNightlyRelease)
+                        // Only stable releases reach users: prereleases, drafts and nightlies are hidden.
+                        val releases = parseGitHubReleases(body).filter(GitHubRelease::isStableRelease)
                         if (releases.isNotEmpty()) {
                             _allReleases.value = releases
                             return@withContext releases.first()

@@ -115,6 +115,8 @@
                 <data android:host="m.youtube.com" />
                 <data android:host="music.youtube.com" />
                 <data android:host="m.music.youtube.com" />
+                <data android:host="gaming.youtube.com" />
+                <data android:host="studio.youtube.com" />
                 <data android:pathPrefix="/watch" />
                 <data android:pathPrefix="/v" />
                 <data android:pathPrefix="/live" />

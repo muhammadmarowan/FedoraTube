@@ -3754,7 +3754,7 @@
     <string name="content_settings_open_links_off">Off. Links open in another app</string>
     <string name="content_settings_open_links_system_asks">Android asks which app to use</string>
     <string name="link_handling_prompt_title">Open YouTube links in FedoraTube</string>
-    <string name="link_handling_prompt_body">Android keeps opening YouTube links in the browser until you allow FedoraTube to handle them. Tap Open settings, choose FedoraTube, then turn on the links you want to open here.</string>
+    <string name="link_handling_prompt_body">Android keeps opening YouTube links in the browser until you allow FedoraTube to handle them. Tap Open settings, choose In the app, tick every address below. 0 verified links is normal, Google owns youtube.com so FedoraTube can never verify it.</string>
     <string name="link_handling_prompt_open">Open settings</string>
     <string name="link_handling_prompt_later">Not now</string>
     <string name="content_settings_shared_links_title">Shared links</string>

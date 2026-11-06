@@ -19,6 +19,8 @@ data class GitHubRelease(
     val body: String? = null,
     @SerialName("html_url") val htmlUrl: String = "",
     @SerialName("published_at") val publishedAt: String? = null,
+    val prerelease: Boolean = false,
+    val draft: Boolean = false,
     val assets: List<GitHubAsset> = emptyList(),
 )
 
@@ -45,6 +47,7 @@ internal fun GitHubRelease.toAppReleaseIfNewer(
     currentVersion: String,
     supportedAbis: List<String>,
 ): AppRelease? {
+    if (prerelease || draft) return null
     if (tagName.isBlank() || !AppVersions.isNewer(tagName, currentVersion)) return null
     return AppRelease(
         version = AppVersions.normalize(tagName),
@@ -60,6 +63,10 @@ internal fun GitHubRelease.toAppReleaseIfNewer(
 internal fun GitHubRelease.isNightlyRelease(): Boolean =
     tagName.equals(NIGHTLY_TAG, ignoreCase = true) ||
         assets.any { it.name.contains(NIGHTLY_MARKER, ignoreCase = true) }
+
+/** Stable releases only: prereleases, drafts and nightlies never reach the updater. */
+internal fun GitHubRelease.isStableRelease(): Boolean =
+    !prerelease && !draft && !isNightlyRelease()
 
 /**
  * The github-flavour APK for this device: the split build for its preferred ABI, else the universal
