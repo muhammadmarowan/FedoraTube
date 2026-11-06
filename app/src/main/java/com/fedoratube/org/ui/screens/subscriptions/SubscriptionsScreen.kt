@@ -283,7 +283,14 @@ fun SubscriptionsScreen(
             modifier =
                 modifier
                     .fillMaxSize()
-                    .padding(padding),
+                    .padding(padding)
+                    .then(
+                        com.fedoratube.org.ui.components.layout.navigation.rememberCategorySwipe(
+                            tabs = topCategoryTabs,
+                            selectedTab = com.fedoratube.org.ui.components.layout.navigation.FlowTab.Subscriptions,
+                            onCategorySelected = onCategorySelected,
+                        ),
+                    ),
         ) {
             AnimatedContent(targetState = isManagingSubs, label = "subscriptionsMode") { manageMode ->
                 if (manageMode) {

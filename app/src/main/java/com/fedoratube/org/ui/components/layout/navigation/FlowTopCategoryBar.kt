@@ -1,8 +1,5 @@
 package com.fedoratube.org.ui.components.layout.navigation
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
@@ -10,6 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.padding
@@ -20,17 +18,15 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 
-/** Category swipe modifier for the tabs row only (cheap — no full-screen pointer input). */
+/** Swipe on any content: drag left = next category, drag right = previous (Home→Subs→Music). */
 fun categorySwipe(
     tabs: List<FlowTab>,
     selectedTab: FlowTab?,
@@ -53,6 +49,17 @@ fun categorySwipe(
         )
     }
 
+@Composable
+fun rememberCategorySwipe(
+    tabs: List<FlowTab>,
+    selectedTab: FlowTab?,
+    onCategorySelected: (FlowTab) -> Unit,
+): Modifier {
+    val density = LocalDensity.current
+    val thresholdPx = with(density) { 72.dp.toPx() }
+    return categorySwipe(tabs, selectedTab, onCategorySelected, thresholdPx)
+}
+
 /**
  * YouTube-style top tabs under the app wordmark: Home, Subscriptions, Music.
  * Plain text tabs with a thick theme-blue underline on the selected tab
@@ -70,20 +77,28 @@ fun FlowTopCategoryBar(
     scrollBehavior: TopAppBarScrollBehavior? = null,
 ) {
     if (tabs.size < 2) return
-    val collapsed by remember(scrollBehavior) {
-        derivedStateOf { (scrollBehavior?.state?.contentOffset ?: 0f) < -8f }
-    }
-    // Fade-only hide to avoid expand/shrink layout thrash on every scroll frame (lag).
-    val density = LocalDensity.current
-    val swipeThresholdPx = with(density) { 72.dp.toPx() }
-    AnimatedVisibility(
-        visible = !collapsed,
-        enter = fadeIn(),
-        exit = fadeOut(),
-        modifier = modifier,
+    // Unified header: the tabs collapse in exact sync with the wordmark bar.
+    // fraction = 1 expanded, 0 collapsed; height + alpha follow it so
+    // one shows only when the other shows and one hides only when the other hides.
+    val limit = scrollBehavior?.state?.heightOffsetLimit ?: 0f
+    val fraction =
+        if (scrollBehavior == null || limit == 0f) {
+            1f
+        } else {
+            (1f - (scrollBehavior.state.heightOffset / limit)).coerceIn(0f, 1f)
+        }
+    if (fraction <= 0.01f) return
+    val fullHeight = 46.dp
+    Box(
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .height(fullHeight * fraction)
+                .alpha(fraction)
+                .clip(androidx.compose.ui.graphics.RectangleShape),
     ) {
         LazyRow(
-            modifier = categorySwipe(tabs, selectedTab, onCategorySelected, swipeThresholdPx),
+            modifier = Modifier.fillMaxWidth(),
             contentPadding = PaddingValues(horizontal = 8.dp),
             horizontalArrangement = Arrangement.spacedBy(4.dp),
         ) {

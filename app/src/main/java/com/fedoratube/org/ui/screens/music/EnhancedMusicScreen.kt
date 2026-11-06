@@ -222,7 +222,14 @@ fun EnhancedMusicScreen(
             modifier =
                 Modifier
                     .fillMaxSize()
-                    .padding(paddingValues),
+                    .padding(paddingValues)
+                    .then(
+                        com.fedoratube.org.ui.components.layout.navigation.rememberCategorySwipe(
+                            tabs = topCategoryTabs,
+                            selectedTab = com.fedoratube.org.ui.components.layout.navigation.FlowTab.Music,
+                            onCategorySelected = onCategorySelected,
+                        ),
+                    ),
         ) {
             val isInitialLoading = uiState.isLoading && uiState.trendingSongs.isEmpty() && uiState.dynamicSections.isEmpty()
 

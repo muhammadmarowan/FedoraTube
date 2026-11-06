@@ -253,8 +253,8 @@ class MainActivity : ComponentActivity() {
                 return@setContent
             }
 
-            // Initialize Flow Neuro Engine and check Auto Clear Cache
-            LaunchedEffect(Unit) {
+            // Off the main thread so first composition is not blocked (startup time).
+            lifecycleScope.launch(Dispatchers.IO) {
                 com.fedoratube.org.data.recommendation.FlowNeuroEngine
                     .initialize(applicationContext)
                 val prefs = com.fedoratube.org.data.local.PlayerPreferences(applicationContext)
