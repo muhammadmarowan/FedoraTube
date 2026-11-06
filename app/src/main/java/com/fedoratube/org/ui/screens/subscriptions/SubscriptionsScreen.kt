@@ -18,7 +18,12 @@ import androidx.compose.material.icons.automirrored.filled.ViewList
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.GridView
 import androidx.compose.material.icons.filled.Upload
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.height
+import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.Search
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -77,6 +82,7 @@ fun SubscriptionsScreen(
     onChannelClick: (Channel) -> Unit = {},
     topCategoryTabs: List<com.fedoratube.org.ui.components.layout.navigation.FlowTab> = emptyList(),
     onCategorySelected: (com.fedoratube.org.ui.components.layout.navigation.FlowTab) -> Unit = {},
+    onNotificationClick: () -> Unit = {},
     modifier: Modifier = Modifier,
     openMusicSubscriptions: Boolean = false,
     onMusicSubscriptionsOpened: () -> Unit = {},
@@ -228,8 +234,21 @@ fun SubscriptionsScreen(
             } else {
                 androidx.compose.foundation.layout.Column {
                     FlowTopBar(
-                        title = stringResource(R.string.top_bar_subscriptions_title),
+                        title = {
+                            Image(
+                                painter = painterResource(R.drawable.ic_fedora_tube_wordmark),
+                                contentDescription = stringResource(R.string.app_name),
+                                modifier = Modifier.height(28.dp),
+                                contentScale = ContentScale.FillHeight,
+                            )
+                        },
                         actions = {
+                            IconButton(onClick = onNotificationClick) {
+                                Icon(
+                                    imageVector = Icons.Outlined.Notifications,
+                                    contentDescription = stringResource(R.string.notifications),
+                                )
+                            }
                             IconButton(onClick = {
                                 manageShowsMusic = false
                                 isManagingSubs = true
@@ -262,7 +281,15 @@ fun SubscriptionsScreen(
             modifier =
                 modifier
                     .fillMaxSize()
-                    .padding(padding),
+                    .padding(padding)
+                    .then(
+                        com.fedoratube.org.ui.components.layout.navigation.rememberCategorySwipe(
+                            tabs = topCategoryTabs,
+                            selectedTab = com.fedoratube.org.ui.components.layout.navigation.FlowTab.Subscriptions,
+                            onCategorySelected = onCategorySelected,
+                            enabled = !isManagingSubs,
+                        ),
+                    ),
         ) {
             AnimatedContent(targetState = isManagingSubs, label = "subscriptionsMode") { manageMode ->
                 if (manageMode) {

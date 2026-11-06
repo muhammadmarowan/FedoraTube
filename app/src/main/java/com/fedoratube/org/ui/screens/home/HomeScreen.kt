@@ -276,6 +276,13 @@ fun HomeScreen(
                     Modifier
                         .fillMaxSize()
                         .padding(padding)
+                        .then(
+                            com.fedoratube.org.ui.components.layout.navigation.rememberCategorySwipe(
+                                tabs = topCategoryTabs,
+                                selectedTab = com.fedoratube.org.ui.components.layout.navigation.FlowTab.Home,
+                                onCategorySelected = onCategorySelected,
+                            ),
+                        )
                         .background(MaterialTheme.colorScheme.background),
             ) {
                 ResettableHomePullToRefreshBox(

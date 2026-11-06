@@ -82,6 +82,9 @@ internal fun NavGraphBuilder.musicRoutes(
             },
             topCategoryTabs = topCategoryTabs,
             onCategorySelected = onCategorySelected,
+            onNotificationClick = {
+                navController.navigate("notifications")
+            },
         )
     }
 

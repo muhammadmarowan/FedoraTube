@@ -162,6 +162,9 @@ fun NavGraphBuilder.flowAppGraph(
             },
             topCategoryTabs = topCategoryTabs,
             onCategorySelected = onCategorySelected,
+            onNotificationClick = {
+                navController.navigate("notifications")
+            },
         )
     }
 

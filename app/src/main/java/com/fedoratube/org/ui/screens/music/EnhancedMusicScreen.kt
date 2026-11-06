@@ -1,14 +1,17 @@
 package com.fedoratube.org.ui.screens.music
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -26,6 +29,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -68,6 +73,7 @@ fun EnhancedMusicScreen(
     onBack: (() -> Unit)? = null,
     topCategoryTabs: List<com.fedoratube.org.ui.components.layout.navigation.FlowTab> = emptyList(),
     onCategorySelected: (com.fedoratube.org.ui.components.layout.navigation.FlowTab) -> Unit = {},
+    onNotificationClick: () -> Unit = {},
     viewModel: MusicViewModel = sharedMusicViewModel(),
     libraryViewModel: MusicHomeLibraryViewModel = hiltViewModel(),
 ) {
@@ -170,9 +176,23 @@ fun EnhancedMusicScreen(
         topBar = {
             androidx.compose.foundation.layout.Column {
                 FlowTopBar(
-                    title = stringResource(R.string.screen_title_music),
+                    title = {
+                        if (!isFocusModeEnabled) {
+                            Image(
+                                painter = painterResource(R.drawable.ic_fedora_tube_wordmark),
+                                contentDescription = stringResource(R.string.app_name),
+                                modifier = Modifier.height(28.dp),
+                                contentScale = ContentScale.FillHeight,
+                            )
+                        }
+                    },
                     onBack = if (isFocusModeEnabled) onBack else null,
                     actions = {
+                        if (!isFocusModeEnabled) {
+                            IconButton(onClick = onNotificationClick) {
+                                Icon(Icons.Outlined.Notifications, stringResource(R.string.notifications))
+                            }
+                        }
                         IconButton(onClick = onSearchClick) {
                             Icon(Icons.Outlined.Search, stringResource(R.string.search))
                         }
@@ -195,7 +215,14 @@ fun EnhancedMusicScreen(
             modifier =
                 Modifier
                     .fillMaxSize()
-                    .padding(paddingValues),
+                    .padding(paddingValues)
+                    .then(
+                        com.fedoratube.org.ui.components.layout.navigation.rememberCategorySwipe(
+                            tabs = topCategoryTabs,
+                            selectedTab = com.fedoratube.org.ui.components.layout.navigation.FlowTab.Music,
+                            onCategorySelected = onCategorySelected,
+                        ),
+                    ),
         ) {
             val isInitialLoading = uiState.isLoading && uiState.trendingSongs.isEmpty() && uiState.dynamicSections.isEmpty()
 
