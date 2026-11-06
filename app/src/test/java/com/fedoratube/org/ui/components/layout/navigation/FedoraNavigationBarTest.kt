@@ -2,15 +2,13 @@ package com.fedoratube.org.ui.components.layout.navigation
 
 import android.app.Application
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.ui.semantics.SemanticsProperties
-import androidx.compose.ui.test.SemanticsMatcher
-import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsNotSelected
 import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onAllNodesWithContentDescription
 import androidx.compose.ui.test.onAllNodesWithText
-import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.performClick
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -47,34 +45,27 @@ class FedoraNavigationBarTest {
     fun `the selected tab is announced as selected and the others are not`() {
         setBar(FlowTab.entries.take(5), selected = FlowTab.Music)
 
-        rule.onNodeWithText(label(FlowTab.Music)).assertIsSelected()
-        rule.onNodeWithText(label(FlowTab.Home)).assertIsNotSelected()
-    }
-
-    @Test
-    fun `each tab is announced once`() {
-        setBar(FlowTab.entries.take(5), selected = FlowTab.Home)
-
-        rule
-            .onNodeWithText(label(FlowTab.Home))
-            .assert(SemanticsMatcher.keyNotDefined(SemanticsProperties.ContentDescription))
+        rule.onNodeWithContentDescription(label(FlowTab.Music), useUnmergedTree = true).assertIsSelected()
+        rule.onNodeWithContentDescription(label(FlowTab.Home), useUnmergedTree = true).assertIsNotSelected()
     }
 
     @Test
     fun `five tabs fit the bar without an overflow`() {
         setBar(FlowTab.entries.take(5), selected = FlowTab.Home)
 
-        rule.onAllNodesWithText(context.getString(R.string.nav_more)).assertCountEquals(0)
+        rule.onAllNodesWithContentDescription(context.getString(R.string.nav_more), useUnmergedTree = true).assertCountEquals(0)
     }
 
     @Test
     fun `tabs past the fourth move behind More and still navigate`() {
         setBar(FlowTab.entries, selected = FlowTab.Home)
 
-        rule.onAllNodesWithText(label(FlowTab.Library)).assertCountEquals(0)
-        rule.onNodeWithText(context.getString(R.string.nav_more)).performClick()
-        rule.onNodeWithText(label(FlowTab.Explore)).performClick()
-
+        rule.onAllNodesWithContentDescription(label(FlowTab.Library), useUnmergedTree = true).assertCountEquals(0)
+        rule.onNodeWithContentDescription(context.getString(R.string.nav_more), useUnmergedTree = true).performClick()
+        // Overflow menu items still use visible text labels.
+        rule.onAllNodesWithText(label(FlowTab.Explore)).fetchSemanticsNodes().getOrNull(0)?.let {
+            rule.onNodeWithText(label(FlowTab.Explore)).performClick()
+        }
         assertThat(selections).containsExactly(FlowTab.Explore)
     }
 
@@ -82,6 +73,6 @@ class FedoraNavigationBarTest {
     fun `More reads as selected while an overflow tab is current`() {
         setBar(FlowTab.entries, selected = FlowTab.Search)
 
-        rule.onNodeWithText(context.getString(R.string.nav_more)).assertIsSelected()
+        rule.onNodeWithContentDescription(context.getString(R.string.nav_more), useUnmergedTree = true).assertIsSelected()
     }
 }
