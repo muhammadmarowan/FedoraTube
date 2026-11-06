@@ -241,7 +241,10 @@ fun ShortsScreen(
                             modifier =
                                 Modifier
                                     .fillMaxSize()
-                                    .padding(bottom = navigationBottom),
+                                    // Video runs edge-to-edge behind the navigation bar, so
+                                    // there is no black blank strip above it. The timeline
+                                    // and overlay sit above the bar instead.
+                                    .padding(bottom = com.fedoratube.org.ui.components.layout.LocalFlowBottomInsets.current.systemBottom),
                             beyondViewportPageCount = 1,
                             // Index-safe: the pager can ask for a key/content while a fresh
                             // page list is still settling (1-item first page -> append).
@@ -328,7 +331,10 @@ fun ShortsScreen(
                                                 }
                                             context.startActivity(Intent.createChooser(intent, context.getString(R.string.share)))
                                         },
-                                        modifier = Modifier.fillMaxSize(),
+                                        modifier =
+                                            Modifier
+                                                .fillMaxSize()
+                                                .padding(bottom = navigationBottom),
                                     )
                                 }
                             }
@@ -380,11 +386,7 @@ fun ShortsScreen(
         }
 
     // YouTube-Shorts style: comments slide up over the video (75% of the window, drag
-    // handle + count header, video paused underneath) instead of navigating away.
-    LaunchedEffect(showComments) {
-        if (showComments) player.pause() else if (playerReady) player.play()
-    }
-
+    // handle + count header) and the video KEEPS PLAYING behind the sheet.
     if (showComments && commentsState.videoId.isNotBlank()) {
         FlowCommentsBottomSheet(
             comments = commentsState.comments,
