@@ -21,11 +21,16 @@ import kotlinx.coroutines.flow.first
  */
 @UnstableApi
 internal object ShortsPlayback {
+    // Process-wide resolved sources: leaving and re-entering Shorts replays the first
+    // Short instantly instead of re-extracting its streams.
+    private val sourceCache = java.util.concurrent.ConcurrentHashMap<String, MediaSource>()
+
     suspend fun resolveMediaSource(
         context: Context,
         preferences: PlayerPreferences,
         videoId: String,
     ): MediaSource? {
+        sourceCache[videoId]?.let { return it }
         val extraction =
             runCatching {
                 kotlinx.coroutines.withTimeoutOrNull(30_000L) {
@@ -64,13 +69,16 @@ internal object ShortsPlayback {
         // The resolver picks the best stream from the capped ladder and wraps it into a
         // DASH manifest (no progressive throttling). Passing the whole ladder — rather
         // than one pre-picked stream — lets the resolver fall back if one manifest fails.
-        return resolver.resolve(
-            videoStreams = ladder,
-            audioStream = audioStream,
-            dashManifestUrl = null,
-            hlsUrl = null,
-            durationSeconds = InnerTubeVideoMapper.durationSeconds(extraction),
-            asAdaptiveLadder = false,
-        )
+        val resolved =
+            resolver.resolve(
+                videoStreams = ladder,
+                audioStream = audioStream,
+                dashManifestUrl = null,
+                hlsUrl = null,
+                durationSeconds = InnerTubeVideoMapper.durationSeconds(extraction),
+                asAdaptiveLadder = false,
+            )
+        if (resolved != null) sourceCache[videoId] = resolved
+        return resolved
     }
 }

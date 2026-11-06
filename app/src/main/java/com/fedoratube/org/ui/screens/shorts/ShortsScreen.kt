@@ -23,13 +23,13 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.outlined.Comment
+import androidx.compose.material.icons.filled.Bookmark
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Share
-import androidx.compose.material.icons.filled.ThumbDown
-import androidx.compose.material.icons.filled.ThumbUp
+import androidx.compose.material.icons.outlined.BookmarkBorder
+import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.Search
-import androidx.compose.material.icons.outlined.ThumbDown
-import androidx.compose.material.icons.outlined.ThumbUp
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -104,6 +104,7 @@ fun ShortsScreen(
     val isFocusModeEnabled by preferences.focusModeEnabled.collectAsStateWithLifecycle(initialValue = false)
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val commentsState by viewModel.commentsState.collectAsStateWithLifecycle()
+    val savedIds by viewModel.savedIds.collectAsStateWithLifecycle()
     var showComments by remember { mutableStateOf(false) }
 
     if (isFocusModeEnabled) {
@@ -148,7 +149,6 @@ fun ShortsScreen(
     var paused by remember { mutableStateOf(false) }
     var playerReady by remember { mutableStateOf(false) }
     val likedIds = remember { mutableStateOf(setOf<String>()) }
-    val dislikedIds = remember { mutableStateOf(setOf<String>()) }
     val sourceCache = remember { mutableMapOf<String, MediaSource>() }
 
     val items = uiState.items
@@ -178,6 +178,7 @@ fun ShortsScreen(
     LaunchedEffect(currentItem?.videoId) {
         val item = currentItem ?: return@LaunchedEffect
         viewModel.enrichItem(item.videoId)
+        viewModel.refreshSaved(item.videoId)
         playerReady = false
         paused = false
         player.volume = 1f
@@ -301,19 +302,13 @@ fun ShortsScreen(
                                     ShortsOverlay(
                                         item = item,
                                         liked = item.videoId in likedIds.value,
-                                        disliked = item.videoId in dislikedIds.value,
+                                        saved = item.videoId in savedIds,
                                         onLike = {
                                             val nowLiked = item.videoId !in likedIds.value
                                             likedIds.value = if (nowLiked) likedIds.value + item.videoId else likedIds.value - item.videoId
-                                            if (nowLiked) dislikedIds.value = dislikedIds.value - item.videoId
                                             viewModel.onLikeToggled(item.videoId, nowLiked)
                                         },
-                                        onDislike = {
-                                            val nowDisliked = item.videoId !in dislikedIds.value
-                                            dislikedIds.value =
-                                                if (nowDisliked) dislikedIds.value + item.videoId else dislikedIds.value - item.videoId
-                                            if (nowDisliked) likedIds.value = likedIds.value - item.videoId
-                                        },
+                                        onSave = { viewModel.toggleSave(item) },
                                         onComments = {
                                             viewModel.openComments(item.videoId)
                                             showComments = true
@@ -433,9 +428,9 @@ private fun ShortsProgressBar(
 private fun ShortsOverlay(
     item: ShortItem,
     liked: Boolean,
-    disliked: Boolean,
+    saved: Boolean,
     onLike: () -> Unit,
-    onDislike: () -> Unit,
+    onSave: () -> Unit,
     onComments: () -> Unit,
     onChannelClick: () -> Unit,
     onShare: () -> Unit,
@@ -523,22 +518,17 @@ private fun ShortsOverlay(
                     .align(Alignment.BottomEnd)
                     .padding(end = 10.dp, bottom = 16.dp),
         ) {
+            // YouTube-Shorts style: plain outline icons, no circles. Love (heart) means
+            // like; below the comment bubble sits the Save bookmark for Watch Later.
             ShortsRailButton(
                 label = item.likeCountText,
                 selected = liked,
                 onClick = onLike,
             ) {
                 Icon(
-                    imageVector = if (liked) Icons.Filled.ThumbUp else Icons.Outlined.ThumbUp,
+                    imageVector = if (liked) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
                     contentDescription = stringResource(R.string.like),
-                    tint = Color.White,
-                )
-            }
-            ShortsRailButton(label = null, selected = disliked, onClick = onDislike) {
-                Icon(
-                    imageVector = if (disliked) Icons.Filled.ThumbDown else Icons.Outlined.ThumbDown,
-                    contentDescription = "Dislike",
-                    tint = Color.White,
+                    tint = if (liked) MaterialTheme.colorScheme.primary else Color.White,
                 )
             }
             ShortsRailButton(label = item.commentCountText, onClick = onComments) {
@@ -546,6 +536,17 @@ private fun ShortsOverlay(
                     imageVector = Icons.AutoMirrored.Outlined.Comment,
                     contentDescription = stringResource(R.string.comments),
                     tint = Color.White,
+                )
+            }
+            ShortsRailButton(
+                label = if (saved) stringResource(R.string.saved) else stringResource(R.string.save),
+                selected = saved,
+                onClick = onSave,
+            ) {
+                Icon(
+                    imageVector = if (saved) Icons.Filled.Bookmark else Icons.Outlined.BookmarkBorder,
+                    contentDescription = stringResource(R.string.save),
+                    tint = if (saved) MaterialTheme.colorScheme.primary else Color.White,
                 )
             }
             ShortsRailButton(label = null, onClick = onShare) {
@@ -560,9 +561,8 @@ private fun ShortsOverlay(
 }
 
 /**
- * Professional rail button matching the app theme: a frosted dark circle with a hairline
- * border that reads on any video, the theme primary filling it when selected (liked /
- * disliked), and a bold label underneath with its own scrim-darkened pill.
+ * YouTube-Shorts rail button: a plain large outline icon with its count in bold white
+ * below it — no circle. The bottom scrim behind the rail keeps it readable on any video.
  */
 @Composable
 private fun ShortsRailButton(
@@ -574,17 +574,7 @@ private fun ShortsRailButton(
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         IconButton(
             onClick = onClick,
-            modifier =
-                Modifier
-                    .size(54.dp)
-                    .clip(CircleShape)
-                    .background(
-                        if (selected) {
-                            MaterialTheme.colorScheme.primary
-                        } else {
-                            Color.Black.copy(alpha = 0.52f)
-                        },
-                    ),
+            modifier = Modifier.size(48.dp),
         ) {
             content()
         }
@@ -595,12 +585,6 @@ private fun ShortsRailButton(
                 style = MaterialTheme.typography.labelMedium,
                 fontWeight = FontWeight.Bold,
                 maxLines = 1,
-                modifier =
-                    Modifier
-                        .padding(top = 2.dp, bottom = 2.dp)
-                        .clip(CircleShape)
-                        .background(Color.Black.copy(alpha = 0.45f))
-                        .padding(horizontal = 7.dp, vertical = 1.dp),
             )
         }
     }

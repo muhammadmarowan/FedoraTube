@@ -99,7 +99,17 @@ class ShortsViewModel
             source = newSource
             continuation = null
             exhausted = false
-            _uiState.value = ShortsUiState(isLoading = true)
+            // Re-entering the Shorts tab shows the last feed instantly from cache while a
+            // fresh page loads behind it — no loading wait on the way back in.
+            val instant =
+                if (newSource == ShortsQueueSource.Feed) cachedFeedItems else null
+            _uiState.value =
+                if (instant.isNullOrEmpty()) {
+                    ShortsUiState(isLoading = true)
+                } else {
+                    continuation = cachedFeedContinuation
+                    ShortsUiState(items = instant, isLoading = false)
+                }
             loadJob =
                 viewModelScope.launch {
                     try {
@@ -162,13 +172,7 @@ class ShortsViewModel
                     val seed = overlayItem(src.startVideoId)
                     val page = YouTube.shortsFromVideo(src.startVideoId).getOrThrow()
                     continuation = page.continuation
-                    var items = (listOfNotNull(seed) + page.entries.map { it.toItem() }).distinctBy { it.videoId }
-                    while (items.size < MIN_INITIAL_ITEMS && continuation != null) {
-                        val next = YouTube.shorts(continuation!!).getOrThrow()
-                        continuation = next.continuation
-                        items = (items + next.entries.map { it.toItem() }).distinctBy { it.videoId }
-                    }
-                    items
+                    (listOfNotNull(seed) + page.entries.map { it.toItem() }).distinctBy { it.videoId }
                 }
 
                 is ShortsQueueSource.Saved -> {
@@ -191,13 +195,13 @@ class ShortsViewModel
         private suspend fun feedPage(sequenceParams: String?): List<ShortItem> {
             val page = YouTube.shorts(sequenceParams).getOrThrow()
             continuation = page.continuation
-            var items = page.entries.map { it.toItem() }.distinctBy { it.videoId }
-            // The seedless first page carries a single entry; exposing a 1-item pager and then
-            // appending crashes the pager while it settles. Fill to a usable minimum first.
-            while (items.size < MIN_INITIAL_ITEMS && continuation != null) {
-                val next = YouTube.shorts(continuation!!).getOrThrow()
-                continuation = next.continuation
-                items = (items + next.entries.map { it.toItem() }).distinctBy { it.videoId }
+            // Expose the first page immediately — filling to a minimum first made entering
+            // Shorts wait through several sequential page fetches. The pager is index-safe,
+            // so a 1-item first page is fine; loadMore appends the rest.
+            val items = page.entries.map { it.toItem() }.distinctBy { it.videoId }
+            if (sequenceParams == null) {
+                cachedFeedItems = items
+                cachedFeedContinuation = continuation
             }
             return items
         }
@@ -375,6 +379,49 @@ class ShortsViewModel
             }
         }
 
+        private val _savedIds = MutableStateFlow<Set<String>>(emptySet())
+        val savedIds: StateFlow<Set<String>> = _savedIds.asStateFlow()
+
+        /** Saves (or unsaves) a Short to Watch Later, YouTube-Shorts style. */
+        fun toggleSave(item: ShortItem) {
+            val saved = item.videoId in _savedIds.value
+            _savedIds.update { ids -> if (saved) ids - item.videoId else ids + item.videoId }
+            viewModelScope.launch {
+                runCatching {
+                    if (saved) {
+                        playlistRepository.removeFromWatchLater(item.videoId)
+                    } else {
+                        playlistRepository.addToWatchLater(
+                            Video(
+                                id = item.videoId,
+                                title = item.title,
+                                channelName = item.channelName,
+                                channelId = item.channelId,
+                                thumbnailUrl = item.posterUrl.orEmpty(),
+                                duration = 0,
+                                viewCount = 0L,
+                                uploadDate = "",
+                                channelThumbnailUrl = item.channelAvatarUrl,
+                                isShort = true,
+                            ),
+                        )
+                    }
+                }
+            }
+        }
+
+        /** Whether [videoId] is already in Watch Later, checked when it becomes visible. */
+        fun refreshSaved(videoId: String) {
+            if (videoId in _savedIds.value) return
+            viewModelScope.launch {
+                runCatching {
+                    val inWatchLater =
+                        playlistRepository.getWatchLaterVideosFlow().first().any { it.id == videoId }
+                    if (inWatchLater) _savedIds.update { it + videoId }
+                }
+            }
+        }
+
         /** Opens the inline comments sheet for one Short. Opening never navigates away, so the reel keeps playing underneath. */
         fun openComments(videoId: String) {
             if (_commentsState.value.videoId == videoId && _commentsState.value.comments.isNotEmpty()) return
@@ -434,6 +481,9 @@ class ShortsViewModel
         companion object {
             private const val TAG = "ShortsViewModel"
             private const val MAX_SUBSCRIPTION_CHANNELS = 20
-            private const val MIN_INITIAL_ITEMS = 5
+
+            /** Last algorithmic feed, kept across ViewModel instances so the tab reopens instantly. */
+            @Volatile private var cachedFeedItems: List<ShortItem> = emptyList()
+            @Volatile private var cachedFeedContinuation: String? = null
         }
     }
