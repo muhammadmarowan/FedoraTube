@@ -138,7 +138,7 @@ fun NavGraphBuilder.flowAppGraph(
             isTabRoot = isTabRoot,
             onBack = { navController.popBackStack() },
             onChannelClick = { channelId -> mediaNavigator.openChannel(channelId) },
-            onOpenVideo = { videoId -> navController.navigateToPlayer(videoId) },
+            onSearchClick = { navController.navigate("search") },
         )
     }
 

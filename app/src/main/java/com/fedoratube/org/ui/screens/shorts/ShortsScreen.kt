@@ -2,18 +2,22 @@ package com.fedoratube.org.ui.screens.shorts
 
 import android.content.Intent
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -23,30 +27,23 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.VolumeOff
 import androidx.compose.material.icons.automirrored.filled.VolumeUp
 import androidx.compose.material.icons.automirrored.outlined.Comment
-import androidx.compose.material.icons.filled.MoreHoriz
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.ThumbDown
 import androidx.compose.material.icons.filled.ThumbUp
+import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.ThumbDown
 import androidx.compose.material.icons.outlined.ThumbUp
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -54,16 +51,25 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.compose.LifecycleStartEffect
+import androidx.media3.common.Player
+import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.source.MediaSource
 import androidx.media3.ui.PlayerView
 import coil3.compose.AsyncImage
 import com.fedoratube.org.R
@@ -73,27 +79,32 @@ import com.fedoratube.org.player.config.VideoSizeCap
 import com.fedoratube.org.player.datasource.YouTubeHttpDataSource
 import com.fedoratube.org.player.factory.PlayerFactory
 import com.fedoratube.org.ui.components.layout.flowBottomContentPadding
+import com.fedoratube.org.ui.components.shared.FlowCommentsBottomSheet
 import com.fedoratube.org.ui.components.shared.FlowErrorState
 import com.fedoratube.org.ui.components.shared.VideoThumbnailImage
 import com.fedoratube.org.ui.screens.shorts.ShortsPlayback.resolveMediaSource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
+import kotlin.math.roundToInt
 
 /**
- * YouTube-Shorts-style vertical pager. One shared player plays whichever page is on screen;
- * the other pages show their poster, so swiping is instant and memory stays flat. The queue
- * itself comes from [ShortsViewModel] — algorithmic feed, channel, subscriptions, a shelf
- * snapshot, or saved Shorts. Focus mode never reaches here with content (see the guard below
- * and the navigation layer); if it does, nothing loads.
+ * YouTube-Shorts-style vertical pager.
+ *
+ * Two things keep it from stuttering (atke-atke jawa):
+ * - ONE [PlayerView] lives outside the pager pages and is translated with the pager offset,
+ *   so swiping never detaches/reattaches the surface or recreates the view.
+ * - The progress ticker owns its own state inside [ShortsProgressBar], so it never
+ *   recomposes the pager, and the next/previous Short's media source is pre-resolved
+ *   into [sourceCache] while the current one plays.
  */
-@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ShortsScreen(
     source: ShortsQueueSource,
     onBack: () -> Unit,
     onChannelClick: (String) -> Unit,
-    onOpenVideo: (String) -> Unit = {},
+    onSearchClick: () -> Unit = {},
     isTabRoot: Boolean = false,
     modifier: Modifier = Modifier,
     viewModel: ShortsViewModel = hiltViewModel(),
@@ -101,42 +112,26 @@ fun ShortsScreen(
     val context = LocalContext.current
     val preferences = remember(context) { PlayerPreferences(context) }
     val isFocusModeEnabled by preferences.focusModeEnabled.collectAsStateWithLifecycle(initialValue = false)
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val commentsState by viewModel.commentsState.collectAsStateWithLifecycle()
+    var showComments by remember { mutableStateOf(false) }
 
     if (isFocusModeEnabled) {
-        Scaffold(
-            containerColor = Color.Black,
-            topBar = {
-                TopAppBar(
-                    title = { Text(text = stringResource(R.string.shorts), color = Color.White) },
-                    navigationIcon = {
-                        if (!isTabRoot) {
-                            IconButton(onClick = onBack) {
-                                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back), tint = Color.White)
-                            }
-                        }
-                    },
-                    colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Black),
-                )
-            },
-        ) { padding ->
-            Box(
-                modifier =
-                    Modifier
-                        .fillMaxSize()
-                        .padding(padding)
-                        .background(Color.Black),
-                contentAlignment = Alignment.Center,
-            ) {
-                Text(text = stringResource(R.string.no_shorts_found), color = Color.White)
-            }
+        Box(
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .background(Color.Black),
+            contentAlignment = Alignment.Center,
+        ) {
+            Text(text = stringResource(R.string.no_shorts_found), color = Color.White)
         }
         return
     }
 
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-
     LaunchedEffect(source) { viewModel.load(source) }
 
+    // One player for the whole pager.
     val playerFactory = remember { PlayerFactory() }
     val player =
         remember {
@@ -156,38 +151,57 @@ fun ShortsScreen(
     DisposableEffect(player) {
         onDispose { player.release() }
     }
+    LifecycleStartEffect(player) {
+        onStopOrDispose { player.pause() }
+    }
 
     var muted by remember { mutableStateOf(false) }
     var paused by remember { mutableStateOf(false) }
-    var progress by remember { mutableFloatStateOf(0f) }
     var playerReady by remember { mutableStateOf(false) }
     val likedIds = remember { mutableStateOf(setOf<String>()) }
     val dislikedIds = remember { mutableStateOf(setOf<String>()) }
+    val sourceCache = remember { mutableMapOf<String, MediaSource>() }
 
     val items = uiState.items
-    val exoPlayer = player
-    val pagerState = rememberPagerState(pageCount = { items.size.coerceAtLeast(0) })
+    val pagerState = rememberPagerState(pageCount = { items.size })
     val currentIndex = pagerState.currentPage
     val currentItem = items.getOrNull(currentIndex)
 
-    // Load more as the pager nears the end.
     LaunchedEffect(currentIndex, items.size) {
         if (items.isNotEmpty() && currentIndex >= items.size - 3) viewModel.loadMore()
+    }
+
+    // Pre-resolve neighbours so a swipe lands on an already-ready source.
+    LaunchedEffect(currentIndex, items.size) {
+        listOf(currentIndex + 1, currentIndex - 1).forEach { neighbour ->
+            val item = items.getOrNull(neighbour) ?: return@forEach
+            if (!sourceCache.containsKey(item.videoId)) {
+                val resolved =
+                    withContext(Dispatchers.IO) {
+                        runCatching { resolveMediaSource(context.applicationContext, preferences, item.videoId) }.getOrNull()
+                    }
+                if (resolved != null) sourceCache[item.videoId] = resolved
+            }
+        }
     }
 
     // (Re)load the current short into the shared player.
     LaunchedEffect(currentItem?.videoId) {
         val item = currentItem ?: return@LaunchedEffect
+        viewModel.enrichItem(item.videoId)
         playerReady = false
-        progress = 0f
         paused = false
         player.volume = if (muted) 0f else 1f
-        player.repeatMode = androidx.media3.common.Player.REPEAT_MODE_ALL
+        player.repeatMode = Player.REPEAT_MODE_ALL
+        player.setVideoScalingMode(androidx.media3.common.C.VIDEO_SCALING_MODE_SCALE_TO_FIT)
+        val cached = sourceCache[item.videoId]
         val mediaSource =
-            withContext(Dispatchers.IO) {
-                runCatching { resolveMediaSource(context.applicationContext, preferences, item.videoId) }.getOrNull()
-            }
+            cached
+                ?: withContext(Dispatchers.IO) {
+                    runCatching { resolveMediaSource(context.applicationContext, preferences, item.videoId) }.getOrNull()
+                }
         if (mediaSource != null) {
+            sourceCache[item.videoId] = mediaSource
             player.setMediaSource(mediaSource)
             player.prepare()
             player.playWhenReady = true
@@ -199,8 +213,252 @@ fun ShortsScreen(
         player.volume = if (muted) 0f else 1f
     }
 
-    // Progress bar ticker for the current short.
-    LaunchedEffect(player, currentItem?.videoId) {
+    Column(
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .background(Color.Black),
+    ) {
+        ShortsTopBar(
+            isTabRoot = isTabRoot,
+            onBack = onBack,
+            onSearchClick = onSearchClick,
+        )
+        Box(
+            modifier =
+                Modifier
+                    .weight(1f)
+                    .fillMaxWidth(),
+        ) {
+            when {
+                uiState.isLoading && items.isEmpty() -> {
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator(color = Color.White)
+                    }
+                }
+
+                uiState.error != null && items.isEmpty() -> {
+                    FlowErrorState(
+                        error = uiState.error ?: stringResource(R.string.error_failed_to_load_shorts),
+                        onRetry = { viewModel.load(source) },
+                    )
+                }
+
+                items.isEmpty() -> {
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        Text(text = stringResource(R.string.no_shorts_found), color = Color.White)
+                    }
+                }
+
+                else -> {
+                    val density = LocalDensity.current
+                    val bottomPad = flowBottomContentPadding()
+                    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+                        val pageHeightPx = with(density) { maxHeight.toPx() - bottomPad.toPx() }
+                        VerticalPager(
+                            state = pagerState,
+                            modifier =
+                                Modifier
+                                    .fillMaxSize()
+                                    .padding(bottom = flowBottomContentPadding()),
+                            beyondViewportPageCount = 1,
+                            key = { index -> items[index].videoId },
+                        ) { page ->
+                            val item = items[page]
+                            val isCurrent = page == currentIndex
+                            Box(
+                                modifier =
+                                    Modifier
+                                        .fillMaxSize()
+                                        .clickable {
+                                            if (isCurrent) {
+                                                paused = !paused
+                                                player.playWhenReady = !paused
+                                            }
+                                        },
+                            ) {
+                                // Poster only until the video actually renders underneath it.
+                                if (!(isCurrent && playerReady)) {
+                                    VideoThumbnailImage(
+                                        videoId = item.videoId,
+                                        model = item.posterUrl,
+                                        contentDescription = null,
+                                        modifier = Modifier.fillMaxSize(),
+                                        contentScale = ContentScale.Crop,
+                                        portrait = true,
+                                    )
+                                }
+                                if (isCurrent) {
+                                    ShortsOverlay(
+                                        item = item,
+                                        muted = muted,
+                                        liked = item.videoId in likedIds.value,
+                                        disliked = item.videoId in dislikedIds.value,
+                                        onMuteToggle = { muted = !muted },
+                                        onLike = {
+                                            val nowLiked = item.videoId !in likedIds.value
+                                            likedIds.value = if (nowLiked) likedIds.value + item.videoId else likedIds.value - item.videoId
+                                            if (nowLiked) dislikedIds.value = dislikedIds.value - item.videoId
+                                            viewModel.onLikeToggled(item.videoId, nowLiked)
+                                        },
+                                        onDislike = {
+                                            val nowDisliked = item.videoId !in dislikedIds.value
+                                            dislikedIds.value =
+                                                if (nowDisliked) dislikedIds.value + item.videoId else dislikedIds.value - item.videoId
+                                            if (nowDisliked) likedIds.value = likedIds.value - item.videoId
+                                        },
+                                        onComments = {
+                                            viewModel.openComments(item.videoId)
+                                            showComments = true
+                                        },
+                                        onChannelClick = { onChannelClick(item.channelId) },
+                                        onShare = {
+                                            val intent =
+                                                Intent(Intent.ACTION_SEND).apply {
+                                                    type = "text/plain"
+                                                    putExtra(
+                                                        Intent.EXTRA_TEXT,
+                                                        "https://www.youtube.com/shorts/${item.videoId}",
+                                                    )
+                                                }
+                                            context.startActivity(Intent.createChooser(intent, context.getString(R.string.share)))
+                                        },
+                                        modifier = Modifier.fillMaxSize(),
+                                    )
+                                }
+                            }
+                        }
+
+                        // The one and only PlayerView: it rides the pager offset, so it is
+                        // never recreated or reattached while swiping.
+                        val offsetPx =
+                            ((pagerState.currentPage + pagerState.currentPageOffsetFraction) * pageHeightPx).roundToInt()
+                        AndroidView(
+                            factory = { ctx ->
+                                PlayerView(ctx).apply {
+                                    useController = false
+                                    resizeMode = androidx.media3.ui.AspectRatioFrameLayout.RESIZE_MODE_ZOOM
+                                    setShutterBackgroundColor(Color.Black.toArgb())
+                                    this.player = player
+                                }
+                            },
+                            modifier =
+                                Modifier
+                                    .fillMaxSize()
+                                    .padding(bottom = flowBottomContentPadding())
+                                    .offset { IntOffset(0, offsetPx) },
+                        )
+                        if (!playerReady) {
+                            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                                CircularProgressIndicator(color = Color.White)
+                            }
+                        }
+                        if (paused && playerReady) {
+                            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                                Icon(
+                                    imageVector = Icons.Filled.PlayArrow,
+                                    contentDescription = stringResource(R.string.play),
+                                    tint = Color.White.copy(alpha = 0.85f),
+                                    modifier = Modifier.size(72.dp),
+                                )
+                            }
+                        }
+                        ShortsProgressBar(
+                            player = player,
+                            modifier =
+                                Modifier
+                                    .align(Alignment.BottomCenter)
+                                    .fillMaxWidth()
+                                    .padding(bottom = flowBottomContentPadding()),
+                        )
+                        if (uiState.isLoadingMore) {
+                            Box(
+                                modifier = Modifier.align(Alignment.BottomCenter),
+                                contentAlignment = Alignment.Center,
+                            ) {
+                                CircularProgressIndicator(color = Color.White, modifier = Modifier.size(28.dp))
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    if (showComments && commentsState.videoId.isNotBlank()) {
+        FlowCommentsBottomSheet(
+            comments = commentsState.comments,
+            isLoading = commentsState.isLoading,
+            onDismiss = {
+                showComments = false
+                viewModel.closeComments()
+            },
+            isLoadingMore = commentsState.isLoadingMore,
+            onLoadMore = viewModel::loadMoreComments,
+            hasMore = commentsState.hasMore,
+            totalText = commentsState.totalText,
+            onAuthorClick = { channelId -> onChannelClick(channelId) },
+            onAvatarClick = { channelId -> onChannelClick(channelId) },
+        )
+    }
+}
+
+/** The app-name bar that stays on top of Shorts, like on every other screen. */
+@Composable
+private fun ShortsTopBar(
+    isTabRoot: Boolean,
+    onBack: () -> Unit,
+    onSearchClick: () -> Unit,
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .background(Color.Black)
+                .statusBarsPadding()
+                .padding(horizontal = 4.dp, vertical = 6.dp),
+    ) {
+        if (!isTabRoot) {
+            IconButton(onClick = onBack) {
+                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back), tint = Color.White)
+            }
+        }
+        Image(
+            painter = painterResource(R.drawable.ic_fedora_tube_wordmark),
+            contentDescription = stringResource(R.string.app_name),
+            modifier = Modifier.height(28.dp),
+            contentScale = ContentScale.FillHeight,
+        )
+        Spacer(modifier = Modifier.width(10.dp))
+        Icon(
+            imageVector = ImageVector.vectorResource(R.drawable.ic_shorts_filled),
+            contentDescription = null,
+            tint = Color.White,
+            modifier = Modifier.size(22.dp),
+        )
+        Spacer(modifier = Modifier.width(4.dp))
+        Text(
+            text = stringResource(R.string.shorts),
+            color = Color.White,
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.Bold,
+        )
+        Spacer(modifier = Modifier.weight(1f))
+        IconButton(onClick = onSearchClick) {
+            Icon(Icons.Outlined.Search, contentDescription = stringResource(R.string.search), tint = Color.White)
+        }
+    }
+}
+
+/** Owns its ticker state, so the pager above never recomposes for the progress bar. */
+@Composable
+private fun ShortsProgressBar(
+    player: ExoPlayer,
+    modifier: Modifier = Modifier,
+) {
+    var progress by remember { androidx.compose.runtime.mutableFloatStateOf(0f) }
+    LaunchedEffect(player) {
         while (true) {
             val duration = player.duration
             progress =
@@ -209,189 +467,18 @@ fun ShortsScreen(
                 } else {
                     0f
                 }
-            delay(200)
+            delay(150)
         }
     }
-
-    LifecycleStartEffect(player) {
-        onStopOrDispose { player.pause() }
-    }
-
-    Box(
+    LinearProgressIndicator(
+        progress = { progress },
         modifier =
             modifier
-                .fillMaxSize()
-                .background(Color.Black),
-    ) {
-        when {
-            uiState.isLoading && items.isEmpty() -> {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator(color = Color.White)
-                }
-            }
-
-            uiState.error != null && items.isEmpty() -> {
-                FlowErrorState(
-                    error = uiState.error ?: stringResource(R.string.error_failed_to_load_shorts),
-                    onRetry = { viewModel.load(source) },
-                )
-            }
-
-            items.isEmpty() -> {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text(text = stringResource(R.string.no_shorts_found), color = Color.White)
-                }
-            }
-
-            else -> {
-                VerticalPager(
-                    state = pagerState,
-                    modifier =
-                        Modifier
-                            .fillMaxSize()
-                            .padding(bottom = flowBottomContentPadding()),
-                    beyondViewportPageCount = 1,
-                    key = { index -> items[index].videoId },
-                ) { page ->
-                    val item = items[page]
-                    val isCurrent = page == currentIndex
-                    Box(
-                        modifier =
-                            Modifier
-                                .fillMaxSize()
-                                .clickable {
-                                    if (isCurrent) {
-                                        paused = !paused
-                                        player.playWhenReady = !paused
-                                    }
-                                },
-                    ) {
-                        // Poster behind the video (and the whole page when it is not current).
-                        VideoThumbnailImage(
-                            videoId = item.videoId,
-                            model = item.posterUrl,
-                            contentDescription = null,
-                            modifier = Modifier.fillMaxSize(),
-                            contentScale = ContentScale.Crop,
-                            portrait = true,
-                        )
-                        if (isCurrent) {
-                            AndroidView(
-                                factory = { ctx ->
-                                    PlayerView(ctx).apply {
-                                        useController = false
-                                        resizeMode = androidx.media3.ui.AspectRatioFrameLayout.RESIZE_MODE_FIT
-                                        this.player = exoPlayer
-                                    }
-                                },
-                                modifier = Modifier.fillMaxSize(),
-                            )
-                            if (!playerReady) {
-                                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                                    CircularProgressIndicator(color = Color.White)
-                                }
-                            }
-                            if (paused) {
-                                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                                    Icon(
-                                        imageVector = Icons.Filled.PlayArrow,
-                                        contentDescription = stringResource(R.string.play),
-                                        tint = Color.White.copy(alpha = 0.85f),
-                                        modifier = Modifier.size(72.dp),
-                                    )
-                                }
-                            }
-                            ShortsOverlay(
-                                item = item,
-                                muted = muted,
-                                liked = item.videoId in likedIds.value,
-                                disliked = item.videoId in dislikedIds.value,
-                                onMuteToggle = { muted = !muted },
-                                onLike = {
-                                    val nowLiked = item.videoId !in likedIds.value
-                                    likedIds.value = if (nowLiked) likedIds.value + item.videoId else likedIds.value - item.videoId
-                                    if (nowLiked) dislikedIds.value = dislikedIds.value - item.videoId
-                                    viewModel.onLikeToggled(item.videoId, nowLiked)
-                                },
-                                onDislike = {
-                                    val nowDisliked = item.videoId !in dislikedIds.value
-                                    dislikedIds.value =
-                                        if (nowDisliked) dislikedIds.value + item.videoId else dislikedIds.value - item.videoId
-                                    if (nowDisliked) likedIds.value = likedIds.value - item.videoId
-                                },
-                                onOpenVideo = { onOpenVideo(item.videoId) },
-                                onChannelClick = { onChannelClick(item.channelId) },
-                                onShare = {
-                                    val intent =
-                                        Intent(Intent.ACTION_SEND).apply {
-                                            type = "text/plain"
-                                            putExtra(
-                                                Intent.EXTRA_TEXT,
-                                                "https://www.youtube.com/shorts/${item.videoId}",
-                                            )
-                                        }
-                                    context.startActivity(Intent.createChooser(intent, context.getString(R.string.share)))
-                                },
-                                modifier = Modifier.fillMaxSize(),
-                            )
-                            // Progress bar at the bottom of the reel.
-                            LinearProgressIndicator(
-                                progress = { progress },
-                                modifier =
-                                    Modifier
-                                        .align(Alignment.BottomCenter)
-                                        .fillMaxWidth()
-                                        .height(3.dp),
-                                color = Color.White,
-                                trackColor = Color.White.copy(alpha = 0.25f),
-                            )
-                        }
-                    }
-                }
-                if (uiState.isLoadingMore) {
-                    Box(
-                        modifier =
-                            Modifier
-                                .align(Alignment.BottomCenter)
-                                .padding(bottom = 24.dp),
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        CircularProgressIndicator(color = Color.White, modifier = Modifier.size(28.dp))
-                    }
-                }
-            }
-        }
-
-        // Top bar: back (when this is not the tab), Shorts wordmark.
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier =
-                Modifier
-                    .align(Alignment.TopCenter)
-                    .fillMaxWidth()
-                    .background(Color.Black.copy(alpha = 0.35f))
-                    .padding(horizontal = 4.dp, vertical = 4.dp),
-        ) {
-            if (!isTabRoot) {
-                IconButton(onClick = onBack) {
-                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back), tint = Color.White)
-                }
-            }
-            Icon(
-                imageVector = ImageVector.vectorResource(R.drawable.ic_shorts_filled),
-                contentDescription = null,
-                tint = Color.White,
-                modifier = Modifier.size(24.dp),
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(
-                text = stringResource(R.string.shorts),
-                color = Color.White,
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold,
-            )
-        }
-    }
+                .fillMaxWidth()
+                .height(3.dp),
+        color = Color.White,
+        trackColor = Color.White.copy(alpha = 0.25f),
+    )
 }
 
 @Composable
@@ -403,13 +490,12 @@ private fun ShortsOverlay(
     onMuteToggle: () -> Unit,
     onLike: () -> Unit,
     onDislike: () -> Unit,
-    onOpenVideo: () -> Unit,
+    onComments: () -> Unit,
     onChannelClick: () -> Unit,
     onShare: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(modifier = modifier) {
-        // Channel + title at the bottom left, clear of the action rail.
         Column(
             modifier =
                 Modifier
@@ -466,7 +552,6 @@ private fun ShortsOverlay(
             }
         }
 
-        // Action rail on the right edge, YouTube-style.
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(4.dp),
@@ -482,7 +567,7 @@ private fun ShortsOverlay(
                 Icon(
                     imageVector = if (liked) Icons.Filled.ThumbUp else Icons.Outlined.ThumbUp,
                     contentDescription = stringResource(R.string.like),
-                    tint = if (liked) Color.White else Color.White,
+                    tint = Color.White,
                 )
             }
             ShortsRailButton(label = null, onClick = onDislike) {
@@ -492,7 +577,7 @@ private fun ShortsOverlay(
                     tint = Color.White,
                 )
             }
-            ShortsRailButton(label = item.commentCountText, onClick = onOpenVideo) {
+            ShortsRailButton(label = item.commentCountText, onClick = onComments) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Outlined.Comment,
                     contentDescription = stringResource(R.string.comments),
@@ -503,13 +588,6 @@ private fun ShortsOverlay(
                 Icon(
                     imageVector = Icons.Filled.Share,
                     contentDescription = stringResource(R.string.share),
-                    tint = Color.White,
-                )
-            }
-            ShortsRailButton(label = null, onClick = onOpenVideo) {
-                Icon(
-                    imageVector = Icons.Filled.MoreHoriz,
-                    contentDescription = "Open video",
                     tint = Color.White,
                 )
             }
@@ -551,4 +629,3 @@ private fun ShortsRailButton(
         }
     }
 }
-

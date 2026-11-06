@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.fedoratube.org.data.comments.CommentsPageResult
 import com.fedoratube.org.data.feed.ShortsQueueSource
 import com.fedoratube.org.data.feed.ShortsSnapshotStore
 import com.fedoratube.org.data.feed.continuesIntoFeed
@@ -11,7 +12,9 @@ import com.fedoratube.org.data.feed.openAtVideoId
 import com.fedoratube.org.data.local.PlayerPreferences
 import com.fedoratube.org.data.local.PlaylistRepository
 import com.fedoratube.org.data.local.SubscriptionRepository
+import com.fedoratube.org.data.model.Comment
 import com.fedoratube.org.data.model.Video
+import com.fedoratube.org.data.repository.YouTubeRepository
 import com.fedoratube.org.innertube.YouTube
 import com.fedoratube.org.innertube.pages.channel.ChannelShortsPage
 import com.fedoratube.org.innertube.pages.reel.ReelEntry
@@ -52,6 +55,16 @@ data class ShortsUiState(
     val endReached: Boolean = false,
 )
 
+/** The inline comments sheet for the Short on screen. */
+data class ShortsCommentsState(
+    val videoId: String = "",
+    val comments: List<Comment> = emptyList(),
+    val isLoading: Boolean = false,
+    val isLoadingMore: Boolean = false,
+    val hasMore: Boolean = false,
+    val totalText: String? = null,
+)
+
 /**
  * Loads the Shorts queue for one [ShortsQueueSource]: the interest-based algorithmic feed, a
  * channel's Shorts tab, the subscribed channels' Shorts, a shelf snapshot (search topic,
@@ -66,9 +79,15 @@ class ShortsViewModel
         private val preferences: PlayerPreferences,
         private val subscriptionRepository: SubscriptionRepository,
         private val playlistRepository: PlaylistRepository,
+        private val youtubeRepository: YouTubeRepository,
     ) : ViewModel() {
         private val _uiState = MutableStateFlow(ShortsUiState())
         val uiState: StateFlow<ShortsUiState> = _uiState.asStateFlow()
+
+        private val _commentsState = MutableStateFlow(ShortsCommentsState())
+        val commentsState: StateFlow<ShortsCommentsState> = _commentsState.asStateFlow()
+        private var commentsContinuation: String? = null
+        private var commentsJob: Job? = null
 
         private var source: ShortsQueueSource = ShortsQueueSource.Feed
         private var continuation: String? = null
@@ -86,7 +105,6 @@ class ShortsViewModel
                     try {
                         val items = initialItems(newSource)
                         _uiState.update { it.copy(items = items, isLoading = false, error = null) }
-                        enrich(items.map { it.videoId })
                     } catch (e: Exception) {
                         Log.w(TAG, "Shorts load failed: ${e.message}")
                         _uiState.update {
@@ -130,7 +148,6 @@ class ShortsViewModel
                         )
                     }
                     if (continuation == null && !src.continuesIntoFeed) exhausted = true
-                    enrich(newItems.map { it.videoId })
                 } catch (e: Exception) {
                     Log.w(TAG, "Shorts load more failed: ${e.message}")
                     _uiState.update { it.copy(isLoadingMore = false) }
@@ -266,32 +283,32 @@ class ShortsViewModel
             )
         }
 
-        private fun enrich(videoIds: List<String>) {
+        /** Fills one visible reel's overlay. Only the on-screen Short is enriched, so a page
+         * load never fires a burst of overlay requests that compete with stream extraction. */
+        fun enrichItem(videoId: String) {
+            val current = _uiState.value.items.firstOrNull { it.videoId == videoId } ?: return
+            if (current.title.isNotBlank() && current.channelName.isNotBlank()) return
             viewModelScope.launch {
-                for (videoId in videoIds) {
-                    val current = _uiState.value.items.firstOrNull { it.videoId == videoId } ?: continue
-                    if (current.title.isNotBlank() && current.channelName.isNotBlank()) continue
-                    val overlay = YouTube.reelOverlay(videoId).getOrNull() ?: continue
-                    _uiState.update { state ->
-                        state.copy(
-                            items =
-                                state.items.map { item ->
-                                    if (item.videoId != videoId) {
-                                        item
-                                    } else {
-                                        item.copy(
-                                            title = overlay.title?.takeIf { it.isNotBlank() } ?: item.title,
-                                            channelId = overlay.channelId?.takeIf { it.isNotBlank() } ?: item.channelId,
-                                            channelName = overlay.channelName?.takeIf { it.isNotBlank() } ?: item.channelName,
-                                            channelAvatarUrl = overlay.channelAvatarUrl?.takeIf { it.isNotBlank() } ?: item.channelAvatarUrl,
-                                            likeCountText = overlay.likeCountText ?: item.likeCountText,
-                                            commentCountText = overlay.commentCountText ?: item.commentCountText,
-                                            soundTitle = overlay.soundTitle ?: item.soundTitle,
-                                        )
-                                    }
-                                },
-                        )
-                    }
+                val overlay = YouTube.reelOverlay(videoId).getOrNull() ?: return@launch
+                _uiState.update { state ->
+                    state.copy(
+                        items =
+                            state.items.map { item ->
+                                if (item.videoId != videoId) {
+                                    item
+                                } else {
+                                    item.copy(
+                                        title = overlay.title?.takeIf { it.isNotBlank() } ?: item.title,
+                                        channelId = overlay.channelId?.takeIf { it.isNotBlank() } ?: item.channelId,
+                                        channelName = overlay.channelName?.takeIf { it.isNotBlank() } ?: item.channelName,
+                                        channelAvatarUrl = overlay.channelAvatarUrl?.takeIf { it.isNotBlank() } ?: item.channelAvatarUrl,
+                                        likeCountText = overlay.likeCountText ?: item.likeCountText,
+                                        commentCountText = overlay.commentCountText ?: item.commentCountText,
+                                        soundTitle = overlay.soundTitle ?: item.soundTitle,
+                                    )
+                                }
+                            },
+                    )
                 }
             }
         }
@@ -342,6 +359,62 @@ class ShortsViewModel
             viewModelScope.launch {
                 runCatching { YouTube.likeVideo(videoId, liked) }
             }
+        }
+
+        /** Opens the inline comments sheet for one Short. Opening never navigates away, so the reel keeps playing underneath. */
+        fun openComments(videoId: String) {
+            if (_commentsState.value.videoId == videoId && _commentsState.value.comments.isNotEmpty()) return
+            commentsJob?.cancel()
+            commentsContinuation = null
+            _commentsState.value = ShortsCommentsState(videoId = videoId, isLoading = true)
+            commentsJob =
+                viewModelScope.launch {
+                    try {
+                        val page: CommentsPageResult = youtubeRepository.getVideoComments(videoId)
+                        if (_commentsState.value.videoId != videoId) return@launch
+                        commentsContinuation = page.continuation
+                        _commentsState.update {
+                            it.copy(
+                                comments = page.comments,
+                                isLoading = false,
+                                hasMore = page.hasMore,
+                                totalText = page.totalText,
+                            )
+                        }
+                    } catch (e: Exception) {
+                        Log.w(TAG, "Shorts comments failed: ${e.message}")
+                        _commentsState.update { it.copy(isLoading = false) }
+                    }
+                }
+        }
+
+        fun loadMoreComments() {
+            val state = _commentsState.value
+            val continuation = commentsContinuation ?: return
+            if (state.isLoadingMore || state.videoId.isBlank()) return
+            _commentsState.update { it.copy(isLoadingMore = true) }
+            viewModelScope.launch {
+                try {
+                    val page = youtubeRepository.getMoreVideoComments(state.videoId, continuation)
+                    if (_commentsState.value.videoId != state.videoId) return@launch
+                    commentsContinuation = page.continuation
+                    _commentsState.update {
+                        it.copy(
+                            comments = it.comments + page.comments,
+                            isLoadingMore = false,
+                            hasMore = page.hasMore,
+                        )
+                    }
+                } catch (e: Exception) {
+                    Log.w(TAG, "Shorts comments load more failed: ${e.message}")
+                    _commentsState.update { it.copy(isLoadingMore = false) }
+                }
+            }
+        }
+
+        fun closeComments() {
+            commentsJob?.cancel()
+            _commentsState.value = ShortsCommentsState()
         }
 
         companion object {
