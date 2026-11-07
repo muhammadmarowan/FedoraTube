@@ -218,12 +218,27 @@ fun ShortsScreen(
     // chrome offsets from here are barBottom only — navigationBottom would count the
     // system inset twice and float the timeline/text above the bar.
     val navigationBottom = com.fedoratube.org.ui.components.layout.LocalFlowBottomInsets.current.barBottom
+    // Full-bleed video. When comments open (YouTube-Shorts style) the video
+    // moves up into the top portion and keeps playing above the sheet.
     Box(
         modifier =
             Modifier
                 .fillMaxSize()
                 .background(Color.Black),
     ) {
+        Column(modifier = Modifier.fillMaxSize()) {
+        Box(
+            modifier =
+                Modifier
+                    .then(
+                        if (showComments) {
+                            Modifier.weight(0.28f, fill = false)
+                        } else {
+                            Modifier.weight(1f)
+                        },
+                    )
+                    .fillMaxWidth(),
+        ) {
             when {
                 uiState.isLoading && items.isEmpty() -> {
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -394,6 +409,8 @@ fun ShortsScreen(
                 }
             }
         }
+        }
+    }
 
     // YouTube-Shorts style: comments slide up over the video (75% of the window, drag
     // handle + count header) and the video KEEPS PLAYING behind the sheet.
@@ -510,13 +527,13 @@ private fun ShortsOverlay(
                 Modifier
                     .align(Alignment.BottomCenter)
                     .fillMaxWidth()
-                    .height(260.dp)
+                    .height(200.dp)
                     .background(
                         androidx.compose.ui.graphics.Brush.verticalGradient(
                             listOf(
                                 Color.Transparent,
-                                Color.Black.copy(alpha = 0.55f),
-                                Color.Black.copy(alpha = 0.85f),
+                                Color.Black.copy(alpha = 0.68f),
+                                Color.Black.copy(alpha = 0.9f),
                             ),
                         ),
                     ),
