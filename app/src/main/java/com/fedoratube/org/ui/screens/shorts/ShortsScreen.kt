@@ -32,6 +32,7 @@ import androidx.compose.material.icons.automirrored.outlined.Comment
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.outlined.BookmarkBorder
 import androidx.compose.material.icons.outlined.FavoriteBorder
@@ -83,6 +84,7 @@ import com.fedoratube.org.player.factory.PlayerFactory
 import com.fedoratube.org.ui.OnTabReselected
 import com.fedoratube.org.ui.components.shared.FlowCommentsBottomSheet
 import com.fedoratube.org.ui.components.shared.FlowErrorState
+import com.fedoratube.org.ui.components.shared.FlowPullToRefreshBox
 import com.fedoratube.org.ui.components.shared.VideoThumbnailImage
 import com.fedoratube.org.ui.screens.shorts.ShortsPlayback.resolveMediaSource
 import kotlinx.coroutines.Dispatchers
@@ -154,6 +156,13 @@ fun ShortsScreen(
         GlobalPlayerState.setShortsCommentsOpen(false)
     }
 
+    // Home-feed style refresh: back to the top Short and a fresh first page, current feed
+    // staying on screen until it lands (ViewModel keeps items while isRefreshing).
+    fun refreshShortsFeed() {
+        if (showComments) return
+        viewModel.refresh()
+    }
+
     if (isFocusModeEnabled) {
         Box(
             modifier =
@@ -207,6 +216,11 @@ fun ShortsScreen(
     OnTabReselected("shorts") {
         if (pagerState.currentPage != 0) pagerState.animateScrollToPage(0)
         viewModel.load(source, force = true)
+    }
+
+    // A manual refresh (pull-to-refresh or the top-bar button) also returns to the top Short.
+    LaunchedEffect(uiState.isRefreshing) {
+        if (uiState.isRefreshing && pagerState.currentPage != 0) pagerState.animateScrollToPage(0)
     }
 
     LaunchedEffect(currentIndex, items.size) {
@@ -272,10 +286,23 @@ fun ShortsScreen(
                 .background(Color.Black),
     ) {
         val totalHeight = maxHeight
-        // 0 when closed, 1 when comments fully open; video occupies the top 35% at 1.
+        // The bottom navigation bar stays fixed while comments are open, and the sheet opens
+        // above it: the comments area is totalHeight - navigationBottom, split 35% video /
+        // 65% sheet. Video height at progress p = totalHeight - p * sheetHeight, so the video's
+        // bottom edge always meets the sheet's top edge exactly, with no gap and no overlap.
+        val commentsAreaHeight = totalHeight - navigationBottom
+        val commentsSheetHeight = commentsAreaHeight * 0.65f
+        // 0 when closed, 1 when comments fully open.
         val commentsOpenFraction = commentsProgress.value
-        val videoHeightFraction = 1f - commentsOpenFraction * 0.65f
+        val videoHeightFraction = 1f - commentsOpenFraction * (commentsSheetHeight.value / totalHeight.value)
 
+        // Home-feed style pull-to-refresh around the video area (not the comments sheet):
+        // pulling down on the first Short reloads the feed with a top indicator.
+        FlowPullToRefreshBox(
+            isRefreshing = uiState.isRefreshing,
+            onRefresh = { refreshShortsFeed() },
+            modifier = Modifier.fillMaxSize(),
+        ) {
         // Video container: fills the full screen normally; shrinks to the top 35% as the same
         // commentsProgress value that slides the sheet up, keeping playback active letterboxed
         // in the top view. fillMaxHeight fraction (not an animated Dp) keeps the per-frame work
@@ -472,6 +499,14 @@ fun ShortsScreen(
                                     }
                                 }
                                 Spacer(modifier = Modifier.weight(1f))
+                                // Same refresh as pull-to-refresh, as a button for discoverability.
+                                IconButton(onClick = { refreshShortsFeed() }) {
+                                    if (uiState.isRefreshing) {
+                                        CircularProgressIndicator(color = Color.White, modifier = Modifier.size(20.dp))
+                                    } else {
+                                        Icon(Icons.Filled.Refresh, contentDescription = stringResource(R.string.action_refresh), tint = Color.White)
+                                    }
+                                }
                                 IconButton(onClick = onSearchClick) {
                                     Icon(Icons.Outlined.Search, contentDescription = stringResource(R.string.search), tint = Color.White)
                                 }
@@ -490,29 +525,41 @@ fun ShortsScreen(
                 }
             }
         }
+        }
 
-        // YouTube-Shorts style: comments sheet occupies bottom ~65% while video
-        // continues playing smoothly in the top 35%. Same progress value drives both, so
-        // opening AND closing (drag-down / back) move video + sheet together frame-by-frame.
+        // YouTube-Shorts style: comments sheet occupies bottom ~65% of the area ABOVE the
+        // fixed navigation bar while video continues playing in the top 35%. The sheet opens
+        // from behind/below the navigation bar (its resting bottom edge sits on the bar's top),
+        // and the bar never hides. Same progress value drives both, so opening AND closing
+        // (drag-down / back) move video + sheet together frame-by-frame.
         // No sort-category chips and no cross button here — drag down or press back to close.
         if (showComments && commentsState.videoId.isNotBlank()) {
-            FlowCommentsBottomSheet(
-                comments = commentsState.comments,
-                isLoading = commentsState.isLoading,
-                onDismiss = { closeCommentsSheet() },
-                isLoadingMore = commentsState.isLoadingMore,
-                onLoadMore = viewModel::loadMoreComments,
-                hasMore = commentsState.hasMore,
-                totalText = commentsState.totalText,
-                onAuthorClick = { channelId -> onChannelClick(channelId) },
-                onAvatarClick = { channelId -> onChannelClick(channelId) },
-                expandedHeight = totalHeight * 0.65f,
-                dismissOnOutsideTap = false,
-                showSortChips = false,
-                showCloseButton = false,
-                externalProgress = commentsProgress,
-                animationSpec = commentsAnimationSpec,
-            )
+            Box(
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .padding(bottom = navigationBottom),
+            ) {
+                FlowCommentsBottomSheet(
+                    comments = commentsState.comments,
+                    isLoading = commentsState.isLoading,
+                    onDismiss = { closeCommentsSheet() },
+                    onLoadReplies = { viewModel.loadCommentReplies(it) },
+                    onLoadMoreReplies = { viewModel.loadMoreCommentReplies(it) },
+                    isLoadingMore = commentsState.isLoadingMore,
+                    onLoadMore = viewModel::loadMoreComments,
+                    hasMore = commentsState.hasMore,
+                    totalText = commentsState.totalText,
+                    onAuthorClick = { channelId -> onChannelClick(channelId) },
+                    onAvatarClick = { channelId -> onChannelClick(channelId) },
+                    expandedHeight = commentsSheetHeight,
+                    dismissOnOutsideTap = false,
+                    showSortChips = false,
+                    showCloseButton = false,
+                    externalProgress = commentsProgress,
+                    animationSpec = commentsAnimationSpec,
+                )
+            }
         }
     }
 }

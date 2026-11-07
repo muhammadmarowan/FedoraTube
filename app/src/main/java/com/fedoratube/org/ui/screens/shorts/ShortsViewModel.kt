@@ -14,6 +14,8 @@ import com.fedoratube.org.data.local.PlaylistRepository
 import com.fedoratube.org.data.local.SubscriptionRepository
 import com.fedoratube.org.data.model.Comment
 import com.fedoratube.org.data.model.Video
+import com.fedoratube.org.data.model.distinctByNonBlankKey
+import com.fedoratube.org.data.model.mergeDistinctByNonBlankKey
 import com.fedoratube.org.data.repository.YouTubeRepository
 import com.fedoratube.org.innertube.YouTube
 import com.fedoratube.org.innertube.pages.channel.ChannelShortsPage
@@ -51,6 +53,8 @@ data class ShortsUiState(
     val items: List<ShortItem> = emptyList(),
     val isLoading: Boolean = true,
     val isLoadingMore: Boolean = false,
+    /** Pull-to-refresh (or refresh button) running while the current feed stays on screen. */
+    val isRefreshing: Boolean = false,
     val error: String? = null,
     val endReached: Boolean = false,
 )
@@ -88,6 +92,7 @@ class ShortsViewModel
         val commentsState: StateFlow<ShortsCommentsState> = _commentsState.asStateFlow()
         private var commentsContinuation: String? = null
         private var commentsJob: Job? = null
+        private val repliesInFlight = mutableSetOf<String>()
 
         private var source: ShortsQueueSource = ShortsQueueSource.Feed
         private var continuation: String? = null
@@ -123,6 +128,40 @@ class ShortsViewModel
                         _uiState.update {
                             it.copy(
                                 isLoading = false,
+                                error = if (it.items.isEmpty()) (e.message ?: "Failed to load shorts") else it.error,
+                            )
+                        }
+                    }
+                }
+        }
+
+        /**
+         * The viewer's refresh, like Home feed pull-to-refresh: the current feed stays on screen
+         * (no loading takeover), a fresh first page replaces it when it lands, and repeated pulls
+         * cannot stack while one is already running.
+         */
+        fun refresh() {
+            if (_uiState.value.isLoading || _uiState.value.isRefreshing || loadJob?.isActive == true) return
+            _uiState.update { it.copy(isRefreshing = true) }
+            loadJob =
+                viewModelScope.launch {
+                    try {
+                        val items = initialItems(source)
+                        _uiState.update {
+                            it.copy(
+                                items = items,
+                                isRefreshing = false,
+                                isLoading = false,
+                                error = null,
+                                endReached = false,
+                            )
+                        }
+                    } catch (e: Exception) {
+                        Log.w(TAG, "Shorts refresh failed: ${e.message}")
+                        // Keep the feed already on screen; only surface the error when there is none.
+                        _uiState.update {
+                            it.copy(
+                                isRefreshing = false,
                                 error = if (it.items.isEmpty()) (e.message ?: "Failed to load shorts") else it.error,
                             )
                         }
@@ -476,8 +515,70 @@ class ShortsViewModel
             }
         }
 
+        fun loadCommentReplies(comment: Comment) = loadCommentReplies(comment, append = false)
+
+        fun loadMoreCommentReplies(comment: Comment) = loadCommentReplies(comment, append = true)
+
+        /**
+         * Comment replies for the Short on screen — the same fetch the regular player uses
+         * (CommentsPager.loadReplies), wired up here so "view replies" actually loads instead of
+         * spinning forever. One request per comment at a time; a late answer for a Short the user
+         * has swiped away from is dropped, and closeComments() clears the in-flight set.
+         */
+        private fun loadCommentReplies(
+            comment: Comment,
+            append: Boolean,
+        ) {
+            val videoId = _commentsState.value.videoId
+            if (videoId.isBlank()) return
+            val continuation = comment.continuationToken
+            val repliesPage = comment.repliesPage
+            if (continuation == null && repliesPage == null) return
+            if (!repliesInFlight.add(comment.id)) return
+            viewModelScope.launch {
+                try {
+                    val (replies, nextContinuation, nextLegacyPage) =
+                        if (continuation != null) {
+                            val page = youtubeRepository.getVideoCommentReplies(videoId, continuation)
+                            Triple(page.comments, page.continuation, null)
+                        } else {
+                            val url = "https://www.youtube.com/watch?v=$videoId"
+                            val (items, nextPage) = youtubeRepository.getCommentReplies(url, requireNotNull(repliesPage))
+                            Triple(items, null, nextPage)
+                        }
+                    if (_commentsState.value.videoId != videoId) return@launch
+                    _commentsState.update { state ->
+                        state.copy(
+                            comments =
+                                state.comments.map { current ->
+                                    if (current.id != comment.id) {
+                                        current
+                                    } else {
+                                        current.copy(
+                                            replies =
+                                                if (append) {
+                                                    current.replies.mergeDistinctByNonBlankKey(replies, Comment::id)
+                                                } else {
+                                                    replies.distinctByNonBlankKey(Comment::id)
+                                                },
+                                            continuationToken = nextContinuation,
+                                            repliesPage = nextLegacyPage,
+                                        )
+                                    }
+                                },
+                        )
+                    }
+                } catch (e: Exception) {
+                    Log.w(TAG, "Shorts comment replies failed: ${e.message}")
+                } finally {
+                    repliesInFlight.remove(comment.id)
+                }
+            }
+        }
+
         fun closeComments() {
             commentsJob?.cancel()
+            repliesInFlight.clear()
             _commentsState.value = ShortsCommentsState()
         }
 
