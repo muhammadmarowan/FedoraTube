@@ -502,16 +502,18 @@ private fun ShortsOverlay(
     modifier: Modifier = Modifier,
 ) {
     Box(modifier = modifier) {
-        // A light shadow only behind the text rail block — no heavy black band.
+        // The shadow runs from behind the caption all the way down INTO the
+        // navigation bar (its darkest end hides behind the bar), so there is no
+        // hard cut line where the shadow meets the bar.
         Box(
             modifier =
                 Modifier
                     .align(Alignment.BottomCenter)
                     .fillMaxWidth()
-                    .height(120.dp)
+                    .height(220.dp)
                     .background(
                         androidx.compose.ui.graphics.Brush.verticalGradient(
-                            listOf(Color.Transparent, Color.Black.copy(alpha = 0.38f)),
+                            listOf(Color.Transparent, Color.Black.copy(alpha = 0.62f)),
                         ),
                     ),
         )
