@@ -214,7 +214,10 @@ fun ShortsScreen(
     // Full-bleed video: from the very top of the screen down to the navigation bar.
     // No app-name bar here; only an overlay search (and back, when not the tab) floats
     // over the video at the top, like YouTube Shorts.
-    val navigationBottom = com.fedoratube.org.ui.components.layout.LocalFlowBottomInsets.current.navigationBottom
+    // NOTE: this content already sits above the system inset (the shell pads it), so
+    // chrome offsets from here are barBottom only — navigationBottom would count the
+    // system inset twice and float the timeline/text above the bar.
+    val navigationBottom = com.fedoratube.org.ui.components.layout.LocalFlowBottomInsets.current.barBottom
     Box(
         modifier =
             Modifier
