@@ -349,21 +349,6 @@ fun ShortsScreen(
                                 }
                             }
                         }
-                        // Bottom shadow attached to the navigation bar, rising up behind
-                        // the timeline, caption and channel bar (in that bottom-to-top
-                        // order) so text reads on any video.
-                        Box(
-                            modifier =
-                                Modifier
-                                    .align(Alignment.BottomCenter)
-                                    .fillMaxWidth()
-                                    .height(300.dp)
-                                    .background(
-                                        androidx.compose.ui.graphics.Brush.verticalGradient(
-                                            listOf(Color.Transparent, Color.Black.copy(alpha = 0.78f)),
-                                        ),
-                                    ),
-                        )
                         ShortsProgressBar(
                             player = player,
                             modifier =
@@ -517,6 +502,20 @@ private fun ShortsOverlay(
     modifier: Modifier = Modifier,
 ) {
     Box(modifier = modifier) {
+        // Bottom shadow behind the text/rail (drawn first, so it never darkens them),
+        // attached to the navigation bar and rising up behind timeline/caption/channel.
+        Box(
+            modifier =
+                Modifier
+                    .align(Alignment.BottomCenter)
+                    .fillMaxWidth()
+                    .height(300.dp)
+                    .background(
+                        androidx.compose.ui.graphics.Brush.verticalGradient(
+                            listOf(Color.Transparent, Color.Black.copy(alpha = 0.78f)),
+                        ),
+                    ),
+        )
         Column(
             modifier =
                 Modifier
