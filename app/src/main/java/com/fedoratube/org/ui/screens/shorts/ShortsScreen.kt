@@ -509,10 +509,10 @@ private fun ShortsOverlay(
                 Modifier
                     .align(Alignment.BottomCenter)
                     .fillMaxWidth()
-                    .height(300.dp)
+                    .height(170.dp)
                     .background(
                         androidx.compose.ui.graphics.Brush.verticalGradient(
-                            listOf(Color.Transparent, Color.Black.copy(alpha = 0.78f)),
+                            listOf(Color.Transparent, Color.Black.copy(alpha = 0.72f)),
                         ),
                     ),
         )
