@@ -485,62 +485,7 @@ fun ShortsScreen(
                                             )
                                         }
                                     }
-                                    // Fades with the same progress as the sheet/video (GPU
-                                    // alpha), so it never pops or lags a frame behind the
-                                    // resize.
-                                    if (commentsOpenFraction < 1f) {
-                                        Box(
-                                            modifier =
-                                                Modifier
-                                                    .fillMaxSize()
-                                                    .graphicsLayer { alpha = 1f - commentsOpenFraction },
-                                        ) {
-                                            ShortsOverlay(
-                                                item = item,
-                                                liked = item.videoId in likedIds.value,
-                                                saved = item.videoId in savedIds,
-                                                onLike = {
-                                                    val nowLiked = item.videoId !in likedIds.value
-                                                    likedIds.value = if (nowLiked) likedIds.value + item.videoId else likedIds.value - item.videoId
-                                                    viewModel.onLikeToggled(item.videoId, nowLiked)
-                                                },
-                                                onSave = { viewModel.toggleSave(item) },
-                                                onComments = { openCommentsSheet(item) },
-                                                onChannelClick = { onChannelClick(item.channelId) },
-                                                onShare = {
-                                                    val intent =
-                                                        Intent(Intent.ACTION_SEND).apply {
-                                                            type = "text/plain"
-                                                            putExtra(
-                                                                Intent.EXTRA_TEXT,
-                                                                "https://www.youtube.com/shorts/${item.videoId}",
-                                                            )
-                                                        }
-                                                    context.startActivity(Intent.createChooser(intent, context.getString(R.string.share)))
-                                                },
-                                                navigationBottom = navigationBottom,
-                                                modifier = Modifier.fillMaxSize(),
-                                            )
-                                        }
-                                    }
                                 }
-                            }
-                        }
-                        // Progress bar + top controls fade on the same GPU alpha as the overlay,
-                        // instead of their own fade animations lagging the video resize.
-                        if (commentsOpenFraction < 1f) {
-                            Box(
-                                modifier =
-                                    Modifier
-                                        .align(Alignment.BottomCenter)
-                                        .fillMaxWidth()
-                                        .padding(bottom = navigationBottom)
-                                        .graphicsLayer { alpha = 1f - commentsOpenFraction },
-                            ) {
-                                ShortsProgressBar(
-                                    player = player,
-                                    modifier = Modifier.fillMaxWidth(),
-                                )
                             }
                         }
                         // Floating top controls over the video (no app-name bar).
@@ -590,6 +535,59 @@ fun ShortsScreen(
                         // above the navigation bar on every entry was pure noise — pages
                         // append silently underneath.
                     }
+                }
+            }
+            // Overlay + timeline live at the OUTER container level (not the aspect box),
+            // bottom-anchored to the navigation bar: timeline at the bar's top edge, caption
+            // above it, channel name + logo above the caption, like/comment/save/share rail
+            // low at the bottom. They fade on the same GPU alpha as the sheet/video.
+            val overlayItem = currentItem
+            if (items.isNotEmpty() && overlayItem != null && commentsOpenFraction < 1f) {
+                Box(
+                    modifier =
+                        Modifier
+                            .fillMaxSize()
+                            .graphicsLayer { alpha = 1f - commentsOpenFraction },
+                ) {
+                    ShortsOverlay(
+                        item = overlayItem,
+                        liked = overlayItem.videoId in likedIds.value,
+                        saved = overlayItem.videoId in savedIds,
+                        onLike = {
+                            val nowLiked = overlayItem.videoId !in likedIds.value
+                            likedIds.value = if (nowLiked) likedIds.value + overlayItem.videoId else likedIds.value - overlayItem.videoId
+                            viewModel.onLikeToggled(overlayItem.videoId, nowLiked)
+                        },
+                        onSave = { viewModel.toggleSave(overlayItem) },
+                        onComments = { openCommentsSheet(overlayItem) },
+                        onChannelClick = { onChannelClick(overlayItem.channelId) },
+                        onShare = {
+                            val intent =
+                                Intent(Intent.ACTION_SEND).apply {
+                                    type = "text/plain"
+                                    putExtra(
+                                        Intent.EXTRA_TEXT,
+                                        "https://www.youtube.com/shorts/${overlayItem.videoId}",
+                                    )
+                                }
+                            context.startActivity(Intent.createChooser(intent, context.getString(R.string.share)))
+                        },
+                        navigationBottom = navigationBottom,
+                        modifier = Modifier.fillMaxSize(),
+                    )
+                }
+                Box(
+                    modifier =
+                        Modifier
+                            .align(Alignment.BottomCenter)
+                            .fillMaxWidth()
+                            .padding(bottom = navigationBottom)
+                            .graphicsLayer { alpha = 1f - commentsOpenFraction },
+                ) {
+                    ShortsProgressBar(
+                        player = player,
+                        modifier = Modifier.fillMaxWidth(),
+                    )
                 }
             }
         }
@@ -833,8 +831,9 @@ private fun ShortsOverlay(
                     tint = Color.White,
                 )
             }
+            // Icon only, like share — no "Save" text under the bookmark.
             ShortsRailButton(
-                label = if (saved) stringResource(R.string.saved) else stringResource(R.string.save),
+                label = null,
                 selected = saved,
                 onClick = onSave,
             ) {
