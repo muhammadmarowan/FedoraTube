@@ -485,7 +485,9 @@ private fun ShortsProgressBar(
                         },
                     )
                 },
-        contentAlignment = Alignment.Center,
+        // The bar sits at the very bottom of its touch area, so the line always
+        // touches the navigation bar — no gap above it.
+        contentAlignment = Alignment.BottomCenter,
     ) {
         LinearProgressIndicator(
             progress = { progress },
@@ -496,31 +498,7 @@ private fun ShortsProgressBar(
             color = Color.White,
             trackColor = Color.White.copy(alpha = 0.25f),
         )
-        if (scrubbing) {
-            val duration = player.duration.coerceAtLeast(0L)
-            val position = (duration * scrubFraction).toLong()
-            Text(
-                text = "${formatShortsTime(position)} / ${formatShortsTime(duration)}",
-                color = Color.White,
-                style = MaterialTheme.typography.labelLarge,
-                fontWeight = FontWeight.Bold,
-                modifier =
-                    Modifier
-                        .align(Alignment.BottomCenter)
-                        .padding(bottom = 20.dp)
-                        .clip(CircleShape)
-                        .background(Color.Black.copy(alpha = 0.7f))
-                        .padding(horizontal = 10.dp, vertical = 4.dp),
-            )
-        }
     }
-}
-
-private fun formatShortsTime(ms: Long): String {
-    val totalSeconds = (ms / 1000).toInt()
-    val minutes = totalSeconds / 60
-    val seconds = totalSeconds % 60
-    return "%d:%02d".format(minutes, seconds)
 }
 
 @Composable
