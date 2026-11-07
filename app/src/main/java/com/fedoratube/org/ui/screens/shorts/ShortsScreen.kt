@@ -339,15 +339,18 @@ fun ShortsScreen(
             onRefresh = { refreshShortsFeed() },
             modifier = Modifier.fillMaxSize(),
         ) {
-        // Video container: fills the full screen normally; shrinks to the top 35% as the same
-        // commentsProgress value that slides the sheet up, keeping playback active letterboxed
-        // in the top view. fillMaxHeight fraction (not an animated Dp) keeps the per-frame work
-        // to one layout fraction, and overlays below fade on the GPU instead of re-laying-out.
+        // Video container: fills the screen normally (below the status bar — that strip
+        // stays black, video plays under it, never behind the status icons); shrinks to the
+        // top 35% as the same commentsProgress value that slides the sheet up, keeping
+        // playback active letterboxed in the top view. fillMaxHeight fraction (not an
+        // animated Dp) keeps the per-frame work to one layout fraction, and overlays below
+        // fade on the GPU instead of re-laying-out.
         Box(
             modifier =
                 Modifier
                     .fillMaxWidth()
                     .fillMaxHeight(videoHeightFraction)
+                    .statusBarsPadding()
                     .align(Alignment.TopCenter)
                     .background(Color.Black),
         ) {
@@ -402,20 +405,25 @@ fun ShortsScreen(
                                             }
                                         },
                             ) {
-                                // Poster always behind the surface: the surface is a
-                                // TextureView with a transparent shutter, invisible until its
-                                // first frame, so a swipe shows poster → video with no black
-                                // frame and no shutter teardown. Two extra pages stay
-                                // composed, so the next Short's poster is already cached
-                                // before the swipe lands.
-                                VideoThumbnailImage(
-                                    videoId = item.videoId,
-                                    model = item.posterUrl,
-                                    contentDescription = null,
-                                    modifier = Modifier.fillMaxSize(),
-                                    contentScale = if (showComments) ContentScale.Fit else ContentScale.Crop,
-                                    portrait = true,
-                                )
+                                // Poster behind the surface until the video has faded in
+                                // over it: the surface is a TextureView with a transparent
+                                // shutter, invisible until its first frame, so a swipe shows
+                                // poster → video with no black frame and no shutter teardown.
+                                // Once the fade completes the poster unmounts, so a letterboxed
+                                // video (comments open) sits on pure black — never a picture
+                                // peeking out around the video. Two extra pages stay composed,
+                                // so the next Short's poster is already cached before the
+                                // swipe lands.
+                                if (!playerReady || playerAlpha < 1f) {
+                                    VideoThumbnailImage(
+                                        videoId = item.videoId,
+                                        model = item.posterUrl,
+                                        contentDescription = null,
+                                        modifier = Modifier.fillMaxSize(),
+                                        contentScale = if (showComments) ContentScale.Fit else ContentScale.Crop,
+                                        portrait = true,
+                                    )
+                                }
                                 // The PlayerView lives INSIDE its page, under the overlay in
                                 // the same page — inside the pager's scrollable, where swipes
                                 // and taps reach it (a surface hoisted above the pager blocks
@@ -546,7 +554,8 @@ fun ShortsScreen(
                                                 listOf(Color.Black.copy(alpha = 0.45f), Color.Transparent),
                                             ),
                                         )
-                                        .statusBarsPadding()
+                                        // No statusBarsPadding here: the video container
+                                        // already starts below the status bar's black strip.
                                         .padding(horizontal = 4.dp, vertical = 2.dp),
                             ) {
                                 if (!isTabRoot) {
@@ -569,14 +578,10 @@ fun ShortsScreen(
                             }
                             }
                         }
-                        if (uiState.isLoadingMore && !showComments) {
-                            Box(
-                                modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = navigationBottom + 16.dp),
-                                contentAlignment = Alignment.Center,
-                            ) {
-                                CircularProgressIndicator(color = Color.White, modifier = Modifier.size(28.dp))
-                            }
-                        }
+                        // No bottom "loading more" spinner: entering Shorts with a short
+                        // first page fires loadMore immediately, and that spinner sitting
+                        // above the navigation bar on every entry was pure noise — pages
+                        // append silently underneath.
                     }
                 }
             }
