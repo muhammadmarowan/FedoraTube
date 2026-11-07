@@ -331,6 +331,12 @@ fun ShortsScreen(
         // 0 when closed, 1 when comments fully open.
         val commentsOpenFraction = commentsProgress.value
         val videoHeightFraction = 1f - commentsOpenFraction * (commentsSheetHeight.value / totalHeight.value)
+        // The video keeps its true 9:16 ratio and starts right below the status bar's black
+        // strip: its box is the aspect height for the screen's width (or the animated video
+        // area when comments shrink it below that), top-anchored — no black gap above the
+        // video, the leftover black sits below it, above the navigation bar.
+        val videoContentHeight = totalHeight * videoHeightFraction
+        val videoBoxHeight = minOf(maxWidth * (16f / 9f), videoContentHeight)
 
         // Home-feed style pull-to-refresh around the video area (not the comments sheet):
         // pulling down on the first Short reloads the feed with a top indicator.
@@ -375,7 +381,13 @@ fun ShortsScreen(
                 }
 
                 else -> {
-                    Box(modifier = Modifier.fillMaxSize()) {
+                    Box(
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .height(videoBoxHeight)
+                                .align(Alignment.TopCenter),
+                    ) {
                         // The surface fades in over the poster only once its first frame
                         // renders (playerReady) — see the listener above.
                         val playerAlpha by animateFloatAsState(
