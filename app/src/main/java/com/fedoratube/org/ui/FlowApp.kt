@@ -390,10 +390,16 @@ fun FlowApp(
                 musicSuppressed = suppressMusicMiniAfterVideo,
             )
         val isMusicSheetShown = activeMiniPlayer == ActiveMiniPlayer.Music
+        val isShortsCommentsOpen by GlobalPlayerState.isShortsCommentsOpen.collectAsState()
         val isPlayerCoveringContent =
             (playerVisible && playerSheetState.currentValue == PlayerSheetValue.Expanded) ||
                 (isMusicSheetShown && musicPlayerSheetState.isExpanded)
-        val showBottomNav = !isInPipMode && currentTab.showsNavigationBar() && !isPlayerCoveringContent && !isFocusModeEnabled
+        val showBottomNav =
+            !isInPipMode &&
+                currentTab.showsNavigationBar() &&
+                !isPlayerCoveringContent &&
+                !isFocusModeEnabled &&
+                !isShortsCommentsOpen
         val isBottomNavShown = !usesNavigationRail && showBottomNav && navScrollState.isBarVisible
         // The rail is hidden only where content goes truly full screen; the expanded players cover
         // it instead, so opening them never re-lays out the page beneath.
@@ -499,7 +505,7 @@ fun FlowApp(
                                 start = paddingValues.calculateStartPadding(layoutDirection),
                                 top = 0.dp,
                                 end = paddingValues.calculateEndPadding(layoutDirection),
-                                bottom = bottomInsets.systemBottom,
+                                bottom = 0.dp,
                             )
                         } else {
                             paddingValues

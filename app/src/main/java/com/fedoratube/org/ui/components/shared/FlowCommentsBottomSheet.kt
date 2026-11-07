@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.BottomSheetDefaults
@@ -56,6 +57,7 @@ fun FlowCommentsBottomSheet(
     collapsedHeight: Dp = 0.dp,
     onSheetProgressChange: (Float) -> Unit = {},
     dismissOnOutsideTap: Boolean = false,
+    shape: androidx.compose.ui.graphics.Shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
     modifier: Modifier = Modifier,
 ) {
     val sheetState = rememberFlowBottomSheetState()
@@ -73,7 +75,7 @@ fun FlowCommentsBottomSheet(
         expandedHeight = expandedHeight ?: defaultSheetExpandedHeight(),
         collapsedHeight = collapsedHeight,
         dismissOnOutsideTap = dismissOnOutsideTap,
-        shape = RectangleShape,
+        shape = shape,
         containerColor = MaterialTheme.colorScheme.surface,
         onProgressChange = onSheetProgressChange,
         header = { dragModifier ->

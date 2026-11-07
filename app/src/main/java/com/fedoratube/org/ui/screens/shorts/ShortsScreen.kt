@@ -1,6 +1,12 @@
 package com.fedoratube.org.ui.screens.shorts
 
 import android.content.Intent
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -56,6 +62,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -69,6 +76,7 @@ import coil3.compose.AsyncImage
 import com.fedoratube.org.R
 import com.fedoratube.org.data.feed.ShortsQueueSource
 import com.fedoratube.org.data.local.PlayerPreferences
+import com.fedoratube.org.player.GlobalPlayerState
 import com.fedoratube.org.player.config.VideoSizeCap
 import com.fedoratube.org.player.datasource.YouTubeHttpDataSource
 import com.fedoratube.org.player.factory.PlayerFactory
@@ -212,32 +220,38 @@ fun ShortsScreen(
     }
 
     // Full-bleed video: from the very top of the screen down to the navigation bar.
-    // No app-name bar here; only an overlay search (and back, when not the tab) floats
-    // over the video at the top, like YouTube Shorts.
-    // NOTE: this content already sits above the system inset (the shell pads it), so
-    // chrome offsets from here are barBottom only — navigationBottom would count the
-    // system inset twice and float the timeline/text above the bar.
-    val navigationBottom = com.fedoratube.org.ui.components.layout.LocalFlowBottomInsets.current.barBottom
-    // Full-bleed video. When comments open (YouTube-Shorts style) the video
-    // moves up into the top portion and keeps playing above the sheet.
-    Box(
+    // In Shorts, content runs edge-to-edge behind the bottom navigation bar.
+    val insets = com.fedoratube.org.ui.components.layout.LocalFlowBottomInsets.current
+    val navigationBottom = insets.navigationBottom
+
+    DisposableEffect(Unit) {
+        onDispose {
+            GlobalPlayerState.setShortsCommentsOpen(false)
+        }
+    }
+
+    BoxWithConstraints(
         modifier =
             Modifier
                 .fillMaxSize()
                 .background(Color.Black),
     ) {
-        Column(modifier = Modifier.fillMaxSize()) {
+        val totalHeight = maxHeight
+        val videoHeight by animateDpAsState(
+            targetValue = if (showComments) totalHeight * 0.35f else totalHeight,
+            animationSpec = spring(dampingRatio = Spring.DampingRatioNoBouncy, stiffness = Spring.StiffnessMediumLow),
+            label = "shorts_video_height",
+        )
+
+        // Video container: fills the full screen normally; shrinks to the top 35%
+        // when comments open, keeping playback active letterboxed in the top view.
         Box(
             modifier =
                 Modifier
-                    .then(
-                        if (showComments) {
-                            Modifier.weight(0.28f, fill = false)
-                        } else {
-                            Modifier.weight(1f)
-                        },
-                    )
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .height(videoHeight)
+                    .align(Alignment.TopCenter)
+                    .background(Color.Black),
         ) {
             when {
                 uiState.isLoading && items.isEmpty() -> {
@@ -263,13 +277,8 @@ fun ShortsScreen(
                     Box(modifier = Modifier.fillMaxSize()) {
                         VerticalPager(
                             state = pagerState,
-                            modifier =
-                                Modifier
-                                    .fillMaxSize()
-                                    // Video runs edge-to-edge behind the navigation bar, so
-                                    // there is no black blank strip above it. The timeline
-                                    // and overlay sit above the bar instead.
-                                    .padding(bottom = com.fedoratube.org.ui.components.layout.LocalFlowBottomInsets.current.systemBottom),
+                            userScrollEnabled = !showComments,
+                            modifier = Modifier.fillMaxSize(),
                             beyondViewportPageCount = 1,
                             // Index-safe: the pager can ask for a key/content while a fresh
                             // page list is still settling (1-item first page -> append).
@@ -295,22 +304,36 @@ fun ShortsScreen(
                                         model = item.posterUrl,
                                         contentDescription = null,
                                         modifier = Modifier.fillMaxSize(),
-                                        contentScale = ContentScale.Crop,
+                                        contentScale = if (showComments) ContentScale.Fit else ContentScale.Crop,
                                         portrait = true,
                                     )
                                 }
                                 // The PlayerView lives INSIDE its page, under the overlay in
-                                // the same page — a hoisted PlayerView sat above every page's
-                                // overlay, hiding the like rail and going black on scroll.
+                                // the same page. When comments are open, resizeMode shifts
+                                // to FIT so the 9:16 video letterboxes neatly in the top section.
                                 if (isCurrent) {
                                     AndroidView(
                                         factory = { ctx ->
                                             PlayerView(ctx).apply {
                                                 useController = false
-                                                resizeMode = androidx.media3.ui.AspectRatioFrameLayout.RESIZE_MODE_ZOOM
+                                                resizeMode =
+                                                    if (showComments) {
+                                                        androidx.media3.ui.AspectRatioFrameLayout.RESIZE_MODE_FIT
+                                                    } else {
+                                                        androidx.media3.ui.AspectRatioFrameLayout.RESIZE_MODE_ZOOM
+                                                    }
                                                 setShutterBackgroundColor(Color.Black.toArgb())
                                                 this.player = player
                                             }
+                                        },
+                                        update = { playerView ->
+                                            playerView.resizeMode =
+                                                if (showComments) {
+                                                    androidx.media3.ui.AspectRatioFrameLayout.RESIZE_MODE_FIT
+                                                } else {
+                                                    androidx.media3.ui.AspectRatioFrameLayout.RESIZE_MODE_ZOOM
+                                                }
+                                            playerView.player = player
                                         },
                                         onRelease = { view -> view.player = null },
                                         modifier = Modifier.fillMaxSize(),
@@ -326,80 +349,98 @@ fun ShortsScreen(
                                                 imageVector = Icons.Filled.PlayArrow,
                                                 contentDescription = stringResource(R.string.play),
                                                 tint = Color.White.copy(alpha = 0.85f),
-                                                modifier = Modifier.size(72.dp),
+                                                modifier = Modifier.size(if (showComments) 40.dp else 72.dp),
                                             )
                                         }
                                     }
-                                    ShortsOverlay(
-                                        item = item,
-                                        liked = item.videoId in likedIds.value,
-                                        saved = item.videoId in savedIds,
-                                        onLike = {
-                                            val nowLiked = item.videoId !in likedIds.value
-                                            likedIds.value = if (nowLiked) likedIds.value + item.videoId else likedIds.value - item.videoId
-                                            viewModel.onLikeToggled(item.videoId, nowLiked)
-                                        },
-                                        onSave = { viewModel.toggleSave(item) },
-                                        onComments = {
-                                            viewModel.openComments(item.videoId)
-                                            showComments = true
-                                        },
-                                        onChannelClick = { onChannelClick(item.channelId) },
-                                        onShare = {
-                                            val intent =
-                                                Intent(Intent.ACTION_SEND).apply {
-                                                    type = "text/plain"
-                                                    putExtra(
-                                                        Intent.EXTRA_TEXT,
-                                                        "https://www.youtube.com/shorts/${item.videoId}",
-                                                    )
-                                                }
-                                            context.startActivity(Intent.createChooser(intent, context.getString(R.string.share)))
-                                        },
-                                        modifier =
-                                            Modifier
-                                                .fillMaxSize()
-                                                .padding(bottom = navigationBottom),
-                                    )
+                                    AnimatedVisibility(
+                                        visible = !showComments,
+                                        enter = fadeIn(),
+                                        exit = fadeOut(),
+                                    ) {
+                                        ShortsOverlay(
+                                            item = item,
+                                            liked = item.videoId in likedIds.value,
+                                            saved = item.videoId in savedIds,
+                                            onLike = {
+                                                val nowLiked = item.videoId !in likedIds.value
+                                                likedIds.value = if (nowLiked) likedIds.value + item.videoId else likedIds.value - item.videoId
+                                                viewModel.onLikeToggled(item.videoId, nowLiked)
+                                            },
+                                            onSave = { viewModel.toggleSave(item) },
+                                            onComments = {
+                                                viewModel.openComments(item.videoId)
+                                                showComments = true
+                                                GlobalPlayerState.setShortsCommentsOpen(true)
+                                            },
+                                            onChannelClick = { onChannelClick(item.channelId) },
+                                            onShare = {
+                                                val intent =
+                                                    Intent(Intent.ACTION_SEND).apply {
+                                                        type = "text/plain"
+                                                        putExtra(
+                                                            Intent.EXTRA_TEXT,
+                                                            "https://www.youtube.com/shorts/${item.videoId}",
+                                                        )
+                                                    }
+                                                context.startActivity(Intent.createChooser(intent, context.getString(R.string.share)))
+                                            },
+                                            navigationBottom = navigationBottom,
+                                            modifier = Modifier.fillMaxSize(),
+                                        )
+                                    }
                                 }
                             }
                         }
-                        ShortsProgressBar(
-                            player = player,
+                        AnimatedVisibility(
+                            visible = !showComments,
+                            enter = fadeIn(),
+                            exit = fadeOut(),
                             modifier =
                                 Modifier
                                     .align(Alignment.BottomCenter)
                                     .fillMaxWidth()
                                     .padding(bottom = navigationBottom),
-                        )
-                        // Floating top controls over the video (no app-name bar).
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier =
-                                Modifier
-                                    .align(Alignment.TopCenter)
-                                    .fillMaxWidth()
-                                    .background(
-                                        androidx.compose.ui.graphics.Brush.verticalGradient(
-                                            listOf(Color.Black.copy(alpha = 0.45f), Color.Transparent),
-                                        ),
-                                    )
-                                    .statusBarsPadding()
-                                    .padding(horizontal = 4.dp, vertical = 2.dp),
                         ) {
-                            if (!isTabRoot) {
-                                IconButton(onClick = onBack) {
-                                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back), tint = Color.White)
+                            ShortsProgressBar(
+                                player = player,
+                                modifier = Modifier.fillMaxWidth(),
+                            )
+                        }
+                        // Floating top controls over the video (no app-name bar).
+                        AnimatedVisibility(
+                            visible = !showComments,
+                            enter = fadeIn(),
+                            exit = fadeOut(),
+                            modifier = Modifier.align(Alignment.TopCenter),
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier =
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .background(
+                                            androidx.compose.ui.graphics.Brush.verticalGradient(
+                                                listOf(Color.Black.copy(alpha = 0.45f), Color.Transparent),
+                                            ),
+                                        )
+                                        .statusBarsPadding()
+                                        .padding(horizontal = 4.dp, vertical = 2.dp),
+                            ) {
+                                if (!isTabRoot) {
+                                    IconButton(onClick = onBack) {
+                                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back), tint = Color.White)
+                                    }
+                                }
+                                Spacer(modifier = Modifier.weight(1f))
+                                IconButton(onClick = onSearchClick) {
+                                    Icon(Icons.Outlined.Search, contentDescription = stringResource(R.string.search), tint = Color.White)
                                 }
                             }
-                            Spacer(modifier = Modifier.weight(1f))
-                            IconButton(onClick = onSearchClick) {
-                                Icon(Icons.Outlined.Search, contentDescription = stringResource(R.string.search), tint = Color.White)
-                            }
                         }
-                        if (uiState.isLoadingMore) {
+                        if (uiState.isLoadingMore && !showComments) {
                             Box(
-                                modifier = Modifier.align(Alignment.BottomCenter),
+                                modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = navigationBottom + 16.dp),
                                 contentAlignment = Alignment.Center,
                             ) {
                                 CircularProgressIndicator(color = Color.White, modifier = Modifier.size(28.dp))
@@ -409,26 +450,28 @@ fun ShortsScreen(
                 }
             }
         }
-        }
-    }
 
-    // YouTube-Shorts style: comments slide up over the video (75% of the window, drag
-    // handle + count header) and the video KEEPS PLAYING behind the sheet.
-    if (showComments && commentsState.videoId.isNotBlank()) {
-        FlowCommentsBottomSheet(
-            comments = commentsState.comments,
-            isLoading = commentsState.isLoading,
-            onDismiss = {
-                showComments = false
-                viewModel.closeComments()
-            },
-            isLoadingMore = commentsState.isLoadingMore,
-            onLoadMore = viewModel::loadMoreComments,
-            hasMore = commentsState.hasMore,
-            totalText = commentsState.totalText,
-            onAuthorClick = { channelId -> onChannelClick(channelId) },
-            onAvatarClick = { channelId -> onChannelClick(channelId) },
-        )
+        // YouTube-Shorts style: comments sheet occupies bottom ~65% while video
+        // continues playing smoothly in the top 35%.
+        if (showComments && commentsState.videoId.isNotBlank()) {
+            FlowCommentsBottomSheet(
+                comments = commentsState.comments,
+                isLoading = commentsState.isLoading,
+                onDismiss = {
+                    showComments = false
+                    viewModel.closeComments()
+                    GlobalPlayerState.setShortsCommentsOpen(false)
+                },
+                isLoadingMore = commentsState.isLoadingMore,
+                onLoadMore = viewModel::loadMoreComments,
+                hasMore = commentsState.hasMore,
+                totalText = commentsState.totalText,
+                onAuthorClick = { channelId -> onChannelClick(channelId) },
+                onAvatarClick = { channelId -> onChannelClick(channelId) },
+                expandedHeight = totalHeight * 0.65f,
+                dismissOnOutsideTap = false,
+            )
+        }
     }
 }
 
@@ -516,6 +559,7 @@ private fun ShortsOverlay(
     onComments: () -> Unit,
     onChannelClick: () -> Unit,
     onShare: () -> Unit,
+    navigationBottom: Dp,
     modifier: Modifier = Modifier,
 ) {
     Box(modifier = modifier) {
@@ -527,13 +571,13 @@ private fun ShortsOverlay(
                 Modifier
                     .align(Alignment.BottomCenter)
                     .fillMaxWidth()
-                    .height(200.dp)
+                    .height(260.dp)
                     .background(
                         androidx.compose.ui.graphics.Brush.verticalGradient(
                             listOf(
                                 Color.Transparent,
-                                Color.Black.copy(alpha = 0.68f),
-                                Color.Black.copy(alpha = 0.9f),
+                                Color.Black.copy(alpha = 0.65f),
+                                Color.Black.copy(alpha = 0.95f),
                             ),
                         ),
                     ),
@@ -543,7 +587,7 @@ private fun ShortsOverlay(
                 Modifier
                     .align(Alignment.BottomStart)
                     .fillMaxWidth(fraction = 0.78f)
-                    .padding(start = 12.dp, bottom = 2.dp, end = 8.dp),
+                    .padding(start = 12.dp, bottom = navigationBottom + 6.dp, end = 8.dp),
         ) {
             if (item.channelName.isNotBlank()) {
                 Row(
@@ -610,7 +654,7 @@ private fun ShortsOverlay(
             modifier =
                 Modifier
                     .align(Alignment.BottomEnd)
-                    .padding(end = 10.dp, bottom = 4.dp),
+                    .padding(end = 10.dp, bottom = navigationBottom + 8.dp),
         ) {
             // YouTube-Shorts style: plain outline icons, no circles. Love (heart) means
             // like; below the comment bubble sits the Save bookmark for Watch Later.

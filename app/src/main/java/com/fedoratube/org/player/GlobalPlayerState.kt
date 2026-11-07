@@ -46,6 +46,13 @@ object GlobalPlayerState {
     private val _dismissRequested = MutableStateFlow(false)
     val dismissRequested: StateFlow<Boolean> = _dismissRequested.asStateFlow()
 
+    private val _isShortsCommentsOpen = MutableStateFlow(false)
+    val isShortsCommentsOpen: StateFlow<Boolean> = _isShortsCommentsOpen.asStateFlow()
+
+    fun setShortsCommentsOpen(open: Boolean) {
+        _isShortsCommentsOpen.value = open
+    }
+
     // Delegate to EnhancedPlayerManager for player state. This is the single reactive
     // source of truth for playback; collect playerState for isPlaying/position/duration.
     val playerState: StateFlow<EnhancedPlayerState> = EnhancedPlayerManager.getInstance().playerState
