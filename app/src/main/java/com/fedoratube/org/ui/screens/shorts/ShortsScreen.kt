@@ -420,7 +420,9 @@ fun ShortsScreen(
                                         model = item.posterUrl,
                                         contentDescription = null,
                                         modifier = Modifier.fillMaxSize(),
-                                        contentScale = if (showComments) ContentScale.Fit else ContentScale.Crop,
+                                        // Same FIT ratio as the video, so poster → first
+                                        // frame does not jump or crop either.
+                                        contentScale = ContentScale.Fit,
                                         portrait = true,
                                     )
                                 }
@@ -428,19 +430,17 @@ fun ShortsScreen(
                                 // the same page — inside the pager's scrollable, where swipes
                                 // and taps reach it (a surface hoisted above the pager blocks
                                 // the pager's drag gestures, which froze Shorts scrolling).
-                                // When comments are open, resizeMode shifts to FIT so the
-                                // 9:16 video letterboxes neatly in the top section.
+                                // resizeMode is FIT in BOTH states: the whole frame always
+                                // shows, never cropped. Switching FIT→ZOOM when comments
+                                // closed cropped the video and made it jump/bounce back —
+                                // one ratio for open and close means the height animation
+                                // alone moves the video, smoothly, to its normal position.
                                 if (isCurrent) {
                                     AndroidView(
                                         factory = { ctx ->
                                             (LayoutInflater.from(ctx).inflate(R.layout.video_player_view, null) as PlayerView).apply {
                                                 layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
-                                                resizeMode =
-                                                    if (showComments) {
-                                                        androidx.media3.ui.AspectRatioFrameLayout.RESIZE_MODE_FIT
-                                                    } else {
-                                                        androidx.media3.ui.AspectRatioFrameLayout.RESIZE_MODE_ZOOM
-                                                    }
+                                                resizeMode = androidx.media3.ui.AspectRatioFrameLayout.RESIZE_MODE_FIT
                                                 setShowBuffering(PlayerView.SHOW_BUFFERING_NEVER)
                                                 setShutterBackgroundColor(android.graphics.Color.TRANSPARENT)
                                                 setBackgroundColor(android.graphics.Color.TRANSPARENT)
@@ -449,12 +449,7 @@ fun ShortsScreen(
                                             }
                                         },
                                         update = { playerView ->
-                                            playerView.resizeMode =
-                                                if (showComments) {
-                                                    androidx.media3.ui.AspectRatioFrameLayout.RESIZE_MODE_FIT
-                                                } else {
-                                                    androidx.media3.ui.AspectRatioFrameLayout.RESIZE_MODE_ZOOM
-                                                }
+                                            playerView.resizeMode = androidx.media3.ui.AspectRatioFrameLayout.RESIZE_MODE_FIT
                                             playerView.player = player
                                         },
                                         onRelease = { view -> view.player = null },
