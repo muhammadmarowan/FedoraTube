@@ -103,11 +103,11 @@ import kotlinx.coroutines.withContext
  *   recomposes the pager.
  * - The next Shorts' media sources are pre-resolved into [sourceCache] while the current one
  *   plays (two ahead, one behind), and overlays are enriched only for the visible Short.
- * - One [PlayerView] lives above the whole pager for the screen's lifetime — never recreated
- *   per page — with a transparent shutter over the pages' posters. A Short is "ready" only
- *   when its first frame actually renders (not when the player is merely prepared), so a
- *   swipe shows poster → video with no black flash, no surface teardown, and no spinner
- *   unless buffering drags past a short grace period.
+ * - The [PlayerView] stays inside its page (inside the pager's scrollable, where swipes
+ *   reach it) with a transparent shutter over the page's poster. A Short is "ready" only when
+ *   its first frame actually renders (not when the player is merely prepared), so a swipe
+ *   shows poster → video with no black flash and no spinner unless buffering drags past a
+ *   short grace period.
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -373,9 +373,13 @@ fun ShortsScreen(
 
                 else -> {
                     Box(modifier = Modifier.fillMaxSize()) {
-                        // Pages are posters only. Two extra pages stay composed so the next
-                        // Shorts' posters are already in Coil's cache before the swipe lands —
-                        // composing them during the swipe was part of the black beat.
+                        // The surface fades in over the poster only once its first frame
+                        // renders (playerReady) — see the listener above.
+                        val playerAlpha by animateFloatAsState(
+                            targetValue = if (playerReady) 1f else 0f,
+                            animationSpec = tween(durationMillis = 200),
+                            label = "shorts_player_alpha",
+                        )
                         VerticalPager(
                             state = pagerState,
                             userScrollEnabled = !showComments,
@@ -386,121 +390,125 @@ fun ShortsScreen(
                             key = { index -> items.getOrNull(index)?.videoId ?: "page-$index" },
                         ) { page ->
                             val item = items.getOrNull(page) ?: return@VerticalPager
-                            VideoThumbnailImage(
-                                videoId = item.videoId,
-                                model = item.posterUrl,
-                                contentDescription = null,
-                                modifier = Modifier.fillMaxSize(),
-                                contentScale = if (showComments) ContentScale.Fit else ContentScale.Crop,
-                                portrait = true,
-                            )
-                        }
-                        // ONE PlayerView above the whole pager for the screen's lifetime: its
-                        // surface is never torn down and recreated per swipe (that teardown +
-                        // black shutter was the flash). It is a TextureView with a transparent
-                        // shutter, invisible until the first frame renders, so the poster shows
-                        // through and the video fades in over it — poster → video, no black.
-                        // When comments are open, resizeMode shifts to FIT so the 9:16 video
-                        // letterboxes neatly in the top section.
-                        val playerAlpha by animateFloatAsState(
-                            targetValue = if (playerReady) 1f else 0f,
-                            animationSpec = tween(durationMillis = 200),
-                            label = "shorts_player_alpha",
-                        )
-                        AndroidView(
-                            factory = { ctx ->
-                                (LayoutInflater.from(ctx).inflate(R.layout.video_player_view, null) as PlayerView).apply {
-                                    layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
-                                    resizeMode =
-                                        if (showComments) {
-                                            androidx.media3.ui.AspectRatioFrameLayout.RESIZE_MODE_FIT
-                                        } else {
-                                            androidx.media3.ui.AspectRatioFrameLayout.RESIZE_MODE_ZOOM
-                                        }
-                                    setShowBuffering(PlayerView.SHOW_BUFFERING_NEVER)
-                                    setShutterBackgroundColor(android.graphics.Color.TRANSPARENT)
-                                    setBackgroundColor(android.graphics.Color.TRANSPARENT)
-                                    subtitleView?.visibility = ViewGroup.GONE
-                                    this.player = player
-                                }
-                            },
-                            update = { playerView ->
-                                playerView.resizeMode =
-                                    if (showComments) {
-                                        androidx.media3.ui.AspectRatioFrameLayout.RESIZE_MODE_FIT
-                                    } else {
-                                        androidx.media3.ui.AspectRatioFrameLayout.RESIZE_MODE_ZOOM
-                                    }
-                                playerView.player = player
-                            },
-                            onRelease = { view -> view.player = null },
-                            modifier =
-                                Modifier
-                                    .fillMaxSize()
-                                    .graphicsLayer { alpha = playerAlpha },
-                        )
-                        // Tap-to-pause rides above the surface, below the overlay and controls.
-                        Box(
-                            modifier =
-                                Modifier
-                                    .fillMaxSize()
-                                    .clickable {
-                                        paused = !paused
-                                        player.playWhenReady = !paused
-                                    },
-                        )
-                        if (showBufferSpinner && !playerReady) {
-                            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                                CircularProgressIndicator(color = Color.White)
-                            }
-                        }
-                        if (paused && playerReady) {
-                            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                                Icon(
-                                    imageVector = Icons.Filled.PlayArrow,
-                                    contentDescription = stringResource(R.string.play),
-                                    tint = Color.White.copy(alpha = 0.85f),
-                                    modifier = Modifier.size(if (showComments) 40.dp else 72.dp),
-                                )
-                            }
-                        }
-                        // Overlay for the current Short, above the surface. It fades with the
-                        // same progress as the sheet/video (GPU alpha), so it never pops or
-                        // lags a frame behind the resize.
-                        val overlayItem = currentItem
-                        if (overlayItem != null && commentsOpenFraction < 1f) {
+                            val isCurrent = page == currentIndex
                             Box(
                                 modifier =
                                     Modifier
                                         .fillMaxSize()
-                                        .graphicsLayer { alpha = 1f - commentsOpenFraction },
-                            ) {
-                                ShortsOverlay(
-                                    item = overlayItem,
-                                    liked = overlayItem.videoId in likedIds.value,
-                                    saved = overlayItem.videoId in savedIds,
-                                    onLike = {
-                                        val nowLiked = overlayItem.videoId !in likedIds.value
-                                        likedIds.value = if (nowLiked) likedIds.value + overlayItem.videoId else likedIds.value - overlayItem.videoId
-                                        viewModel.onLikeToggled(overlayItem.videoId, nowLiked)
-                                    },
-                                    onSave = { viewModel.toggleSave(overlayItem) },
-                                    onComments = { openCommentsSheet(overlayItem) },
-                                    onChannelClick = { onChannelClick(overlayItem.channelId) },
-                                    onShare = {
-                                        val intent =
-                                            Intent(Intent.ACTION_SEND).apply {
-                                                type = "text/plain"
-                                                putExtra(
-                                                    Intent.EXTRA_TEXT,
-                                                    "https://www.youtube.com/shorts/${overlayItem.videoId}",
-                                                )
+                                        .clickable {
+                                            if (isCurrent) {
+                                                paused = !paused
+                                                player.playWhenReady = !paused
                                             }
-                                        context.startActivity(Intent.createChooser(intent, context.getString(R.string.share)))
-                                    },
-                                    navigationBottom = navigationBottom,
+                                        },
+                            ) {
+                                // Poster always behind the surface: the surface is a
+                                // TextureView with a transparent shutter, invisible until its
+                                // first frame, so a swipe shows poster → video with no black
+                                // frame and no shutter teardown. Two extra pages stay
+                                // composed, so the next Short's poster is already cached
+                                // before the swipe lands.
+                                VideoThumbnailImage(
+                                    videoId = item.videoId,
+                                    model = item.posterUrl,
+                                    contentDescription = null,
                                     modifier = Modifier.fillMaxSize(),
+                                    contentScale = if (showComments) ContentScale.Fit else ContentScale.Crop,
+                                    portrait = true,
                                 )
+                                // The PlayerView lives INSIDE its page, under the overlay in
+                                // the same page — inside the pager's scrollable, where swipes
+                                // and taps reach it (a surface hoisted above the pager blocks
+                                // the pager's drag gestures, which froze Shorts scrolling).
+                                // When comments are open, resizeMode shifts to FIT so the
+                                // 9:16 video letterboxes neatly in the top section.
+                                if (isCurrent) {
+                                    AndroidView(
+                                        factory = { ctx ->
+                                            (LayoutInflater.from(ctx).inflate(R.layout.video_player_view, null) as PlayerView).apply {
+                                                layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+                                                resizeMode =
+                                                    if (showComments) {
+                                                        androidx.media3.ui.AspectRatioFrameLayout.RESIZE_MODE_FIT
+                                                    } else {
+                                                        androidx.media3.ui.AspectRatioFrameLayout.RESIZE_MODE_ZOOM
+                                                    }
+                                                setShowBuffering(PlayerView.SHOW_BUFFERING_NEVER)
+                                                setShutterBackgroundColor(android.graphics.Color.TRANSPARENT)
+                                                setBackgroundColor(android.graphics.Color.TRANSPARENT)
+                                                subtitleView?.visibility = ViewGroup.GONE
+                                                this.player = player
+                                            }
+                                        },
+                                        update = { playerView ->
+                                            playerView.resizeMode =
+                                                if (showComments) {
+                                                    androidx.media3.ui.AspectRatioFrameLayout.RESIZE_MODE_FIT
+                                                } else {
+                                                    androidx.media3.ui.AspectRatioFrameLayout.RESIZE_MODE_ZOOM
+                                                }
+                                            playerView.player = player
+                                        },
+                                        onRelease = { view -> view.player = null },
+                                        modifier =
+                                            Modifier
+                                                .fillMaxSize()
+                                                .graphicsLayer { alpha = playerAlpha },
+                                    )
+                                    if (showBufferSpinner && !playerReady) {
+                                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                                            CircularProgressIndicator(color = Color.White)
+                                        }
+                                    }
+                                    if (paused && playerReady) {
+                                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                                            Icon(
+                                                imageVector = Icons.Filled.PlayArrow,
+                                                contentDescription = stringResource(R.string.play),
+                                                tint = Color.White.copy(alpha = 0.85f),
+                                                modifier = Modifier.size(if (showComments) 40.dp else 72.dp),
+                                            )
+                                        }
+                                    }
+                                    // Fades with the same progress as the sheet/video (GPU
+                                    // alpha), so it never pops or lags a frame behind the
+                                    // resize.
+                                    if (commentsOpenFraction < 1f) {
+                                        Box(
+                                            modifier =
+                                                Modifier
+                                                    .fillMaxSize()
+                                                    .graphicsLayer { alpha = 1f - commentsOpenFraction },
+                                        ) {
+                                            ShortsOverlay(
+                                                item = item,
+                                                liked = item.videoId in likedIds.value,
+                                                saved = item.videoId in savedIds,
+                                                onLike = {
+                                                    val nowLiked = item.videoId !in likedIds.value
+                                                    likedIds.value = if (nowLiked) likedIds.value + item.videoId else likedIds.value - item.videoId
+                                                    viewModel.onLikeToggled(item.videoId, nowLiked)
+                                                },
+                                                onSave = { viewModel.toggleSave(item) },
+                                                onComments = { openCommentsSheet(item) },
+                                                onChannelClick = { onChannelClick(item.channelId) },
+                                                onShare = {
+                                                    val intent =
+                                                        Intent(Intent.ACTION_SEND).apply {
+                                                            type = "text/plain"
+                                                            putExtra(
+                                                                Intent.EXTRA_TEXT,
+                                                                "https://www.youtube.com/shorts/${item.videoId}",
+                                                            )
+                                                        }
+                                                    context.startActivity(Intent.createChooser(intent, context.getString(R.string.share)))
+                                                },
+                                                navigationBottom = navigationBottom,
+                                                modifier = Modifier.fillMaxSize(),
+                                            )
+                                        }
+                                    }
+                                }
                             }
                         }
                         // Progress bar + top controls fade on the same GPU alpha as the overlay,
