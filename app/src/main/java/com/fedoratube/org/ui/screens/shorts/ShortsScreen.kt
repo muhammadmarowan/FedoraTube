@@ -502,26 +502,22 @@ private fun ShortsOverlay(
     modifier: Modifier = Modifier,
 ) {
     Box(modifier = modifier) {
-        // Bottom shadow behind the text/rail (drawn first, so it never darkens them),
-        // attached to the navigation bar and rising up behind timeline/caption/channel.
+        // The shadow now starts BELOW the timeline (only in the nav-bar strip), so
+        // channel/caption sit low and read via their own text shadow instead.
         Box(
             modifier =
                 Modifier
                     .align(Alignment.BottomCenter)
                     .fillMaxWidth()
-                    .height(170.dp)
-                    .background(
-                        androidx.compose.ui.graphics.Brush.verticalGradient(
-                            listOf(Color.Transparent, Color.Black.copy(alpha = 0.72f)),
-                        ),
-                    ),
+                    .height(24.dp)
+                    .background(Color.Black.copy(alpha = 0.55f)),
         )
         Column(
             modifier =
                 Modifier
                     .align(Alignment.BottomStart)
                     .fillMaxWidth(fraction = 0.78f)
-                    .padding(start = 12.dp, bottom = 8.dp, end = 8.dp),
+                    .padding(start = 12.dp, bottom = 4.dp, end = 8.dp),
         ) {
             if (item.channelName.isNotBlank()) {
                 Row(
@@ -546,7 +542,15 @@ private fun ShortsOverlay(
                     Text(
                         text = item.channelName,
                         color = Color.White,
-                        style = MaterialTheme.typography.bodyMedium,
+                        style =
+                            MaterialTheme.typography.bodyMedium.copy(
+                                shadow =
+                                    androidx.compose.ui.graphics.Shadow(
+                                        color = Color.Black.copy(alpha = 0.8f),
+                                        blurRadius = 6f,
+                                        offset = androidx.compose.ui.geometry.Offset(1f, 1f),
+                                    ),
+                            ),
                         fontWeight = FontWeight.SemiBold,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
@@ -558,7 +562,15 @@ private fun ShortsOverlay(
                 Text(
                     text = item.title,
                     color = Color.White,
-                    style = MaterialTheme.typography.bodyMedium,
+                    style =
+                        MaterialTheme.typography.bodyMedium.copy(
+                            shadow =
+                                androidx.compose.ui.graphics.Shadow(
+                                    color = Color.Black.copy(alpha = 0.8f),
+                                    blurRadius = 6f,
+                                    offset = androidx.compose.ui.geometry.Offset(1f, 1f),
+                                ),
+                        ),
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
                 )
@@ -568,7 +580,15 @@ private fun ShortsOverlay(
                 Text(
                     text = item.soundTitle,
                     color = Color.White.copy(alpha = 0.85f),
-                    style = MaterialTheme.typography.bodySmall,
+                    style =
+                        MaterialTheme.typography.bodySmall.copy(
+                            shadow =
+                                androidx.compose.ui.graphics.Shadow(
+                                    color = Color.Black.copy(alpha = 0.8f),
+                                    blurRadius = 6f,
+                                    offset = androidx.compose.ui.geometry.Offset(1f, 1f),
+                                ),
+                        ),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
@@ -582,7 +602,7 @@ private fun ShortsOverlay(
             modifier =
                 Modifier
                     .align(Alignment.BottomEnd)
-                    .padding(end = 10.dp, bottom = 8.dp),
+                    .padding(end = 10.dp, bottom = 4.dp),
         ) {
             // YouTube-Shorts style: plain outline icons, no circles. Love (heart) means
             // like; below the comment bubble sits the Save bookmark for Watch Later.
