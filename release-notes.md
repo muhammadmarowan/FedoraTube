@@ -5,6 +5,8 @@
 
 ## Highlights
 
+- Shorts comments animation is now smooth and synced both ways: opening comments slides the sheet up while the video shrinks to the top in the same motion, and closing (drag down or back) slides it back down while the video grows to full screen — one shared animation instead of two fighting ones, with overlays fading in step
+- Shorts comment sheet is cleaner, YouTube-style: no sort-category chips (Top/Newest) and no cross (close) button — drag the sheet down or press back to close; the regular video player's comment sheet is unchanged
 - Shorts are back, YouTube-style: a Shorts icon sits in the bottom navigation bar directly right of Home, opening a full-screen vertical Shorts player (swipe up/down, tap to pause, mute, like/dislike, share, progress bar, channel + title overlay)
 - Shorts tab plays the interest-based algorithmic feed; channel pages show a Shorts tab and Shorts shelves, the Subscriptions page shows a Shorts strip of your subscribed channels, and search results show a Shorts strip for the searched topic (tapping any Short opens the matching queue and continues into recommendations)
 - Focus mode has no Shorts anywhere: no Shorts tab in the navigation bar, no Shorts player (Shorts open in the regular player), no Shorts tab/shelves on channel pages, no Shorts strip in search results or Subscriptions, no Shorts in History/Library

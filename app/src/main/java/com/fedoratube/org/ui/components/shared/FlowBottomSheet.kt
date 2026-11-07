@@ -2,6 +2,8 @@ package com.fedoratube.org.ui.components.shared
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.AnimationSpec
+import androidx.compose.animation.core.AnimationVector1D
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -111,6 +113,13 @@ fun rememberFlowBottomSheetState(): FlowBottomSheetState = remember { FlowBottom
  * @param header drawn above [content] and handed the drag modifier, so a title row drags the sheet
  *   like the handle does. The slot owns the drag handle; when it is null the sheet draws a bare
  *   M3 handle.
+ * @param externalProgress when supplied, the host owns the 0..1 progress: the sheet does not run
+ *   its own enter animation, and drag/back dismissal animates this same value to 0 before calling
+ *   [onDismiss]. A host that animates something else from the same value (Shorts shrinks its
+ *   video as comments rise) therefore stays in perfect sync on open, close, drag and back, with
+ *   one animation driving everything instead of two springs fighting.
+ * @param animationSpec the enter/exit/drag-snap spring; the host passes the same spec it animates
+ *   [externalProgress] with, so a drag that snaps back feels identical to a programmatic open.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -129,6 +138,8 @@ fun FlowBottomSheet(
     onProgressChange: (Float) -> Unit = {},
     onVisibleHeightChange: (Float) -> Unit = {},
     header: (@Composable ColumnScope.(dragModifier: Modifier) -> Unit)? = null,
+    externalProgress: Animatable<Float, AnimationVector1D>? = null,
+    animationSpec: AnimationSpec<Float> = sheetSpring(),
     content: @Composable ColumnScope.() -> Unit,
 ) {
     val scope = rememberCoroutineScope()
@@ -139,14 +150,16 @@ fun FlowBottomSheet(
     val collapsedHeightPx = with(LocalDensity.current) { collapsedHeight.toPx() }.coerceAtLeast(0f)
     val latestCollapsedHeightPx by rememberUpdatedState(collapsedHeightPx)
 
-    val progress = remember { Animatable(0f) }
+    val internalProgress = remember { Animatable(0f) }
+    val progress = externalProgress ?: internalProgress
+    val latestAnimationSpec by rememberUpdatedState(animationSpec)
     var sheetHeightPx by remember { mutableIntStateOf(0) }
     var isAnimatingOut by remember { mutableStateOf(false) }
 
     fun dragRangePx(heightPx: Float): Float = (heightPx - collapsedHeightPx.coerceAtMost(heightPx)).coerceAtLeast(1f)
 
     fun animateIn() {
-        scope.launch { progress.animateTo(targetValue = 1f, animationSpec = sheetSpring()) }
+        scope.launch { progress.animateTo(targetValue = 1f, animationSpec = latestAnimationSpec) }
     }
 
     fun animateOut(after: () -> Unit = {}) {
@@ -158,19 +171,20 @@ fun FlowBottomSheet(
         }
         isAnimatingOut = true
         scope.launch {
-            progress.animateTo(targetValue = 0f, animationSpec = sheetSpring())
+            progress.animateTo(targetValue = 0f, animationSpec = latestAnimationSpec)
             latestOnDismiss()
             after()
         }
     }
 
     LaunchedEffect(expandedHeight, collapsedHeight, dismissible) {
+        if (externalProgress != null) return@LaunchedEffect
         if (isAnimatingOut) return@LaunchedEffect
         if (!dismissible) {
             progress.snapTo(1f)
             return@LaunchedEffect
         }
-        progress.animateTo(targetValue = 1f, animationSpec = sheetSpring())
+        progress.animateTo(targetValue = 1f, animationSpec = latestAnimationSpec)
     }
 
     LaunchedEffect(Unit) {

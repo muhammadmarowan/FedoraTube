@@ -8,6 +8,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.AnimationSpec
+import androidx.compose.animation.core.AnimationVector1D
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -58,6 +63,12 @@ fun FlowCommentsBottomSheet(
     onSheetProgressChange: (Float) -> Unit = {},
     dismissOnOutsideTap: Boolean = false,
     shape: androidx.compose.ui.graphics.Shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
+    // Shorts passes both false: no sort-category chips and no cross (close) button — the sheet
+    // closes by dragging it down or pressing back, exactly like YouTube Shorts comments.
+    showSortChips: Boolean = true,
+    showCloseButton: Boolean = true,
+    externalProgress: Animatable<Float, AnimationVector1D>? = null,
+    animationSpec: AnimationSpec<Float> = spring(dampingRatio = Spring.DampingRatioNoBouncy, stiffness = Spring.StiffnessLow),
     modifier: Modifier = Modifier,
 ) {
     val sheetState = rememberFlowBottomSheetState()
@@ -78,6 +89,8 @@ fun FlowCommentsBottomSheet(
         shape = shape,
         containerColor = MaterialTheme.colorScheme.surface,
         onProgressChange = onSheetProgressChange,
+        externalProgress = externalProgress,
+        animationSpec = animationSpec,
         header = { dragModifier ->
             // Not FlowSheetHeader: the sort chips sit under the title row, inside the same padding
             // and above the divider, which no header parameter can express.
@@ -88,6 +101,8 @@ fun FlowCommentsBottomSheet(
                 onTimedChange = onTimedChange,
                 onFilterChanged = onFilterChanged,
                 onClose = { sheetState.dismiss() },
+                showSortChips = showSortChips,
+                showCloseButton = showCloseButton,
                 dragModifier = dragModifier,
             )
         },
@@ -125,6 +140,8 @@ private fun CommentsSheetHeader(
     onFilterChanged: (CommentSortFilter) -> Unit,
     onClose: () -> Unit,
     dragModifier: Modifier,
+    showSortChips: Boolean = true,
+    showCloseButton: Boolean = true,
 ) {
     Column(modifier = dragModifier) {
         Box(
@@ -161,21 +178,25 @@ private fun CommentsSheetHeader(
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
-                Spacer(modifier = Modifier.weight(1f))
-                IconButton(
-                    onClick = onClose,
-                    modifier = Modifier.size(40.dp),
-                ) {
-                    Icon(Icons.Default.Close, contentDescription = stringResource(R.string.close))
+                if (showCloseButton) {
+                    Spacer(modifier = Modifier.weight(1f))
+                    IconButton(
+                        onClick = onClose,
+                        modifier = Modifier.size(40.dp),
+                    ) {
+                        Icon(Icons.Default.Close, contentDescription = stringResource(R.string.close))
+                    }
                 }
             }
-            CommentSortChips(
-                selected = selectedFilter,
-                onSelect = onFilterChanged,
-                timedOnly = timedOnly,
-                onTimedChange = onTimedChange,
-                modifier = Modifier.padding(top = 2.dp),
-            )
+            if (showSortChips) {
+                CommentSortChips(
+                    selected = selectedFilter,
+                    onSelect = onFilterChanged,
+                    timedOnly = timedOnly,
+                    onTimedChange = onTimedChange,
+                    modifier = Modifier.padding(top = 2.dp),
+                )
+            }
         }
         HorizontalDivider(
             color =

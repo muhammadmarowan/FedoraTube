@@ -1,12 +1,9 @@
 package com.fedoratube.org.ui.screens.shorts
 
 import android.content.Intent
-import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.spring
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -18,6 +15,7 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -50,10 +48,12 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.input.pointer.pointerInput
@@ -87,6 +87,7 @@ import com.fedoratube.org.ui.components.shared.VideoThumbnailImage
 import com.fedoratube.org.ui.screens.shorts.ShortsPlayback.resolveMediaSource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 /**
@@ -118,6 +119,40 @@ fun ShortsScreen(
     val commentsState by viewModel.commentsState.collectAsStateWithLifecycle()
     val savedIds by viewModel.savedIds.collectAsStateWithLifecycle()
     var showComments by remember { mutableStateOf(false) }
+
+    // One animation drives BOTH the video shrinking up and the comments sheet sliding up — and
+    // back, in perfect sync. Previously the video used its own Dp spring while the sheet used a
+    // second spring (and on close the sheet was unmounted instantly with no exit animation at
+    // all), so the two drifted apart and dropped frames. Now:
+    // - a single Animatable (0 = closed, 1 = open) is shared with FlowBottomSheet via
+    //   externalProgress, whose slide is a GPU graphicsLayer translation (no recomposition), and
+    // - the video container height is a plain fillMaxHeight fraction of that same value, with the
+    //   overlays fading through graphicsLayer alpha instead of separate AnimatedVisibility layers.
+    // A spring (not a fixed tween) keeps velocity when the user reverses mid-animation — re-tapping
+    // comment, or dragging the sheet half-way and letting go, turns around smoothly instead of
+    // restarting. The same spec is handed to the sheet, so drag-snap-back matches too.
+    val commentsProgress = remember { Animatable(0f) }
+    val commentsAnimationSpec =
+        remember {
+            spring<Float>(dampingRatio = Spring.DampingRatioNoBouncy, stiffness = Spring.StiffnessMedium)
+        }
+    val commentsScope = rememberCoroutineScope()
+    fun openCommentsSheet(item: ShortItem) {
+        viewModel.openComments(item.videoId)
+        if (!showComments) {
+            showComments = true
+            GlobalPlayerState.setShortsCommentsOpen(true)
+        }
+        commentsScope.launch { commentsProgress.animateTo(1f, commentsAnimationSpec) }
+    }
+
+    // Called by the sheet only AFTER it has animated externalProgress back to 0 (drag-down or
+    // back press), so the video is already full-height again when the sheet unmounts — no jump.
+    fun closeCommentsSheet() {
+        showComments = false
+        viewModel.closeComments()
+        GlobalPlayerState.setShortsCommentsOpen(false)
+    }
 
     if (isFocusModeEnabled) {
         Box(
@@ -237,19 +272,19 @@ fun ShortsScreen(
                 .background(Color.Black),
     ) {
         val totalHeight = maxHeight
-        val videoHeight by animateDpAsState(
-            targetValue = if (showComments) totalHeight * 0.35f else totalHeight,
-            animationSpec = spring(dampingRatio = Spring.DampingRatioNoBouncy, stiffness = Spring.StiffnessMediumLow),
-            label = "shorts_video_height",
-        )
+        // 0 when closed, 1 when comments fully open; video occupies the top 35% at 1.
+        val commentsOpenFraction = commentsProgress.value
+        val videoHeightFraction = 1f - commentsOpenFraction * 0.65f
 
-        // Video container: fills the full screen normally; shrinks to the top 35%
-        // when comments open, keeping playback active letterboxed in the top view.
+        // Video container: fills the full screen normally; shrinks to the top 35% as the same
+        // commentsProgress value that slides the sheet up, keeping playback active letterboxed
+        // in the top view. fillMaxHeight fraction (not an animated Dp) keeps the per-frame work
+        // to one layout fraction, and overlays below fade on the GPU instead of re-laying-out.
         Box(
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .height(videoHeight)
+                    .fillMaxHeight(videoHeightFraction)
                     .align(Alignment.TopCenter)
                     .background(Color.Black),
         ) {
@@ -353,11 +388,15 @@ fun ShortsScreen(
                                             )
                                         }
                                     }
-                                    AnimatedVisibility(
-                                        visible = !showComments,
-                                        enter = fadeIn(),
-                                        exit = fadeOut(),
-                                    ) {
+                                    // Fades with the same progress as the sheet/video (GPU alpha),
+                                    // so it never pops or lags a frame behind the resize.
+                                    if (commentsOpenFraction < 1f) {
+                                        Box(
+                                            modifier =
+                                                Modifier
+                                                    .fillMaxSize()
+                                                    .graphicsLayer { alpha = 1f - commentsOpenFraction },
+                                        ) {
                                         ShortsOverlay(
                                             item = item,
                                             liked = item.videoId in likedIds.value,
@@ -368,11 +407,7 @@ fun ShortsScreen(
                                                 viewModel.onLikeToggled(item.videoId, nowLiked)
                                             },
                                             onSave = { viewModel.toggleSave(item) },
-                                            onComments = {
-                                                viewModel.openComments(item.videoId)
-                                                showComments = true
-                                                GlobalPlayerState.setShortsCommentsOpen(true)
-                                            },
+                                            onComments = { openCommentsSheet(item) },
                                             onChannelClick = { onChannelClick(item.channelId) },
                                             onShare = {
                                                 val intent =
@@ -388,32 +423,36 @@ fun ShortsScreen(
                                             navigationBottom = navigationBottom,
                                             modifier = Modifier.fillMaxSize(),
                                         )
+                                        }
                                     }
                                 }
                             }
                         }
-                        AnimatedVisibility(
-                            visible = !showComments,
-                            enter = fadeIn(),
-                            exit = fadeOut(),
-                            modifier =
-                                Modifier
-                                    .align(Alignment.BottomCenter)
-                                    .fillMaxWidth()
-                                    .padding(bottom = navigationBottom),
-                        ) {
-                            ShortsProgressBar(
-                                player = player,
-                                modifier = Modifier.fillMaxWidth(),
-                            )
+                        // Progress bar + top controls fade on the same GPU alpha as the overlay,
+                        // instead of their own fade animations lagging the video resize.
+                        if (commentsOpenFraction < 1f) {
+                            Box(
+                                modifier =
+                                    Modifier
+                                        .align(Alignment.BottomCenter)
+                                        .fillMaxWidth()
+                                        .padding(bottom = navigationBottom)
+                                        .graphicsLayer { alpha = 1f - commentsOpenFraction },
+                            ) {
+                                ShortsProgressBar(
+                                    player = player,
+                                    modifier = Modifier.fillMaxWidth(),
+                                )
+                            }
                         }
                         // Floating top controls over the video (no app-name bar).
-                        AnimatedVisibility(
-                            visible = !showComments,
-                            enter = fadeIn(),
-                            exit = fadeOut(),
-                            modifier = Modifier.align(Alignment.TopCenter),
-                        ) {
+                        if (commentsOpenFraction < 1f) {
+                            Box(
+                                modifier =
+                                    Modifier
+                                        .align(Alignment.TopCenter)
+                                        .graphicsLayer { alpha = 1f - commentsOpenFraction },
+                            ) {
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
                                 modifier =
@@ -437,6 +476,7 @@ fun ShortsScreen(
                                     Icon(Icons.Outlined.Search, contentDescription = stringResource(R.string.search), tint = Color.White)
                                 }
                             }
+                            }
                         }
                         if (uiState.isLoadingMore && !showComments) {
                             Box(
@@ -452,16 +492,14 @@ fun ShortsScreen(
         }
 
         // YouTube-Shorts style: comments sheet occupies bottom ~65% while video
-        // continues playing smoothly in the top 35%.
+        // continues playing smoothly in the top 35%. Same progress value drives both, so
+        // opening AND closing (drag-down / back) move video + sheet together frame-by-frame.
+        // No sort-category chips and no cross button here — drag down or press back to close.
         if (showComments && commentsState.videoId.isNotBlank()) {
             FlowCommentsBottomSheet(
                 comments = commentsState.comments,
                 isLoading = commentsState.isLoading,
-                onDismiss = {
-                    showComments = false
-                    viewModel.closeComments()
-                    GlobalPlayerState.setShortsCommentsOpen(false)
-                },
+                onDismiss = { closeCommentsSheet() },
                 isLoadingMore = commentsState.isLoadingMore,
                 onLoadMore = viewModel::loadMoreComments,
                 hasMore = commentsState.hasMore,
@@ -470,6 +508,10 @@ fun ShortsScreen(
                 onAvatarClick = { channelId -> onChannelClick(channelId) },
                 expandedHeight = totalHeight * 0.65f,
                 dismissOnOutsideTap = false,
+                showSortChips = false,
+                showCloseButton = false,
+                externalProgress = commentsProgress,
+                animationSpec = commentsAnimationSpec,
             )
         }
     }

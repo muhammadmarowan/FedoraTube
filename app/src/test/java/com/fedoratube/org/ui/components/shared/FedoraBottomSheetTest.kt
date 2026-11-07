@@ -3,12 +3,15 @@ package com.fedoratube.org.ui.components.shared
 import android.app.Application
 import android.content.Context
 import androidx.activity.ComponentActivity
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.AnimationVector1D
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.platform.testTag
@@ -215,6 +218,42 @@ class FedoraBottomSheetTest {
         rule.waitForIdle()
 
         assertThat(progress.last()).isEqualTo(0f)
+    }
+
+    @Test
+    fun externallyDrivenSheetDoesNotAutoAnimateAndDismissesThroughTheHostProgress() {
+        // Shorts animates its video from the same progress value: the sheet must leave that
+        // value alone on enter, and dismissal must run it back to 0 before onDismiss.
+        var dismissed = false
+        val external = mutableListOf<Animatable<Float, AnimationVector1D>>()
+        rule.setContent {
+            MaterialTheme {
+                val progress = remember { Animatable(1f) }
+                external += progress
+                FlowBottomSheet(
+                    onDismiss = { dismissed = true },
+                    expandedHeight = 300.dp,
+                    externalProgress = progress,
+                ) {
+                    Box(
+                        Modifier
+                            .fillMaxWidth()
+                            .height(300.dp)
+                            .testTag(CONTENT_TAG),
+                    )
+                }
+            }
+        }
+        rule.waitForIdle()
+
+        assertThat(external.single().value).isEqualTo(1f)
+        assertThat(dismissed).isFalse()
+
+        rule.activityRule.scenario.onActivity { it.onBackPressedDispatcher.onBackPressed() }
+        rule.waitForIdle()
+
+        assertThat(dismissed).isTrue()
+        assertThat(external.single().value).isEqualTo(0f)
     }
 
     @Test
