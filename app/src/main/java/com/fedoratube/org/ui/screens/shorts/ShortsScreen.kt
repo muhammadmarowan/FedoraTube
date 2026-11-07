@@ -502,22 +502,25 @@ private fun ShortsOverlay(
     modifier: Modifier = Modifier,
 ) {
     Box(modifier = modifier) {
-        // The shadow now starts BELOW the timeline (only in the nav-bar strip), so
-        // channel/caption sit low and read via their own text shadow instead.
+        // A light shadow only behind the text rail block — no heavy black band.
         Box(
             modifier =
                 Modifier
                     .align(Alignment.BottomCenter)
                     .fillMaxWidth()
-                    .height(24.dp)
-                    .background(Color.Black.copy(alpha = 0.55f)),
+                    .height(120.dp)
+                    .background(
+                        androidx.compose.ui.graphics.Brush.verticalGradient(
+                            listOf(Color.Transparent, Color.Black.copy(alpha = 0.38f)),
+                        ),
+                    ),
         )
         Column(
             modifier =
                 Modifier
                     .align(Alignment.BottomStart)
                     .fillMaxWidth(fraction = 0.78f)
-                    .padding(start = 12.dp, bottom = 4.dp, end = 8.dp),
+                    .padding(start = 12.dp, bottom = 2.dp, end = 8.dp),
         ) {
             if (item.channelName.isNotBlank()) {
                 Row(
@@ -572,24 +575,6 @@ private fun ShortsOverlay(
                                 ),
                         ),
                     maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
-                )
-            }
-            if (!item.soundTitle.isNullOrBlank()) {
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = item.soundTitle,
-                    color = Color.White.copy(alpha = 0.85f),
-                    style =
-                        MaterialTheme.typography.bodySmall.copy(
-                            shadow =
-                                androidx.compose.ui.graphics.Shadow(
-                                    color = Color.Black.copy(alpha = 0.8f),
-                                    blurRadius = 6f,
-                                    offset = androidx.compose.ui.geometry.Offset(1f, 1f),
-                                ),
-                        ),
-                    maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
             }
