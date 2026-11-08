@@ -217,9 +217,6 @@ fun NavGraphBuilder.flowAppGraph(
                 navController.navigate("playlist/${PlaylistRepository.WATCH_LATER_ID}")
             },
             onNavigateToSavedShorts = {},
-            onNavigateToDownloads = {
-                navController.navigate("downloads")
-            },
             onNavigateToNotes = {
                 navController.navigate("notes")
             },
@@ -510,6 +507,7 @@ fun NavGraphBuilder.flowAppGraph(
 
         com.fedoratube.org.ui.screens.library.DownloadsScreen(
             isTabRoot = true,
+            onSearchClick = { navController.navigate(com.fedoratube.org.ui.components.layout.navigation.FlowTab.Search.route) },
             onBackClick = { navController.popBackStack() },
             onVideoClick = { videos, index ->
                 val videoList = videos.map { it.video }

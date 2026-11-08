@@ -1,10 +1,7 @@
 package com.fedoratube.org.ui.screens.subscriptions
 
 import android.content.Intent
-import android.net.Uri
-import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.BackHandler
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,7 +14,6 @@ import androidx.compose.material.icons.automirrored.filled.Sort
 import androidx.compose.material.icons.automirrored.filled.ViewList
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.GridView
-import androidx.compose.material.icons.filled.Upload
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.height
 import androidx.compose.material.icons.outlined.Notifications
@@ -111,16 +107,6 @@ fun SubscriptionsScreen(
     var showGroupsDialog by remember { mutableStateOf(false) }
     var showCreateGroupDialog by remember { mutableStateOf(false) }
     var editingGroup by remember { mutableStateOf<SubscriptionGroup?>(null) }
-
-    val importLauncher =
-        rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
-            uri?.let {
-                viewModel.importNewPipeBackup(it)
-                scope.launch {
-                    snackbarHostState.showSnackbar(context.getString(R.string.importing_from_backup))
-                }
-            }
-        }
 
     LaunchedEffect(viewModel) { viewModel.ensureStarted() }
     LaunchedEffect(viewModel) { viewModel.importMessages.collect { snackbarHostState.showSnackbar(it) } }
@@ -223,12 +209,6 @@ fun SubscriptionsScreen(
                                 }
                             }
                         }
-                        IconButton(onClick = { importLauncher.launch("application/json") }) {
-                            Icon(
-                                imageVector = Icons.Default.Upload,
-                                contentDescription = stringResource(R.string.import_newpipe_backup),
-                            )
-                        }
                     },
                 )
             } else {
@@ -284,12 +264,18 @@ fun SubscriptionsScreen(
                 modifier
                     .fillMaxSize()
                     .padding(padding)
+                    // No category swipe while managing subs (All channels / Music subs):
+                    // a horizontal swipe there must not jump to the Music category page.
                     .then(
-                        com.fedoratube.org.ui.components.layout.navigation.rememberCategorySwipe(
-                            tabs = topCategoryTabs,
-                            selectedTab = com.fedoratube.org.ui.components.layout.navigation.FlowTab.Subscriptions,
-                            onCategorySelected = onCategorySelected,
-                        ),
+                        if (isManagingSubs) {
+                            Modifier
+                        } else {
+                            com.fedoratube.org.ui.components.layout.navigation.rememberCategorySwipe(
+                                tabs = topCategoryTabs,
+                                selectedTab = com.fedoratube.org.ui.components.layout.navigation.FlowTab.Subscriptions,
+                                onCategorySelected = onCategorySelected,
+                            )
+                        },
                     ),
         ) {
             AnimatedContent(targetState = isManagingSubs, label = "subscriptionsMode") { manageMode ->

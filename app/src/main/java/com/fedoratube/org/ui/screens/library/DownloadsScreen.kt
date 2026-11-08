@@ -19,6 +19,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Checklist
 import androidx.compose.material.icons.filled.SelectAll
 import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -49,10 +50,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.fedoratube.org.R
+import com.fedoratube.org.data.local.PlayerPreferences
 import com.fedoratube.org.data.local.dao.DownloadCollectionSummary
 import com.fedoratube.org.data.music.DownloadedTrack
 import com.fedoratube.org.data.video.DownloadedVideo
 import com.fedoratube.org.data.video.storage.StorageAccess
+import com.fedoratube.org.ui.components.layout.topbar.FlowGlobalActionsMode
+import com.fedoratube.org.ui.components.layout.topbar.FlowGlobalActionsRow
 import com.fedoratube.org.ui.components.layout.topbar.FlowTopBar
 import com.fedoratube.org.ui.components.library.ActiveDownloadActions
 import com.fedoratube.org.ui.components.library.DownloadCollectionsShelf
@@ -82,10 +86,14 @@ fun DownloadsScreen(
     // arrow, the bar itself is how the viewer leaves. Selection mode still uses back to
     // exit selection.
     isTabRoot: Boolean = false,
+    onSearchClick: () -> Unit = {},
     viewModel: DownloadsViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    val isFocusModeEnabled by
+        remember(context) { PlayerPreferences(context).focusModeEnabled }
+            .collectAsStateWithLifecycle(initialValue = false)
     val snackbarHostState = remember { SnackbarHostState() }
     var access by remember { mutableStateOf(StorageAccess.read(context)) }
     var recoveryDismissed by rememberSaveable { mutableStateOf(false) }
@@ -151,7 +159,21 @@ fun DownloadsScreen(
                     } else {
                         stringResource(R.string.downloads_title)
                     },
-                onBack = if (selectionMode) exitSelection else if (isTabRoot) null else onBackClick,
+                // Focus mode gets a back arrow instead of a tab root (and no notification or
+                // search icon); selection mode always uses back to exit selection.
+                onBack =
+                    if (selectionMode) {
+                        exitSelection
+                    } else if (isFocusModeEnabled) {
+                        onBackClick
+                    } else if (isTabRoot) {
+                        null
+                    } else {
+                        onBackClick
+                    },
+                // Hand-rendered so the search icon can sit AFTER the notifications action:
+                // notifications, then search.
+                globalActions = FlowGlobalActionsMode.None,
                 actions = {
                     if (selectionMode) {
                         if (selectedIds.isNotEmpty()) {
@@ -162,9 +184,17 @@ fun DownloadsScreen(
                         IconButton(onClick = { selectedIds = if (selectedIds.size == shownIds.size) emptySet() else shownIds.toSet() }) {
                             Icon(Icons.Default.SelectAll, contentDescription = stringResource(R.string.select_all))
                         }
-                    } else if (shownIds.isNotEmpty()) {
-                        IconButton(onClick = { selectionMode = true }) {
-                            Icon(Icons.Default.Checklist, contentDescription = stringResource(R.string.select_videos))
+                    } else {
+                        if (!isFocusModeEnabled) {
+                            FlowGlobalActionsRow()
+                            IconButton(onClick = onSearchClick) {
+                                Icon(Icons.Outlined.Search, contentDescription = stringResource(R.string.search))
+                            }
+                        }
+                        if (shownIds.isNotEmpty()) {
+                            IconButton(onClick = { selectionMode = true }) {
+                                Icon(Icons.Default.Checklist, contentDescription = stringResource(R.string.select_videos))
+                            }
                         }
                     }
                 },

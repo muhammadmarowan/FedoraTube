@@ -139,7 +139,7 @@ fun HistoryScreen(
             )
 
             HistoryFilterRow(
-                shortsEnabled = false,
+                shortsEnabled = uiState.shortsEnabled,
                 selectedFilter = contentFilter,
                 onFilterSelected = viewModel::setContentFilter,
                 selectedSort = sortOrder,

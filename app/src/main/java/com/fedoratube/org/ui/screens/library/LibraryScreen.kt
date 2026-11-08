@@ -66,7 +66,6 @@ fun LibraryScreen(
     onNavigateToLikedMusic: () -> Unit,
     onNavigateToWatchLater: () -> Unit,
     onNavigateToSavedShorts: () -> Unit = {},
-    onNavigateToDownloads: () -> Unit,
     onNavigateToLocalMedia: () -> Unit = {},
     onNavigateToNotes: () -> Unit,
     onManageData: () -> Unit = {},
@@ -153,12 +152,7 @@ fun LibraryScreen(
                         subtitle = LibrarySection.WATCH_LATER.subtitle(counts),
                         onClick = onNavigateToWatchLater,
                     )
-                    LibraryNavigationRow(
-                        icon = LibrarySection.DOWNLOADS.icon,
-                        title = LibrarySection.DOWNLOADS.title,
-                        subtitle = LibrarySection.DOWNLOADS.subtitle(counts),
-                        onClick = onNavigateToDownloads,
-                    )
+                    // Downloads lives in its own bottom-bar tab next to Shorts now.
                     if (notes != null && notes > 0) {
                         LibraryNavigationRow(
                             icon = LibrarySection.NOTES.icon,

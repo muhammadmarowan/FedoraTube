@@ -130,9 +130,9 @@ class HistoryViewModel
 
         init {
             viewModelScope.launch {
-                shortsContentFilter.enabled.collect { _ ->
-                    _uiState.update { it.copy(shortsEnabled = false) }
-                    if (_contentFilter.value == HistoryContentFilter.Shorts) {
+                shortsContentFilter.enabled.collect { enabled ->
+                    _uiState.update { it.copy(shortsEnabled = enabled) }
+                    if (!enabled && _contentFilter.value == HistoryContentFilter.Shorts) {
                         _contentFilter.value = HistoryContentFilter.All
                     }
                 }
@@ -142,7 +142,9 @@ class HistoryViewModel
                 _uiState.update { it.copy(isLoading = true) }
                 viewHistory
                     .getAllHistory()
-                    .map { history -> history.filterNot { it.isShort } }
+                    // Watched Shorts belong in History too (their own row + Shorts filter,
+                    // like YouTube) — unless the viewer turned Shorts content off.
+                    .map { history -> if (_uiState.value.shortsEnabled) history else history.filterNot { it.isShort } }
                     .collect { history ->
                         val enriched = enrichFromDatabase(history)
                         val shortVideos = loadShortVideos(enriched)
