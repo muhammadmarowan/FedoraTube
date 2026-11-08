@@ -5,14 +5,19 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.only
+import androidx.compose.foundation.layout.windowInsetsBottomHeight
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ShortNavigationBarDefaults
 import androidx.compose.material3.WideNavigationRailDefaults
@@ -53,6 +58,11 @@ fun flowUsesNavigationRail(): Boolean = LocalWindowSizeClass.current.let { it.is
  *
  * The bar overlays the content, so callers reserve [onBarHeightChanged] themselves. The rail takes
  * its own column; [onRailWidthChanged] is only for overlays drawn outside this layout.
+ *
+ * [showGestureScrim] paints the gesture (home indicator) strip in the page's background colour
+ * over the content: the bar covers that strip while it is shown, and without this the content
+ * would slide under the white home line the moment the bar hides on scroll — YouTube keeps that
+ * strip opaque so nothing ever appears below the line.
  */
 @Composable
 fun FlowNavigationChrome(
@@ -62,6 +72,7 @@ fun FlowNavigationChrome(
     barVisible: Boolean,
     railVisible: Boolean,
     modifier: Modifier = Modifier,
+    showGestureScrim: Boolean = false,
     onBarHeightChanged: (Dp) -> Unit = {},
     onRailWidthChanged: (Dp) -> Unit = {},
     content: @Composable BoxScope.() -> Unit,
@@ -98,6 +109,19 @@ fun FlowNavigationChrome(
         ) {
             content()
             if (!usesRail) {
+                if (showGestureScrim) {
+                    // Opaque gesture (home indicator) strip over the content: while the bar is
+                    // shown it sits under the bar, and once the bar hides on scroll it keeps the
+                    // band below the white home line clear, the way YouTube does.
+                    Box(
+                        modifier =
+                            Modifier
+                                .align(Alignment.BottomCenter)
+                                .fillMaxWidth()
+                                .windowInsetsBottomHeight(WindowInsets.navigationBars)
+                                .background(MaterialTheme.colorScheme.background),
+                    )
+                }
                 NavigationBarSlot(
                     tabs = tabs,
                     selectedTab = selectedTab,

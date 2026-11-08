@@ -479,6 +479,11 @@ fun FlowApp(
             },
             barVisible = showBottomNav && navScrollState.isBarVisible,
             railVisible = isNavigationRailVisible,
+            // The bar covers the gesture strip while it is up; this keeps the strip painted over
+            // the content everywhere the bar does not (hidden on scroll, focus mode, routes with
+            // no bar) so nothing shows below the white home line — and never in PiP or under an
+            // expanded player, which draw to the bottom edge themselves.
+            showGestureScrim = !isInPipMode && !usesNavigationRail && !isPlayerCoveringContent,
             onBarHeightChanged = { navigationBarHeight = it },
             onRailWidthChanged = { navigationRailWidth = it },
         ) {
