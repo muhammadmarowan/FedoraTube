@@ -237,7 +237,7 @@ fun ShortsScreen(
     var firstFrameB by remember { mutableStateOf<String?>(null) }
     // Reveal is remembered per Short (first frame + a stable reported video size), not per
     // player, so the role flip at a swipe keeps the same surface without blinking.
-    var revealedIds by remember { mutableStateOf(setOf<String>()) }
+    var revealedIds by remember { mutableStateOf(setOf<String?>()) }
     var showBufferSpinner by remember { mutableStateOf(false) }
     val likedIds = remember { mutableStateOf(setOf<String>()) }
     val sourceCache = remember { mutableMapOf<String, MediaSource>() }
@@ -250,7 +250,10 @@ fun ShortsScreen(
     // flip in one step when the pager settles.
     val settledIndex = pagerState.settledPage
     val settledItem = items.getOrNull(settledIndex)
-    val nextItem = items.getOrNull(settledIndex + 1)
+    // The next Short the viewer will swipe to — preloaded into the non-main player right
+    // after the current one settles, so its first frame is already rendered before the next
+    // swipe even begins (swipe → poster → instant video, no black gap).
+    val preItem = items.getOrNull(currentIndex + 1)
     // Roles alternate with the settled page, so they are pure derivations of pager state —
     // never a state write, which could leave one frame bound to the wrong player.
     val mainPlayer = if (settledIndex % 2 == 0) playerA else playerB
@@ -314,8 +317,8 @@ fun ShortsScreen(
         mainPlayer.waitForStableVideoSize()
         revealedIds = revealedIds + id
     }
-    LaunchedEffect(prePlayer, nextItem?.videoId, preFirstFrame) {
-        val id = nextItem?.videoId ?: return@LaunchedEffect
+    LaunchedEffect(prePlayer, preItem?.videoId, preFirstFrame) {
+        val id = preItem?.videoId ?: return@LaunchedEffect
         if (preFirstFrame != id || id in revealedIds) return@LaunchedEffect
         prePlayer.waitForStableVideoSize()
         revealedIds = revealedIds + id
@@ -389,8 +392,8 @@ fun ShortsScreen(
     // Load the next Short into the PRELOADING player (volume 0, silent). Its first frame is
     // rendered ahead of the swipe, so when the pager settles the incoming page already shows
     // live video instead of a poster or a black frame.
-    LaunchedEffect(nextItem?.videoId) {
-        val item = nextItem ?: return@LaunchedEffect
+    LaunchedEffect(preItem?.videoId) {
+        val item = preItem ?: return@LaunchedEffect
         val cached = sourceCache[item.videoId]
         val mediaSource =
             cached

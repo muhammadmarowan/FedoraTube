@@ -17,6 +17,7 @@
 - Shorts video now starts right below the status bar in its true ratio, so no black gap sits above it — the leftover black area is only below the video, above the navigation bar
 - Shorts video fills the whole area from below the status bar to the navigation bar like YouTube, in one ratio with comments open and closed (no crop switch, no bounce on close), and swiping is smooth: the current Short keeps playing until the pager settles, then the next one plays straight away without flashing the old thumbnail or reloading
 - Switching Home ↔ Shorts is smooth now: entering Shorts no longer shows the video as a small centered strip that snaps to full size — the first frame fades in from the poster only once its size has settled, so entry is one clean fade with no shake
+- Swiping Short→Short is YouTube-smooth now: the next Short is preloaded with its first frame rendered before the swipe, so the pager shows poster → live video with no black screen or spinner, and nothing freezes mid-scroll
 - Shorts comments-open shrink restored: opening comments slides the video up, uncropped, to the top third again, and closing glides it back smoothly
 - Shorts bottom layout is back to the YouTube order: timeline at the navigation bar's top edge, caption above it, channel name + logo above the caption, and like/comment/save/share low at the bottom — with no "Save" text under the bookmark icon
 - Downloads is now its own bottom-bar tab right after Shorts (download icon): all downloaded videos and songs live there, one tap away — the Library tab stays too
