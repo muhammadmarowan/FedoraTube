@@ -78,6 +78,10 @@ fun DownloadsScreen(
     onOpenCollection: (DownloadCollectionSummary) -> Unit,
     onHomeClick: () -> Unit,
     modifier: Modifier = Modifier,
+    // True when hosted as a bottom-bar tab root (Downloads sits next to Shorts): no back
+    // arrow, the bar itself is how the viewer leaves. Selection mode still uses back to
+    // exit selection.
+    isTabRoot: Boolean = false,
     viewModel: DownloadsViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -147,7 +151,7 @@ fun DownloadsScreen(
                     } else {
                         stringResource(R.string.downloads_title)
                     },
-                onBack = if (selectionMode) exitSelection else onBackClick,
+                onBack = if (selectionMode) exitSelection else if (isTabRoot) null else onBackClick,
                 actions = {
                     if (selectionMode) {
                         if (selectedIds.isNotEmpty()) {

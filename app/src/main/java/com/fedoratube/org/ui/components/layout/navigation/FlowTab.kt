@@ -2,12 +2,14 @@ package com.fedoratube.org.ui.components.layout.navigation
 
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Explore
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.MusicNote
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Subscriptions
 import androidx.compose.material.icons.filled.VideoLibrary
+import androidx.compose.material.icons.outlined.Download
 import androidx.compose.material.icons.outlined.Explore
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.MusicNote
@@ -37,6 +39,7 @@ enum class FlowTab(
     Library(4, "library", R.string.nav_library),
     Search(5, "search", R.string.nav_search),
     Explore(6, "categories", R.string.nav_explore),
+    Downloads(7, "downloads", R.string.nav_downloads),
     ;
 
     companion object {
@@ -54,6 +57,7 @@ fun FlowTab.icon(selected: Boolean): ImageVector =
         FlowTab.Library -> if (selected) Icons.Filled.VideoLibrary else Icons.Outlined.VideoLibrary
         FlowTab.Search -> if (selected) Icons.Filled.Search else Icons.Outlined.Search
         FlowTab.Explore -> if (selected) Icons.Filled.Explore else Icons.Outlined.Explore
+        FlowTab.Downloads -> if (selected) Icons.Filled.Download else Icons.Outlined.Download
     }
 
 data class NavigationVisibility(
@@ -68,8 +72,8 @@ data class NavigationVisibility(
  * The bottom-bar tabs, in the user's order. Library cannot be hidden: every root
  * destination carries Notifications and Settings in its top bar, so one must always exist.
  * Subscriptions and Music live in the top category chips (see [topCategoryTabs]) and are
- * intentionally absent here, YouTube-style. Shorts always sits directly after Home,
- * whatever order was persisted before the tab existed.
+ * intentionally absent here, YouTube-style. Shorts always sits directly after Home and
+ * Downloads directly after Shorts, whatever order was persisted before they existed.
  */
 fun visibleFlowTabs(
     order: List<Int>,
@@ -79,23 +83,38 @@ fun visibleFlowTabs(
         buildSet {
             if (visibility.home) add(FlowTab.Home)
             if (visibility.shorts) add(FlowTab.Shorts)
+            add(FlowTab.Downloads)
             add(FlowTab.Library)
             if (visibility.search) add(FlowTab.Search)
             if (visibility.categories) add(FlowTab.Explore)
         }
-    val tabs =
+    var tabs =
         (order + DEFAULT_NAV_TAB_ORDER)
             .distinct()
             .mapNotNull(FlowTab::fromId)
             .filter { enabled.contains(it) }
-    if (FlowTab.Shorts !in tabs) return tabs
-    val withoutShorts = tabs - FlowTab.Shorts
-    val homeIndex = withoutShorts.indexOf(FlowTab.Home)
-    return if (homeIndex >= 0) {
-        withoutShorts.toMutableList().apply { add(homeIndex + 1, FlowTab.Shorts) }
-    } else {
-        listOf(FlowTab.Shorts) + withoutShorts
+    if (FlowTab.Shorts in tabs) {
+        val withoutShorts = tabs - FlowTab.Shorts
+        val homeIndex = withoutShorts.indexOf(FlowTab.Home)
+        tabs =
+            if (homeIndex >= 0) {
+                withoutShorts.toMutableList().apply { add(homeIndex + 1, FlowTab.Shorts) }
+            } else {
+                listOf(FlowTab.Shorts) + withoutShorts
+            }
     }
+    if (FlowTab.Downloads in tabs) {
+        val withoutDownloads = tabs - FlowTab.Downloads
+        val anchorIndex =
+            maxOf(withoutDownloads.indexOf(FlowTab.Shorts), withoutDownloads.indexOf(FlowTab.Home))
+        tabs =
+            if (anchorIndex >= 0) {
+                withoutDownloads.toMutableList().apply { add(anchorIndex + 1, FlowTab.Downloads) }
+            } else {
+                listOf(FlowTab.Downloads) + withoutDownloads
+            }
+    }
+    return tabs
 }
 
 /**

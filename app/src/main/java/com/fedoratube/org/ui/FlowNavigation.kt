@@ -509,6 +509,7 @@ fun NavGraphBuilder.flowAppGraph(
             )
 
         com.fedoratube.org.ui.screens.library.DownloadsScreen(
+            isTabRoot = true,
             onBackClick = { navController.popBackStack() },
             onVideoClick = { videos, index ->
                 val videoList = videos.map { it.video }
