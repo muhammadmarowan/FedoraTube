@@ -5,16 +5,13 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.only
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ShortNavigationBarDefaults
@@ -65,10 +62,6 @@ fun FlowNavigationChrome(
     barVisible: Boolean,
     railVisible: Boolean,
     modifier: Modifier = Modifier,
-    // Bar hidden by scrolling (not covered by a player): the bar's own background strip
-    // stays behind the system gesture pill, like YouTube, instead of the pill floating
-    // over the feed content.
-    scrollHiddenStrip: Boolean = false,
     onBarHeightChanged: (Dp) -> Unit = {},
     onRailWidthChanged: (Dp) -> Unit = {},
     content: @Composable BoxScope.() -> Unit,
@@ -110,7 +103,6 @@ fun FlowNavigationChrome(
                     selectedTab = selectedTab,
                     onTabSelected = onTabSelected,
                     visible = barVisible,
-                    scrollHiddenStrip = scrollHiddenStrip,
                     onHeightChanged = onBarHeightChanged,
                 )
             }
@@ -124,24 +116,11 @@ private fun BoxScope.NavigationBarSlot(
     selectedTab: FlowTab?,
     onTabSelected: (FlowTab) -> Unit,
     visible: Boolean,
-    scrollHiddenStrip: Boolean,
     onHeightChanged: (Dp) -> Unit,
 ) {
     val density = LocalDensity.current
     val bottomInsetPx = ShortNavigationBarDefaults.windowInsets.getBottom(density)
     val motion = MaterialTheme.motionScheme
-    // The bar's own background, always at the bottom when the bar is scroll-hidden, so the
-    // gesture pill lands on it instead of floating over the scrolling content.
-    if (scrollHiddenStrip && tabs.isNotEmpty()) {
-        Box(
-            modifier =
-                Modifier
-                    .align(Alignment.BottomCenter)
-                    .height(FlowNavigationDefaults.BarHeight + with(density) { bottomInsetPx.toDp() })
-                    .fillMaxWidth()
-                    .background(MaterialTheme.colorScheme.surface),
-        )
-    }
     AnimatedVisibility(
         visible = visible,
         modifier = Modifier.align(Alignment.BottomCenter),

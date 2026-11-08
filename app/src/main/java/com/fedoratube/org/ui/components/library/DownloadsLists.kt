@@ -22,8 +22,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.pulltorefresh.PullToRefreshState
-import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -38,7 +36,6 @@ import com.fedoratube.org.data.video.DownloadProgressUpdate
 import com.fedoratube.org.data.video.DownloadedVideo
 import com.fedoratube.org.ui.components.layout.flowBottomContentPadding
 import com.fedoratube.org.ui.components.shared.FlowEmptyState
-import com.fedoratube.org.ui.components.shared.FlowPullToRefreshBox
 import com.fedoratube.org.ui.components.shared.MediaKind
 import com.fedoratube.org.ui.components.shared.animateMediaGridItem
 
@@ -90,24 +87,17 @@ internal fun VideosDownloadsList(
     query: String,
     selection: LibrarySelection,
     activeActions: ActiveDownloadActions,
-    isRefreshing: Boolean,
-    onRefresh: () -> Unit,
     onVideoClick: (List<DownloadedVideo>, Int) -> Unit,
     onDelete: (id: String, title: String) -> Unit,
     onHomeClick: () -> Unit,
     modifier: Modifier = Modifier,
     header: (@Composable () -> Unit)? = null,
-    pullRefreshState: PullToRefreshState = rememberPullToRefreshState(),
 ) {
-    FlowPullToRefreshBox(
-        isRefreshing = isRefreshing,
-        onRefresh = onRefresh,
-        state = pullRefreshState,
-        modifier = modifier.fillMaxSize(),
-    ) {
+    // No pull-to-refresh in Downloads (viewer asked for none) — the list is live from the DB.
+    Box(modifier = modifier.fillMaxSize()) {
         if (totalCount == 0 && incomplete.isEmpty()) {
             DownloadsEmptyState(kind = MediaKind.Videos, onHomeClick = onHomeClick)
-            return@FlowPullToRefreshBox
+            return@Box
         }
         BoxWithConstraints(Modifier.fillMaxSize()) {
             val grid = remember(maxWidth) { libraryGridLayoutFor(maxWidth) }
@@ -167,23 +157,15 @@ internal fun MusicDownloadsList(
     query: String,
     selection: LibrarySelection,
     activeActions: ActiveDownloadActions,
-    isRefreshing: Boolean,
-    onRefresh: () -> Unit,
     onMusicClick: (List<DownloadedTrack>, Int) -> Unit,
     onHomeClick: () -> Unit,
     modifier: Modifier = Modifier,
     header: (@Composable () -> Unit)? = null,
-    pullRefreshState: PullToRefreshState = rememberPullToRefreshState(),
 ) {
-    FlowPullToRefreshBox(
-        isRefreshing = isRefreshing,
-        onRefresh = onRefresh,
-        state = pullRefreshState,
-        modifier = modifier.fillMaxSize(),
-    ) {
+    Box(modifier = modifier.fillMaxSize()) {
         if (totalCount == 0 && incomplete.isEmpty()) {
             DownloadsEmptyState(kind = MediaKind.Music, onHomeClick = onHomeClick)
-            return@FlowPullToRefreshBox
+            return@Box
         }
         LazyVerticalGrid(
             columns = GridCells.Fixed(columns),
