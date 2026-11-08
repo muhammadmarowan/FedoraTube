@@ -12,6 +12,7 @@ import com.fedoratube.org.data.feed.openAtVideoId
 import com.fedoratube.org.data.local.PlayerPreferences
 import com.fedoratube.org.data.local.PlaylistRepository
 import com.fedoratube.org.data.local.SubscriptionRepository
+import com.fedoratube.org.data.local.ViewHistory
 import com.fedoratube.org.data.model.Comment
 import com.fedoratube.org.data.model.Video
 import com.fedoratube.org.data.model.distinctByNonBlankKey
@@ -84,6 +85,7 @@ class ShortsViewModel
         private val subscriptionRepository: SubscriptionRepository,
         private val playlistRepository: PlaylistRepository,
         private val youtubeRepository: YouTubeRepository,
+        private val viewHistory: ViewHistory,
     ) : ViewModel() {
         private val _uiState = MutableStateFlow(ShortsUiState())
         val uiState: StateFlow<ShortsUiState> = _uiState.asStateFlow()
@@ -167,6 +169,27 @@ class ShortsViewModel
                         }
                     }
                 }
+        }
+
+        /**
+         * Watching a Short writes a history row (isShort), like the regular player does on
+         * open — without this, watched Shorts never showed up in History at all. Blank
+         * fields (feed items arrive title-less) leave any richer row already on record,
+         * and History enriches stubs itself.
+         */
+        fun recordWatch(item: ShortItem) {
+            viewModelScope.launch {
+                runCatching {
+                    viewHistory.touchHistoryEntry(
+                        videoId = item.videoId,
+                        title = item.title,
+                        thumbnailUrl = item.posterUrl.orEmpty(),
+                        channelName = item.channelName,
+                        channelId = item.channelId,
+                        isShort = true,
+                    )
+                }
+            }
         }
 
         fun loadMore() {

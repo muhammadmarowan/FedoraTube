@@ -19,6 +19,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Checklist
 import androidx.compose.material.icons.filled.SelectAll
 import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.Refresh
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -28,6 +29,8 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -74,6 +77,7 @@ import com.fedoratube.org.ui.components.shared.MediaKind
 import com.fedoratube.org.ui.components.shared.dismissKeyboardOnPress
 import com.fedoratube.org.ui.components.shared.flowGridColumns
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DownloadsScreen(
     onBackClick: () -> Unit,
@@ -116,6 +120,10 @@ fun DownloadsScreen(
     var removingCollection by remember { mutableStateOf<DownloadCollectionSummary?>(null) }
     var selectionMode by rememberSaveable { mutableStateOf(false) }
     var selectedIds by rememberSaveable(stateSaver = SelectionSaver) { mutableStateOf(emptySet<String>()) }
+    // One pull-to-refresh state for both kind pages, kept at screen level: a state
+    // remembered inside a pager page is recreated when the page recomposes, which dropped
+    // the indicator mid-refresh and made pull-to-refresh look dead.
+    val pullRefreshState = rememberPullToRefreshState()
     val haptic = LocalHapticFeedback.current
     val focusManager = LocalFocusManager.current
     val exitSelection = {
@@ -191,6 +199,9 @@ fun DownloadsScreen(
                                 Icon(Icons.Outlined.Search, contentDescription = stringResource(R.string.search))
                             }
                         }
+                        IconButton(onClick = viewModel::rescan) {
+                            Icon(Icons.Outlined.Refresh, contentDescription = stringResource(R.string.action_refresh))
+                        }
                         if (shownIds.isNotEmpty()) {
                             IconButton(onClick = { selectionMode = true }) {
                                 Icon(Icons.Default.Checklist, contentDescription = stringResource(R.string.select_videos))
@@ -265,6 +276,7 @@ fun DownloadsScreen(
                                 activeActions = activeActions,
                                 isRefreshing = uiState.isScanning,
                                 onRefresh = viewModel::rescan,
+                                pullRefreshState = pullRefreshState,
                                 onVideoClick = onVideoClick,
                                 onDelete = { id, title -> pendingDeletion = PendingDeletion(setOf(id), title) },
                                 onHomeClick = onHomeClick,
@@ -286,6 +298,7 @@ fun DownloadsScreen(
                                 activeActions = activeActions,
                                 isRefreshing = uiState.isScanning,
                                 onRefresh = viewModel::rescan,
+                                pullRefreshState = pullRefreshState,
                                 onMusicClick = onMusicClick,
                                 onHomeClick = onHomeClick,
                             )

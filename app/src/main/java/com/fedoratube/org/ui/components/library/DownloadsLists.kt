@@ -22,6 +22,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshState
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -96,11 +97,12 @@ internal fun VideosDownloadsList(
     onHomeClick: () -> Unit,
     modifier: Modifier = Modifier,
     header: (@Composable () -> Unit)? = null,
+    pullRefreshState: PullToRefreshState = rememberPullToRefreshState(),
 ) {
     FlowPullToRefreshBox(
         isRefreshing = isRefreshing,
         onRefresh = onRefresh,
-        state = rememberPullToRefreshState(),
+        state = pullRefreshState,
         modifier = modifier.fillMaxSize(),
     ) {
         if (totalCount == 0 && incomplete.isEmpty()) {
@@ -171,11 +173,12 @@ internal fun MusicDownloadsList(
     onHomeClick: () -> Unit,
     modifier: Modifier = Modifier,
     header: (@Composable () -> Unit)? = null,
+    pullRefreshState: PullToRefreshState = rememberPullToRefreshState(),
 ) {
     FlowPullToRefreshBox(
         isRefreshing = isRefreshing,
         onRefresh = onRefresh,
-        state = rememberPullToRefreshState(),
+        state = pullRefreshState,
         modifier = modifier.fillMaxSize(),
     ) {
         if (totalCount == 0 && incomplete.isEmpty()) {

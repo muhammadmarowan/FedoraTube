@@ -407,6 +407,7 @@ internal fun ChannelContent(
                                         isSubscribed = isSubscribed,
                                         onSubscribeClick = { onSubscribeChannel(channel, true) },
                                         onUnsubscribeClick = { onSubscribeChannel(channel, false) },
+                                        showSubscribe = !isFocusModeEnabled,
                                     )
                                 },
                             ),
@@ -456,6 +457,7 @@ internal fun ChannelContent(
                     onManageGroups = onManageGroups.takeIf { uiState.isSubscribed },
                     note = channelNote,
                     onEditNote = onEditNote,
+                    showSubscribe = !isFocusModeEnabled,
                 )
             }
 

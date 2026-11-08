@@ -288,6 +288,7 @@ fun ShortsScreen(
         val item = currentItem ?: return@LaunchedEffect
         viewModel.enrichItem(item.videoId)
         viewModel.refreshSaved(item.videoId)
+        viewModel.recordWatch(item)
         paused = false
         player.volume = 1f
         player.repeatMode = Player.REPEAT_MODE_ALL

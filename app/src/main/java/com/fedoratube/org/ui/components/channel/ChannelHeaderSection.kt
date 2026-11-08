@@ -60,6 +60,8 @@ internal fun ChannelHeaderSection(
     onManageGroups: (() -> Unit)?,
     note: String?,
     onEditNote: (() -> Unit)?,
+    // Focus mode hides the whole subscribe system on channel pages.
+    showSubscribe: Boolean = true,
 ) {
     val bannerUrl = remember(header.bannerUrl) { ThumbnailUrlResolver.resolveChannelBanner(header.bannerUrl, targetWidth = 2048) }
     var showFullSizeAvatar by remember(header.id) { mutableStateOf(false) }
@@ -107,15 +109,17 @@ internal fun ChannelHeaderSection(
 
                     Spacer(modifier = Modifier.weight(1f))
 
-                    FlowSubscribeButton(
-                        isSubscribed = isSubscribed,
-                        isNotificationsEnabled = isNotificationsEnabled,
-                        onSubscribeClick = onSubscribeClick,
-                        onUnsubscribeClick = onUnsubscribeClick,
-                        onNotificationChange = onNotificationChange,
-                        onManageGroups = onManageGroups,
-                        onAddNote = onEditNote,
-                    )
+                    if (showSubscribe) {
+                        FlowSubscribeButton(
+                            isSubscribed = isSubscribed,
+                            isNotificationsEnabled = isNotificationsEnabled,
+                            onSubscribeClick = onSubscribeClick,
+                            onUnsubscribeClick = onUnsubscribeClick,
+                            onNotificationChange = onNotificationChange,
+                            onManageGroups = onManageGroups,
+                            onAddNote = onEditNote,
+                        )
+                    }
                 }
             }
 
@@ -143,15 +147,17 @@ internal fun ChannelHeaderSection(
 
                 Spacer(modifier = Modifier.weight(1f))
 
-                FlowSubscribeButton(
-                    isSubscribed = isSubscribed,
-                    isNotificationsEnabled = isNotificationsEnabled,
-                    onSubscribeClick = onSubscribeClick,
-                    onUnsubscribeClick = onUnsubscribeClick,
-                    onNotificationChange = onNotificationChange,
-                    onManageGroups = onManageGroups,
-                    onAddNote = onEditNote,
-                )
+                if (showSubscribe) {
+                    FlowSubscribeButton(
+                        isSubscribed = isSubscribed,
+                        isNotificationsEnabled = isNotificationsEnabled,
+                        onSubscribeClick = onSubscribeClick,
+                        onUnsubscribeClick = onUnsubscribeClick,
+                        onNotificationChange = onNotificationChange,
+                        onManageGroups = onManageGroups,
+                        onAddNote = onEditNote,
+                    )
+                }
             }
         }
 

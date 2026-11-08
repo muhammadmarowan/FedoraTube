@@ -41,6 +41,8 @@ internal fun ChannelRow(
     isSubscribed: Boolean? = null,
     onSubscribeClick: () -> Unit = {},
     onUnsubscribeClick: () -> Unit = {},
+    // Focus mode hides the whole subscribe system on channel pages.
+    showSubscribe: Boolean = true,
 ) {
     Row(
         modifier =
@@ -77,7 +79,7 @@ internal fun ChannelRow(
                 )
             }
         }
-        if (isSubscribed != null) {
+        if (isSubscribed != null && showSubscribe) {
             FlowSubscribeButton(
                 isSubscribed = isSubscribed,
                 onSubscribeClick = onSubscribeClick,

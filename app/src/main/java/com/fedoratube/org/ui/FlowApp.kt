@@ -478,6 +478,8 @@ fun FlowApp(
                 }
             },
             barVisible = showBottomNav && navScrollState.isBarVisible,
+            // Bar hidden only by scrolling: keep its background strip behind the gesture pill.
+            scrollHiddenStrip = showBottomNav && !navScrollState.isBarVisible && !usesNavigationRail,
             railVisible = isNavigationRailVisible,
             onBarHeightChanged = { navigationBarHeight = it },
             onRailWidthChanged = { navigationRailWidth = it },
