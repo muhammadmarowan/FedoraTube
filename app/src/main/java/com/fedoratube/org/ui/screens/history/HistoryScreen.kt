@@ -36,7 +36,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.fedoratube.org.R
 import com.fedoratube.org.data.local.VideoHistoryEntry
 import com.fedoratube.org.data.music.model.MusicTrack
-import com.fedoratube.org.data.feed.ShortsQueueSource
 import com.fedoratube.org.ui.components.layout.LocalFlowBottomInsets
 import com.fedoratube.org.ui.components.layout.floatAboveBottomChrome
 import com.fedoratube.org.ui.components.layout.topbar.FlowTopBar
@@ -55,7 +54,6 @@ private val SearchFieldPadding = PaddingValues(horizontal = 16.dp, vertical = 8.
 fun HistoryScreen(
     onVideoClick: (MusicTrack) -> Unit,
     onBackClick: () -> Unit,
-    onShortsQueue: (ShortsQueueSource) -> Unit = {},
     onMusicClick: (MusicTrack, List<MusicTrack>) -> Unit = { track, _ -> onVideoClick(track) },
     modifier: Modifier = Modifier,
     viewModel: HistoryViewModel = hiltViewModel(),
@@ -139,7 +137,6 @@ fun HistoryScreen(
             )
 
             HistoryFilterRow(
-                shortsEnabled = uiState.shortsEnabled,
                 selectedFilter = contentFilter,
                 onFilterSelected = viewModel::setContentFilter,
                 selectedSort = sortOrder,
@@ -181,10 +178,8 @@ fun HistoryScreen(
                 else -> {
                     HistoryList(
                         entries = displayEntries,
-                        shortVideos = uiState.shortVideos,
                         selectedFilter = contentFilter,
                         onVideoClick = onVideoClick,
-                        onShortClick = { row, tapped -> onShortsQueue(viewModel.shortsRowSource(row, tapped)) },
                         onMusicClick = onMusicClick,
                         onRemove = onRemove,
                     )

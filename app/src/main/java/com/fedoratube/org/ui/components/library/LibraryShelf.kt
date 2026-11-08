@@ -34,7 +34,6 @@ import com.fedoratube.org.data.model.Video
 import com.fedoratube.org.data.music.DownloadedTrack
 import com.fedoratube.org.data.music.model.MusicTrack
 import com.fedoratube.org.data.video.DownloadedVideo
-import com.fedoratube.org.ui.components.shared.MediaShortCard
 import com.fedoratube.org.ui.components.shared.ShimmerBone
 import com.fedoratube.org.ui.components.shared.ShortCardDefaults
 
@@ -228,21 +227,6 @@ internal fun LibraryMediaShelf(
                     )
                 }
             }
-        }
-    }
-}
-
-@Composable
-internal fun LibraryShortsShelf(
-    title: String,
-    icon: ImageVector,
-    shorts: List<Video>,
-    onTitleClick: () -> Unit,
-    onShortClick: (Video) -> Unit,
-) {
-    LibraryShelf(title = title, icon = icon, onTitleClick = onTitleClick) {
-        items(shorts, key = Video::id, contentType = { "short" }) { short ->
-            MediaShortCard(video = short, onClick = { onShortClick(short) }, removableFromSavedShorts = true)
         }
     }
 }

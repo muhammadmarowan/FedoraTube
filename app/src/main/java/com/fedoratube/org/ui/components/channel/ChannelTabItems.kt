@@ -34,8 +34,6 @@ import com.fedoratube.org.ui.components.rememberFeedGridLayout
 import com.fedoratube.org.ui.components.shared.FeedPagingFooter
 import com.fedoratube.org.ui.components.shared.FlowEmptyState
 import com.fedoratube.org.ui.components.shared.FlowLoadingIndicator
-import com.fedoratube.org.ui.components.shared.MediaShortCard
-import com.fedoratube.org.ui.components.shared.ShortCardDefaults
 import com.fedoratube.org.ui.components.shared.card.MediaVideoCard
 import com.fedoratube.org.ui.components.shared.card.VideoCardDefaults
 import com.fedoratube.org.ui.components.shared.card.VideoCardLayout
@@ -59,7 +57,6 @@ internal fun ChannelTabItems(
     contentPadding: PaddingValues,
     topInset: Dp,
     onVideoClick: (Video) -> Unit,
-    onShortClick: (String) -> Unit,
     onPlaylistClick: (String) -> Unit,
     onChannelClick: (String) -> Unit,
 ) {
@@ -82,7 +79,6 @@ internal fun ChannelTabItems(
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
         val feedLayout = rememberFeedGridLayout(maxWidth, columnPreference)
         val isVideos = kind == ChannelTabKind.Videos
-        val isShorts = kind == ChannelTabKind.Shorts
         val isLive = kind == ChannelTabKind.Live
         val plan =
             rememberFeedGridPlan(
@@ -98,7 +94,6 @@ internal fun ChannelTabItems(
         val sidePadding =
             when {
                 isVideos || isLive -> 0.dp
-                isShorts -> ShortCardDefaults.gridPadding(feedLayout)
                 else -> plan.horizontalPadding
             }
         val padding =
@@ -116,7 +111,6 @@ internal fun ChannelTabItems(
 
         val gridColumns =
             when {
-                isShorts -> GridCells.Adaptive(minSize = 120.dp)
                 isVideos || isLive -> GridCells.Fixed(1)
                 else -> GridCells.Fixed(1)
             }
@@ -126,8 +120,8 @@ internal fun ChannelTabItems(
             state = listState,
             modifier = Modifier.fillMaxSize(),
             contentPadding = padding,
-            horizontalArrangement = Arrangement.spacedBy(if (isShorts) 10.dp else 0.dp),
-            verticalArrangement = Arrangement.spacedBy(if (useRowCards) 0.dp else if (isShorts) 14.dp else 16.dp),
+            horizontalArrangement = Arrangement.spacedBy(0.dp),
+            verticalArrangement = Arrangement.spacedBy(if (useRowCards) 0.dp else 16.dp),
         ) {
             if (topGap != null) {
                 fullSpanItem(key = "top_gap") { Spacer(Modifier.height(topGap)) }
@@ -165,10 +159,12 @@ internal fun ChannelTabItems(
                     }
 
                     is FeedItem.ShortItem -> {
-                        MediaShortCard(
+                        MediaVideoCard(
                             video = item.video,
-                            onClick = { onShortClick(item.video.id) },
-                            modifier = Modifier.fillMaxWidth(),
+                            layout = VideoCardLayout.Stacked,
+                            showChannel = false,
+                            onClick = { onVideoClick(item.video) },
+                            useInternalPadding = false,
                         )
                     }
 

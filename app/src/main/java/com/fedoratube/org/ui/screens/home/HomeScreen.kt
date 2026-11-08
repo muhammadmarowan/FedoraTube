@@ -85,7 +85,6 @@ import com.fedoratube.org.data.local.HomeFeedColumns
 import com.fedoratube.org.data.local.PlayerPreferences
 import com.fedoratube.org.data.local.VideoHistoryEntry
 import com.fedoratube.org.data.model.Video
-import com.fedoratube.org.data.feed.ShortsQueueSource
 import com.fedoratube.org.player.DeepFlowManager
 import com.fedoratube.org.ui.TabScrollEventBus
 import com.fedoratube.org.ui.components.layout.LocalFlowBottomInsets
@@ -111,14 +110,12 @@ private const val MILLIS_PER_SECOND = 1000L
 @Composable
 fun HomeScreen(
     onVideoClick: (Video) -> Unit,
-    onShortClick: (ShortsQueueSource) -> Unit,
     onSearchClick: () -> Unit,
     onNavigateToSettings: () -> Unit = {},
     onNavigateToMusic: () -> Unit = {},
     onNavigateToDownloads: () -> Unit = {},
     onNotificationClick: () -> Unit = {},
     onNavigateToHistory: () -> Unit = {},
-    onOpenShortsFeed: () -> Unit = {},
     onPlayMix: (videos: List<Video>, title: String) -> Unit = { _, _ -> },
     topCategoryTabs: List<com.fedoratube.org.ui.components.layout.navigation.FlowTab> = emptyList(),
     onCategorySelected: (com.fedoratube.org.ui.components.layout.navigation.FlowTab) -> Unit = {},
@@ -331,10 +328,6 @@ fun HomeScreen(
                                     onEnrichChannelMetadata = viewModel::enrichChannelMetadataIfMissing,
                                     onContinueWatchingClick = { entry -> onVideoClick(entry.toResumeVideo()) },
                                     onContinueWatchingRemove = viewModel::removeContinueWatchingEntry,
-                                    onShortClick = { _, _ -> },
-                                    onSeeAllHistory = onNavigateToHistory,
-                                    onOpenShortsFeed = {},
-                                    onShortsShown = {},
                                     onRefresh = { viewModel.refreshFeed() },
                                     onRetryLoadMore = viewModel::retryLoadMore,
                                     footerMinVideos = 0,

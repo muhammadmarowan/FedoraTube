@@ -17,13 +17,10 @@ class ContentSettingsViewModel
         val homeFeed = preferences.homeFeedEnabled.asState(true)
         val refreshOnReselect = preferences.refreshHomeOnReselect.asState(true)
         val continueWatching = preferences.continueWatchingEnabled.asState(true)
-        val homeShortsShelf = preferences.homeShortsShelfEnabled.asState(true)
         val homeSubscriptions = preferences.homeSubscriptionsEnabled.asState(true)
         val hideWatchedHome = preferences.hideWatchedVideosFromHome.asState(false)
 
         val subsVideos = preferences.subscriptionShowVideos.asState(true)
-        val subsShorts = preferences.subscriptionShowShorts.asState(true)
-        val subsShortsShelf = preferences.shortsShelfEnabled.asState(true)
         val subsLive = preferences.subscriptionShowLive.asState(true)
         val subsCollaborations = preferences.subscriptionCollaborationsEnabled.asState(true)
         val hideWatchedSubs = preferences.hideWatchedVideosFromSubscriptions.asState(false)
@@ -31,9 +28,6 @@ class ContentSettingsViewModel
         val subsRefreshOnStartup = preferences.subscriptionRefreshOnStartup.asState(false)
         val subsCheckedCount = preferences.subscriptionShowCheckedVideoCount.asState(true)
 
-        val shortsContent = preferences.shortsContentEnabled.asState(true)
-        val channelShortsTab = preferences.channelShortsTabWhenHidden.asState(false)
-        val hideWatchedShorts = preferences.hideWatchedShorts.asState(true)
         val removeWatchedWatchLater = preferences.removeWatchedFromWatchLater.asState(false)
         val watchedThreshold = preferences.watchedThreshold.asState(WatchedThreshold.ALMOST_FINISHED)
         val sharedLinkAction = preferences.sharedLinkAction.asState(SharedLinkAction.ASK_WHILE_PLAYING)
@@ -49,17 +43,11 @@ class ContentSettingsViewModel
 
         fun setContinueWatching(value: Boolean) = write { preferences.setContinueWatchingEnabled(value) }
 
-        fun setHomeShortsShelf(value: Boolean) = write { preferences.setHomeShortsShelfEnabled(value) }
-
         fun setHomeSubscriptions(value: Boolean) = write { preferences.setHomeSubscriptionsEnabled(value) }
 
         fun setHideWatchedHome(value: Boolean) = write { preferences.setHideWatchedVideosFromHome(value) }
 
         fun setSubsVideos(value: Boolean) = write { preferences.setSubscriptionShowVideos(value) }
-
-        fun setSubsShorts(value: Boolean) = write { preferences.setSubscriptionShowShorts(value) }
-
-        fun setSubsShortsShelf(value: Boolean) = write { preferences.setShortsShelfEnabled(value) }
 
         fun setSubsLive(value: Boolean) = write { preferences.setSubscriptionShowLive(value) }
 
@@ -72,12 +60,6 @@ class ContentSettingsViewModel
         fun setSubsRefreshOnStartup(value: Boolean) = write { preferences.setSubscriptionRefreshOnStartup(value) }
 
         fun setSubsCheckedCount(value: Boolean) = write { preferences.setSubscriptionShowCheckedVideoCount(value) }
-
-        fun setShortsContent(value: Boolean) = write { preferences.setShortsContentEnabled(value) }
-
-        fun setChannelShortsTab(value: Boolean) = write { preferences.setChannelShortsTabWhenHidden(value) }
-
-        fun setHideWatchedShorts(value: Boolean) = write { preferences.setHideWatchedShorts(value) }
 
         fun setRemoveWatchedWatchLater(value: Boolean) = write { preferences.setRemoveWatchedFromWatchLater(value) }
 

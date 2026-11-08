@@ -4,8 +4,8 @@ import com.fedoratube.org.innertube.pages.channel.ChannelHeader
 import com.fedoratube.org.innertube.pages.channel.ChannelTabDescriptor
 import com.fedoratube.org.innertube.pages.channel.ChannelTabKind
 
-/** Search is already the magnifier in the filter bar; Store is a shop the app does not implement. */
-private val HIDDEN_TABS = setOf(ChannelTabKind.Search, ChannelTabKind.Store)
+/** Search is already the magnifier in the filter bar; Store is a shop the app does not implement. Shorts are removed app-wide. */
+private val HIDDEN_TABS = setOf(ChannelTabKind.Search, ChannelTabKind.Store, ChannelTabKind.Shorts)
 
 internal data class ChannelScreenTab(
     val kind: ChannelTabKind,
@@ -24,14 +24,11 @@ internal data class ChannelScreenTab(
 internal fun channelScreenTabs(
     descriptors: List<ChannelTabDescriptor>,
     header: ChannelHeader?,
-    showShortsTab: Boolean,
     aboutTitle: String,
 ): List<ChannelScreenTab> {
     val tabs =
         descriptors.mapNotNull { descriptor ->
             if (descriptor.kind in HIDDEN_TABS) return@mapNotNull null
-            // The Shorts tab is the channel's own Shorts grid; Focus mode turns it off upstream.
-            if (descriptor.kind == ChannelTabKind.Shorts && !showShortsTab) return@mapNotNull null
             val params = descriptor.params ?: descriptor.kind.defaultParams ?: return@mapNotNull null
             val title = descriptor.title.takeIf(String::isNotBlank) ?: return@mapNotNull null
             ChannelScreenTab(kind = descriptor.kind, title = title, params = params)

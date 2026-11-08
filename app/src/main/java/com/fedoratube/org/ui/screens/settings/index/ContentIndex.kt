@@ -31,14 +31,6 @@ internal object ContentIndex {
             section = R.string.settings_section_home,
             destination = page,
         )
-    val homeShortsShelf =
-        SettingEntry(
-            key = "content.home.shorts_shelf",
-            title = R.string.settings_home_shorts_shelf_title,
-            summary = R.string.settings_home_shorts_shelf_subtitle,
-            section = R.string.settings_section_home,
-            destination = page,
-        )
     val homeSubscriptions =
         SettingEntry(
             key = "content.home.subscriptions",
@@ -61,22 +53,6 @@ internal object ContentIndex {
             key = "content.subs.videos",
             title = R.string.content_settings_subs_show_videos_title,
             summary = R.string.content_settings_subs_show_videos_subtitle,
-            section = R.string.settings_section_subscriptions,
-            destination = page,
-        )
-    val subsShorts =
-        SettingEntry(
-            key = "content.subs.shorts",
-            title = R.string.content_settings_subs_show_shorts_title,
-            summary = R.string.content_settings_subs_show_shorts_subtitle,
-            section = R.string.settings_section_subscriptions,
-            destination = page,
-        )
-    val subsShortsShelf =
-        SettingEntry(
-            key = "content.subs.shorts_shelf",
-            title = R.string.settings_subs_shorts_shelf_title,
-            summary = R.string.settings_subs_shorts_shelf_subtitle,
             section = R.string.settings_section_subscriptions,
             destination = page,
         )
@@ -127,31 +103,6 @@ internal object ContentIndex {
             title = R.string.content_settings_subs_show_checked_count_title,
             summary = R.string.content_settings_subs_show_checked_count_subtitle,
             section = R.string.settings_section_subscriptions,
-            destination = page,
-        )
-    val shortsContent =
-        SettingEntry(
-            key = "content.shorts.enabled",
-            title = R.string.content_settings_shorts_content_title,
-            summary = R.string.content_settings_shorts_content_subtitle,
-            section = R.string.content_settings_header_shorts,
-            destination = page,
-        )
-    val channelShortsTab =
-        SettingEntry(
-            key = "content.shorts.channel_tab",
-            title = R.string.content_settings_channel_shorts_tab_title,
-            summary = R.string.content_settings_channel_shorts_tab_subtitle,
-            section = R.string.content_settings_header_shorts,
-            destination = page,
-        )
-    val hideWatchedShorts =
-        SettingEntry(
-            key = "content.shorts.hide_watched",
-            title = R.string.content_settings_hide_watched_shorts_title,
-            summary = R.string.content_settings_hide_watched_shorts_subtitle,
-            keywords = R.string.settings_keywords_hide_watched,
-            section = R.string.content_settings_header_shorts,
             destination = page,
         )
     val removeWatchedWatchLater =
@@ -225,21 +176,15 @@ internal object ContentIndex {
             homeFeed,
             refreshOnReselect,
             continueWatching,
-            homeShortsShelf,
             homeSubscriptions,
             hideWatchedHome,
             subsVideos,
-            subsShorts,
-            subsShortsShelf,
             subsLive,
             subsCollaborations,
             hideWatchedSubs,
             hideUnplayableSubs,
             subsRefreshOnStartup,
             subsCheckedCount,
-            shortsContent,
-            channelShortsTab,
-            hideWatchedShorts,
             removeWatchedWatchLater,
             watchedThreshold,
             notes,

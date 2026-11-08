@@ -63,10 +63,6 @@ internal fun HomeChipContent(
                 onEnrichChannelMetadata = onEnrichVideo,
                 onContinueWatchingClick = {},
                 onContinueWatchingRemove = {},
-                onShortClick = { _, _ -> },
-                onSeeAllHistory = {},
-                onOpenShortsFeed = {},
-                onShortsShown = {},
                 onRefresh = onRefresh,
                 modifier = modifier,
             )

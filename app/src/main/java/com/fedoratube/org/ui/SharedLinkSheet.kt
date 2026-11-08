@@ -42,7 +42,6 @@ internal fun mediaLoaded(): Boolean = GlobalPlayerState.currentVideo.value != nu
 @Composable
 internal fun HandleIncomingVideo(
     videoId: String?,
-    isShort: Boolean,
     isShared: Boolean,
     navController: NavController,
     preferences: PlayerPreferences,
@@ -52,7 +51,6 @@ internal fun HandleIncomingVideo(
     val scope = rememberCoroutineScope()
     HandleDeepLinks(
         deeplinkVideoId = videoId,
-        isShort = isShort,
         navController = navController,
         onDeeplinkConsumed = onConsumed,
         asksFirst = { isShared && sharedLinkAsks(preferences.sharedLinkAction.first(), mediaLoaded()) },

@@ -55,16 +55,14 @@ class AppearanceViewModel
         val cardMarkWatched = preferences.videoCardMarkWatchedEnabled.asState(false)
         val cardWatchProgress = preferences.showWatchProgress.asState(true)
 
-        val shortsContent = preferences.shortsContentEnabled.asState(true)
         val navigationVisibility: StateFlow<NavigationVisibility> =
             combine(
                 preferences.homeNavigationEnabled,
-                preferences.shortsNavigationEnabled,
                 preferences.musicNavigationEnabled,
                 preferences.searchNavigationEnabled,
                 preferences.categoriesNavigationEnabled,
-            ) { home, shorts, music, search, categories ->
-                NavigationVisibility(home = home, shorts = shorts, music = music, search = search, categories = categories)
+            ) { home, music, search, categories ->
+                NavigationVisibility(home = home, music = music, search = search, categories = categories)
             }.asState(NavigationVisibility())
         val hideNavOnScroll = preferences.bottomNavHideOnScroll.asState(true)
         val navTabOrder = preferences.navTabOrder.asState(DEFAULT_NAV_TAB_ORDER)
@@ -106,8 +104,6 @@ class AppearanceViewModel
         fun setCardWatchProgress(enabled: Boolean) = write { preferences.setShowWatchProgress(enabled) }
 
         fun setHomeTab(enabled: Boolean) = write { preferences.setHomeNavigationEnabled(enabled) }
-
-        fun setShortsTab(enabled: Boolean) = write { preferences.setShortsNavigationEnabled(enabled) }
 
         fun setMusicTab(enabled: Boolean) = write { preferences.setMusicNavigationEnabled(enabled) }
 

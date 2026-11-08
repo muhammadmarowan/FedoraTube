@@ -46,9 +46,7 @@ import com.fedoratube.org.ui.components.layout.flowBottomContentPadding
 import com.fedoratube.org.ui.components.shared.FastScrollbar
 import com.fedoratube.org.ui.components.shared.FlowFilterChip
 import com.fedoratube.org.ui.components.shared.MediaRowAction
-import com.fedoratube.org.ui.components.shared.MediaShortCard
 import com.fedoratube.org.ui.components.shared.MediaThumbnailDefaults
-import com.fedoratube.org.ui.components.shared.ShortCardDefaults
 import com.fedoratube.org.ui.components.shared.animateMediaListItem
 import com.fedoratube.org.ui.screens.history.HistoryContentFilter
 import com.fedoratube.org.ui.screens.history.HistorySort
@@ -58,7 +56,6 @@ import java.util.Locale
 
 private val FilterRowPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
 private val SectionHeaderPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp)
-private val ShortsRowPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp)
 private val ItemSpacing = 4.dp
 private const val DAYS_IN_WEEK = 7
 private const val MILLIS_PER_DAY = 24L * 60L * 60L * 1000L
@@ -67,7 +64,6 @@ private val ScrollbarInset = 8.dp
 
 @Composable
 internal fun HistoryFilterRow(
-    shortsEnabled: Boolean,
     selectedFilter: HistoryContentFilter,
     onFilterSelected: (HistoryContentFilter) -> Unit,
     selectedSort: HistorySort,
@@ -79,8 +75,8 @@ internal fun HistoryFilterRow(
     var sortExpanded by remember { mutableStateOf(false) }
     var yearExpanded by remember { mutableStateOf(false) }
     val visibleFilters =
-        remember(shortsEnabled) {
-            HistoryContentFilter.entries.filter { shortsEnabled || it != HistoryContentFilter.Shorts }
+        remember {
+            HistoryContentFilter.entries.filter { it != HistoryContentFilter.Shorts }
         }
 
     LazyRow(
@@ -157,10 +153,8 @@ internal fun HistoryFilterRow(
 @Composable
 internal fun HistoryList(
     entries: List<VideoHistoryEntry>,
-    shortVideos: Map<String, Video>,
     selectedFilter: HistoryContentFilter,
     onVideoClick: (MusicTrack) -> Unit,
-    onShortClick: (row: List<Video>, tapped: Video) -> Unit,
     onMusicClick: (MusicTrack, List<MusicTrack>) -> Unit,
     onRemove: (VideoHistoryEntry) -> Unit,
 ) {
@@ -192,19 +186,7 @@ internal fun HistoryList(
                 }
 
                 when (selectedFilter) {
-                    HistoryContentFilter.Shorts -> {
-                        item(key = "shorts-$sectionKey", contentType = "shorts") {
-                            ShortsHistoryRow(
-                                entries = sectionEntries,
-                                shortVideos = shortVideos,
-                                onShortClick = onShortClick,
-                                onRemove = onRemove,
-                            )
-                        }
-                    }
-
                     HistoryContentFilter.All -> {
-                        val shorts = sectionEntries.filter { it.isShort && !it.isMusic }
                         val regular = sectionEntries.filter { !it.isShort || it.isMusic }
 
                         items(
@@ -222,22 +204,11 @@ internal fun HistoryList(
                                 modifier = animateMediaListItem(),
                             )
                         }
-
-                        if (shorts.isNotEmpty()) {
-                            item(key = "shorts-$sectionKey", contentType = "shorts") {
-                                ShortsHistoryRow(
-                                    entries = shorts,
-                                    shortVideos = shortVideos,
-                                    onShortClick = onShortClick,
-                                    onRemove = onRemove,
-                                )
-                            }
-                        }
                     }
 
                     else -> {
                         items(
-                            items = sectionEntries,
+                            items = sectionEntries.filter { !it.isShort || it.isMusic },
                             key = { it.videoId },
                             contentType = { if (it.isMusic) "track" else "video" },
                         ) { entry ->
@@ -332,46 +303,6 @@ internal fun HistoryEntryRow(
             contentDescription = removeLabel,
             onClick = { onRemove(entry) },
         )
-    }
-}
-
-@Composable
-internal fun ShortsHistoryRow(
-    entries: List<VideoHistoryEntry>,
-    shortVideos: Map<String, Video>,
-    onShortClick: (row: List<Video>, tapped: Video) -> Unit,
-    onRemove: (VideoHistoryEntry) -> Unit,
-) {
-    val rowVideos =
-        remember(entries, shortVideos) {
-            entries.map { shortVideos[it.videoId] ?: it.toVideo() }
-        }
-    val entriesById = remember(entries) { entries.associateBy { it.videoId } }
-    val removeLabel = stringResource(R.string.remove_from_history)
-
-    LazyRow(
-        contentPadding = ShortsRowPadding,
-        horizontalArrangement = Arrangement.spacedBy(ShortCardDefaults.Spacing),
-    ) {
-        items(
-            items = rowVideos,
-            key = Video::id,
-            contentType = { "short" },
-        ) { video ->
-            MediaShortCard(
-                video = video,
-                onClick = { onShortClick(rowVideos, video) },
-                trailingContent = {
-                    IconButton(onClick = { entriesById[video.id]?.let(onRemove) }) {
-                        Icon(
-                            imageVector = Icons.Default.Close,
-                            contentDescription = removeLabel,
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
-                    }
-                },
-            )
-        }
     }
 }
 

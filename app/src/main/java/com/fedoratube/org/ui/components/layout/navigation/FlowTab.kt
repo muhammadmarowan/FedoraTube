@@ -33,7 +33,6 @@ enum class FlowTab(
     @StringRes val labelRes: Int,
 ) {
     Home(0, "home", R.string.nav_home),
-    Shorts(1, "shorts", R.string.nav_shorts),
     Music(2, "music", R.string.nav_music),
     Subscriptions(3, "subscriptions", R.string.nav_subs),
     Library(4, "library", R.string.nav_library),
@@ -51,7 +50,6 @@ enum class FlowTab(
 fun FlowTab.icon(selected: Boolean): ImageVector =
     when (this) {
         FlowTab.Home -> if (selected) Icons.Filled.Home else Icons.Outlined.Home
-        FlowTab.Shorts -> ImageVector.vectorResource(if (selected) R.drawable.ic_shorts_filled else R.drawable.ic_shorts)
         FlowTab.Music -> if (selected) Icons.Filled.MusicNote else Icons.Outlined.MusicNote
         FlowTab.Subscriptions -> if (selected) Icons.Filled.Subscriptions else Icons.Outlined.Subscriptions
         FlowTab.Library -> if (selected) Icons.Filled.VideoLibrary else Icons.Outlined.VideoLibrary
@@ -62,7 +60,6 @@ fun FlowTab.icon(selected: Boolean): ImageVector =
 
 data class NavigationVisibility(
     val home: Boolean = true,
-    val shorts: Boolean = false,
     val music: Boolean = true,
     val search: Boolean = false,
     val categories: Boolean = false,
@@ -72,8 +69,8 @@ data class NavigationVisibility(
  * The bottom-bar tabs, in the user's order. Library cannot be hidden: every root
  * destination carries Notifications and Settings in its top bar, so one must always exist.
  * Subscriptions and Music live in the top category chips (see [topCategoryTabs]) and are
- * intentionally absent here, YouTube-style. Shorts always sits directly after Home and
- * Downloads directly after Shorts, whatever order was persisted before they existed.
+ * intentionally absent here, YouTube-style. Downloads sits directly after Home, whatever order
+ * was persisted before they existed.
  */
 fun visibleFlowTabs(
     order: List<Int>,
@@ -82,7 +79,6 @@ fun visibleFlowTabs(
     val enabled =
         buildSet {
             if (visibility.home) add(FlowTab.Home)
-            if (visibility.shorts) add(FlowTab.Shorts)
             add(FlowTab.Downloads)
             add(FlowTab.Library)
             if (visibility.search) add(FlowTab.Search)
@@ -93,20 +89,9 @@ fun visibleFlowTabs(
             .distinct()
             .mapNotNull(FlowTab::fromId)
             .filter { enabled.contains(it) }
-    if (FlowTab.Shorts in tabs) {
-        val withoutShorts = tabs - FlowTab.Shorts
-        val homeIndex = withoutShorts.indexOf(FlowTab.Home)
-        tabs =
-            if (homeIndex >= 0) {
-                withoutShorts.toMutableList().apply { add(homeIndex + 1, FlowTab.Shorts) }
-            } else {
-                listOf(FlowTab.Shorts) + withoutShorts
-            }
-    }
     if (FlowTab.Downloads in tabs) {
         val withoutDownloads = tabs - FlowTab.Downloads
-        val anchorIndex =
-            maxOf(withoutDownloads.indexOf(FlowTab.Shorts), withoutDownloads.indexOf(FlowTab.Home))
+        val anchorIndex = withoutDownloads.indexOf(FlowTab.Home)
         tabs =
             if (anchorIndex >= 0) {
                 withoutDownloads.toMutableList().apply { add(anchorIndex + 1, FlowTab.Downloads) }

@@ -22,7 +22,6 @@ import com.fedoratube.org.ui.components.library.LibraryMediaShelf
 import com.fedoratube.org.ui.components.library.LibrarySection
 import com.fedoratube.org.ui.components.library.LibraryShelf
 import com.fedoratube.org.ui.components.library.LibraryShelfPlaceholder
-import com.fedoratube.org.ui.components.library.LibraryShortsShelf
 import com.fedoratube.org.ui.components.library.LibraryVideoCard
 import kotlinx.coroutines.flow.StateFlow
 
@@ -156,36 +155,6 @@ internal fun LibraryVideoShelf(
                     )
                 }
             }
-        }
-    }
-}
-
-@Composable
-internal fun LibraryShortsShelfRoute(
-    section: LibrarySection,
-    shortsFlow: StateFlow<List<Video>?>,
-    onTitleClick: () -> Unit,
-    onShortClick: (Video) -> Unit,
-) {
-    val shorts by shortsFlow.collectAsStateWithLifecycle()
-    val title = section.title
-    when {
-        shorts == null -> {
-            LibraryShelfPlaceholder(title = title, icon = section.icon, portrait = true)
-        }
-
-        shorts.isNullOrEmpty() -> {
-            Unit
-        }
-
-        else -> {
-            LibraryShortsShelf(
-                title = title,
-                icon = section.icon,
-                shorts = shorts.orEmpty(),
-                onTitleClick = onTitleClick,
-                onShortClick = onShortClick,
-            )
         }
     }
 }

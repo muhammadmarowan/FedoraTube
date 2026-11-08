@@ -126,7 +126,6 @@ fun ChannelScreen(
     channelUrl: String,
     onVideoClick: (Video) -> Unit,
     onChannelClick: (String) -> Unit,
-    onShortClick: (videoId: String, sortIndex: Int) -> Unit,
     onPlaylistClick: (String) -> Unit,
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -146,7 +145,6 @@ fun ChannelScreen(
     val subscribedChannelIds by viewModel.subscribedChannelIds.collectAsStateWithLifecycle()
     val channelNote by viewModel.channelNote.collectAsStateWithLifecycle()
     val notesEnabled by viewModel.notesEnabled.collectAsStateWithLifecycle()
-    val showShortsTab by viewModel.showShortsTab.collectAsStateWithLifecycle()
     var showNoteEditor by rememberSaveable { mutableStateOf(false) }
     val subscriptionGroups by viewModel.subscriptionGroups.collectAsStateWithLifecycle()
     var showGroupSheet by rememberSaveable { mutableStateOf(false) }
@@ -195,7 +193,6 @@ fun ChannelScreen(
                     uiState = uiState,
                     communityUiState = communityUiState,
                     tabStates = tabStates,
-                    showShortsTab = showShortsTab,
                     onFilterSelected = viewModel::selectTabFilter,
                     subscribedChannelIds = subscribedChannelIds,
                     channelNote = channelNote.takeIf { notesEnabled },
@@ -203,9 +200,6 @@ fun ChannelScreen(
                     onSubscribeChannel = viewModel::setChannelSubscription,
                     onVideoClick = onVideoClick,
                     onChannelClick = onChannelClick,
-                    onShortClick = { videoId ->
-                        onShortClick(videoId, tabStates[ChannelTabKind.Shorts]?.selected?.firstOrNull() ?: 0)
-                    },
                     onPlaylistClick = onPlaylistClick,
                     onSubscribeClick = { viewModel.toggleSubscription() },
                     onUnsubscribeClick = { viewModel.unsubscribe() },

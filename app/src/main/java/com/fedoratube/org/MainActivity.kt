@@ -314,7 +314,6 @@ class MainActivity : ComponentActivity() {
                                             systemLightThemeMode = theme.systemLightThemeMode,
                                             systemDarkThemeMode = theme.systemDarkThemeMode,
                                             deeplinkVideoId = deeplinkVideoId,
-                                            isShort = isDeeplinkShort,
                                             isSharedLink = isDeeplinkShared,
                                             openMusicPlayerRequest = openMusicPlayerRequest,
                                             openMusicLyricsRequest = openMusicLyricsRequest,

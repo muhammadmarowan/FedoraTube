@@ -24,8 +24,6 @@ import com.fedoratube.org.ui.components.PlaylistCardLayout
 import com.fedoratube.org.ui.components.layout.flowBottomContentPadding
 import com.fedoratube.org.ui.components.shared.FeedGridTopPadding
 import com.fedoratube.org.ui.components.shared.FeedPagingFooter
-import com.fedoratube.org.ui.components.shared.MediaShortCard
-import com.fedoratube.org.ui.components.shared.ShortCardDefaults
 import com.fedoratube.org.ui.components.shared.card.MediaVideoCard
 import com.fedoratube.org.ui.components.shared.card.VideoCardDefaults
 import com.fedoratube.org.ui.components.shared.card.VideoCardLayout
@@ -35,7 +33,6 @@ import com.fedoratube.org.ui.components.shared.rememberFeedGridPlan
 /** Every callback the result surfaces need, threaded through one object rather than nine parameters. */
 data class SearchResultActions(
     val onVideoClick: (Video) -> Unit,
-    val onShortsClick: (shelf: List<Video>, tapped: Video) -> Unit,
     val onChannelClick: (Channel) -> Unit,
     val onPlaylistClick: (Playlist) -> Unit,
     val dismissKeyboard: () -> Unit,
@@ -114,7 +111,6 @@ fun SearchResults(
                         asThumbnailRows = isGridMode || !feedLayout.isCompact,
                         thumbnailWidth = plan.listThumbnailWidth,
                         onVideoClick = actions.onVideoClick,
-                        onShortsClick = actions.onShortsClick,
                         onChannelClick = { actions.onChannelClick(Channel(it, "", "", 0)) },
                     )
                 }
@@ -134,57 +130,6 @@ fun SearchResults(
         }
     }
 }
-
-/** The Shorts tab is a portrait grid of its own, never mixed with long-form cards. */
-@Composable
-fun SearchShortsGrid(
-    pagingItems: LazyPagingItems<SearchResultItem>,
-    gridState: LazyGridState,
-    feedLayout: FeedGridLayout,
-    actions: SearchResultActions,
-    modifier: Modifier = Modifier,
-) {
-    val sidePadding = ShortCardDefaults.gridPadding(feedLayout)
-    LazyVerticalGrid(
-        columns = GridCells.Adaptive(ShortCardDefaults.MinWidth),
-        state = gridState,
-        modifier = modifier.fillMaxSize().dismissKeyboardOnPress(actions.dismissKeyboard),
-        contentPadding =
-            PaddingValues(
-                start = sidePadding,
-                end = sidePadding,
-                top = FeedGridTopPadding,
-                bottom = flowBottomContentPadding(),
-            ),
-        horizontalArrangement = Arrangement.spacedBy(ShortCardDefaults.Spacing),
-        verticalArrangement = Arrangement.spacedBy(ShortCardDefaults.Spacing),
-    ) {
-        items(
-            count = pagingItems.itemCount,
-            key = { index -> pagingItems.peek(index).itemKey(index) },
-            contentType = { index -> pagingItems.peek(index).contentType() },
-        ) { index ->
-            (pagingItems[index] as? SearchResultItem.VideoResult)?.let { result ->
-                MediaShortCard(
-                    video = result.video,
-                    onClick = { actions.onShortsClick(pagingItems.loadedShorts(), result.video) },
-                    modifier = Modifier.fillMaxSize(),
-                )
-            }
-        }
-
-        item(span = { GridItemSpan(maxLineSpan) }) {
-            FeedPagingFooter(
-                appendState = pagingItems.loadState.append,
-                itemCount = pagingItems.itemCount,
-                onRetry = pagingItems::retry,
-            )
-        }
-    }
-}
-
-private fun LazyPagingItems<SearchResultItem>.loadedShorts(): List<Video> =
-    (0 until itemCount).mapNotNull { (peek(it) as? SearchResultItem.VideoResult)?.video }
 
 /** The hero card and every strip own their row; only results share one. */
 private fun SearchResultItem?.spansRow(): Boolean =

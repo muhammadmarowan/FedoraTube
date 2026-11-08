@@ -77,7 +77,6 @@ fun SearchScreen(
     onVideoClick: (Video) -> Unit,
     onChannelClick: (Channel) -> Unit,
     onPlaylistClick: (Playlist) -> Unit,
-    onShortsQueue: (ShortsQueueSource) -> Unit,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: SearchViewModel = hiltViewModel(),
@@ -184,9 +183,6 @@ fun SearchScreen(
                     remember(feedLayout, subscribedIds) {
                         SearchResultActions(
                             onVideoClick = onVideoClick,
-                            onShortsClick = { shelf, tapped ->
-                                onShortsQueue(viewModel.shortsShelfSource(shelf, tapped))
-                            },
                             onChannelClick = onChannelClick,
                             onPlaylistClick = onPlaylistClick,
                             dismissKeyboard = state::stopTyping,

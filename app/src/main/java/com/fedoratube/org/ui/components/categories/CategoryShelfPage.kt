@@ -26,15 +26,13 @@ internal fun CategoryShelfPage(
     listState: LazyGridState,
     columnPreference: HomeFeedColumns,
     onVideoClick: (Video) -> Unit,
-    onShortClick: (String) -> Unit,
     onPlaylistClick: (String) -> Unit,
     onShelfOpen: (FeedShelf) -> Unit,
 ) {
     val actions =
-        remember(onVideoClick, onShortClick, onPlaylistClick, onShelfOpen) {
+        remember(onVideoClick, onPlaylistClick, onShelfOpen) {
             FeedShelfActions(
                 onVideoClick = onVideoClick,
-                onShortClick = onShortClick,
                 onPlaylistClick = onPlaylistClick,
                 onSectionMore = onShelfOpen,
                 canOpenSection = { it.moreParams != null },

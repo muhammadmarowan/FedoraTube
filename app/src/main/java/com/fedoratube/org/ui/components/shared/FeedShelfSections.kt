@@ -64,7 +64,6 @@ import com.fedoratube.org.ui.components.shared.card.VideoCardLayout
 /** Every callback a shelf page needs, threaded through one object rather than a dozen parameters. */
 data class FeedShelfActions(
     val onVideoClick: (Video) -> Unit,
-    val onShortClick: (String) -> Unit = {},
     val onPlaylistClick: (String) -> Unit = {},
     val onSectionMore: (FeedShelf) -> Unit = {},
     val canOpenSection: (FeedShelf) -> Boolean = { false },
@@ -105,7 +104,6 @@ fun FeedShelfSections(
     actions: FeedShelfActions,
     slots: FeedShelfSlots = FeedShelfSlots(),
     showChannelInfo: Boolean = false,
-    showShorts: Boolean = true,
 ) {
     val renderable = remember(sections, slots) { sections.filter { it.hasRenderableItems(slots) } }
     if (renderable.isEmpty()) {
@@ -145,7 +143,6 @@ fun FeedShelfSections(
                     actions = actions,
                     slots = slots,
                     showChannelInfo = showChannelInfo,
-                    showShorts = showShorts,
                 )
             }
             fullSpanItem(key = "bottom_gap") { Spacer(Modifier.height(16.dp)) }
@@ -171,7 +168,6 @@ private fun LazyGridScope.shelfSection(
     actions: FeedShelfActions,
     slots: FeedShelfSlots,
     showChannelInfo: Boolean,
-    showShorts: Boolean = true,
 ) {
     val columns = layout.columns
     val rowThumbnailWidth = if (layout.isCompact) VideoCardDefaults.RowThumbnailWidth else layout.thumbnailWidth
@@ -197,24 +193,8 @@ private fun LazyGridScope.shelfSection(
         return
     }
 
-    // A shelf of only Shorts is a portrait strip of its own, never mixed with long-form cards.
-    // Focus mode hides it like every other Shorts surface.
+    // Shorts sections are removed from the app — skip them entirely.
     if (section.items.isNotEmpty() && section.items.all { it is FeedItem.ShortItem }) {
-        if (!showShorts) return
-        val shorts = section.items.filterIsInstance<FeedItem.ShortItem>().map { it.video }
-        fullSpanItem(key = "${section.id}:shorts") {
-            Column {
-                ShelfHeader(
-                    title = section.title,
-                    hasMore = actions.canOpenSection(section),
-                    onClick = { actions.onSectionMore(section) },
-                )
-                ShortsShelfStrip(
-                    videos = shorts,
-                    onShortClick = actions.onShortClick,
-                )
-            }
-        }
         return
     }
 
@@ -234,7 +214,7 @@ private fun LazyGridScope.shelfSection(
         return
     }
 
-    val shelfItems = if (showShorts) section.items else section.items.filterNot { it is FeedItem.ShortItem }
+    val shelfItems = section.items.filterNot { it is FeedItem.ShortItem }
     val previewCount = feedShelfPreviewCount(columns, shelfItems.size)
     val visible = if (isExpanded) shelfItems else shelfItems.take(previewCount)
     val partialRows = partialRowIndices(visible.map { it is FeedItem.PostItem }, columns)
@@ -287,21 +267,3 @@ private fun FeedItem.shelfKey(): String =
         is FeedItem.RelatedChannelItem -> "c_${channel.id}"
         is FeedItem.PostItem -> "b_${post.id}"
     }
-
-@Composable
-private fun ShortsShelfStrip(
-    videos: List<Video>,
-    onShortClick: (String) -> Unit,
-) {
-    androidx.compose.foundation.lazy.LazyRow(
-        contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp),
-        horizontalArrangement = Arrangement.spacedBy(ShortCardDefaults.StripSpacing),
-    ) {
-        items(videos.size, key = { index -> videos[index].id }) { index ->
-            MediaShortCard(
-                video = videos[index],
-                onClick = { onShortClick(videos[index].id) },
-            )
-        }
-    }
-}

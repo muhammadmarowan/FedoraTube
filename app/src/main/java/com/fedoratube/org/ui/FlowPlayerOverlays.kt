@@ -180,7 +180,6 @@ internal fun FlowPlayerOverlays(
     playerVisibleState: MutableState<Boolean>,
     playerSheetState: PlayerDraggableState,
     activeVideo: Video?,
-    isShortsPlayerRoute: Boolean,
     bottomPadding: Dp,
     startInset: Dp,
     miniPlayerScale: Float,
@@ -235,7 +234,7 @@ internal fun FlowPlayerOverlays(
     ) {
         VideoPlayerHost(
             video = activeVideo,
-            isVisible = playerVisible && !isShortsPlayerRoute,
+            isVisible = playerVisible,
             playerSheetState = playerSheetState,
             bottomPadding = bottomPadding.coerceAtLeast(0.dp),
             startInset = startInset,

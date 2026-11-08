@@ -74,7 +74,6 @@ private const val STALE_REFRESH_INTERVAL_MS = 3 * 60 * 1000L
 @Composable
 fun SubscriptionsScreen(
     onVideoClick: (Video) -> Unit,
-    onShortClick: (ShortsQueueSource) -> Unit = {},
     onChannelClick: (Channel) -> Unit = {},
     topCategoryTabs: List<com.fedoratube.org.ui.components.layout.navigation.FlowTab> = emptyList(),
     onCategorySelected: (com.fedoratube.org.ui.components.layout.navigation.FlowTab) -> Unit = {},
@@ -314,7 +313,6 @@ fun SubscriptionsScreen(
                         columnPreference = columnPreference,
                         onRefresh = viewModel::refreshFeed,
                         onVideoClick = onVideoClick,
-                        onShortClick = onShortClick,
                         onChannelClick = { channel ->
                             viewModel.selectChannel(channel.id)
                             scope.launch { feedGridState.animateScrollToItem(0) }

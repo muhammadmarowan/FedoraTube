@@ -79,7 +79,6 @@ internal fun ChannelContent(
     onManageGroups: (() -> Unit)?,
     communityUiState: ChannelCommunityUiState,
     tabStates: Map<ChannelTabKind, ChannelTabState>,
-    showShortsTab: Boolean,
     onFilterSelected: (ChannelTabKind, Int, Int) -> Unit,
     subscribedChannelIds: Set<String>,
     channelNote: String?,
@@ -87,7 +86,6 @@ internal fun ChannelContent(
     onSubscribeChannel: (com.fedoratube.org.data.model.Channel, Boolean) -> Unit,
     onVideoClick: (Video) -> Unit,
     onChannelClick: (String) -> Unit,
-    onShortClick: (String) -> Unit,
     onPlaylistClick: (String) -> Unit,
     onSubscribeClick: () -> Unit,
     onUnsubscribeClick: () -> Unit,
@@ -123,8 +121,8 @@ internal fun ChannelContent(
 
     val aboutTitle = stringResource(R.string.tab_about)
     val visibleTabs =
-        remember(uiState.tabs, uiState.header, showShortsTab, aboutTitle) {
-            channelScreenTabs(uiState.tabs, uiState.header, showShortsTab, aboutTitle)
+        remember(uiState.tabs, uiState.header, aboutTitle) {
+            channelScreenTabs(uiState.tabs, uiState.header, aboutTitle)
         }
     if (visibleTabs.isEmpty()) return
 
@@ -222,7 +220,6 @@ internal fun ChannelContent(
             initialFirstVisibleItemIndex = initialScrollIndex,
             initialFirstVisibleItemScrollOffset = initialScrollOffset,
         )
-    val shortsListState = rememberLazyGridState()
     val liveListState = rememberLazyGridState()
     val playlistsListState = rememberLazyGridState()
     val postsListState = rememberLazyListState()
@@ -234,7 +231,6 @@ internal fun ChannelContent(
     fun listStateFor(kind: ChannelTabKind) =
         when (kind) {
             ChannelTabKind.Videos -> videosListState
-            ChannelTabKind.Shorts -> shortsListState
             ChannelTabKind.Live -> liveListState
             ChannelTabKind.Playlists -> playlistsListState
             else -> genericListState
@@ -336,11 +332,9 @@ internal fun ChannelContent(
                         columnPreference = columnPreference,
                         contentPadding = listPadding,
                         topInset = visibleHeaderHeightDp,
-                        showShorts = !isFocusModeEnabled,
                         actions =
                             FeedShelfActions(
                                 onVideoClick = onVideoClick,
-                                onShortClick = onShortClick,
                                 onPlaylistClick = onPlaylistClick,
                                 canOpenSection = { section -> sectionTarget(section, visibleTabs) != null },
                                 subscribedChannelIds = subscribedChannelIds,
@@ -426,7 +420,6 @@ internal fun ChannelContent(
                         contentPadding = listPadding,
                         topInset = visibleHeaderHeightDp,
                         onVideoClick = onVideoClick,
-                        onShortClick = onShortClick,
                         onPlaylistClick = onPlaylistClick,
                         onChannelClick = onChannelClick,
                     )
@@ -481,8 +474,7 @@ internal fun ChannelContent(
                         selected = activeSelection,
                         searchActive = uiState.searchActive,
                         searchQuery = uiState.searchQuery,
-                        // The Shorts tab is a fixed portrait grid and has no in-channel search.
-                        showListControls = settledTab.kind != ChannelTabKind.Shorts,
+                        showListControls = true,
                         onFilterSelected = { group, option -> onFilterSelected(settledTab.kind, group, option) },
                         onSearchToggle = onSearchToggle,
                         onSearchQueryChange = onSearchQueryChange,

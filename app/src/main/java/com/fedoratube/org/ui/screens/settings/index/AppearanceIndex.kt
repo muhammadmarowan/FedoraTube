@@ -141,7 +141,6 @@ internal object NavigationBarIndex {
     )
 
     val home = tab("home", R.string.settings_home_nav_tab_title, R.string.settings_home_nav_tab_subtitle)
-    val shorts = tab("shorts", R.string.settings_shorts_nav_tab_title, R.string.settings_shorts_nav_tab_subtitle)
     val music = tab("music", R.string.settings_music_nav_tab_title, R.string.settings_music_nav_tab_subtitle)
     val search = tab("search", R.string.settings_search_nav_tab_title, R.string.settings_search_nav_tab_subtitle)
     val explore = tab("explore", R.string.settings_categories_nav_tab_title, R.string.settings_categories_nav_tab_subtitle)
@@ -163,7 +162,7 @@ internal object NavigationBarIndex {
             destination = page,
         )
 
-    val all = listOf(home, shorts, music, search, explore, hideOnScroll, order)
+    val all = listOf(home, music, search, explore, hideOnScroll, order)
 }
 
 internal object ThemeIndex {

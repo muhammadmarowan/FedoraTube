@@ -65,7 +65,6 @@ fun LibraryScreen(
     onNavigateToLikedVideos: () -> Unit,
     onNavigateToLikedMusic: () -> Unit,
     onNavigateToWatchLater: () -> Unit,
-    onNavigateToSavedShorts: () -> Unit = {},
     onNavigateToLocalMedia: () -> Unit = {},
     onNavigateToNotes: () -> Unit,
     onManageData: () -> Unit = {},
@@ -77,7 +76,6 @@ fun LibraryScreen(
     onMusicPlaylistClick: (String) -> Unit = {},
     onDownloadedVideoClick: (List<DownloadedVideo>, Int) -> Unit = { _, _ -> },
     onDownloadedMusicClick: (List<DownloadedTrack>, Int) -> Unit = { _, _ -> },
-    onSavedShortClick: (Video) -> Unit = {},
     modifier: Modifier = Modifier,
     viewModel: LibraryViewModel = hiltViewModel(),
 ) {

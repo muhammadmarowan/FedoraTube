@@ -115,7 +115,7 @@ class ChannelViewModel
 
         val showShortsTab: StateFlow<Boolean> =
             playerPreferences.effectiveChannelShortsTabEnabled
-                .stateIn(viewModelScope, SharingStarted.WhileSubscribed(GROUPS_SUBSCRIPTION_TIMEOUT_MS), true)
+                .stateIn(viewModelScope, SharingStarted.WhileSubscribed(GROUPS_SUBSCRIPTION_TIMEOUT_MS), false)
 
         private val _channelNote = MutableStateFlow<String?>(null)
         val channelNote: StateFlow<String?> = _channelNote.asStateFlow()
@@ -256,17 +256,9 @@ class ChannelViewModel
         }
 
         private fun ensureTabLoaded(kind: ChannelTabKind) {
+            if (kind == ChannelTabKind.Shorts) return
             if (kind == ChannelTabKind.Posts) {
                 communityController.ensurePostsLoaded()
-                return
-            }
-            if (kind == ChannelTabKind.Shorts) {
-                // Read at load time, not once per channel, so turning the tab on while a channel is open still loads it.
-                viewModelScope.launch {
-                    if (playerPreferences.effectiveChannelShortsTabEnabled.first()) {
-                        tabController.ensureLoaded(kind, _uiState.value.tabParams(kind))
-                    }
-                }
                 return
             }
             tabController.ensureLoaded(kind, _uiState.value.tabParams(kind))

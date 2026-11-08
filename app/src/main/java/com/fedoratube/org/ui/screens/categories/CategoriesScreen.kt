@@ -55,7 +55,6 @@ import com.fedoratube.org.utils.RegionCatalog
 @Composable
 fun CategoriesScreen(
     onVideoClick: (Video) -> Unit,
-    onShortClick: (String) -> Unit = {},
     onPlaylistClick: (String) -> Unit = {},
     viewModel: CategoriesViewModel = hiltViewModel(),
 ) {
@@ -163,7 +162,6 @@ fun CategoriesScreen(
                             listState = shelfState,
                             columnPreference = columnPreference,
                             onVideoClick = onVideoClick,
-                            onShortClick = onShortClick,
                             onPlaylistClick = onPlaylistClick,
                             onShelfOpen = viewModel::openShelf,
                         )

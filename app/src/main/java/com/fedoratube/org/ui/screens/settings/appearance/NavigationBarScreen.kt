@@ -31,15 +31,13 @@ internal fun NavigationBarScreen(
     viewModel: AppearanceViewModel = hiltViewModel(),
 ) {
     val visibility by viewModel.navigationVisibility.collectAsStateWithLifecycle()
-    val shortsContent by viewModel.shortsContent.collectAsStateWithLifecycle()
     val hideOnScroll by viewModel.hideNavOnScroll.collectAsStateWithLifecycle()
     val order by viewModel.navTabOrder.collectAsStateWithLifecycle()
     val defaultIndex by viewModel.defaultNavTabIndex.collectAsStateWithLifecycle()
 
-    val effectiveVisibility = visibility.copy(shorts = visibility.shorts && shortsContent)
+    val effectiveVisibility = visibility
     val visibleTabs = visibleFlowTabs(order, effectiveVisibility)
     val defaultTab = resolveDefaultFlowTab(defaultIndex, order, effectiveVisibility)
-    val shortsHiddenSummary = stringResource(R.string.settings_shorts_tab_disabled_summary)
 
     SettingsPage(
         title = stringResource(R.string.settings_navigation_bar_title),
@@ -48,14 +46,6 @@ internal fun NavigationBarScreen(
     ) {
         group(key = "navigation_bar.tabs", header = R.string.settings_section_tabs) {
             switch(NavigationBarIndex.home, visibility.home, viewModel::setHomeTab, icon = Icons.Outlined.Home)
-            switch(
-                NavigationBarIndex.shorts,
-                checked = visibility.shorts && shortsContent,
-                onCheckedChange = viewModel::setShortsTab,
-                enabled = shortsContent,
-                summary = if (shortsContent) null else shortsHiddenSummary,
-                iconRes = R.drawable.ic_shorts,
-            )
             switch(NavigationBarIndex.music, visibility.music, viewModel::setMusicTab, icon = Icons.Outlined.MusicNote)
             switch(NavigationBarIndex.search, visibility.search, viewModel::setSearchTab, icon = Icons.Outlined.Search)
             switch(NavigationBarIndex.explore, visibility.categories, viewModel::setExploreTab, icon = Icons.Outlined.Explore)

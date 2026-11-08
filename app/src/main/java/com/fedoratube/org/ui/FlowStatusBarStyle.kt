@@ -27,7 +27,6 @@ internal fun ApplyStatusBarStyle(
     isFullscreen: Boolean,
     isMusicPlayerImmersive: Boolean = false,
     musicPlayerFollowsTheme: Boolean = false,
-    isShortsPlayer: Boolean = false,
     // A page's full-bleed hero is under the status bar, so its icons must be light to read on the photo.
     heroUnderStatusBar: Boolean = false,
 ) {
@@ -46,7 +45,7 @@ internal fun ApplyStatusBarStyle(
     SideEffect {
         val window = activity.window
         val insetsController = WindowCompat.getInsetsController(window, view)
-        val shouldDrawBehindStatusBar = isFullscreen || isMusicPlayerImmersive || isShortsPlayer || heroUnderStatusBar
+        val shouldDrawBehindStatusBar = isFullscreen || isMusicPlayerImmersive || heroUnderStatusBar
 
         window.statusBarColor =
             if (shouldDrawBehindStatusBar) {
@@ -56,7 +55,7 @@ internal fun ApplyStatusBarStyle(
             }
 
         val musicImmersiveOnLightSurface =
-            isMusicPlayerImmersive && musicPlayerFollowsTheme && !isDarkTheme && !isFullscreen && !isShortsPlayer
+            isMusicPlayerImmersive && musicPlayerFollowsTheme && !isDarkTheme && !isFullscreen
         insetsController.isAppearanceLightStatusBars =
             (!isDarkTheme && !shouldDrawBehindStatusBar) || musicImmersiveOnLightSurface
     }

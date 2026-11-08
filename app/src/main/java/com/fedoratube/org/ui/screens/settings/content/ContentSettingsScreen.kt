@@ -35,11 +35,8 @@ internal fun ContentSettingsScreen(
     onNavigate: (SettingsTarget) -> Unit,
     viewModel: ContentSettingsViewModel = hiltViewModel(),
 ) {
-    val shortsContent by viewModel.shortsContent.collectAsStateWithLifecycle()
-    val channelShortsTab by viewModel.channelShortsTab.collectAsStateWithLifecycle()
     val hideWatchedHome by viewModel.hideWatchedHome.collectAsStateWithLifecycle()
     val hideWatchedSubs by viewModel.hideWatchedSubs.collectAsStateWithLifecycle()
-    val hideWatchedShorts by viewModel.hideWatchedShorts.collectAsStateWithLifecycle()
     val removeWatchedWatchLater by viewModel.removeWatchedWatchLater.collectAsStateWithLifecycle()
     val notes by viewModel.notes.collectAsStateWithLifecycle()
     val context = LocalContext.current
@@ -56,7 +53,6 @@ internal fun ContentSettingsScreen(
             switch(ContentIndex.homeFeed, viewModel.homeFeed, viewModel::setHomeFeed)
             switch(ContentIndex.refreshOnReselect, viewModel.refreshOnReselect, viewModel::setRefreshOnReselect)
             switch(ContentIndex.continueWatching, viewModel.continueWatching, viewModel::setContinueWatching)
-            switch(ContentIndex.homeShortsShelf, viewModel.homeShortsShelf, viewModel::setHomeShortsShelf, enabled = shortsContent)
             switch(ContentIndex.homeSubscriptions, viewModel.homeSubscriptions, viewModel::setHomeSubscriptions)
             switch(ContentIndex.hideWatchedHome, viewModel.hideWatchedHome, viewModel::setHideWatchedHome)
         }
@@ -74,8 +70,6 @@ internal fun ContentSettingsScreen(
         }
         group(key = "content.subscriptions", header = R.string.settings_section_subscriptions) {
             switch(ContentIndex.subsVideos, viewModel.subsVideos, viewModel::setSubsVideos)
-            switch(ContentIndex.subsShorts, viewModel.subsShorts, viewModel::setSubsShorts, enabled = shortsContent)
-            switch(ContentIndex.subsShortsShelf, viewModel.subsShortsShelf, viewModel::setSubsShortsShelf, enabled = shortsContent)
             switch(ContentIndex.subsLive, viewModel.subsLive, viewModel::setSubsLive)
             switch(ContentIndex.subsCollaborations, viewModel.subsCollaborations, viewModel::setSubsCollaborations)
             switch(ContentIndex.hideWatchedSubs, viewModel.hideWatchedSubs, viewModel::setHideWatchedSubs)
@@ -83,24 +77,10 @@ internal fun ContentSettingsScreen(
             switch(ContentIndex.subsRefreshOnStartup, viewModel.subsRefreshOnStartup, viewModel::setSubsRefreshOnStartup)
             switch(ContentIndex.subsCheckedCount, viewModel.subsCheckedCount, viewModel::setSubsCheckedCount)
         }
-        group(key = "content.shorts", header = R.string.content_settings_header_shorts) {
-            switch(ContentIndex.shortsContent, viewModel.shortsContent, viewModel::setShortsContent)
-            row(ContentIndex.channelShortsTab.key) { shape ->
-                FlowSwitchRow(
-                    title = stringResource(ContentIndex.channelShortsTab.title),
-                    supportingText = stringResource(R.string.content_settings_channel_shorts_tab_subtitle),
-                    checked = channelShortsTab || shortsContent,
-                    onCheckedChange = viewModel::setChannelShortsTab,
-                    enabled = !shortsContent,
-                    shape = shape,
-                )
-            }
-            switch(ContentIndex.hideWatchedShorts, viewModel.hideWatchedShorts, viewModel::setHideWatchedShorts, enabled = shortsContent)
-        }
         group(key = "content.watch_later", header = R.string.watch_later) {
             switch(ContentIndex.removeWatchedWatchLater, viewModel.removeWatchedWatchLater, viewModel::setRemoveWatchedWatchLater)
         }
-        if (hideWatchedHome || hideWatchedSubs || hideWatchedShorts || removeWatchedWatchLater) {
+        if (hideWatchedHome || hideWatchedSubs || removeWatchedWatchLater) {
             group(key = "content.watched", header = R.string.settings_section_watched) {
                 choice(ContentIndex.watchedThreshold, onClick = { showThresholdDialog = true }) {
                     val threshold by viewModel.watchedThreshold.collectAsStateWithLifecycle()

@@ -10,7 +10,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.fedoratube.org.data.feed.ShortsQueueSource
 import com.fedoratube.org.data.local.PlaylistRepository
 import com.fedoratube.org.data.localmedia.LocalMediaIds
 import com.fedoratube.org.data.localmedia.toMusicTrack
@@ -43,7 +42,6 @@ import com.fedoratube.org.ui.screens.recap.RecapScreen
 import com.fedoratube.org.ui.screens.recap.story.RecapStoryScreen
 import com.fedoratube.org.ui.screens.search.SearchScreen
 import com.fedoratube.org.ui.screens.settings.SettingsHost
-import com.fedoratube.org.ui.screens.shorts.ShortsScreen
 import com.fedoratube.org.ui.screens.subscriptions.SubscriptionsScreen
 import com.fedoratube.org.ui.screens.update.UPDATE_ROUTE
 import com.fedoratube.org.ui.screens.update.UpdateScreen
@@ -60,7 +58,6 @@ fun NavGraphBuilder.flowAppGraph(
     playerViewModel: VideoPlayerViewModel,
     playerUiStateResult: State<VideoPlayerUiState>,
     playerVisibleState: MutableState<Boolean>,
-    disableShortsPlayer: Boolean = false,
     defaultStartRoute: String = "home",
     onMusicStarted: () -> Unit = {},
     topCategoryTabs: List<com.fedoratube.org.ui.components.layout.navigation.FlowTab> = emptyList(),
@@ -85,13 +82,8 @@ fun NavGraphBuilder.flowAppGraph(
         currentRoute.value = "home"
         HomeScreen(
             onVideoClick = { video ->
-                navController.openVideoOrShorts(video, disableShortsPlayer) {
-                    playerViewModel.playVideo(it)
-                    GlobalPlayerState.setCurrentVideo(it)
-                }
-            },
-            onShortClick = { source ->
-                navController.openShortsOrPlayer(source, disableShortsPlayer)
+                playerViewModel.playVideo(video)
+                GlobalPlayerState.setCurrentVideo(video)
             },
             onSearchClick = {
                 navController.navigate("search")
@@ -111,34 +103,10 @@ fun NavGraphBuilder.flowAppGraph(
             onNavigateToHistory = {
                 navController.navigate("history")
             },
-            onOpenShortsFeed = {},
             onPlayMix = { videos, title -> playerViewModel.playPlaylist(videos, 0, title, false) },
             topCategoryTabs = topCategoryTabs,
             onCategorySelected = onCategorySelected,
             viewModel = homeViewModel,
-        )
-    }
-
-    composable(
-        route = SHORTS_ROUTE_PATTERN,
-        arguments =
-            listOf(
-                navArgument(SHORTS_ROUTE_ARG) {
-                    type = NavType.StringType
-                    nullable = true
-                    defaultValue = ""
-                },
-            ),
-    ) { backStackEntry ->
-        currentRoute.value = SHORTS_ROUTE_KEY
-        val source = ShortsQueueSource.decode(backStackEntry.arguments?.getString(SHORTS_ROUTE_ARG))
-        val isTabRoot = source == ShortsQueueSource.Feed
-        ShortsScreen(
-            source = source,
-            isTabRoot = isTabRoot,
-            onBack = { navController.popBackStack() },
-            onChannelClick = { channelId -> mediaNavigator.openChannel(channelId) },
-            onSearchClick = { navController.navigate("search") },
         )
     }
 
@@ -169,13 +137,8 @@ fun NavGraphBuilder.flowAppGraph(
             openMusicSubscriptions = openMusic,
             onMusicSubscriptionsOpened = { backStackEntry.savedStateHandle[OPEN_MUSIC_SUBSCRIPTIONS] = false },
             onVideoClick = { video ->
-                navController.openVideoOrShorts(video, disableShortsPlayer) {
-                    playerViewModel.playVideo(it)
-                    GlobalPlayerState.setCurrentVideo(it)
-                }
-            },
-            onShortClick = { source ->
-                navController.openShortsOrPlayer(source, disableShortsPlayer)
+                playerViewModel.playVideo(video)
+                GlobalPlayerState.setCurrentVideo(video)
             },
             onChannelClick = { channel ->
                 if (channel.isMusic && channel.id.isNotBlank()) {
@@ -216,7 +179,6 @@ fun NavGraphBuilder.flowAppGraph(
             onNavigateToWatchLater = {
                 navController.navigate("playlist/${PlaylistRepository.WATCH_LATER_ID}")
             },
-            onNavigateToSavedShorts = {},
             onNavigateToNotes = {
                 navController.navigate("notes")
             },
@@ -227,7 +189,7 @@ fun NavGraphBuilder.flowAppGraph(
                 navController.navigate("settings")
             },
             onVideoClick = { video ->
-                navController.openVideoOrShorts(video, disableShortsPlayer) { playerViewModel.playVideo(it) }
+                playerViewModel.playVideo(video)
             },
             onMusicClick = { track, queue, sourceName ->
                 musicPlayerViewModel.loadAndPlayTrack(track, queue, sourceName)
@@ -250,9 +212,6 @@ fun NavGraphBuilder.flowAppGraph(
                 musicPlayerViewModel.loadAndPlayTrack(selectedTrack, musicTracks, downloadsSourceName)
                 onMusicStarted()
             },
-            onSavedShortClick = { video ->
-                navController.openShortsOrPlayer(ShortsQueueSource.Saved(video.id), disableShortsPlayer)
-            },
         )
     }
 
@@ -261,10 +220,7 @@ fun NavGraphBuilder.flowAppGraph(
         // Search owns the whole screen, the way YouTube's does.
         SearchScreen(
             onVideoClick = { video ->
-                navController.openVideoOrShorts(video, disableShortsPlayer) { playerViewModel.playVideo(it) }
-            },
-            onShortsQueue = { source ->
-                navController.openShortsOrPlayer(source, disableShortsPlayer)
+                playerViewModel.playVideo(video)
             },
             onChannelClick = { channel ->
                 mediaNavigator.openChannel(channel.url.ifBlank { channel.id })
@@ -287,10 +243,7 @@ fun NavGraphBuilder.flowAppGraph(
         currentRoute.value = "categories"
         com.fedoratube.org.ui.screens.categories.CategoriesScreen(
             onVideoClick = { video ->
-                navController.openVideoOrShorts(video, disableShortsPlayer) { playerViewModel.playVideo(it) }
-            },
-            onShortClick = { videoId ->
-                navController.openShortsOrPlayer(ShortsQueueSource.SeededFeed(videoId), disableShortsPlayer)
+                playerViewModel.playVideo(video)
             },
             onPlaylistClick = { playlistId ->
                 navController.navigate("playlist/$playlistId")
@@ -388,16 +341,10 @@ fun NavGraphBuilder.flowAppGraph(
         ChannelScreen(
             channelUrl = channelUrl,
             onVideoClick = { video ->
-                navController.openVideoOrShorts(video, disableShortsPlayer) { playerViewModel.playVideo(it) }
+                playerViewModel.playVideo(video)
             },
             onChannelClick = { channelId ->
                 mediaNavigator.openChannel(channelId)
-            },
-            onShortClick = { videoId, sortIndex ->
-                navController.openShortsOrPlayer(
-                    ShortsQueueSource.Channel(channelUrl = channelUrl, startVideoId = videoId, sortIndex = sortIndex),
-                    disableShortsPlayer,
-                )
             },
             onPlaylistClick = { playlistId ->
                 navController.navigate("playlist/$playlistId")
@@ -429,9 +376,6 @@ fun NavGraphBuilder.flowAppGraph(
                 } else {
                     playerViewModel.playVideo(track.toVideo())
                 }
-            },
-            onShortsQueue = { source ->
-                navController.openShortsOrPlayer(source, disableShortsPlayer)
             },
             onMusicClick = { track, queue ->
                 musicPlayerViewModel.loadAndPlayTrack(track, queue, "History")
@@ -484,10 +428,6 @@ fun NavGraphBuilder.flowAppGraph(
                     val tracks = videos.filter { it.isMusic }.map { it.toMusicTrack() }
                     musicPlayerViewModel.loadAndPlayTrack(start.toMusicTrack(), tracks, title)
                     onMusicStarted()
-                } else if (start.isShort && !disableShortsPlayer) {
-                    // A Short saved to Watch Later (or any playlist) opens in the Shorts
-                    // player, not the long-form player.
-                    navController.openShorts(ShortsQueueSource.SeededFeed(start.id))
                 } else {
                     playerViewModel.playPlaylist(videos, index, title, shuffle)
                 }

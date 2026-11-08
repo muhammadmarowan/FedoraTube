@@ -173,7 +173,7 @@ private fun List<SearchSection>.latestStripAfter(index: Int): SearchResultItem.S
 private fun FeedItem.toResultItem(shortsEnabled: Boolean): SearchResultItem? =
     when (this) {
         is FeedItem.VideoItem -> SearchResultItem.VideoResult(video)
-        is FeedItem.ShortItem -> SearchResultItem.VideoResult(video).takeIf { shortsEnabled }
+        is FeedItem.ShortItem -> null
         is FeedItem.PlaylistItem -> SearchResultItem.PlaylistResult(playlist)
         is FeedItem.RelatedChannelItem -> SearchResultItem.ChannelResult(channel)
         is FeedItem.PostItem -> null
@@ -184,10 +184,11 @@ private fun FeedShelf.toShelfItem(shortsEnabled: Boolean): SearchResultItem? {
     if (posts.isNotEmpty()) {
         return SearchResultItem.ShelfResult(id, title, SearchShelfKind.POSTS, posts = posts)
     }
+    // Shorts shelves are removed app-wide.
+    if (style == FeedShelfStyle.Grid) return null
     val videos = items.mapNotNull { it.videoOrNull() }
     if (videos.isEmpty()) return null
-    val kind = if (style == FeedShelfStyle.Grid) SearchShelfKind.SHORTS else SearchShelfKind.VIDEOS
-    if (kind == SearchShelfKind.SHORTS && !shortsEnabled) return null
+    val kind = SearchShelfKind.VIDEOS
     return SearchResultItem.ShelfResult(
         id = id,
         title = title,

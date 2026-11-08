@@ -54,16 +54,15 @@ fun HandlePendingRoute(
 @Composable
 fun HandleDeepLinks(
     deeplinkVideoId: String?,
-    isShort: Boolean,
     navController: NavController,
     onDeeplinkConsumed: () -> Unit,
     asksFirst: suspend () -> Boolean = { false },
     onAsk: (videoId: String) -> Unit = {},
 ) {
     val currentAsksFirst by rememberUpdatedState(asksFirst)
-    LaunchedEffect(deeplinkVideoId, isShort) {
+    LaunchedEffect(deeplinkVideoId) {
         val videoId = deeplinkVideoId ?: return@LaunchedEffect
-        if (!isShort && currentAsksFirst()) {
+        if (currentAsksFirst()) {
             onAsk(videoId)
             onDeeplinkConsumed()
             return@LaunchedEffect

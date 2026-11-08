@@ -2,23 +2,14 @@ package com.fedoratube.org.ui
 
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
-import com.fedoratube.org.data.feed.ShortsQueueSource
 import com.fedoratube.org.ui.components.layout.navigation.FlowTab
 import java.net.URI
 import java.net.URLEncoder
 
 /** The tab whose root screen [route] is, or null for every screen that is not a tab root. */
-internal fun flowTabForDestination(
-    route: String?,
-    shortsSourceArg: String?,
-): FlowTab? =
-    when (route) {
-        null -> null
-        SHORTS_ROUTE_PATTERN -> FlowTab.Shorts.takeIf { ShortsQueueSource.decode(shortsSourceArg) == ShortsQueueSource.Feed }
-        else -> FlowTab.entries.firstOrNull { it.route == route }
-    }
+internal fun flowTabForDestination(route: String?): FlowTab? = FlowTab.entries.firstOrNull { it.route == route }
 
-internal fun NavBackStackEntry.flowTab(): FlowTab? = flowTabForDestination(destination.route, arguments?.getString(SHORTS_ROUTE_ARG))
+internal fun NavBackStackEntry.flowTab(): FlowTab? = flowTabForDestination(destination.route)
 
 /** The tab a route handed in from outside the graph (a widget, a shortcut) names, if any. */
 internal fun flowTabForRoute(route: String): FlowTab? = FlowTab.entries.firstOrNull { it.route == route }
@@ -37,9 +28,6 @@ internal fun NavController.navigateToTab(
         restoreState = true
     }
 }
-
-/** The first tab a video opened from the Shorts tab can play over: any visible tab but Shorts itself. */
-internal fun shortsExitRoute(tabs: List<FlowTab>): String = (tabs.firstOrNull { it != FlowTab.Shorts } ?: FlowTab.Home).route
 
 /** Search is a tab, but it keeps the back-button layout of the other search screens, so no bar. */
 internal fun FlowTab?.showsNavigationBar(): Boolean = this != null && this != FlowTab.Search

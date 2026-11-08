@@ -85,7 +85,6 @@ fun FlowApp(
     systemLightThemeMode: ThemeMode,
     systemDarkThemeMode: ThemeMode,
     deeplinkVideoId: String? = null,
-    isShort: Boolean = false,
     isSharedLink: Boolean = false,
     openMusicPlayerRequest: Int = 0,
     openMusicLyricsRequest: Int = 0,
@@ -108,11 +107,9 @@ fun FlowApp(
 
     val preferences = remember { PlayerPreferences(context) }
     val isHomeNavigationEnabled by preferences.homeNavigationEnabled.collectAsState(initial = true)
-    val isShortsNavigationEnabled by preferences.effectiveShortsNavigationEnabled.collectAsState(initial = true)
     val isMusicNavigationEnabled by preferences.musicNavigationEnabled.collectAsState(initial = true)
     val isSearchNavigationEnabled by preferences.searchNavigationEnabled.collectAsState(initial = false)
     val isCategoriesNavigationEnabled by preferences.categoriesNavigationEnabled.collectAsState(initial = false)
-    val disableShortsPlayer by preferences.effectiveDisableShortsPlayer.collectAsState(initial = false)
     val musicPlayerBackgroundStyle by preferences.musicPlayerBackgroundStyle.collectAsState(
         initial = com.fedoratube.org.data.local.MusicPlayerBackgroundStyle.BLUR_GRADIENT,
     )
@@ -122,16 +119,12 @@ fun FlowApp(
     val subscriptionRefreshOnStartup by preferences.subscriptionRefreshOnStartup.collectAsState(initial = false)
     val bottomNavHideOnScroll by preferences.bottomNavHideOnScroll.collectAsState(initial = true)
     val isFocusModeEnabled by preferences.focusModeEnabled.collectAsState(initial = false)
-    // Focus mode has no Shorts anywhere: no tab, no Shorts player, no shelves.
-    val effectiveShortsNavEnabled = isShortsNavigationEnabled && !isFocusModeEnabled
-    val effectiveDisableShortsPlayer = disableShortsPlayer || isFocusModeEnabled
     val sleepTimerCloseAppOnExpiry by preferences.sleepTimerCloseAppOnExpiry.collectAsState(
         initial = SleepTimerManager.preferredCloseAppOnExpiry,
     )
     val navigationVisibility =
         NavigationVisibility(
             home = isHomeNavigationEnabled,
-            shorts = effectiveShortsNavEnabled,
             music = isMusicNavigationEnabled,
             search = isSearchNavigationEnabled,
             categories = isCategoriesNavigationEnabled,
@@ -188,7 +181,7 @@ fun FlowApp(
         subscriptionRefreshOnStartup = subscriptionRefreshOnStartup,
     )
 
-    HandleIncomingVideo(deeplinkVideoId, isShort, isSharedLink, navController, preferences, onDeeplinkConsumed)
+    HandleIncomingVideo(deeplinkVideoId, isSharedLink, navController, preferences, onDeeplinkConsumed)
     OfflineMonitor(context, navController, snackbarHostState, currentRoute)
 
     val currentEntry by navController.currentBackStackEntryAsState()
@@ -212,19 +205,11 @@ fun FlowApp(
         rememberFlowNavigationScrollState(
             hideOnScroll = bottomNavHideOnScroll && isHomeRoute && !isFocusModeEnabled,
             routeKey = currentRoute.value,
-            locked = (!isHomeRoute) || isFocusModeEnabled || currentRoute.value == SHORTS_ROUTE_KEY,
+            locked = (!isHomeRoute) || isFocusModeEnabled,
         )
 
     val isInPipMode by GlobalPlayerState.isInPipMode.collectAsState()
     val currentVideo by GlobalPlayerState.currentVideo.collectAsState()
-    val isShortsPlayerRoute = currentRoute.value == SHORTS_ROUTE_KEY
-
-    LaunchedEffect(isShortsPlayerRoute) {
-        if (isShortsPlayerRoute) {
-            EnhancedPlayerManager.getInstance().pause()
-            GlobalPlayerState.hideMiniPlayer()
-        }
-    }
 
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
         val density = LocalDensity.current
@@ -246,12 +231,10 @@ fun FlowApp(
                     if (musicPlayerSheetState.isExpanded) musicPlayerSheetState.collapse()
                 }
             }
-        val currentShortsExitRoute by rememberUpdatedState(shortsExitRoute(navigationTabs))
         val mediaNavigator =
             remember(navController, collapseExpandedPlayers) {
-                FlowMediaNavigator(navController, collapseExpandedPlayers) { currentShortsExitRoute }
-            }
-        // A page opened from another app would otherwise land under an expanded player.
+                FlowMediaNavigator(navController, collapseExpandedPlayers)
+            }        // A page opened from another app would otherwise land under an expanded player.
         HandlePendingRoute(
             pendingRoute,
             navController,
@@ -363,7 +346,6 @@ fun FlowApp(
             musicPlayerFollowsTheme =
                 musicPlayerBackgroundStyle == com.fedoratube.org.data.local.MusicPlayerBackgroundStyle.DEFAULT ||
                     (musicPlayerFollowLightTheme && musicPlayerBackgroundStyle.canTurnLight),
-            isShortsPlayer = isShortsPlayerRoute,
             heroUnderStatusBar =
                 statusBarHero.heroUnderStatusBar &&
                     !musicPlayerSheetState.isExpanded &&
@@ -375,7 +357,7 @@ fun FlowApp(
             navController.awaitGraph()
             val video = currentVideo
             val route = currentRoute.value
-            if (route != SHORTS_ROUTE_KEY && !route.startsWith("player") && video != null) {
+            if (!route.startsWith("player") && video != null) {
                 navController.navigate("player/${video.id}")
             }
         }
@@ -385,7 +367,6 @@ fun FlowApp(
                 hasVideo = playerUiState.cachedVideo != null,
                 videoVisible = playerVisible,
                 videoInBackground = playerUiState.isBackgroundPlaybackMode,
-                onShortsPlayer = isShortsPlayerRoute,
                 hasMusic = currentMusicTrack != null,
                 musicSuppressed = suppressMusicMiniAfterVideo,
             )
@@ -393,8 +374,6 @@ fun FlowApp(
         val isPlayerCoveringContent =
             (playerVisible && playerSheetState.currentValue == PlayerSheetValue.Expanded) ||
                 (isMusicSheetShown && musicPlayerSheetState.isExpanded)
-        // Shorts comments opening must NOT hide the bar: the bar stays fixed and the comment
-        // sheet opens in the space above it (ShortsScreen pads the sheet by navigationBottom).
         val showBottomNav =
             !isInPipMode &&
                 currentTab.showsNavigationBar() &&
@@ -408,7 +387,6 @@ fun FlowApp(
             !isInPipMode &&
                 needsOnboarding != null &&
                 currentDestinationRoute != "onboarding" &&
-                !(currentDestinationRoute == SHORTS_ROUTE_PATTERN && currentTab == null) &&
                 !isFocusModeEnabled
         val showVideoBar = activeMiniPlayer == ActiveMiniPlayer.VideoBar && !isInPipMode
         val isMiniBarObscuringContent =
@@ -502,19 +480,7 @@ fun FlowApp(
                     contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal),
                 ) { paddingValues ->
                     val layoutDirection = LocalLayoutDirection.current
-                    val contentPadding =
-                        if (
-                            isShortsPlayerRoute
-                        ) {
-                            PaddingValues(
-                                start = paddingValues.calculateStartPadding(layoutDirection),
-                                top = 0.dp,
-                                end = paddingValues.calculateEndPadding(layoutDirection),
-                                bottom = 0.dp,
-                            )
-                        } else {
-                            paddingValues
-                        }
+                    val contentPadding = paddingValues
 
                     Box(
                         modifier =
@@ -561,7 +527,6 @@ fun FlowApp(
                                             playerViewModel = playerViewModel,
                                             playerUiStateResult = playerUiStateResult,
                                             playerVisibleState = playerVisibleState,
-                                            disableShortsPlayer = effectiveDisableShortsPlayer,
                                             defaultStartRoute = defaultStartRoute,
                                             onMusicStarted = onMusicStarted,
                                             topCategoryTabs = topCategoryTabs,
@@ -590,7 +555,6 @@ fun FlowApp(
             playerVisibleState = playerVisibleState,
             playerSheetState = playerSheetState,
             activeVideo = activeVideo,
-            isShortsPlayerRoute = isShortsPlayerRoute,
             bottomPadding = bottomPaddingTarget,
             startInset = if (usesNavigationRail && isNavigationRailVisible) navigationRailWidth else 0.dp,
             miniPlayerScale = miniPlayerScale,

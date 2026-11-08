@@ -2,7 +2,6 @@ package com.fedoratube.org.ui
 
 import android.net.Uri
 import androidx.navigation.NavHostController
-import com.fedoratube.org.data.feed.ShortsQueueSource
 import com.fedoratube.org.ui.components.layout.navigation.MediaNavigator
 import com.fedoratube.org.utils.YouTubeLink
 
@@ -40,13 +39,11 @@ internal fun isOpenMediaPage(
 
 /**
  * The shell's [MediaNavigator]. [beforeNavigate] moves an expanded player out of the way, so a page
- * opened from inside a player sheet is not hidden behind it. [shortsExitRoute] is where a video
- * opened from a Shorts player at the root of the back stack plays, since it cannot play over Shorts.
+ * opened from inside a player sheet is not hidden behind it.
  */
 internal class FlowMediaNavigator(
     private val navController: NavHostController,
     private val beforeNavigate: () -> Unit,
-    private val shortsExitRoute: () -> String,
 ) : MediaNavigator {
     override fun openChannel(channelId: String) {
         if (channelId.isBlank()) return
@@ -78,12 +75,12 @@ internal class FlowMediaNavigator(
                 openPlayer { navController.navigateToPlayer(destination.videoId) }
             }
 
-            destination is LinkDestination.Page && destination.playsVideo -> {
-                openPlayer { navController.navigate(destination.route) }
-            }
-
             destination is LinkDestination.Short -> {
                 openPlayer { navController.navigateToPlayer(destination.videoId) }
+            }
+
+            destination is LinkDestination.Page && destination.playsVideo -> {
+                openPlayer { navController.navigate(destination.route) }
             }
 
             destination is LinkDestination.Page -> {
@@ -94,23 +91,7 @@ internal class FlowMediaNavigator(
         return true
     }
 
-    /**
-     * The video player stays hidden while a Shorts screen is on top, and the player route hands back
-     * to whatever is under it, so every Shorts screen has to go first or the video would play unseen.
-     */
-    private fun openPlayer(navigate: () -> Unit) {
-        while (isShortsOnTop() && navController.previousBackStackEntry != null) navController.popBackStack()
-        if (isShortsOnTop()) {
-            navController.navigate(shortsExitRoute()) {
-                popUpTo(SHORTS_ROUTE_PATTERN) { saveState = true }
-                launchSingleTop = true
-                restoreState = true
-            }
-        }
-        navigate()
-    }
-
-    private fun isShortsOnTop() = navController.currentBackStackEntry?.destination?.route == SHORTS_ROUTE_PATTERN
+    private fun openPlayer(navigate: () -> Unit) = navigate()
 
     private fun openCollection(id: String) = open(MUSIC_PLAYLIST_ROUTE_PATTERN, MUSIC_PLAYLIST_ROUTE_ARG, id, musicCollectionRoute(id))
 

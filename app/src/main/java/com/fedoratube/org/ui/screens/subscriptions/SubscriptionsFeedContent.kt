@@ -33,14 +33,11 @@ import com.fedoratube.org.data.local.HomeFeedColumns
 import com.fedoratube.org.data.model.Channel
 import com.fedoratube.org.data.model.Comment
 import com.fedoratube.org.data.model.Video
-import com.fedoratube.org.data.feed.ShortsQueueSource
 import com.fedoratube.org.innertube.pages.renderer.CommunityPost
 import com.fedoratube.org.ui.components.channel.CommunityPostCard
 import com.fedoratube.org.ui.components.channel.CommunityPostInlineComments
 import com.fedoratube.org.ui.components.layout.flowBottomContentPadding
 import com.fedoratube.org.ui.components.shared.FlowPullToRefreshBox
-import com.fedoratube.org.ui.components.shared.MediaShortCard
-import com.fedoratube.org.ui.components.shared.ShortCardDefaults
 import com.fedoratube.org.ui.components.shared.card.MediaVideoCard
 import com.fedoratube.org.ui.components.shared.card.VideoCardLayout
 
@@ -71,7 +68,6 @@ internal fun SubscriptionsFeedContent(
     columnPreference: HomeFeedColumns,
     onRefresh: () -> Unit,
     onVideoClick: (Video) -> Unit,
-    onShortClick: (ShortsQueueSource) -> Unit,
     onChannelClick: (Channel) -> Unit,
     onChannelLongClick: ((Channel) -> Unit)? = null,
     onViewAllClick: () -> Unit,
@@ -163,35 +159,6 @@ internal fun SubscriptionsFeedContent(
                                     vertical = ErrorCardPadding,
                                 ),
                         )
-
-                        // Subscribed channels' Shorts (latest one per channel). Focus mode turns
-                        // the shelf off upstream, so it never appears there.
-                        if (state.isShortsShelfEnabled && state.showSubscriptionShorts && state.shorts.isNotEmpty()) {
-                            Text(
-                                text = stringResource(R.string.tab_shorts),
-                                style = MaterialTheme.typography.titleMedium,
-                                modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
-                            )
-                            LazyRow(
-                                contentPadding = PaddingValues(horizontal = 12.dp),
-                                horizontalArrangement = Arrangement.spacedBy(ShortCardDefaults.StripSpacing),
-                            ) {
-                                lazyItems(state.shorts, key = { it.id }) { short ->
-                                    MediaShortCard(
-                                        video = short,
-                                        onClick = {
-                                            onShortClick(
-                                                ShortsQueueSource.Snapshot(
-                                                    token = com.fedoratube.org.data.feed.ShortsSnapshotStore.register(state.shorts),
-                                                    startVideoId = short.id,
-                                                ),
-                                            )
-                                        },
-                                    )
-                                }
-                            }
-                            Spacer(modifier = Modifier.height(4.dp))
-                        }
                     }
                 }
 

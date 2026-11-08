@@ -84,7 +84,7 @@ internal fun ShelfItem(
                 gridCard = gridCard,
                 rowThumbnailWidth = rowThumbnailWidth,
                 showChannelInfo = showChannelInfo,
-                onClick = { actions.onShortClick(item.video.id) },
+                onClick = { actions.onVideoClick(item.video) },
             )
         }
 

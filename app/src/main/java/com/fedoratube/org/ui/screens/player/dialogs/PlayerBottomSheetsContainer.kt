@@ -183,16 +183,7 @@ internal fun PlayerBottomSheetsContainer(
         )
     }
 
-    // Shorts Suggestion Dialog
-    if (screenState.showShortsPrompt && !disableShortsPlayer && showShortsPlayerPrompt) {
-        ShortsSuggestionDialog(
-            onPlayAsShort = {
-                screenState.showShortsPrompt = false
-                onPlayAsShort(completeVideo.id)
-            },
-            onDismiss = { screenState.showShortsPrompt = false },
-        )
-    }
+    // Shorts suggestion removed app-wide.
 }
 
 /**

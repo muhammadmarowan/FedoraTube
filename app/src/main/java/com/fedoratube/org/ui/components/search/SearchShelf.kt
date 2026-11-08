@@ -33,15 +33,13 @@ import com.fedoratube.org.R
 import com.fedoratube.org.data.model.Video
 import com.fedoratube.org.data.paging.SearchResultItem
 import com.fedoratube.org.data.paging.SearchShelfKind
-import com.fedoratube.org.ui.components.shared.MediaShortCard
-import com.fedoratube.org.ui.components.shared.ShortCardDefaults
 import com.fedoratube.org.ui.components.shared.card.MediaVideoCard
 import com.fedoratube.org.ui.components.shared.card.VideoCardDefaults
 import com.fedoratube.org.ui.components.shared.card.VideoCardLayout
 
 /**
- * One of the strips YouTube interleaves between search results: a creator's latest uploads, an
- * inline Shorts row, or their recent community posts.
+ * One of the strips YouTube interleaves between search results: a creator's latest uploads or
+ * their recent community posts.
  *
  * Each is fenced by dividers, the way YouTube separates a strip from the results around it, and a
  * videos strip opens at the count YouTube itself collapses it to rather than all ten.
@@ -54,18 +52,17 @@ fun SearchShelf(
     shelf: SearchResultItem.ShelfResult,
     asThumbnailRows: Boolean,
     onVideoClick: (Video) -> Unit,
-    onShortsClick: (shelf: List<Video>, tapped: Video) -> Unit,
     onChannelClick: (String) -> Unit,
     modifier: Modifier = Modifier,
     thumbnailWidth: Dp = VideoCardDefaults.RowThumbnailWidth,
 ) {
+    // Shorts are removed app-wide — never render a Shorts shelf.
+    if (shelf.kind == SearchShelfKind.SHORTS) return
     Column(modifier = modifier.fillMaxWidth().padding(vertical = SectionSpacing)) {
         HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
         shelf.title?.let { ShelfTitle(it) }
         when (shelf.kind) {
-            SearchShelfKind.SHORTS -> {
-                ShortsStrip(shelf, onShortsClick)
-            }
+            SearchShelfKind.SHORTS -> Unit
 
             SearchShelfKind.VIDEOS -> {
                 VideoStrip(shelf, asThumbnailRows, thumbnailWidth, onVideoClick)
@@ -76,24 +73,6 @@ fun SearchShelf(
             }
         }
         HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-    }
-}
-
-@Composable
-private fun ShortsStrip(
-    shelf: SearchResultItem.ShelfResult,
-    onShortsClick: (shelf: List<Video>, tapped: Video) -> Unit,
-) {
-    LazyRow(
-        contentPadding = PaddingValues(horizontal = StripHorizontalPadding, vertical = StripVerticalPadding),
-        horizontalArrangement = Arrangement.spacedBy(ShortCardDefaults.StripSpacing),
-    ) {
-        items(shelf.videos, key = { it.id }) { video ->
-            MediaShortCard(
-                video = video,
-                onClick = { onShortsClick(shelf.videos, video) },
-            )
-        }
     }
 }
 
