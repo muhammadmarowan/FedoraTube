@@ -63,7 +63,6 @@ class PlaybackSettingsViewModel
         val haptics = preferences.playerHapticsEnabled.asState(true)
         val controlsWhileLoading = preferences.showControlsWhileLoading.asState(overlay.showControlsWhileLoading)
 
-        val castButton = preferences.overlayCastEnabled.asState(overlay.castEnabled)
         val captionsButton = preferences.overlayCcEnabled.asState(overlay.captionsEnabled)
         val pipButton = preferences.overlayPipEnabled.asState(overlay.pipEnabled)
         val autoplayButton = preferences.overlayAutoplayEnabled.asState(overlay.autoplayEnabled)
@@ -166,8 +165,6 @@ class PlaybackSettingsViewModel
         fun setHaptics(value: Boolean) = write { preferences.setPlayerHapticsEnabled(value) }
 
         fun setControlsWhileLoading(value: Boolean) = write { preferences.setShowControlsWhileLoading(value) }
-
-        fun setCastButton(value: Boolean) = write { preferences.setOverlayCastEnabled(value) }
 
         fun setCaptionsButton(value: Boolean) = write { preferences.setOverlayCcEnabled(value) }
 

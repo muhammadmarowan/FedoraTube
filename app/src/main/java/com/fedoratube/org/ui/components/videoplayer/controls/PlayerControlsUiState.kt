@@ -39,7 +39,6 @@ internal data class PlayerControlsUiState(
     /** SponsorBlock is on and this video has segments to act on. */
     val isSponsorBlockAvailable: Boolean = false,
     val isSponsorBlockOffForVideo: Boolean = false,
-    val isCasting: Boolean = false,
     val isLive: Boolean = false,
     val isLiveChatAvailable: Boolean = false,
     val isCommentsAvailable: Boolean = false,

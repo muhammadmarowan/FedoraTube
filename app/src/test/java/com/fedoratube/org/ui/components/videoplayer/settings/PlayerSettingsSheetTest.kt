@@ -59,7 +59,7 @@ class PlayerSettingsSheetTest {
         var speed: Float? = null
         var subtitlesDisabled = false
         var sleepTimer = false
-        var cast = false
+        var locked = false
     }
 
     private fun setMenu(
@@ -87,7 +87,7 @@ class PlayerSettingsSheetTest {
                     subtitleStyle = SubtitleStyle(),
                     onSubtitleStyleChange = {},
                     onLoopToggle = {},
-                    onCastClick = { callbacks.cast = true },
+                    onLockScreen = { callbacks.locked = true },
                     onSleepTimerClick = { callbacks.sleepTimer = true },
                     enableVerticalDismiss = enableVerticalDismiss,
                 )
@@ -98,40 +98,47 @@ class PlayerSettingsSheetTest {
     }
 
     @Test
-    fun mainPageRendersEverySectionAndRow() {
+    fun mainPageRendersTheYouTubeStyleRows() {
         setMenu()
 
         rule.onNodeWithText(string(R.string.player_settings)).assertIsDisplayed()
         listOf(
-            R.string.video,
             R.string.quality,
             R.string.playback_speed,
-            R.string.audio_settings_title,
-            R.string.audio_track,
             R.string.captions,
-            R.string.filter_subtitles,
-            R.string.subtitle_style,
-            R.string.player_settings_overlay_controls,
+            R.string.audio_track,
+            R.string.lock_screen,
+            R.string.more_header,
+        ).forEach { id -> rule.onNodeWithText(string(id)).assertExists() }
+        // Everything else lives behind More now, and casting is out of the app entirely.
+        listOf(
             R.string.cast_to_tv,
+            R.string.loop_video,
             R.string.pip_mode,
-            R.string.sleep_timer,
+        ).forEach { id -> rule.onNodeWithText(string(id)).assertDoesNotExist() }
+    }
+
+    @Test
+    fun morePageKeepsTheRestOfTheSettings() {
+        setMenu(initialPage = PlayerSettingsPage.More)
+
+        rule.onNodeWithText(string(R.string.more_header)).assertIsDisplayed()
+        listOf(
             R.string.loop_video,
             R.string.autoplay_next,
-            R.string.audio_effects,
+            R.string.pip_mode,
+            R.string.sleep_timer,
             R.string.equalizer,
             R.string.player_settings_skip_silence,
             R.string.player_settings_stable_voice,
-            R.string.player_settings_display,
             R.string.player_settings_ambient_mode,
         ).forEach { id -> rule.onNodeWithText(string(id)).assertExists() }
     }
 
     @Test
-    fun mainPageShowsThePlaybackHeaderOnce() {
-        setMenu()
+    fun morePageShowsThePlaybackHeaderOnce() {
+        setMenu(initialPage = PlayerSettingsPage.More)
 
-        // The speed row and the loop/autoplay toggles used to sit under two separate headers with
-        // the same title; they are one group now.
         rule.onAllNodesWithText(string(R.string.playback_header)).assertCountEquals(1)
     }
 
@@ -199,8 +206,8 @@ class PlayerSettingsSheetTest {
     }
 
     @Test
-    fun mainPageTogglesAreSwitchesThatReportTheirState() {
-        setMenu()
+    fun morePageTogglesAreSwitchesThatReportTheirState() {
+        setMenu(initialPage = PlayerSettingsPage.More)
 
         rule
             .onNode(hasText(string(R.string.loop_video)) and hasRole(Role.Switch))
@@ -210,7 +217,7 @@ class PlayerSettingsSheetTest {
 
     @Test
     fun autoplayToggleIsDisabledWhileLooping() {
-        setMenu(playerState = fakePlayerState().copy(isLooping = true))
+        setMenu(initialPage = PlayerSettingsPage.More, playerState = fakePlayerState().copy(isLooping = true))
 
         rule
             .onNode(hasText(string(R.string.autoplay_next)) and hasRole(Role.Switch))
@@ -234,7 +241,7 @@ class PlayerSettingsSheetTest {
 
     @Test
     fun sleepTimerRowFiresAfterTheSheetDismisses() {
-        val callbacks = setMenu()
+        val callbacks = setMenu(initialPage = PlayerSettingsPage.More)
 
         rule.onNodeWithText(string(R.string.sleep_timer)).performScrollTo().performClick()
         rule.waitForIdle()
@@ -244,19 +251,19 @@ class PlayerSettingsSheetTest {
     }
 
     @Test
-    fun castRowFiresAfterTheSheetDismisses() {
+    fun lockScreenRowFiresAfterTheSheetDismisses() {
         val callbacks = setMenu()
 
-        rule.onNodeWithText(string(R.string.cast_to_tv)).performScrollTo().performClick()
+        rule.onNodeWithText(string(R.string.lock_screen)).performClick()
         rule.waitForIdle()
 
-        assertThat(callbacks.cast).isTrue()
+        assertThat(callbacks.locked).isTrue()
         assertThat(callbacks.dismissed).isTrue()
     }
 
     @Test
     fun sleepTimerRowInAPanelHostFiresWithoutDismissing() {
-        val callbacks = setMenu(enableVerticalDismiss = false)
+        val callbacks = setMenu(initialPage = PlayerSettingsPage.More, enableVerticalDismiss = false)
 
         rule.onNodeWithText(string(R.string.sleep_timer)).performScrollTo().performClick()
         rule.waitForIdle()
@@ -266,14 +273,8 @@ class PlayerSettingsSheetTest {
     }
 
     @Test
-    fun subtitleStyleOpensAsAPageAndBackReturnsToMain() {
-        val callbacks = setMenu()
-
-        rule.onNodeWithText(string(R.string.subtitle_style)).performScrollTo().performClick()
-        rule.waitForIdle()
-
-        rule.onNodeWithText(string(R.string.subtitle_customization_title)).assertExists()
-        assertThat(callbacks.dismissed).isFalse()
+    fun backFromTheSubtitlesPageReturnsToTheMainPage() {
+        setMenu(initialPage = PlayerSettingsPage.Subtitles, subtitlesEnabled = true)
 
         rule.onNodeWithContentDescription(string(R.string.back)).performClick()
         rule.waitForIdle()

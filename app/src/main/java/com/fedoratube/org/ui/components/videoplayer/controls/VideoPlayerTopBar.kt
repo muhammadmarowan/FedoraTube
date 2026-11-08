@@ -16,12 +16,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.QueueMusic
-import androidx.compose.material.icons.outlined.Cast
 import androidx.compose.material.icons.outlined.ChatBubbleOutline
 import androidx.compose.material.icons.outlined.ClosedCaption
 import androidx.compose.material.icons.rounded.AspectRatio
 import androidx.compose.material.icons.rounded.Bedtime
-import androidx.compose.material.icons.rounded.Cast
 import androidx.compose.material.icons.rounded.ClosedCaption
 import androidx.compose.material.icons.rounded.Fullscreen
 import androidx.compose.material.icons.rounded.KeyboardArrowDown
@@ -82,7 +80,6 @@ internal fun VideoPlayerTopBar(
     sbSubmitEnabled: Boolean,
     isSponsorBlockAvailable: Boolean,
     isSponsorBlockOffForVideo: Boolean,
-    isCasting: Boolean,
     isSubtitlesEnabled: Boolean,
     isAutoplayOn: Boolean,
     isLooping: Boolean,

@@ -2,12 +2,10 @@ package com.fedoratube.org.ui.components.shared.quickactions
 
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.outlined.PlaylistAdd
 import androidx.compose.material.icons.filled.WatchLater
 import androidx.compose.material.icons.outlined.Block
 import androidx.compose.material.icons.outlined.BookmarkBorder
 import androidx.compose.material.icons.outlined.Download
-import androidx.compose.material.icons.outlined.QueuePlayNext
 import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material.icons.outlined.ThumbDown
 import androidx.compose.material.icons.outlined.WatchLater
@@ -56,28 +54,6 @@ fun VideoQuickActionsMenu(
         onDismissRequest = onDismissRequest,
         modifier = Modifier.widthIn(min = 240.dp),
     ) {
-        DropdownMenuItem(
-            text = { Text(stringResource(R.string.play_next)) },
-            leadingIcon = {
-                Icon(Icons.Outlined.QueuePlayNext, contentDescription = null)
-            },
-            onClick = {
-                haptics.performHapticFeedback(HapticFeedbackType.Confirm)
-                viewModel.playVideoNext(video)
-                onDismissRequest()
-            },
-        )
-        DropdownMenuItem(
-            text = { Text(stringResource(R.string.add_to_queue)) },
-            leadingIcon = {
-                Icon(Icons.AutoMirrored.Outlined.PlaylistAdd, contentDescription = null)
-            },
-            onClick = {
-                haptics.performHapticFeedback(HapticFeedbackType.Confirm)
-                viewModel.addVideoToQueue(video)
-                onDismissRequest()
-            },
-        )
         DropdownMenuItem(
             text = { Text(stringResource(R.string.watch_later)) },
             leadingIcon = {

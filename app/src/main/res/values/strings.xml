@@ -1593,6 +1593,7 @@
     <string name="confirm">Confirm</string>
     <!-- Sleep Timer -->
     <string name="sleep_timer">Sleep Timer</string>
+    <string name="lock_screen">Lock screen</string>
     <string name="sleep_timer_duration">Duration</string>
     <plurals name="sleep_timer_minutes">
         <item quantity="one">%1$d min</item>

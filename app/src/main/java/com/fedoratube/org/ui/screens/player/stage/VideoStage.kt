@@ -49,7 +49,6 @@ internal fun VideoStage(
     rememberSubtitleLanguage: (String) -> Unit,
     onDecodedVideoAspectRatioChanged: (Float) -> Unit,
     onSbSubmitClick: () -> Unit,
-    onCastClick: () -> Unit,
 ) {
     val video = session.video
     val screenState = session.screenState
@@ -241,7 +240,6 @@ internal fun VideoStage(
                 onToggleRemainingTime = { showRemainingTime = !showRemainingTime },
                 rememberSubtitleLanguage = rememberSubtitleLanguage,
                 onSbSubmitClick = onSbSubmitClick,
-                onCastClick = onCastClick,
             )
         }
     }

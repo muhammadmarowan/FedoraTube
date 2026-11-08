@@ -65,7 +65,6 @@ class VideoPlayerTopBarSpacingTest {
                     sbSubmitEnabled = true,
                     isSponsorBlockAvailable = true,
                     isSponsorBlockOffForVideo = false,
-                    isCasting = false,
                     isSubtitlesEnabled = false,
                     isAutoplayOn = true,
                     isLooping = false,

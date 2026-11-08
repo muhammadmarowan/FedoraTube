@@ -1,18 +1,13 @@
 package com.fedoratube.org.ui.screens.player.dialogs
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.fedoratube.org.data.model.Video
-import com.fedoratube.org.player.EnhancedPlayerManager
-import com.fedoratube.org.player.dlna.DlnaCastManager
 import com.fedoratube.org.player.state.EnhancedPlayerState
 import com.fedoratube.org.ui.components.shared.MediaDownloadDialog
 import com.fedoratube.org.ui.components.shared.MediaDownloadDialogCompact
-import com.fedoratube.org.ui.components.videoplayer.DlnaDevicePickerDialog
 import com.fedoratube.org.ui.screens.player.VideoPlayerViewModel
 import com.fedoratube.org.ui.screens.player.state.PlayerScreenState
 import com.fedoratube.org.ui.screens.player.state.PlayerSheet
@@ -86,42 +81,6 @@ internal fun PlayerDialogsContainer(
             pipAspectRatio = null,
             onSheetProgressChange = onMediaSheetProgressChange,
             onDismiss = { screenState.closeSheet() },
-        )
-    }
-
-    if (screenState.activeSheet == PlayerSheet.Dlna) {
-        val dlnaDevices by DlnaCastManager.devices.collectAsStateWithLifecycle()
-        val isDlnaDiscovering by DlnaCastManager.isDiscovering.collectAsStateWithLifecycle()
-        DlnaDevicePickerDialog(
-            devices = dlnaDevices,
-            isDiscovering = isDlnaDiscovering,
-            isCasting = DlnaCastManager.isCasting,
-            videoTitle = video.title,
-            onDeviceSelected = { device ->
-                val currentPlayerUrl =
-                    EnhancedPlayerManager
-                        .getInstance()
-                        .getPlayer()
-                        ?.currentMediaItem
-                        ?.localConfiguration
-                        ?.uri
-                        ?.toString()
-                DlnaCastManager.castStreamInfo(
-                    device = device,
-                    title = video.title,
-                    streamInfo = null,
-                    currentPlayerUrl = currentPlayerUrl,
-                )
-                screenState.closeSheet()
-            },
-            onStopCasting = {
-                DlnaCastManager.disconnect()
-                screenState.closeSheet()
-            },
-            onDismiss = {
-                DlnaCastManager.stopDiscovery()
-                screenState.closeSheet()
-            },
         )
     }
 }

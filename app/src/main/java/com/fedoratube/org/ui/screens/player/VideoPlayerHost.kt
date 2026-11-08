@@ -26,7 +26,6 @@ import androidx.media3.common.util.UnstableApi
 import com.fedoratube.org.data.model.Video
 import com.fedoratube.org.player.EnhancedPlayerManager
 import com.fedoratube.org.player.GlobalPlayerState
-import com.fedoratube.org.player.dlna.DlnaCastManager
 import com.fedoratube.org.ui.components.videoplayer.DraggablePlayerLayout
 import com.fedoratube.org.ui.components.videoplayer.PlayerDraggableState
 import com.fedoratube.org.ui.components.videoplayer.PlayerSheetValue
@@ -514,10 +513,6 @@ fun VideoPlayerHost(
                         onSbSubmitClick = {
                             screenState.showControls = false
                             screenState.open(PlayerSheet.SbSubmit)
-                        },
-                        onCastClick = {
-                            DlnaCastManager.startDiscovery(context)
-                            screenState.open(PlayerSheet.Dlna)
                         },
                     )
                 },

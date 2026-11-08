@@ -14,7 +14,6 @@ import com.fedoratube.org.R
 import com.fedoratube.org.player.EnhancedPlayerManager
 import com.fedoratube.org.player.PictureInPictureHelper
 import com.fedoratube.org.player.SleepTimerManager
-import com.fedoratube.org.player.dlna.DlnaCastManager
 import com.fedoratube.org.ui.components.videoplayer.controls.PlayerControlActions
 import com.fedoratube.org.ui.components.videoplayer.controls.PlayerControlsOverlay
 import com.fedoratube.org.ui.components.videoplayer.controls.PlayerControlsUiState
@@ -40,7 +39,6 @@ internal fun VideoStageControls(
     onToggleRemainingTime: () -> Unit,
     rememberSubtitleLanguage: (String) -> Unit,
     onSbSubmitClick: () -> Unit,
-    onCastClick: () -> Unit,
 ) {
     val video = session.video
     val context = session.context
@@ -125,7 +123,6 @@ internal fun VideoStageControls(
             sbSubmitEnabled = prefs.sbSubmitEnabled,
             isSponsorBlockAvailable = prefs.sponsorBlockEnabled && sponsorSegments.any { it.endTime > it.startTime },
             isSponsorBlockOffForVideo = sponsorBlockOffForVideo,
-            isCasting = DlnaCastManager.isCasting,
             isLive = !playerUiState.hlsUrl.isNullOrEmpty(),
             isLiveChatAvailable = playerUiState.isLiveChatAvailable,
             isCommentsAvailable = isCommentsAvailable,
@@ -201,7 +198,6 @@ internal fun VideoStageControls(
                 val message = if (off) R.string.sb_off_for_video else R.string.sb_on_for_video
                 Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
             },
-            onCastClick = onCastClick,
             onLiveClick = { EnhancedPlayerManager.getInstance().seekToLiveEdge(resetSpeed = true) },
             onLiveChatClick = {
                 val fullscreenLiveChat = PlayerSheet.LiveChat(fullscreen = true)

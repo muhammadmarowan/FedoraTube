@@ -298,7 +298,6 @@ internal fun PlayerControlsOverlay(
                             sbSubmitEnabled = state.sbSubmitEnabled,
                             isSponsorBlockAvailable = state.isSponsorBlockAvailable,
                             isSponsorBlockOffForVideo = state.isSponsorBlockOffForVideo,
-                            isCasting = state.isCasting,
                             isSubtitlesEnabled = state.isSubtitlesEnabled,
                             isAutoplayOn = state.autoplayEnabled,
                             isLooping = state.isLooping,

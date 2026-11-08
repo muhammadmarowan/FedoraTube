@@ -220,14 +220,6 @@ internal object PlaybackIndex {
             section = R.string.player_appearance_gestures_header,
             destination = page,
         )
-    val castButton =
-        SettingEntry(
-            key = "playback.cast_button",
-            title = R.string.player_settings_overlay_cast,
-            summary = R.string.player_settings_overlay_cast_subtitle,
-            section = R.string.settings_section_player_buttons,
-            destination = page,
-        )
     val captionsButton =
         SettingEntry(
             key = "playback.captions_button",
@@ -514,7 +506,6 @@ internal object PlaybackIndex {
             seekGesture,
             haptics,
             controlsWhileLoading,
-            castButton,
             captionsButton,
             pipButton,
             autoplayButton,

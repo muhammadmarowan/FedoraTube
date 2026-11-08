@@ -53,7 +53,7 @@ fun SettingsMenuDialog(
     onLoopToggle: (Boolean) -> Unit,
     ambientModeEnabled: Boolean = false,
     onAmbientModeToggle: (Boolean) -> Unit = {},
-    onCastClick: () -> Unit = {},
+    onLockScreen: () -> Unit = {},
     onPipClick: () -> Unit = {},
     onSleepTimerClick: () -> Unit = {},
     sponsorBlockSegmentCount: Int = 0,
@@ -70,10 +70,14 @@ fun SettingsMenuDialog(
 ) {
     val sheetState = rememberFlowBottomSheetState()
     var currentPage by remember { mutableStateOf(initialPage) }
-    var subtitleStyleReturnPage by remember { mutableStateOf(PlayerSettingsPage.Main) }
+    var subtitleStyleReturnPage by remember { mutableStateOf(PlayerSettingsPage.Subtitles) }
+    // Which page the current subpage was opened from, so back from e.g. Quality returns to the
+    // page that led there (front page or "More") rather than always the front page.
+    var subpageReturnPage by remember { mutableStateOf(PlayerSettingsPage.Main) }
     val currentTitle =
         when (currentPage) {
             PlayerSettingsPage.Main -> stringResource(R.string.player_settings)
+            PlayerSettingsPage.More -> stringResource(R.string.more_header)
             PlayerSettingsPage.Quality -> stringResource(R.string.video_quality_title)
             PlayerSettingsPage.Speed -> stringResource(R.string.playback_speed)
             PlayerSettingsPage.Audio -> stringResource(R.string.audio_track)
@@ -85,7 +89,8 @@ fun SettingsMenuDialog(
         when (currentPage) {
             PlayerSettingsPage.Main -> null
             PlayerSettingsPage.SubtitleStyle -> subtitleStyleReturnPage
-            else -> PlayerSettingsPage.Main
+            PlayerSettingsPage.More -> PlayerSettingsPage.Main
+            else -> subpageReturnPage
         }
     // A panel host swaps the panel's content in place, so a row that opens another surface must not
     // run the exit animation there: the host's onDismiss would close the panel under the new surface.
@@ -137,15 +142,24 @@ fun SettingsMenuDialog(
                 PlayerSettingsPage.Main -> {
                     PlayerSettingsMainPage(
                         playerState = playerState,
-                        autoplayEnabled = autoplayEnabled,
                         subtitlesEnabled = subtitlesEnabled,
-                        ambientModeEnabled = ambientModeEnabled,
-                        onNavigateToPage = { currentPage = it },
-                        onShowSubtitleStyle = {
-                            subtitleStyleReturnPage = PlayerSettingsPage.Main
-                            currentPage = PlayerSettingsPage.SubtitleStyle
+                        onNavigateToPage = { page ->
+                            subpageReturnPage = PlayerSettingsPage.Main
+                            currentPage = page
                         },
-                        onCastClick = { leaveFor(onCastClick) },
+                        onLockScreen = { leaveFor(onLockScreen) },
+                    )
+                }
+
+                PlayerSettingsPage.More -> {
+                    PlayerSettingsMorePage(
+                        playerState = playerState,
+                        autoplayEnabled = autoplayEnabled,
+                        ambientModeEnabled = ambientModeEnabled,
+                        onNavigateToPage = { page ->
+                            subpageReturnPage = PlayerSettingsPage.More
+                            currentPage = page
+                        },
                         onPipClick = { sheetState.dismiss(onPipClick) },
                         onSleepTimerClick = { leaveFor(onSleepTimerClick) },
                         onLoopToggle = onLoopToggle,
@@ -238,6 +252,7 @@ fun SettingsMenuDialog(
 
 enum class PlayerSettingsPage {
     Main,
+    More,
     Quality,
     Speed,
     Audio,

@@ -21,7 +21,6 @@ import com.fedoratube.org.R
 import com.fedoratube.org.data.local.PlayerPreferences
 import com.fedoratube.org.player.EnhancedPlayerManager
 import com.fedoratube.org.player.PictureInPictureHelper
-import com.fedoratube.org.player.dlna.DlnaCastManager
 import com.fedoratube.org.player.state.EnhancedPlayerState
 import com.fedoratube.org.ui.components.videoplayer.settings.SettingsMenuDialog
 import com.fedoratube.org.ui.screens.player.VideoPlayerViewModel
@@ -135,9 +134,11 @@ internal fun PlayerSettingsSheetHost(
         onLoopToggle = { viewModel.toggleLoop(it) },
         ambientModeEnabled = ambientModeEnabled,
         onAmbientModeToggle = { scope.launch { playerPreferences.setVideoAmbientModeEnabled(it) } },
-        onCastClick = {
-            DlnaCastManager.startDiscovery(context)
-            screenState.open(PlayerSheet.Dlna)
+        onLockScreen = {
+            screenState.isTouchLocked = true
+            screenState.showControls = true
+            screenState.revealLockOverlay()
+            screenState.onInteraction()
         },
         onPipClick = {
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O &&
