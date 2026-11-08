@@ -178,12 +178,6 @@ fun CommunityPostCard(
             }
         }
 
-        if (!compact) {
-            Box(modifier = Modifier.padding(horizontal = PostHorizontalPadding)) {
-                PostCommentPreview(onClick = onCommentsClick)
-            }
-        }
-
         if (showDivider) {
             HorizontalDivider(color = MaterialTheme.colorScheme.surfaceVariant, thickness = 0.5.dp)
         }
