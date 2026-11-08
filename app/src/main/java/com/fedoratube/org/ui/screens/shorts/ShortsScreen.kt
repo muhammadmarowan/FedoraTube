@@ -337,6 +337,12 @@ fun ShortsScreen(
         // 0 when closed, 1 when comments fully open.
         val commentsOpenFraction = commentsProgress.value
         val videoHeightFraction = 1f - commentsOpenFraction * (commentsSheetHeight.value / totalHeight.value)
+        // The video keeps its true 9:16 ratio and starts right below the status bar's black
+        // strip: its box is the aspect height for the screen's width (or the animated video
+        // area when comments shrink it below that), top-anchored — no black gap above the
+        // video, the leftover black sits below it, above the navigation bar.
+        val videoContentHeight = totalHeight * videoHeightFraction
+        val videoBoxHeight = minOf(maxWidth * (16f / 9f), videoContentHeight)
 
         // Home-feed style pull-to-refresh around the video area (not the comments sheet):
         // pulling down on the first Short reloads the feed with a top indicator.
@@ -381,11 +387,13 @@ fun ShortsScreen(
                 }
 
                 else -> {
-                    // The video fills the whole area from below the status bar to the
-                    // navigation bar (RESIZE_MODE_ZOOM, like YouTube) — no black gap above
-                    // it and no uncropped letterbox. One mode in both comments states, so
-                    // closing comments never changes the ratio or bounces the video.
-                    Box(modifier = Modifier.fillMaxSize()) {
+                    Box(
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .height(videoBoxHeight)
+                                .align(Alignment.TopCenter),
+                    ) {
                         // The surface fades in over the poster only once its first frame
                         // renders (playerReady) — see the listener above.
                         val playerAlpha by animateFloatAsState(
@@ -430,9 +438,9 @@ fun ShortsScreen(
                                         model = item.posterUrl,
                                         contentDescription = null,
                                         modifier = Modifier.fillMaxSize(),
-                                        // Same fill ratio as the video, so poster → first
-                                        // frame does not jump either.
-                                        contentScale = ContentScale.Crop,
+                                        // Same FIT ratio as the video, so poster → first
+                                        // frame does not jump or crop either.
+                                        contentScale = ContentScale.Fit,
                                         portrait = true,
                                     )
                                 }
@@ -440,17 +448,16 @@ fun ShortsScreen(
                                 // the same page — inside the pager's scrollable, where swipes
                                 // and taps reach it (a surface hoisted above the pager blocks
                                 // the pager's drag gestures, which froze Shorts scrolling).
-                                // resizeMode is ZOOM (fill) in BOTH states: the video
-                                // always fills from below the status bar to the navigation
-                                // bar like YouTube. One mode for open and close means the
-                                // height animation alone moves the video — no ratio switch,
-                                // no crop jump, no bounce when comments close.
+                                // resizeMode is FIT in BOTH states: the whole frame always
+                                // shows, never cropped. Opening comments shrinks the video,
+                                // uncropped, to the top; closing glides it back with no ratio
+                                // switch, no crop jump, no bounce.
                                 if (isCurrent) {
                                     AndroidView(
                                         factory = { ctx ->
                                             (LayoutInflater.from(ctx).inflate(R.layout.video_player_view, null) as PlayerView).apply {
                                                 layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
-                                                resizeMode = androidx.media3.ui.AspectRatioFrameLayout.RESIZE_MODE_ZOOM
+                                                resizeMode = androidx.media3.ui.AspectRatioFrameLayout.RESIZE_MODE_FIT
                                                 setShowBuffering(PlayerView.SHOW_BUFFERING_NEVER)
                                                 setShutterBackgroundColor(android.graphics.Color.TRANSPARENT)
                                                 setBackgroundColor(android.graphics.Color.TRANSPARENT)
@@ -459,7 +466,7 @@ fun ShortsScreen(
                                             }
                                         },
                                         update = { playerView ->
-                                            playerView.resizeMode = androidx.media3.ui.AspectRatioFrameLayout.RESIZE_MODE_ZOOM
+                                            playerView.resizeMode = androidx.media3.ui.AspectRatioFrameLayout.RESIZE_MODE_FIT
                                             playerView.player = player
                                         },
                                         onRelease = { view -> view.player = null },
