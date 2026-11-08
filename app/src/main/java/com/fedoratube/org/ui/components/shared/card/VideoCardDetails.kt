@@ -4,6 +4,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
@@ -23,6 +24,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -37,6 +39,7 @@ import com.fedoratube.org.data.model.Video
 import com.fedoratube.org.data.model.VideoCollaborator
 import com.fedoratube.org.ui.components.layout.navigation.LocalMediaNavigator
 import com.fedoratube.org.ui.components.shared.pressScale
+import com.fedoratube.org.ui.components.shared.quickactions.VideoQuickActionsMenu
 import com.fedoratube.org.ui.theme.extendedColors
 import com.fedoratube.org.utils.avatarImageIdentityKey
 
@@ -138,11 +141,21 @@ internal fun VideoCardSideActions(
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier.offset(y = -alignTo)) {
-        IconButton(onClick = { state.sheets.showQuickActions = true }) {
-            Icon(
-                imageVector = Icons.Default.MoreVert,
-                contentDescription = stringResource(R.string.more_options),
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+        // YouTube-style: the ⋮ opens an anchored popup right under the button, not a bottom sheet.
+        var menuOpen by remember { mutableStateOf(false) }
+        Box {
+            IconButton(onClick = { menuOpen = true }) {
+                Icon(
+                    imageVector = Icons.Default.MoreVert,
+                    contentDescription = stringResource(R.string.more_options),
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+            VideoQuickActionsMenu(
+                video = state.video,
+                expanded = menuOpen,
+                onDismissRequest = { menuOpen = false },
+                title = state.title,
             )
         }
         if (showWatched) {

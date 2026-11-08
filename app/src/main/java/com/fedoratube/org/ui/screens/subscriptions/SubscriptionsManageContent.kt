@@ -1,5 +1,6 @@
 package com.fedoratube.org.ui.screens.subscriptions
 
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -25,10 +26,13 @@ import androidx.compose.material3.ToggleButton
 import androidx.compose.material3.ToggleButtonShapes
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -85,7 +89,30 @@ internal fun SubscriptionsManageContent(
             }
         }
 
-    Column(modifier = modifier.fillMaxSize()) {
+    val swipeThreshold = with(LocalDensity.current) { 64.dp.toPx() }
+    var dragOffsetX by remember { mutableStateOf(0f) }
+
+    Column(
+        modifier =
+            modifier
+                .fillMaxSize()
+                // Swipe left/right switches the Video <-> Music subscription list, like the tabs above.
+                // Vertical scrolling stays with the LazyColumn below.
+                .pointerInput(selectedTabIndex) {
+                    detectHorizontalDragGestures(
+                        onDragEnd = {
+                            when {
+                                dragOffsetX <= -swipeThreshold -> onShowsMusicChange(true)
+                                dragOffsetX >= swipeThreshold -> onShowsMusicChange(false)
+                            }
+                            dragOffsetX = 0f
+                        },
+                        onDragCancel = { dragOffsetX = 0f },
+                    ) { _, amount ->
+                        dragOffsetX += amount
+                    }
+                },
+    ) {
         FlowConnectedToggleGroup(
             options =
                 listOf(

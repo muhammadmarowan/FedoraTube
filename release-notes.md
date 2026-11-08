@@ -22,6 +22,8 @@
 - Library no longer has a Downloads row (it's in the bar now); History now shows watched Shorts too (Shorts row + Shorts filter); Downloads top bar has a search icon right of notifications, and in Focus mode it shows a back button with no notification/search icons
 - Subscriptions: swiping on the All-channels (manage) list no longer jumps to the Music category, and the import/export button is removed from the top of that page
 - Downloads has no refresh (no pull-to-refresh, no refresh icon) — the list is live; watched Shorts are recorded into History; Focus mode hides subscribe on channel pages entirely
+- Subscriptions "View all" page swipes between the All-channels (Video) list and the Music subscriptions list, like the tabs above
+- Video card ⋮ now opens a YouTube-style anchored popup menu (Play next, Add to queue, Watch later, Save to playlist, Download, Share, Not interested, Don't show this channel) instead of a bottom sheet
 - Shorts are back, YouTube-style: a Shorts icon sits in the bottom navigation bar directly right of Home, opening a full-screen vertical Shorts player (swipe up/down, tap to pause, mute, like/dislike, share, progress bar, channel + title overlay)
 - Shorts tab plays the interest-based algorithmic feed; channel pages show a Shorts tab and Shorts shelves, the Subscriptions page shows a Shorts strip of your subscribed channels, and search results show a Shorts strip for the searched topic (tapping any Short opens the matching queue and continues into recommendations)
 - Focus mode has no Shorts anywhere: no Shorts tab in the navigation bar, no Shorts player (Shorts open in the regular player), no Shorts tab/shelves on channel pages, no Shorts strip in search results or Subscriptions, no Shorts in History/Library
