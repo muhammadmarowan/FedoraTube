@@ -13,7 +13,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.outlined.Tune
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -22,19 +21,21 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.NestedScrollSource
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
 import com.fedoratube.org.R
 import com.fedoratube.org.data.model.Comment
 import com.fedoratube.org.ui.components.shared.CommentSortFilter
-import com.fedoratube.org.ui.components.shared.CommentSortChips
 import com.fedoratube.org.ui.components.shared.FlowBottomSheet
 import com.fedoratube.org.ui.components.shared.FlowCommentsList
 import com.fedoratube.org.ui.components.shared.defaultSheetExpandedHeight
@@ -62,8 +63,6 @@ fun CommunityPostCommentsSheet(
     onAvatarClick: (String) -> Unit = {},
 ) {
     val sheetState = rememberFlowBottomSheetState()
-    var selectedFilter by remember { mutableStateOf(CommentSortFilter.TOP) }
-    var showSort by remember { mutableStateOf(false) }
 
     FlowBottomSheet(
         onDismiss = onDismiss,
@@ -105,13 +104,6 @@ fun CommunityPostCommentsSheet(
                         )
                     }
                     Spacer(Modifier.weight(1f))
-                    IconButton(onClick = { showSort = !showSort }, modifier = Modifier.size(40.dp)) {
-                        Icon(
-                            Icons.Outlined.Tune,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onSurface,
-                        )
-                    }
                     IconButton(
                         onClick = { sheetState.dismiss() },
                         modifier = Modifier.size(40.dp),
@@ -119,22 +111,35 @@ fun CommunityPostCommentsSheet(
                         Icon(Icons.Default.Close, contentDescription = stringResource(R.string.close))
                     }
                 }
-                if (showSort) {
-                    CommentSortChips(
-                        selected = selectedFilter,
-                        onSelect = { selectedFilter = it },
-                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp),
-                    )
-                }
                 HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
             }
         },
     ) {
+        val scrollBlock =
+            remember {
+                object : NestedScrollConnection {
+                    override fun onPreScroll(
+                        available: Offset,
+                        source: NestedScrollSource,
+                    ): Offset = available
+
+                    override fun onPostScroll(
+                        consumed: Offset,
+                        available: Offset,
+                        source: NestedScrollSource,
+                    ): Offset = available
+
+                    override suspend fun onPostFling(
+                        consumed: Velocity,
+                        available: Velocity,
+                    ): Velocity = available
+                }
+            }
         FlowCommentsList(
             comments = comments,
             isLoading = isLoading,
             listState = rememberLazyListState(),
-            selectedFilter = selectedFilter,
+            selectedFilter = CommentSortFilter.TOP,
             onSeekMs = {},
             onLoadReplies = onLoadReplies,
             onLoadMoreReplies = onLoadMoreReplies,
@@ -146,7 +151,8 @@ fun CommunityPostCommentsSheet(
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .weight(1f),
+                    .weight(1f)
+                    .nestedScroll(scrollBlock),
             contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp),
         )
     }

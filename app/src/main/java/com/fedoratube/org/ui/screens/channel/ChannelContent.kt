@@ -185,13 +185,14 @@ internal fun ChannelContent(
     }
 
     val nestedScrollConnection =
-        remember(collapsingHeaderHeightPx, topBarHeightPx) {
+        remember(collapsingHeaderHeightPx, topBarHeightPx, communityUiState.activePost?.id) {
+            val commentsOpen = communityUiState.activePost != null
             object : NestedScrollConnection {
                 override fun onPreScroll(
                     available: Offset,
                     source: NestedScrollSource,
                 ): Offset {
-                    if (available.y >= 0f) return Offset.Zero
+                    if (commentsOpen || available.y >= 0f) return Offset.Zero
                     val maxOffset = -(collapsingHeaderHeightPx - topBarHeightPx).coerceAtLeast(0f)
                     val previous = headerOffsetPx
                     val next = (previous + available.y).coerceIn(maxOffset, 0f)
@@ -204,7 +205,7 @@ internal fun ChannelContent(
                     available: Offset,
                     source: NestedScrollSource,
                 ): Offset {
-                    if (available.y <= 0f) return Offset.Zero
+                    if (commentsOpen || available.y <= 0f) return Offset.Zero
                     val maxOffset = -(collapsingHeaderHeightPx - topBarHeightPx).coerceAtLeast(0f)
                     val previous = headerOffsetPx
                     val next = (previous + available.y).coerceIn(maxOffset, 0f)
@@ -263,7 +264,7 @@ internal fun ChannelContent(
                     .fillMaxSize()
                     .graphicsLayer { alpha = if (headerMeasured) 1f else 0f },
             verticalAlignment = Alignment.Top,
-            userScrollEnabled = true,
+            userScrollEnabled = communityUiState.activePost == null,
         ) { page ->
             val listPadding = PaddingValues(top = visibleHeaderHeightDp, bottom = flowBottomContentPadding())
             val tab = visibleTabs.getOrElse(page) { visibleTabs.first() }
