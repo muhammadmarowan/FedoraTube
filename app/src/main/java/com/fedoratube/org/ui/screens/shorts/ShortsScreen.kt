@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.snap
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -184,35 +185,59 @@ fun ShortsScreen(
 
     LaunchedEffect(source) { viewModel.load(source) }
 
-    // One player for the whole pager.
+    /** Only the main shorts player requests audio focus; the preloader stays silent. */
+    val ShortsAudioAttributes =
+        androidx.media3.common.AudioAttributes.Builder()
+            .setContentType(androidx.media3.common.C.AUDIO_CONTENT_TYPE_MOVIE)
+            .setUsage(androidx.media3.common.C.USAGE_MEDIA)
+            .build()
+
+    // Two players ping-pong so the next Short is already prepared with its first frame on
+    // screen before the swipe: during a drag the settled Short keeps playing on the main
+    // player while the incoming page shows the preloaded player's live frame. On settle the
+    // roles flip deterministically (even page = A, odd page = B), so a page is never bound to
+    // the wrong player and no step of the swipe shows a black frame.
     val playerFactory = remember { PlayerFactory() }
-    val player =
-        remember {
-            val appContext = context.applicationContext
-            val dataSourceFactory =
-                androidx.media3.datasource.DefaultDataSource
-                    .Factory(appContext, YouTubeHttpDataSource.Factory())
-            playerFactory.createPlayer(
+    fun createShortsPlayer(): ExoPlayer {
+        val appContext = context.applicationContext
+        val dataSourceFactory =
+            androidx.media3.datasource.DefaultDataSource
+                .Factory(appContext, YouTubeHttpDataSource.Factory())
+        return playerFactory
+            .createPlayer(
                 appContext,
                 playerFactory.createTrackSelector(appContext, VideoSizeCap.forDevice(appContext)),
                 playerFactory.createLoadControl(appContext),
                 playerFactory.createRenderersFactory(appContext),
                 playerFactory.createBandwidthMeter(appContext),
                 dataSourceFactory,
-            )
-        }
-    DisposableEffect(player) {
-        onDispose { player.release() }
+            ).apply {
+                // Only the main player may request audio focus, so the two players can never
+                // fight over it; the preloading one stays silent.
+                setAudioAttributes(ShortsAudioAttributes, false)
+                volume = 0f
+            }
     }
-    LifecycleStartEffect(player) {
-        onStopOrDispose { player.pause() }
+    val playerA = remember { createShortsPlayer() }
+    val playerB = remember { createShortsPlayer() }
+    DisposableEffect(Unit) {
+        onDispose {
+            playerA.release()
+            playerB.release()
+        }
     }
 
     var paused by remember { mutableStateOf(false) }
-    // Set only when the current Short's first frame actually renders — the same rule the main
-    // player uses (firstFrameVideoId). "Prepared" is not ready: hiding the poster at prepare()
-    // time was the black flash on every swipe, since the surface was still black then.
-    var firstFrameVideoId by remember { mutableStateOf<String?>(null) }
+    // Per-player media target + the Short whose first frame that player has rendered.
+    // "Prepared" is not ready: hiding the poster at prepare() time was the black flash on
+    // every swipe, since the surface is still black then.
+    var targetA by remember { mutableStateOf<String?>(null) }
+    var targetB by remember { mutableStateOf<String?>(null) }
+    var firstFrameA by remember { mutableStateOf<String?>(null) }
+    var firstFrameB by remember { mutableStateOf<String?>(null) }
+    // Reveal is remembered per Short (first frame + a stable reported video size), not per
+    // player, so the role flip at a swipe keeps the same surface without blinking.
+    var revealedIds by remember { mutableStateOf(setOf<String>()) }
     var showBufferSpinner by remember { mutableStateOf(false) }
     val likedIds = remember { mutableStateOf(setOf<String>()) }
     val sourceCache = remember { mutableMapOf<String, MediaSource>() }
@@ -220,37 +245,85 @@ fun ShortsScreen(
     val items = uiState.items
     val pagerState = rememberPagerState(pageCount = { items.size })
     val currentIndex = pagerState.currentPage
-    val currentItem = items.getOrNull(currentIndex)
-    // The surface, overlay and "ready" state follow the SETTLED page, not the target page:
-    // during a swipe the old Short keeps playing on its page until the pager settles, then
-    // the switch happens in one clean step — no thumbnail of the old video flashing
-    // mid-swipe, no surface teardown while the new page is still arriving.
+    // The surface and the overlay follow the SETTLED page: during a swipe the old Short keeps
+    // playing on its page and the incoming page shows its preloaded video, then the roles
+    // flip in one step when the pager settles.
     val settledIndex = pagerState.settledPage
     val settledItem = items.getOrNull(settledIndex)
-    val playerReady = settledItem != null && firstFrameVideoId == settledItem.videoId
+    val nextItem = items.getOrNull(settledIndex + 1)
+    // Roles alternate with the settled page, so they are pure derivations of pager state —
+    // never a state write, which could leave one frame bound to the wrong player.
+    val mainPlayer = if (settledIndex % 2 == 0) playerA else playerB
+    val prePlayer = if (mainPlayer === playerA) playerB else playerA
+    val mainTarget = if (mainPlayer === playerA) targetA else targetB
+    val preTarget = if (prePlayer === playerA) targetA else targetB
+    val mainFirstFrame = if (mainPlayer === playerA) firstFrameA else firstFrameB
+    val preFirstFrame = if (prePlayer === playerA) firstFrameA else firstFrameB
+    val mainReady = settledItem != null && mainFirstFrame == settledItem.videoId
+
+    // Each player reports its own first frame, so a role flip never mixes their events.
+    DisposableEffect(playerA) {
+        val listener =
+            object : Player.Listener {
+                override fun onRenderedFirstFrame() {
+                    firstFrameA = targetA
+                }
+            }
+        playerA.addListener(listener)
+        onDispose { playerA.removeListener(listener) }
+    }
+    DisposableEffect(playerB) {
+        val listener =
+            object : Player.Listener {
+                override fun onRenderedFirstFrame() {
+                    firstFrameB = targetB
+                }
+            }
+        playerB.addListener(listener)
+        onDispose { playerB.removeListener(listener) }
+    }
+
+    LifecycleStartEffect(mainPlayer) {
+        mainPlayer.playWhenReady = !paused
+        if (preTarget != null && preFirstFrame != preTarget) prePlayer.playWhenReady = true
+        onStopOrDispose {
+            mainPlayer.pause()
+            prePlayer.pause()
+        }
+    }
 
     // The poster stays until this Short's first frame renders; a spinner only appears if
     // buffering drags past a short grace period (YouTube shows the thumbnail, not a spinner,
     // for a normal swipe). A resolved source is usually instant by swipe time, so most
     // swipes never show the spinner at all.
-    LaunchedEffect(currentItem?.videoId, playerReady) {
+    LaunchedEffect(settledItem?.videoId, mainReady) {
         showBufferSpinner = false
-        if (!playerReady) {
+        if (!mainReady) {
             delay(600)
             showBufferSpinner = true
         }
     }
 
-    DisposableEffect(player, currentItem?.videoId) {
-        val videoId = currentItem?.videoId ?: return@DisposableEffect onDispose {}
-        val listener =
-            object : Player.Listener {
-                override fun onRenderedFirstFrame() {
-                    firstFrameVideoId = videoId
-                }
-            }
-        player.addListener(listener)
-        onDispose { player.removeListener(listener) }
+    // media3 can report the un-rotated coded size first and correct it a beat later (a
+    // portrait Short arrives as 16:9), which resized the surface from a letterboxed strip to
+    // the full frame right after entry — the "shake". Reveal only after the first frame AND a
+    // stable size, so handing over from the poster is one clean fade.
+    LaunchedEffect(mainPlayer, settledItem?.videoId, mainFirstFrame) {
+        val id = settledItem?.videoId ?: return@LaunchedEffect
+        if (mainFirstFrame != id || id in revealedIds) return@LaunchedEffect
+        mainPlayer.waitForStableVideoSize()
+        revealedIds = revealedIds + id
+    }
+    LaunchedEffect(prePlayer, nextItem?.videoId, preFirstFrame) {
+        val id = nextItem?.videoId ?: return@LaunchedEffect
+        if (preFirstFrame != id || id in revealedIds) return@LaunchedEffect
+        prePlayer.waitForStableVideoSize()
+        revealedIds = revealedIds + id
+    }
+    // The preloaded Short holds its first frame paused; it starts playing the moment it
+    // becomes the main player (see the orchestrator below).
+    LaunchedEffect(prePlayer, preTarget, preFirstFrame) {
+        if (preTarget != null && preFirstFrame == preTarget) prePlayer.playWhenReady = false
     }
 
     // Tapping the already-selected Shorts nav icon refreshes the feed and jumps to the top.
@@ -283,16 +356,17 @@ fun ShortsScreen(
         }
     }
 
-    // (Re)load the current short into the shared player.
-    LaunchedEffect(currentItem?.videoId) {
-        val item = currentItem ?: return@LaunchedEffect
+    // Load the settled Short into the MAIN player (volume up, playing). This runs on every
+    // role flip, so after a swipe the newly-settled player is already the one showing video.
+    LaunchedEffect(settledItem?.videoId) {
+        val item = settledItem ?: return@LaunchedEffect
         viewModel.enrichItem(item.videoId)
         viewModel.refreshSaved(item.videoId)
         viewModel.recordWatch(item)
         paused = false
-        player.volume = 1f
-        player.repeatMode = Player.REPEAT_MODE_ALL
-        player.setVideoScalingMode(androidx.media3.common.C.VIDEO_SCALING_MODE_SCALE_TO_FIT)
+        mainPlayer.volume = 1f
+        mainPlayer.repeatMode = Player.REPEAT_MODE_ALL
+        mainPlayer.setVideoScalingMode(androidx.media3.common.C.VIDEO_SCALING_MODE_SCALE_TO_FIT)
         val cached = sourceCache[item.videoId]
         val mediaSource =
             cached
@@ -302,13 +376,44 @@ fun ShortsScreen(
         if (mediaSource != null) {
             sourceCache[item.videoId] = mediaSource
             runCatching {
-                player.setMediaSource(mediaSource)
-                player.prepare()
-                player.playWhenReady = true
-                // playerReady flips via onRenderedFirstFrame — not here, where the screen
-                // would still be black behind the poster for a beat.
+                if (mainTarget != item.videoId) {
+                    if (mainPlayer === playerA) targetA = item.videoId else targetB = item.videoId
+                    mainPlayer.setMediaSource(mediaSource)
+                }
+                mainPlayer.prepare()
+                mainPlayer.playWhenReady = !paused
             }
         }
+    }
+
+    // Load the next Short into the PRELOADING player (volume 0, silent). Its first frame is
+    // rendered ahead of the swipe, so when the pager settles the incoming page already shows
+    // live video instead of a poster or a black frame.
+    LaunchedEffect(nextItem?.videoId) {
+        val item = nextItem ?: return@LaunchedEffect
+        val cached = sourceCache[item.videoId]
+        val mediaSource =
+            cached
+                ?: withContext(Dispatchers.IO) {
+                    runCatching { resolveMediaSource(context.applicationContext, preferences, item.videoId) }.getOrNull()
+                }
+        if (mediaSource != null) {
+            sourceCache[item.videoId] = mediaSource
+            runCatching {
+                if (preTarget != item.videoId) {
+                    if (prePlayer === playerA) targetA = item.videoId else targetB = item.videoId
+                    prePlayer.setMediaSource(mediaSource)
+                }
+                prePlayer.prepare()
+                prePlayer.playWhenReady = true
+            }
+        }
+    }
+
+    // Once a player's first frame renders, hold it paused until it becomes the main player:
+    // the preloaded Short sits on its first frame (poster → live video at settle, no black).
+    LaunchedEffect(prePlayer, preTarget, preFirstFrame) {
+        if (preTarget != null && preFirstFrame == preTarget) prePlayer.playWhenReady = false
     }
 
     // Full-bleed video: from the very top of the screen down to the navigation bar.
@@ -396,9 +501,9 @@ fun ShortsScreen(
                                 .align(Alignment.TopCenter),
                     ) {
                         // The surface fades in over the poster only once its first frame
-                        // renders (playerReady) — see the listener above.
+                        // renders (mainReady) — see the listener above.
                         val playerAlpha by animateFloatAsState(
-                            targetValue = if (playerReady) 1f else 0f,
+                            targetValue = if (mainReady) 1f else 0f,
                             animationSpec = tween(durationMillis = 200),
                             label = "shorts_player_alpha",
                         )
@@ -420,7 +525,7 @@ fun ShortsScreen(
                                         .clickable {
                                             if (isCurrent) {
                                                 paused = !paused
-                                                player.playWhenReady = !paused
+                                                mainPlayer.playWhenReady = !paused
                                             }
                                         },
                             ) {
@@ -433,7 +538,7 @@ fun ShortsScreen(
                                 // peeking out around the video. Two extra pages stay composed,
                                 // so the next Short's poster is already cached before the
                                 // swipe lands.
-                                if (!playerReady || playerAlpha < 1f) {
+                                if (!mainReady || playerAlpha < 1f) {
                                     VideoThumbnailImage(
                                         videoId = item.videoId,
                                         model = item.posterUrl,
@@ -463,12 +568,12 @@ fun ShortsScreen(
                                                 setShutterBackgroundColor(android.graphics.Color.TRANSPARENT)
                                                 setBackgroundColor(android.graphics.Color.TRANSPARENT)
                                                 subtitleView?.visibility = ViewGroup.GONE
-                                                this.player = player
+                                                this.player = mainPlayer
                                             }
                                         },
                                         update = { playerView ->
                                             playerView.resizeMode = androidx.media3.ui.AspectRatioFrameLayout.RESIZE_MODE_FIT
-                                            playerView.player = player
+                                            playerView.player = mainPlayer
                                         },
                                         onRelease = { view -> view.player = null },
                                         modifier =
@@ -476,12 +581,12 @@ fun ShortsScreen(
                                                 .fillMaxSize()
                                                 .graphicsLayer { alpha = playerAlpha },
                                     )
-                                    if (showBufferSpinner && !playerReady) {
+                                    if (showBufferSpinner && !mainReady) {
                                         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                                             CircularProgressIndicator(color = Color.White)
                                         }
                                     }
-                                    if (paused && playerReady) {
+                                    if (paused && mainReady) {
                                         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                                             Icon(
                                                 imageVector = Icons.Filled.PlayArrow,
@@ -591,7 +696,7 @@ fun ShortsScreen(
                             .graphicsLayer { alpha = 1f - commentsOpenFraction },
                 ) {
                     ShortsProgressBar(
-                        player = player,
+                        player = mainPlayer,
                         modifier = Modifier.fillMaxWidth(),
                     )
                 }
@@ -887,5 +992,36 @@ private fun ShortsRailButton(
                 maxLines = 1,
             )
         }
+    }
+}
+
+/**
+ * Waits until media3 reports a stable video size before the surface is revealed. media3 can
+ * report the un-rotated coded size first (e.g. 1920×1080 for a portrait Short) and correct it
+ * a beat later (1080×1920); revealing on the first report resizes the surface from a
+ * letterboxed strip to the full frame — the Home↔Shorts "shake". Two consecutive equal
+ * non-zero sizes means the reported size has settled, so the poster → first-frame hand-off is
+ * one clean fade with no size pop.
+ */
+private suspend fun ExoPlayer.waitForStableVideoSize(maxMs: Long = 1500) {
+    var last: Pair<Int, Int>? = null
+    var stableSince: Long = -1
+    val start = System.currentTimeMillis()
+    while (System.currentTimeMillis() - start < maxMs) {
+        val vs = videoSize
+        if (vs.width > 0 && vs.height > 0) {
+            val size = Pair(vs.width, vs.height)
+            if (size == last) {
+                if (stableSince < 0) stableSince = System.currentTimeMillis()
+                else if (System.currentTimeMillis() - stableSince >= 30) return
+            } else {
+                last = size
+                stableSince = -1
+            }
+        } else {
+            last = null
+            stableSince = -1
+        }
+        delay(16)
     }
 }
