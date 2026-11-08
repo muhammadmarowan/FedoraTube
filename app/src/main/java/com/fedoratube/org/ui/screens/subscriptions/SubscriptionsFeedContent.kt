@@ -35,7 +35,7 @@ import com.fedoratube.org.data.model.Comment
 import com.fedoratube.org.data.model.Video
 import com.fedoratube.org.innertube.pages.renderer.CommunityPost
 import com.fedoratube.org.ui.components.channel.CommunityPostCard
-import com.fedoratube.org.ui.components.channel.CommunityPostInlineComments
+import com.fedoratube.org.ui.components.channel.CommunityPostCommentsSheet
 import com.fedoratube.org.ui.components.layout.flowBottomContentPadding
 import com.fedoratube.org.ui.components.shared.FlowPullToRefreshBox
 import com.fedoratube.org.ui.components.shared.card.MediaVideoCard
@@ -212,59 +212,38 @@ internal fun SubscriptionsFeedContent(
                                             )
                                         }
                                     },
-                                    onCommentsClick = {
-                                        if (state.activeCommunityPost?.id == row.post.id) {
-                                            onCloseCommunityPostComments()
-                                        } else {
-                                            onCommunityPostComments(row.post)
-                                        }
-                                    },
+                                    onCommentsClick = { onCommunityPostComments(row.post) },
                                     onShareClick = { onCommunityPostShare(row.post) },
                                     onVideoClick = onVideoClick,
                                     compact = false,
-                                    commentsContent =
-                                        if (state.activeCommunityPost?.id == row.post.id) {
-                                            {
-                                                CommunityPostInlineComments(
-                                                    comments = state.communityComments,
-                                                    isLoading = state.isLoadingCommunityComments,
-                                                    onClose = onCloseCommunityPostComments,
-                                                    totalText = row.post.commentCountText,
-                                                    isLoadingMore = state.isLoadingMoreCommunityComments,
-                                                    onLoadMore = onLoadMoreCommunityPostComments,
-                                                    hasMore = state.communityCommentsContinuation != null,
-                                                    onLoadReplies = { comment -> onLoadCommunityCommentReplies(comment, false) },
-                                                    onLoadMoreReplies = { comment -> onLoadCommunityCommentReplies(comment, true) },
-                                                    onAuthorClick = { authorRef ->
-                                                        onOpenChannel(
-                                                            Channel(
-                                                                id = authorRef,
-                                                                name = "",
-                                                                thumbnailUrl = "",
-                                                                subscriberCount = 0L,
-                                                            ),
-                                                        )
-                                                    },
-                                                    onAvatarClick = { authorRef ->
-                                                        onOpenChannel(
-                                                            Channel(
-                                                                id = authorRef,
-                                                                name = "",
-                                                                thumbnailUrl = "",
-                                                                subscriberCount = 0L,
-                                                            ),
-                                                        )
-                                                    },
-                                                )
-                                            }
-                                        } else {
-                                            null
-                                        },
                                 )
                             }
                         }
                     }
                 }
+            }
+            state.activeCommunityPost?.let { activePost ->
+                CommunityPostCommentsSheet(
+                    comments = state.communityComments,
+                    isLoading = state.isLoadingCommunityComments,
+                    onDismiss = onCloseCommunityPostComments,
+                    totalText = activePost.commentCountText,
+                    isLoadingMore = state.isLoadingMoreCommunityComments,
+                    onLoadMore = onLoadMoreCommunityPostComments,
+                    hasMore = state.communityCommentsContinuation != null,
+                    onLoadReplies = { comment -> onLoadCommunityCommentReplies(comment, false) },
+                    onLoadMoreReplies = { comment -> onLoadCommunityCommentReplies(comment, true) },
+                    onAuthorClick = { authorRef ->
+                        onOpenChannel(
+                            Channel(id = authorRef, name = "", thumbnailUrl = "", subscriberCount = 0L),
+                        )
+                    },
+                    onAvatarClick = { authorRef ->
+                        onOpenChannel(
+                            Channel(id = authorRef, name = "", thumbnailUrl = "", subscriberCount = 0L),
+                        )
+                    },
+                )
             }
         }
     }

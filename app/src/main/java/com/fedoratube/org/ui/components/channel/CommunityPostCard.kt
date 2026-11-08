@@ -59,7 +59,6 @@ fun CommunityPostCard(
     onVideoClick: (Video) -> Unit = {},
     showDivider: Boolean = true,
     compact: Boolean = false,
-    commentsContent: (@Composable () -> Unit)? = null,
 ) {
     var textExpanded by rememberSaveable(post.id) { mutableStateOf(false) }
     var textOverflows by rememberSaveable(post.id) { mutableStateOf(false) }
@@ -179,15 +178,9 @@ fun CommunityPostCard(
             }
         }
 
-        val currentCommentsContent = commentsContent
-        if (currentCommentsContent != null) {
-            Box(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = PostHorizontalPadding),
-            ) {
-                currentCommentsContent()
+        if (!compact) {
+            Box(modifier = Modifier.padding(horizontal = PostHorizontalPadding)) {
+                PostCommentPreview(onClick = onCommentsClick)
             }
         }
 

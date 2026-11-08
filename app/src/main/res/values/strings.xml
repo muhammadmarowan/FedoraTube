@@ -326,6 +326,7 @@
     <string name="live_chat_jump_to_latest">Jump to latest chat message</string>
     <!-- Comments -->
     <string name="comments">Comments</string>
+    <string name="post_comments">Post comments</string>
     <string name="filter_top">Top</string>
     <string name="filter_newest">Newest</string>
     <string name="filter_oldest">Oldest</string>
