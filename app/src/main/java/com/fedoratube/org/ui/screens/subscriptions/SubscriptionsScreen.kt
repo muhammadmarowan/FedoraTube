@@ -92,7 +92,10 @@ fun SubscriptionsScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     val feedGridState = rememberLazyGridState()
-    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    val scrollBehavior =
+        TopAppBarDefaults.enterAlwaysScrollBehavior(
+            canScroll = { uiState.activeCommunityPost == null },
+        )
 
     var isManagingSubs by rememberSaveable { mutableStateOf(false) }
     var manageShowsMusic by rememberSaveable { mutableStateOf(false) }

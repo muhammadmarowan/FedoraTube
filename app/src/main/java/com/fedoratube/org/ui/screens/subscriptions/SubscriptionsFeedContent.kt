@@ -96,6 +96,7 @@ internal fun SubscriptionsFeedContent(
         isRefreshing = state.isLoading,
         onRefresh = onRefresh,
         state = pullRefreshState,
+        enabled = state.activeCommunityPost == null,
         modifier = modifier.fillMaxSize(),
     ) {
         BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
