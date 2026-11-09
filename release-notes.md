@@ -37,6 +37,7 @@
 - Post comments no longer let the feed behind them scroll: background lists are frozen while the comments sheet is open (tap the dimmed area or press close to dismiss) while the sheet's own comment list scrolls normally
 - Playlist, Watch Later and music playlist pages no longer offer "Save as file": the 3-dot menu's save-to-file action and its file-picker system are removed on both video and music playlists, so Watch Later (and other non-editable playlists) no longer show a 3-dot menu at all — only editable playlists keep a 3-dot menu with Edit/Delete and other actions
 - Subscriptions search now finds channels: tapping the search icon in Subscriptions opens the full search (with channel results and subscribe) instead of only filtering the already-subscribed list, which could never find a new channel
+- Subscriptions layout is tighter: the subscribed-channel row sits closer under the Subs indicator, and the "All" (arrow) button is redesigned as a tonal circle (secondary-container with a larger arrow icon and proper ripple) instead of a flat placeholder disc
 
 # Fedora Tube v1.7.7
 

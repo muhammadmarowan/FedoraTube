@@ -139,24 +139,22 @@ internal fun AllSubscriptionsAvatarItem(
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier =
-            modifier
-                .width(AvatarItemWidth)
-                .clickable(onClick = onClick),
+        modifier = modifier.width(AvatarItemWidth),
     ) {
-        Box(
-            modifier =
-                Modifier
-                    .size(AvatarSize)
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.surfaceContainerHighest),
-            contentAlignment = Alignment.Center,
+        Surface(
+            onClick = onClick,
+            modifier = Modifier.size(AvatarSize),
+            shape = CircleShape,
+            color = MaterialTheme.colorScheme.secondaryContainer,
+            contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
         ) {
-            Icon(
-                imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                contentDescription = stringResource(R.string.view_all_button_label),
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
+            Box(contentAlignment = Alignment.Center) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                    contentDescription = stringResource(R.string.view_all_button_label),
+                    modifier = Modifier.size(28.dp),
+                )
+            }
         }
         Spacer(modifier = Modifier.height(LabelSpacing))
         Text(

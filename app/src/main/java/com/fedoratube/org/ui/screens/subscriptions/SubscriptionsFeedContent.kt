@@ -53,7 +53,7 @@ sealed interface SubscriptionsFeedRow {
     }
 }
 
-private val HeaderTopPadding = 8.dp
+private val HeaderTopPadding = 2.dp
 private val HeaderBottomPadding = 12.dp
 private val ErrorCardPadding = 4.dp
 private val FeedTopPadding = 4.dp

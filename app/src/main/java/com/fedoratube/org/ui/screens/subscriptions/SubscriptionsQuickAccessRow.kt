@@ -21,7 +21,7 @@ import com.fedoratube.org.data.model.Channel
 
 private val RowHorizontalPadding = 12.dp
 private val AvatarSpacing = 12.dp
-private val AvatarRowTopPadding = 10.dp
+private val AvatarRowTopPadding = 4.dp
 
 @Composable
 internal fun SubscriptionsQuickAccessRow(
