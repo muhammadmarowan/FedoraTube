@@ -1,6 +1,6 @@
 # Fedora Tube v1.7.8 (Prerelease)
 
-**Release date:** 2026-11-07
+**Release date:** 2026-11-09
 **Status:** Prerelease
 
 ## Highlights
