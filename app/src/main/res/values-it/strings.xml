@@ -1004,6 +1004,7 @@
     <string name="loading_music">Caricamento musica…</string>
     <string name="screen_title_music">MUSICA</string>
     <string name="section_listen_again">Ascolta di nuovo</string>
+    <string name="section_recommended_for_you">Recommended for You</string>
     <string name="section_quick_picks">Scelte rapide</string>
     <string name="section_recommended">Consigliati</string>
     <string name="section_recently_played">Riprodotti di recente</string>

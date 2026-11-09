@@ -1675,6 +1675,7 @@
     <string name="title_add_to_playlist">Добавить в плейлист</string>
     <string name="loading_music">Загрузка музыки...</string>
     <string name="section_listen_again">Послушать еще раз</string>
+    <string name="section_recommended_for_you">Recommended for You</string>
     <string name="section_daily_discover">Открытия дня</string>
     <string name="section_quick_picks">Рекомендации</string>
     <string name="section_speed_dial">Быстрый выбор</string>

@@ -151,4 +151,6 @@
     <string name="subscriptions_music_badge_cd">Претплате музике</string>
     <string name="no_subscriptions_found">Нису нађене претплате</string>
     <string name="live_chat">Ћаскање уживо</string>
+
+    <string name="section_recommended_for_you">Recommended for You</string>
 </resources>

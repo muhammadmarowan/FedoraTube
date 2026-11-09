@@ -135,6 +135,7 @@ class MusicViewModel
                             lastTrackId = activeTrack.videoId
                             if (isUiVisible()) {
                                 rebuildQuickPicks(activeTrack)
+                                rebuildRecommendedForYou()
                                 refreshLocalShelves()
                             } else {
                                 shelvesStale = true
@@ -153,6 +154,7 @@ class MusicViewModel
                     } else if (count > 0 && shelvesStale) {
                         shelvesStale = false
                         rebuildQuickPicks(EnhancedMusicPlayerManager.currentTrack.value)
+                        rebuildRecommendedForYou()
                         refreshLocalShelves()
                     }
                 }
@@ -279,6 +281,62 @@ class MusicViewModel
                 }
             } catch (e: Exception) {
                 Log.e("MusicViewModel", "Error composing Quick Picks", e)
+            }
+        }
+
+        /**
+         * Recommended for You: one related lane per history seed (excluding the currently
+         * playing track), plus top-affinity genre lanes, ranked by the brain and interleaved,
+         * so the shelf reads as related to what the viewer keeps listening to and its category.
+         */
+        private suspend fun rebuildRecommendedForYou() {
+            try {
+                val history =
+                    playlistRepository.history
+                        .firstOrNull()
+                        .orEmpty()
+                        .audioMusicOnly()
+                if (history.isEmpty()) return
+                val excluded = history.firstOrNull()?.let { listOf(it.videoId) }?.toSet() ?: emptySet()
+
+                val genreAffinity = musicBrain.genreAffinitySnapshot()
+                val topGenres = genreAffinity.entries.sortedByDescending { it.value }.map { it.key.trim() }
+
+                val seedVideoIds = LinkedHashSet<String>()
+                val lanes = ArrayList<List<MusicTrack>>()
+
+                // Related lanes from recent, distinct-artist history seeds.
+                history.asSequence()
+                    .distinctBy { it.primaryArtistKey() }
+                    .take(4)
+                    .forEach { seed ->
+                        val lane = cachedRelatedLane(seed.videoId, seed.primaryArtistKey(), seed)
+                        if (lane.isNotEmpty()) {
+                            seedVideoIds += seed.videoId
+                            lanes.add(musicBrain.rankTracks(lane, "similar"))
+                        }
+                    }
+
+                // Category lanes: tracks from the genres/moods the viewer keeps most.
+                val genreMap = _uiState.value.genreTracks
+                for (genre in topGenres.take(2)) {
+                    val match = genreMap.entries.firstOrNull { it.key.trim().equals(genre, ignoreCase = true) }
+                    val tracks = match?.value?.audioMusicOnly().orEmpty()
+                    if (tracks.isNotEmpty()) {
+                        lanes.add(musicBrain.rankTracks(tracks, "discover"))
+                    }
+                }
+
+                if (lanes.isEmpty()) return
+
+                val caps = lanes.map { Int.MAX_VALUE }
+                val seedIds = seedVideoIds
+                val mixed = MusicQuickPicks.interleave(lanes, MusicQuickPicks.TARGET, excluded + seedIds, caps)
+                if (mixed.size >= 4) {
+                    _uiState.update { it.copy(recommendedForYouTracks = mixed) }
+                }
+            } catch (e: Exception) {
+                Log.e("MusicViewModel", "Error composing Recommended for You", e)
             }
         }
 
@@ -738,6 +796,8 @@ class MusicViewModel
                             isLoading = false,
                         )
                     }
+                    // After the history lands, compose the taste-driven shelf on top of it.
+                    rebuildRecommendedForYou()
                 }
             }
 
@@ -1491,7 +1551,8 @@ data class MusicUiState(
     val rotationBucket: MusicTimeBucket? = null,
     val speedDialTracks: List<MusicTrack> = emptyList(), // Brain-ranked speed dial pool
     val forYouTracks: List<MusicTrack> = emptyList(), // Quick Picks
-    val recommendedTracks: List<MusicTrack> = emptyList(), // Recommended for you
+    val recommendedTracks: List<MusicTrack> = emptyList(), // Recommended for you (YT-home driven)
+    val recommendedForYouTracks: List<MusicTrack> = emptyList(), // Recommended for you (history + taste driven)
     val listenAgain: List<MusicTrack> = emptyList(), // Listen Again
     val trendingSongs: List<MusicTrack> = emptyList(),
     val chartPlaylists: List<MusicPlaylist> = emptyList(),

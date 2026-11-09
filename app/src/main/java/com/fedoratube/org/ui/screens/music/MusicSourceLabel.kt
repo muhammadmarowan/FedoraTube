@@ -28,6 +28,7 @@ internal fun musicSourceLabel(
             "quick_picks" -> context.getString(R.string.section_quick_picks)
             "speed_dial", "speed_dial_shuffle" -> context.getString(R.string.section_speed_dial)
             "recommended" -> context.getString(R.string.section_recommended)
+            "recommended_for_you" -> context.getString(R.string.section_recommended_for_you)
             "recently_played" -> context.getString(R.string.section_recently_played)
             "music_videos" -> context.getString(R.string.section_music_videos)
             "music_videos_for_you" -> context.getString(R.string.section_music_videos_for_you)

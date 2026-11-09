@@ -1418,6 +1418,7 @@
     <string name="loading_music">Carregando música...</string>
     <string name="screen_title_music">MÚSICA</string>
     <string name="section_listen_again">Ouça novamente</string>
+    <string name="section_recommended_for_you">Recommended for You</string>
     <string name="section_daily_discover">Sua descoberta diária</string>
     <string name="section_quick_picks">Escolhas rápidas</string>
     <string name="section_speed_dial">Discagem rápida</string>

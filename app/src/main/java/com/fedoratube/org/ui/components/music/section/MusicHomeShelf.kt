@@ -22,6 +22,7 @@ enum class MusicHomeShelf(
     DAILY_DISCOVER(R.string.section_daily_discover),
     QUICK_PICKS(R.string.section_quick_picks),
     FROM_COMMUNITY(R.string.section_from_the_community),
+    RECOMMENDED_FOR_YOU(R.string.section_recommended_for_you),
     RECOMMENDED(R.string.section_recommended),
     SIMILAR_TO(R.string.music_home_shelf_similar),
     LIVE_PERFORMANCES(R.string.section_live_performances),

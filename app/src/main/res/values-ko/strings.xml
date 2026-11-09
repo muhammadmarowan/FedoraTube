@@ -1384,6 +1384,7 @@
     <string name="loading_music">음악을 불러오는 중...</string>
     <string name="screen_title_music">음악</string>
     <string name="section_listen_again">다시 듣기</string>
+    <string name="section_recommended_for_you">Recommended for You</string>
     <string name="section_daily_discover">오늘의 맞춤 발견</string>
     <string name="section_quick_picks">빠른 선곡</string>
     <string name="section_speed_dial">빠른 실행</string>

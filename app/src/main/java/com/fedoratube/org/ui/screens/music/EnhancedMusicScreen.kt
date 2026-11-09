@@ -141,6 +141,7 @@ fun EnhancedMusicScreen(
                     "mature" -> {
                         listOf(
                             HomeSectionType.QUICK_PICKS,
+                            HomeSectionType.RECOMMENDED_FOR_YOU,
                             HomeSectionType.SIMILAR_TO,
                             HomeSectionType.FROM_COMMUNITY,
                         )
@@ -149,6 +150,7 @@ fun EnhancedMusicScreen(
                     else -> {
                         listOf(
                             HomeSectionType.QUICK_PICKS,
+                            HomeSectionType.RECOMMENDED_FOR_YOU,
                             HomeSectionType.FROM_COMMUNITY,
                             HomeSectionType.DAILY_DISCOVER,
                         )

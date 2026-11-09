@@ -914,6 +914,7 @@
     <string name="loading_music">संगीत लोड हो रहा है..।</string>
     <string name="screen_title_music">संगीत</string>
     <string name="section_listen_again">फिर से सुनें</string>
+    <string name="section_recommended_for_you">Recommended for You</string>
     <string name="section_quick_picks">त्वरित चयन</string>
     <string name="section_recommended">अनुशंसित</string>
     <string name="section_recently_played">हाल ही में चलाया गया</string>

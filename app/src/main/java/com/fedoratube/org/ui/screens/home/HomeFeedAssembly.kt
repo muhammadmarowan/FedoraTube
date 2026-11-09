@@ -190,10 +190,12 @@ internal suspend fun buildHomeFeedLanes(
                 .take(BEST_NEIGHBOUR_LIMIT),
         relevantNeighbourChannels = relevantNeighbours.mapTo(HashSet()) { it.channelId },
         bestRelated =
-            share(
-                demoteByFit(
-                    applyGraphBoost(rankRelevant(relatedPool), relatedMetadata),
-                    taste,
+            spreadByChannel(
+                share(
+                    demoteByFit(
+                        applyGraphBoost(rankRelevant(relatedPool), relatedMetadata),
+                        taste,
+                    ),
                 ),
             ).take(BEST_RELATED_LIMIT),
         relatedCandidates = relatedCandidates,

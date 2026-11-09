@@ -1076,6 +1076,7 @@
     <string name="loading_music">Завантаження музики...</string>
     <string name="screen_title_music">МУЗИКА</string>
     <string name="section_listen_again">Слухати знову</string>
+    <string name="section_recommended_for_you">Recommended for You</string>
     <string name="section_quick_picks">Швидкий вибір</string>
     <string name="section_recommended">Рекомендовано</string>
     <string name="section_recently_played">Нещодавні</string>

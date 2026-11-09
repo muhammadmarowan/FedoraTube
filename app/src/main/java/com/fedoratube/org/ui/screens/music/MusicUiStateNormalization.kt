@@ -82,6 +82,7 @@ internal fun MusicUiState.withHiddenArtists(hidden: Set<String>): MusicUiState {
     val filteredSpeedDial = speedDialTracks.dropHidden()
     val filteredForYou = forYouTracks.dropHidden()
     val filteredRecommended = recommendedTracks.dropHidden()
+    val filteredRecommendedForYou = recommendedForYouTracks.dropHidden()
     val filteredListenAgain = listenAgain.dropHidden()
     val filteredTrending = trendingSongs.dropHidden()
     val filteredChartArtists =
@@ -110,6 +111,7 @@ internal fun MusicUiState.withHiddenArtists(hidden: Set<String>): MusicUiState {
         filteredSpeedDial === speedDialTracks &&
         filteredForYou === forYouTracks &&
         filteredRecommended === recommendedTracks &&
+        filteredRecommendedForYou === recommendedForYouTracks &&
         filteredListenAgain === listenAgain &&
         filteredTrending === trendingSongs &&
         filteredChartArtists === chartArtists &&
@@ -142,6 +144,7 @@ internal fun MusicUiState.withHiddenArtists(hidden: Set<String>): MusicUiState {
         speedDialTracks = filteredSpeedDial,
         forYouTracks = filteredForYou,
         recommendedTracks = filteredRecommended,
+        recommendedForYouTracks = filteredRecommendedForYou,
         listenAgain = filteredListenAgain,
         trendingSongs = filteredTrending,
         chartArtists = filteredChartArtists,
@@ -172,6 +175,7 @@ internal fun MusicUiState.withUniqueLazyContent(): MusicUiState {
     val uniqueDeepCuts = deepCutTracks.uniqueMusicTracks()
     val uniqueArtistsForYou = artistsForYou.distinctByNonBlankKeyOrSelf(ArtistDetails::channelId)
     val uniqueRecommended = recommendedTracks.uniqueMusicTracks()
+    val uniqueRecommendedForYou = recommendedForYouTracks.uniqueMusicTracks()
     val uniqueListenAgain = listenAgain.uniqueMusicTracks()
     val uniqueTrending = trendingSongs.uniqueMusicTracks()
     val uniqueChartPlaylists = chartPlaylists.uniqueMusicPlaylists()
@@ -212,6 +216,7 @@ internal fun MusicUiState.withUniqueLazyContent(): MusicUiState {
         uniqueDeepCuts === deepCutTracks &&
         uniqueArtistsForYou === artistsForYou &&
         uniqueRecommended === recommendedTracks &&
+        uniqueRecommendedForYou === recommendedForYouTracks &&
         uniqueListenAgain === listenAgain &&
         uniqueTrending === trendingSongs &&
         uniqueChartPlaylists === chartPlaylists &&
@@ -246,6 +251,7 @@ internal fun MusicUiState.withUniqueLazyContent(): MusicUiState {
         deepCutTracks = uniqueDeepCuts,
         artistsForYou = uniqueArtistsForYou,
         recommendedTracks = uniqueRecommended,
+        recommendedForYouTracks = uniqueRecommendedForYou,
         listenAgain = uniqueListenAgain,
         trendingSongs = uniqueTrending,
         chartPlaylists = uniqueChartPlaylists,

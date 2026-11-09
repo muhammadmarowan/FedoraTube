@@ -2183,6 +2183,7 @@
     <string name="loading_music">載入音樂中…</string>
     <string name="screen_title_music">音樂</string>
     <string name="section_listen_again">再聽一次</string>
+    <string name="section_recommended_for_you">Recommended for You</string>
     <string name="section_on_repeat">重複播放</string>
     <string name="section_daily_mix_title">%1$s 精選輯</string>
     <string name="section_daily_mix_label">每日精選</string>

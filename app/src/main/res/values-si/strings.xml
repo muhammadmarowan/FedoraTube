@@ -155,4 +155,6 @@
         <item quantity="other">%d නාලිකා</item>
     </plurals>
     <string name="tab_videos">වීඩියෝ</string>
+
+    <string name="section_recommended_for_you">Recommended for You</string>
 </resources>

@@ -1706,6 +1706,7 @@
     <string name="action_play_all">Odtwarzaj wszystko</string>
     <string name="loading_music">Ładowanie muzyki...</string>
     <string name="section_listen_again">Posłuchaj ponownie</string>
+    <string name="section_recommended_for_you">Recommended for You</string>
     <string name="daily_discover_sounds_like">Brzmi jak %1$s</string>
     <string name="daily_discover_because_you_listen_to">Ponieważ słuchałeś %1$s</string>
     <string name="daily_discover_based_on">Na podstawie %1$s</string>

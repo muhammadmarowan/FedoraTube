@@ -1052,6 +1052,7 @@
     <string name="section_recently_played">Jugado recientemente</string>
     <string name="section_music_videos">Vídeos musicales</string>
     <string name="section_listen_again">Escucha de nuevo</string>
+    <string name="section_recommended_for_you">Recommended for You</string>
     <string name="subtitle_single_template">Soltero · %1$s</string>
     <string name="section_mixed_for_you">Mezclado para ti</string>
     <string name="genre_mix_template">mezcla de %1$s</string>

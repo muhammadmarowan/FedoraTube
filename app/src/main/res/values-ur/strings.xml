@@ -116,4 +116,6 @@
     <string name="playlist_creation_menu_close">پلے لسٹ بنانے والا مینو بند کریں</string>
     <string name="add_to_library">لائبریری میں شامل کریں</string>
     <string name="saved_to_library">لائبریری میں محفوظ کر لیا گیا</string>
+
+    <string name="section_recommended_for_you">Recommended for You</string>
 </resources>

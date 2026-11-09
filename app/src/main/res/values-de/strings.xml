@@ -1183,6 +1183,7 @@
     <string name="loading_music">Musik laden...</string>
     <string name="screen_title_music">MUSIK</string>
     <string name="section_listen_again">Nochmal anhören</string>
+    <string name="section_recommended_for_you">Recommended for You</string>
     <string name="shuffle_play">Zufallswiedergabe</string>
     <string name="daily_discover_sounds_like">Klingt wie %1$s</string>
     <string name="daily_discover_because_you_listen_to">Weil du %1$s gehört hast</string>

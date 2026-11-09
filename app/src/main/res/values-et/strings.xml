@@ -315,4 +315,6 @@
     <string name="notif_settings_title">Teavituste eelistused</string>
     <string name="notif_type_new_videos">Uued videod</string>
     <string name="notif_type_new_videos_subtitle">Teavita, kui tellitud kanalitesse laaditakse üles uusi videoid</string>
+
+    <string name="section_recommended_for_you">Recommended for You</string>
 </resources>

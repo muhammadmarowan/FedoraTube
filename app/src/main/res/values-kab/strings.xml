@@ -78,4 +78,6 @@
     <string name="btn_close">Mdel</string>
     <string name="action_comments">Iwenniten</string>
     <string name="action_save">Sekles</string>
+
+    <string name="section_recommended_for_you">Recommended for You</string>
 </resources>

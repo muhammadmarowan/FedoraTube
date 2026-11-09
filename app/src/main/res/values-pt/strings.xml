@@ -495,4 +495,6 @@
     <string name="unlike">Descurtir</string>
     <string name="tab_shorts">Curtas</string>
     <string name="tab_playlists">Playlists</string>
+
+    <string name="section_recommended_for_you">Recommended for You</string>
 </resources>

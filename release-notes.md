@@ -38,6 +38,8 @@
 - Playlist, Watch Later and music playlist pages no longer offer "Save as file": the 3-dot menu's save-to-file action and its file-picker system are removed on both video and music playlists, so Watch Later (and other non-editable playlists) no longer show a 3-dot menu at all — only editable playlists keep a 3-dot menu with Edit/Delete and other actions
 - Subscriptions search now finds channels: tapping the search icon in Subscriptions opens the full search (with channel results and subscribe) instead of only filtering the already-subscribed list, which could never find a new channel
 - Subscriptions layout is tighter: the subscribed-channel row sits closer under the Subs indicator, and the "All" (arrow) button is redesigned as a tonal circle (secondary-container with a larger arrow icon and proper ripple) instead of a flat placeholder disc
+- Home feed never re-shows a video you have already watched (exact watch-history dedup, including subscribed-channel uploads, RSS fresh-subs and cache paths) — no setting required — and the Related/similar lane now spreads one video per channel round-robin before repeats, so a watch no longer turns the feed into that channel again and again
+- Music feed has a new "Recommended for You" shelf seeded from what you actually play: recent distinct-artist history expands through related recall and the genres/moods you listen most, ranked by the on-device brain (new in the section order and hideable in settings); next song also auto-plays on an empty queue via "Endless radio" (on by default, Settings > Playback)
 
 # Fedora Tube v1.7.7
 

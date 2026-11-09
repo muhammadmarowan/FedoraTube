@@ -184,6 +184,36 @@ internal fun spreadAcrossSearches(
     return (even + overflow).take(limit)
 }
 
+/**
+ * Spreads a ranked list over its sources instead of letting the first source fill every slot:
+ * round-robins across channels, one video per channel until every channel had its turn, then
+ * falls back to rank order, so a related list can never arrive as a wall of one channel.
+ */
+internal fun spreadByChannel(videos: List<Video>): List<Video> {
+    if (videos.size < 2) return videos
+    val byChannel = LinkedHashMap<String, ArrayDeque<Video>>()
+    val noChannel = ArrayDeque<Video>()
+    for (video in videos) {
+        val key = video.channelId.takeIf { it.isNotBlank() }
+        if (key == null) {
+            noChannel.addLast(video)
+        } else {
+            byChannel.getOrPut(key) { ArrayDeque() }.addLast(video)
+        }
+    }
+    val out = ArrayList<Video>(videos.size)
+    while (byChannel.isNotEmpty() || noChannel.isNotEmpty()) {
+        if (noChannel.isNotEmpty()) out.add(noChannel.removeFirst())
+        val iterator = byChannel.entries.iterator()
+        while (iterator.hasNext()) {
+            val (_, queue) = iterator.next()
+            out.add(queue.removeFirst())
+            if (queue.isEmpty()) iterator.remove()
+        }
+    }
+    return out
+}
+
 internal fun Video.withChannelMetadataFrom(enriched: Video): Video {
     val avatarUrl = enriched.channelThumbnailUrl.ifBlank { channelThumbnailUrl }
     return copy(

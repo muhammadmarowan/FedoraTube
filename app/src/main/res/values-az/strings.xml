@@ -1385,6 +1385,7 @@
     <string name="loading_music">Musiqi yüklənir...</string>
     <string name="screen_title_music">MUSİQİ</string>
     <string name="section_listen_again">Yenidən dinlə</string>
+    <string name="section_recommended_for_you">Recommended for You</string>
     <string name="section_daily_discover">Gündəlik kəşfiniz</string>
     <string name="section_quick_picks">Sürətli seçimlər</string>
     <string name="section_speed_dial">Sürətli giriş</string>

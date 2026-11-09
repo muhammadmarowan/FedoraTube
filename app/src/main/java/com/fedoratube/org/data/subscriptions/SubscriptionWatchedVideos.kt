@@ -21,11 +21,10 @@ class SubscriptionWatchedVideos
         val ids: Flow<Set<String>> =
             combine(
                 viewHistory.getVideoWatchProgress(),
-                playerPreferences.hideWatchedVideosFromSubscriptions,
                 playerPreferences.watchedThreshold,
                 database.downloadDao().getVideoDownloads(),
-            ) { history, hideWatched, threshold, downloads ->
-                if (!hideWatched) return@combine emptySet<String>()
+            ) { history, threshold, downloads ->
+                // Always dedup what the viewer has already watched (plus downloaded ids).
                 val downloadedIds = downloads.mapTo(HashSet()) { it.download.videoId }
                 history
                     .asSequence()

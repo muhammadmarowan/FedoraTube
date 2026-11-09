@@ -24,7 +24,9 @@ internal fun filterHomeHistory(
             .filter { watchedThreshold.isWatched(it.position, it.duration) }
             .mapTo(HashSet()) { it.videoId }
     }
-    val watchedVideoIds = if (hideWatchedVideos) watchedIds else emptySet()
+    // Watched-exactly dedup is unconditional now: a video the viewer has already watched never
+    // comes back into the Home feed, no setting required.
+    val watchedVideoIds = watchedIds
 
     val continueWatchingVideos =
         if (continueWatchingEnabled) {

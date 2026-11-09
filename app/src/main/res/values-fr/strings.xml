@@ -719,6 +719,7 @@
     <!-- Écran de Musique Améliorée -->
     <string name="screen_title_music">MUSIQUE</string>
     <string name="section_listen_again">Écouter à nouveau</string>
+    <string name="section_recommended_for_you">Recommended for You</string>
     <string name="section_quick_picks">Sélection rapide</string>
     <string name="section_recommended">Recommandé</string>
     <string name="section_recently_played">Récemment joué</string>

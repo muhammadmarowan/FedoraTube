@@ -194,6 +194,18 @@ fun LazyListScope.musicHomeFeed(
                 community(uiState.communityPlaylists, downloaded, onAlbumClick, onSongClick, onTrackMenu, onCollectionMenu)
             }
 
+            HomeSectionType.RECOMMENDED_FOR_YOU -> {
+                trackShelf(
+                    id = "recommended_for_you",
+                    titleRes = R.string.section_recommended_for_you,
+                    tracks = uiState.recommendedForYouTracks,
+                    downloaded = downloaded,
+                    playFrom = "recommended_for_you",
+                    onSongClick = onSongClick,
+                    onTrackMenu = onTrackMenu,
+                )
+            }
+
             HomeSectionType.RECOMMENDED -> {
                 trackShelf(
                     id = "recommended",

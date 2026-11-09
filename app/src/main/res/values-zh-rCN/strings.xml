@@ -1385,6 +1385,7 @@
     <string name="loading_music">正在加载音乐...</string>
     <string name="screen_title_music">音乐</string>
     <string name="section_listen_again">再听一遍</string>
+    <string name="section_recommended_for_you">Recommended for You</string>
     <string name="section_daily_discover">您的每日发现</string>
     <string name="section_quick_picks">快速选择</string>
     <string name="section_speed_dial">快速拨号</string>
