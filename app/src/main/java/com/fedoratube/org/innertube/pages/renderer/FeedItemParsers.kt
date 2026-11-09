@@ -44,8 +44,6 @@ internal val FEED_ITEM_PARSERS: Map<String, FeedItemParser> =
         "channelRenderer" to FeedItemParser { node, _ -> node.toChannelRendererItem() },
         "channelVideoPlayerRenderer" to FeedItemParser { node, owner -> node.toTrailerItem(owner) },
         "gridShowRenderer" to FeedItemParser { node, _ -> node.toShowItem() },
-        "postRenderer" to FeedItemParser { node, owner -> node.toPostItem(owner) },
-        "backstagePostThreadRenderer" to FeedItemParser { node, owner -> node.toPostThreadItem(owner) },
         "showRenderer" to FeedItemParser { node, _ -> node.toShowItem() },
     )
 
@@ -393,16 +391,6 @@ private fun JsonElement?.episodeCount(): Int? {
     }
     return count
 }
-
-private fun JsonObject.toPostItem(owner: FeedItemOwner): FeedItem? =
-    toCommunityPost(owner.name, owner.avatarUrl, owner)?.let(FeedItem::PostItem)
-
-private fun JsonObject.toPostThreadItem(owner: FeedItemOwner): FeedItem? =
-    this["post"]
-        .objectOrNull()
-        ?.get("backstagePostRenderer")
-        .objectOrNull()
-        ?.toPostItem(owner)
 
 internal fun parseDurationText(text: String?): Int? {
     if (text.isNullOrBlank() || !text.contains(':')) return null

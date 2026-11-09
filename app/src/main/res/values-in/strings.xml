@@ -1848,12 +1848,7 @@
     <string name="search_filter_all">Semua</string>
     <string name="search_toggle_view_mode">Alihkan tampilan hasil pencarian</string>
     <string name="channel_sort_latest">Terbaru</string>
-    <string name="tab_posts">Postingan</string>
-    <string name="community_posts_empty">Tidak ada postingan komunitas yang ditemukan</string>
-    <string name="community_posts_load_failed">Tidak dapat memuat postingan komunitas</string>
     <string name="channel_search_failed">Tidak dapat mencari kanal ini</string>
-    <string name="community_post_image_content_description">Gambar postingan komunitas</string>
-    <string name="share_community_post">Bagikan postingan komunitas</string>
     <string name="player_portrait_seekbar_width_title">Lebar bilah pencarian mode potret</string>
     <string name="player_portrait_seekbar_width_spaced">Renggang</string>
     <string name="content_settings_home_reselect_refresh_title">Segarkan Beranda saat dipilih kembali</string>

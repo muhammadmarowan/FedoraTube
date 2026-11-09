@@ -3,7 +3,6 @@ package com.fedoratube.org.data.paging
 import com.fedoratube.org.data.model.Channel
 import com.fedoratube.org.data.model.Playlist
 import com.fedoratube.org.data.model.Video
-import com.fedoratube.org.innertube.pages.renderer.CommunityPost
 
 /** One row of the search feed: a result, or one of the strips YouTube interleaves between them. */
 sealed interface SearchResultItem {
@@ -34,7 +33,6 @@ sealed interface SearchResultItem {
         val title: String?,
         val kind: SearchShelfKind,
         val videos: List<Video> = emptyList(),
-        val posts: List<CommunityPost> = emptyList(),
         val collapsedItemCount: Int? = null,
     ) : SearchResultItem
 }
@@ -42,5 +40,4 @@ sealed interface SearchResultItem {
 enum class SearchShelfKind {
     SHORTS,
     VIDEOS,
-    POSTS,
 }

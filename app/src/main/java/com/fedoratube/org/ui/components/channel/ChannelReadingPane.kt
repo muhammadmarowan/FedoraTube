@@ -11,10 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
-/**
- * Reading surfaces — posts and the about panel — run edge to edge on a phone and stop widening on a
- * tablet, where a full-width line of text is unreadable.
- */
+/** Reading surfaces — the about panel — run edge to edge on a phone and stop widening on a tablet, where a full-width line of text is unreadable. */
 @Composable
 internal fun ChannelReadingPane(
     maxWidth: Dp = ReadingPaneMaxWidth,
@@ -35,6 +32,3 @@ internal fun ChannelReadingPane(
 }
 
 private val ReadingPaneMaxWidth = 640.dp
-
-/** Posts carry images, which read better wider than a column of prose. */
-internal val PostsPaneMaxWidth = 760.dp

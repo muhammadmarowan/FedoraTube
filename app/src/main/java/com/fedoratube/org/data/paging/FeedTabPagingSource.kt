@@ -60,5 +60,4 @@ private fun FeedItem.pagingKey(): String =
         is FeedItem.ShortItem -> video.id
         is FeedItem.PlaylistItem -> playlist.id
         is FeedItem.RelatedChannelItem -> channel.id
-        is FeedItem.PostItem -> post.id
     }

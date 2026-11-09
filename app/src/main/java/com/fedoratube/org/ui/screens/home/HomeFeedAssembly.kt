@@ -92,6 +92,7 @@ internal suspend fun buildHomeFeedLanes(
     now: Long,
     freshSlotTarget: Int,
     subAvatarMap: Map<String, String>,
+    excludedOnScreenIds: Set<String> = emptySet(),
     rank: suspend (List<Video>) -> List<Video>,
     rankRelevant: suspend (List<Video>) -> List<Video> = rank,
     share: suspend (List<Video>) -> List<Video> = { it },
@@ -151,6 +152,9 @@ internal suspend fun buildHomeFeedLanes(
     // lets the next unseen upload take the slot.
     val (shownFresh, unshownFresh) =
         freshSubsLane
+            // Already on screen right now means it must not be pinned again on refresh either —
+            // shownItems have their own slot in the SUBS lane; pinning is for news, not for repeats.
+            .filterNot { it.id in excludedOnScreenIds }
             .partition { isRecentlyShown(it.id) }
             .let { (shown, unshown) -> shown.take(freshSlotTarget) to unshown.take(freshSlotTarget) }
     val freshIds = (shownFresh + unshownFresh).mapTo(HashSet()) { it.id }
@@ -237,8 +241,10 @@ internal fun assembleHomeFeed(
     var freshAdded = 0
 
     if (onScreenIds.isNotEmpty()) {
+        // The lanes already dropped on-screen ids on the way in, but match the freshCandidates
+        // guard anyway so no pinned duplicate survives even if that changes.
         val freshCandidateCount = lanes.freshCandidates.distinctBy { it.id }.count { it.id !in onScreenIds }
-        if (freshCandidateCount >= targetSize / 2) {
+        if (freshCandidateCount >= 1) {
             usedVideoIds += onScreenIds
         }
     }

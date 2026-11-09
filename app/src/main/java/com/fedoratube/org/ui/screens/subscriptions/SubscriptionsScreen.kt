@@ -1,7 +1,5 @@
 package com.fedoratube.org.ui.screens.subscriptions
 
-import android.content.Intent
-import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -92,10 +90,7 @@ fun SubscriptionsScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     val feedGridState = rememberLazyGridState()
-    val scrollBehavior =
-        TopAppBarDefaults.enterAlwaysScrollBehavior(
-            canScroll = { uiState.activeCommunityPost == null },
-        )
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
     var isManagingSubs by rememberSaveable { mutableStateOf(false) }
     var manageShowsMusic by rememberSaveable { mutableStateOf(false) }
@@ -329,24 +324,6 @@ fun SubscriptionsScreen(
                         },
                         onRetryFailedChannels = viewModel::retryFailedChannels,
                         onDismissFailedChannels = viewModel::dismissFailedChannels,
-                        onCommunityPostComments = viewModel::openCommunityPostComments,
-                        onCloseCommunityPostComments = viewModel::closeCommunityPostComments,
-                        onLoadMoreCommunityPostComments = viewModel::loadMoreCommunityPostComments,
-                        onLoadCommunityCommentReplies = viewModel::loadCommunityCommentReplies,
-                        onOpenChannel = onChannelClick,
-                        onCommunityPostShare = { post ->
-                            val shareIntent =
-                                Intent(Intent.ACTION_SEND).apply {
-                                    type = "text/plain"
-                                    putExtra(Intent.EXTRA_TEXT, "https://www.youtube.com/post/${post.id}")
-                                }
-                            context.startActivity(
-                                Intent.createChooser(
-                                    shareIntent,
-                                    context.getString(R.string.share_community_post),
-                                ),
-                            )
-                        },
                     )
                 }
             }
@@ -389,9 +366,6 @@ fun SubscriptionsScreen(
         )
     }
 
-    BackHandler(enabled = uiState.activeCommunityPost != null) {
-        viewModel.closeCommunityPostComments()
-    }
 }
 
 private suspend fun unsubscribeWithUndo(

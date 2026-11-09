@@ -130,8 +130,6 @@ internal fun SearchResultsPage.toResultItems(shortsEnabled: Boolean): List<Searc
  *
  * Only what the viewer hid outright applies: a search is an explicit ask, so the engine's inferred
  * suppressions and blocked topics do not filter it.
- *
- * Community posts carry no channel id in the response, so a blocked creator's post survives here.
  */
 internal fun List<SearchResultItem>.withoutHidden(exclusions: FeedExclusions): List<SearchResultItem> {
     if (exclusions.isEmpty) return this
@@ -152,11 +150,7 @@ internal fun List<SearchResultItem>.withoutHidden(exclusions: FeedExclusions): L
 
             is SearchResultItem.ShelfResult -> {
                 val videos = item.videos.filterNot { exclusions.hides(it) }
-                when {
-                    videos.isNotEmpty() -> item.copy(videos = videos)
-                    item.posts.isNotEmpty() -> item
-                    else -> null
-                }
+                videos.takeIf { it.isNotEmpty() }?.let { item.copy(videos = it) }
             }
         }
     }
@@ -176,14 +170,9 @@ private fun FeedItem.toResultItem(shortsEnabled: Boolean): SearchResultItem? =
         is FeedItem.ShortItem -> null
         is FeedItem.PlaylistItem -> SearchResultItem.PlaylistResult(playlist)
         is FeedItem.RelatedChannelItem -> SearchResultItem.ChannelResult(channel)
-        is FeedItem.PostItem -> null
     }
 
 private fun FeedShelf.toShelfItem(shortsEnabled: Boolean): SearchResultItem? {
-    val posts = items.filterIsInstance<FeedItem.PostItem>().map { it.post }
-    if (posts.isNotEmpty()) {
-        return SearchResultItem.ShelfResult(id, title, SearchShelfKind.POSTS, posts = posts)
-    }
     // Shorts shelves are removed app-wide.
     if (style == FeedShelfStyle.Grid) return null
     val videos = items.mapNotNull { it.videoOrNull() }

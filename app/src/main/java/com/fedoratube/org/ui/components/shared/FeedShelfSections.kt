@@ -47,7 +47,6 @@ import androidx.compose.ui.unit.dp
 import com.fedoratube.org.data.local.HomeFeedColumns
 import com.fedoratube.org.data.model.Channel
 import com.fedoratube.org.data.model.Video
-import com.fedoratube.org.innertube.pages.renderer.CommunityPost
 import com.fedoratube.org.innertube.pages.renderer.FeedItem
 import com.fedoratube.org.innertube.pages.renderer.FeedShelf
 import com.fedoratube.org.innertube.pages.renderer.FeedShelfStyle
@@ -72,12 +71,11 @@ data class FeedShelfActions(
 )
 
 /**
- * The two card shapes a shelf page cannot own: a community post and a channel row both carry
- * feature vocabulary, so the surface supplies them. A slot left null drops the items it would
- * have drawn, and a shelf left empty by that is skipped.
+ * The one card shape a shelf page cannot own: a channel row carries feature vocabulary, so the surface
+ * supplies it. A slot left null drops the items it would have drawn, and a shelf left empty by that is
+ * skipped.
  */
 data class FeedShelfSlots(
-    val post: (@Composable (post: CommunityPost, compact: Boolean) -> Unit)? = null,
     val channelRow: (@Composable (channel: Channel, isSubscribed: Boolean) -> Unit)? = null,
 )
 
@@ -156,7 +154,6 @@ fun FeedShelfSections(
 private fun FeedShelf.hasRenderableItems(slots: FeedShelfSlots): Boolean =
     items.any { item ->
         when (item) {
-            is FeedItem.PostItem -> slots.post != null
             is FeedItem.RelatedChannelItem -> slots.channelRow != null
             else -> true
         }
@@ -208,24 +205,16 @@ private fun LazyGridScope.shelfSection(
         )
     }
 
-    val postSlot = slots.post
-    if (columns > 1 && postSlot != null && section.items.isNotEmpty() && section.items.all { it is FeedItem.PostItem }) {
-        fullSpanItem(key = "${section.id}:posts") {
-            PostsShelf(posts = section.items.map { (it as FeedItem.PostItem).post }, post = postSlot)
-        }
-        return
-    }
-
     val shelfItems = section.items.filterNot { it is FeedItem.ShortItem }
     val previewCount = feedShelfPreviewCount(columns, shelfItems.size)
     val visible = if (isExpanded) shelfItems else shelfItems.take(previewCount)
-    val partialRows = partialRowIndices(visible.map { it is FeedItem.PostItem }, columns)
+    val partialRows = partialRowIndices(visible.map { false }, columns)
     itemsIndexed(
         items = visible,
         key = { _, item -> "${section.id}:${item.shelfKey()}" },
         contentType = { _, item -> item::class },
         span = { index, item ->
-            if (columns > 1 && item !is FeedItem.PostItem && index !in partialRows) {
+            if (columns > 1 && index !in partialRows) {
                 GridItemSpan(1)
             } else {
                 GridItemSpan(maxLineSpan)
@@ -267,5 +256,4 @@ private fun FeedItem.shelfKey(): String =
         is FeedItem.ShortItem -> "s_${video.id}"
         is FeedItem.PlaylistItem -> "p_${playlist.id}"
         is FeedItem.RelatedChannelItem -> "c_${channel.id}"
-        is FeedItem.PostItem -> "b_${post.id}"
     }

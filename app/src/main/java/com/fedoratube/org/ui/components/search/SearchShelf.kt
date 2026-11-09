@@ -38,8 +38,7 @@ import com.fedoratube.org.ui.components.shared.card.VideoCardDefaults
 import com.fedoratube.org.ui.components.shared.card.VideoCardLayout
 
 /**
- * One of the strips YouTube interleaves between search results: a creator's latest uploads or
- * their recent community posts.
+ * One of the strips YouTube interleaves between search results: a creator's latest uploads.
  *
  * Each is fenced by dividers, the way YouTube separates a strip from the results around it, and a
  * videos strip opens at the count YouTube itself collapses it to rather than all ten.
@@ -66,10 +65,6 @@ fun SearchShelf(
 
             SearchShelfKind.VIDEOS -> {
                 VideoStrip(shelf, asThumbnailRows, thumbnailWidth, onVideoClick)
-            }
-
-            SearchShelfKind.POSTS -> {
-                PostStrip(shelf)
             }
         }
         HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
@@ -128,21 +123,8 @@ private fun VideoStrip(
     }
 }
 
-@Composable
-private fun PostStrip(shelf: SearchResultItem.ShelfResult) {
-    LazyRow(
-        contentPadding = PaddingValues(horizontal = StripHorizontalPadding, vertical = StripVerticalPadding),
-        horizontalArrangement = Arrangement.spacedBy(PostSpacing),
-    ) {
-        items(shelf.posts, key = { it.id }) { post ->
-            SearchPostCard(post = post, onClick = {})
-        }
-    }
-}
-
 private val SectionSpacing = 8.dp
 private val StripHorizontalPadding = 12.dp
 private val StripVerticalPadding = 8.dp
 private val TitleVerticalPadding = 10.dp
-private val PostSpacing = 10.dp
 private val ButtonIconSpacing = 6.dp

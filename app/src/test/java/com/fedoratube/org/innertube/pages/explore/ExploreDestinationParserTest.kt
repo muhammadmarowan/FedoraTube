@@ -66,17 +66,6 @@ class ExploreDestinationParserTest {
     }
 
     @Test
-    fun `the news destination carries a shelf of community posts`() {
-        val posts =
-            page(ExploreFixture.DESTINATION_NEWS)
-                .shelves
-                .flatMap { it.items }
-                .filterIsInstance<FeedItem.PostItem>()
-
-        assertThat(posts).isNotEmpty()
-    }
-
-    @Test
     fun `the music destination's album lockups parse as playlists`() {
         val shelf = shelfTitled(ExploreFixture.DESTINATION_MUSIC, "New & Trending Songs")
 

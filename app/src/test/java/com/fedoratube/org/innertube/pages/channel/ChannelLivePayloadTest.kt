@@ -47,7 +47,7 @@ class ChannelLivePayloadTest {
                 ChannelTabKind.Shows,
                 ChannelTabKind.Podcasts,
                 ChannelTabKind.Playlists,
-                ChannelTabKind.Posts,
+                ChannelTabKind.Unknown,
                 ChannelTabKind.Store,
                 ChannelTabKind.Search,
             ),
@@ -292,19 +292,6 @@ class ChannelLivePayloadTest {
         val ids = content("landing", ChannelTabKind.Home).sections.map { it.id }
 
         assertEquals(ids.size, ids.distinct().size)
-    }
-
-    @Test
-    fun `the home tab includes the posts shelf`() {
-        val posts =
-            content("landing", ChannelTabKind.Home)
-                .sections
-                .firstOrNull { section -> section.items.any { it is FeedItem.PostItem } }
-
-        assertNotNull("the Home posts shelf ships bare postRenderers, not thread wrappers", posts)
-        val post = (posts!!.items.first { it is FeedItem.PostItem } as FeedItem.PostItem).post
-        assertTrue(post.id.isNotBlank())
-        assertTrue(post.authorName.isNotBlank())
     }
 
     @Test

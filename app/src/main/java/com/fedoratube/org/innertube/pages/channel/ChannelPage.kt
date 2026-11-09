@@ -50,7 +50,6 @@ enum class ChannelTabKind {
     Podcasts,
     Playlists,
     Courses,
-    Posts,
     Releases,
     Store,
     Search,
@@ -69,7 +68,6 @@ enum class ChannelTabKind {
                 Podcasts -> "Eghwb2RjYXN0c_IGBQoDugEA"
                 Playlists -> "EglwbGF5bGlzdHPyBgoKCEIGCgIQaCIA"
                 Courses -> "Egdjb3Vyc2Vz8gYFCgPCAQA="
-                Posts -> "EgVwb3N0c_IGBAoCSgA="
                 Store -> "EgVzdG9yZfIGBAoCGgA="
                 Search -> "EgZzZWFyY2jyBgQKAloA"
                 Releases, Unknown -> null

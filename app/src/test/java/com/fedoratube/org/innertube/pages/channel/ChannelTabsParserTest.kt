@@ -43,7 +43,6 @@ class ChannelTabsParserTest {
                 tab("Shows", "/@LinusTechTips/shows"),
                 tab("Podcasts", "/@LinusTechTips/podcasts"),
                 tab("Playlists", "/@LinusTechTips/playlists"),
-                tab("Posts", "/@LinusTechTips/community"),
                 tab("Store", "/@LinusTechTips/store"),
             )
 
@@ -56,7 +55,6 @@ class ChannelTabsParserTest {
                 ChannelTabKind.Shows,
                 ChannelTabKind.Podcasts,
                 ChannelTabKind.Playlists,
-                ChannelTabKind.Posts,
                 ChannelTabKind.Store,
             ),
             resolved.map { it.kind },
@@ -72,10 +70,9 @@ class ChannelTabsParserTest {
                 tab("Videos", "/@Hyperplexed/videos"),
                 tab("Shorts", "/@Hyperplexed/shorts"),
                 tab("Playlists", "/@Hyperplexed/playlists"),
-                tab("Posts", "/@Hyperplexed/community"),
             )
 
-        assertEquals(5, resolved.size)
+        assertEquals(4, resolved.size)
         assertTrue(resolved.none { it.kind == ChannelTabKind.Live })
         assertTrue(resolved.none { it.kind == ChannelTabKind.Podcasts })
         assertTrue(resolved.none { it.kind == ChannelTabKind.Store })

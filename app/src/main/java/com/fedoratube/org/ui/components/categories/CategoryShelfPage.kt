@@ -15,9 +15,6 @@ import com.fedoratube.org.ui.components.shared.FeedShelfSections
 /**
  * A destination's landing page. Only shelves that can be opened get a chevron — the news
  * destination clusters its stories without publishing a "see all" for any of them.
- *
- * No post slot is passed, so the one shelf of community posts the news destination ships is left
- * out rather than rendered as a bare header.
  */
 @Composable
 internal fun CategoryShelfPage(

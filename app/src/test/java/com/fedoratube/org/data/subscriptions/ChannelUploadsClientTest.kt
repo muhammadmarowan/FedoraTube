@@ -106,7 +106,7 @@ class ChannelUploadsClientTest {
         runTest {
             val result =
                 client(
-                    landingPage = Result.success(landing(ChannelTabKind.Home, ChannelTabKind.Posts)),
+                    landingPage = Result.success(landing(ChannelTabKind.Home, ChannelTabKind.Unknown)),
                     tabs = emptyMap(),
                 ).fetch("UCa", notBeforeMillis = now - 60 * 24 * hour)
 

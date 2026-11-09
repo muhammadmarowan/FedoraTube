@@ -1032,12 +1032,7 @@
     <string name="search_filter_all">Alle</string>
     <string name="search_toggle_view_mode">Ansicht der Suchergebnisse umschalten</string>
     <string name="channel_sort_latest">Aktuellste</string>
-    <string name="tab_posts">Beiträge</string>
-    <string name="community_posts_empty">Es wurden keine Community-Beiträge gefunden</string>
-    <string name="community_posts_load_failed">Community-Beiträge konnten nicht geladen werden</string>
     <string name="channel_search_failed">Dieser Kanal konnte nicht durchsucht werden</string>
-    <string name="community_post_image_content_description">Bild zum Community-Beitrag</string>
-    <string name="share_community_post">Community-Beitrag teilen</string>
     <string name="appearance_customizer_variant_title">%1$s benutzerdefiniertes Design</string>
     <string name="appearance_role_primary_container">Primärbehälter</string>
     <string name="appearance_role_on_primary_container">Auf dem Primärcontainer</string>

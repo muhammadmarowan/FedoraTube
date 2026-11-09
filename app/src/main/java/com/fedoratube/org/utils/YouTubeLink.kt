@@ -61,7 +61,7 @@ private val YOUTUBE_DOMAINS = listOf("youtube.com", "youtube-nocookie.com")
 private val FRONT_END_DOMAINS = listOf("piped.video", "yewtu.be")
 private val MUSIC_HOSTS = setOf("music.youtube.com", "m.music.youtube.com")
 private val VIDEO_PATHS = setOf("live", "embed", "v", "e")
-private val CHANNEL_TABS = setOf("featured", "videos", "shorts", "streams", "playlists", "community", "posts", "about")
+private val CHANNEL_TABS = setOf("featured", "videos", "shorts", "streams", "playlists", "about")
 
 // Top-level youtube.com pages a bare `/name` channel link can never be, including every path
 // pathLink reads, so a malformed watch or shorts link is not mistaken for a channel.

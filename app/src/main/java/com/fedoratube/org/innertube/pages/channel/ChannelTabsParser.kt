@@ -65,7 +65,6 @@ internal fun String?.toChannelTabKind(): ChannelTabKind {
         "podcasts" -> ChannelTabKind.Podcasts
         "playlists" -> ChannelTabKind.Playlists
         "courses" -> ChannelTabKind.Courses
-        "community", "posts" -> ChannelTabKind.Posts
         "releases" -> ChannelTabKind.Releases
         "store" -> ChannelTabKind.Store
         "search" -> ChannelTabKind.Search

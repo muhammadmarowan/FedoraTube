@@ -31,11 +31,7 @@ import androidx.compose.ui.unit.dp
 import com.fedoratube.org.R
 import com.fedoratube.org.data.local.HomeFeedColumns
 import com.fedoratube.org.data.model.Channel
-import com.fedoratube.org.data.model.Comment
 import com.fedoratube.org.data.model.Video
-import com.fedoratube.org.innertube.pages.renderer.CommunityPost
-import com.fedoratube.org.ui.components.channel.CommunityPostCard
-import com.fedoratube.org.ui.components.channel.CommunityPostCommentsSheet
 import com.fedoratube.org.ui.components.layout.flowBottomContentPadding
 import com.fedoratube.org.ui.components.shared.FlowPullToRefreshBox
 import com.fedoratube.org.ui.components.shared.card.MediaVideoCard
@@ -46,10 +42,6 @@ sealed interface SubscriptionsFeedRow {
 
     data class VideoRow(val video: Video) : SubscriptionsFeedRow {
         override val key: String get() = "v_${video.id}"
-    }
-
-    data class PostRow(val post: CommunityPost) : SubscriptionsFeedRow {
-        override val key: String get() = "p_${post.id}"
     }
 }
 
@@ -76,12 +68,6 @@ internal fun SubscriptionsFeedContent(
     onDismissFailedChannels: () -> Unit = {},
     onGroupSelected: (String?) -> Unit = {},
     onManageGroups: () -> Unit = {},
-    onCommunityPostComments: (CommunityPost) -> Unit = {},
-    onCloseCommunityPostComments: () -> Unit = {},
-    onLoadMoreCommunityPostComments: () -> Unit = {},
-    onLoadCommunityCommentReplies: (Comment, Boolean) -> Unit = { _, _ -> },
-    onCommunityPostShare: (CommunityPost) -> Unit = {},
-    onOpenChannel: (Channel) -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     val pullRefreshState = rememberPullToRefreshState()
@@ -96,37 +82,14 @@ internal fun SubscriptionsFeedContent(
         isRefreshing = state.isLoading,
         onRefresh = onRefresh,
         state = pullRefreshState,
-        enabled = state.activeCommunityPost == null,
         modifier = modifier.fillMaxSize(),
     ) {
         BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
             val nonShortVideos = remember(videos) { videos.filter { !it.isShort } }
-            val feedRows =
-                remember(nonShortVideos, state.communityPosts) {
-                    if (state.communityPosts.isEmpty()) {
-                        nonShortVideos.map { SubscriptionsFeedRow.VideoRow(it) }
-                    } else if (nonShortVideos.isEmpty()) {
-                        state.communityPosts.map { SubscriptionsFeedRow.PostRow(it) }
-                    } else {
-                        val result = mutableListOf<SubscriptionsFeedRow>()
-                        val postQueue = ArrayDeque(state.communityPosts)
-                        nonShortVideos.forEachIndexed { index, video ->
-                            result.add(SubscriptionsFeedRow.VideoRow(video))
-                            if ((index == 0 || (index + 1) % 4 == 0) && postQueue.isNotEmpty()) {
-                                result.add(SubscriptionsFeedRow.PostRow(postQueue.removeFirst()))
-                            }
-                        }
-                        while (postQueue.isNotEmpty()) {
-                            result.add(SubscriptionsFeedRow.PostRow(postQueue.removeFirst()))
-                        }
-                        result
-                    }
-                }
+            val feedRows = remember(nonShortVideos) { nonShortVideos.map { SubscriptionsFeedRow.VideoRow(it) } }
             LazyVerticalGrid(
                 columns = androidx.compose.foundation.lazy.grid.GridCells.Fixed(1),
                 state = gridState,
-                // While the post comments sheet is open the feed behind it must not scroll.
-                userScrollEnabled = state.activeCommunityPost == null,
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(top = FeedTopPadding, bottom = flowBottomContentPadding()),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -197,56 +160,9 @@ internal fun SubscriptionsFeedContent(
                                     useInternalPadding = false,
                                 )
                             }
-                            is SubscriptionsFeedRow.PostRow -> {
-                                CommunityPostCard(
-                                    post = row.post,
-                                    onAuthorClick = {
-                                        val channelId =
-                                            row.post.channelId.takeIf { it.isNotEmpty() }
-                                                ?: state.subscribedChannels.find { it.name.equals(row.post.authorName, ignoreCase = true) }?.id
-                                        if (channelId != null) {
-                                            onOpenChannel(
-                                                Channel(
-                                                    id = channelId,
-                                                    name = row.post.authorName,
-                                                    thumbnailUrl = row.post.authorAvatarUrl,
-                                                    subscriberCount = 0L,
-                                                ),
-                                            )
-                                        }
-                                    },
-                                    onCommentsClick = { onCommunityPostComments(row.post) },
-                                    onShareClick = { onCommunityPostShare(row.post) },
-                                    onVideoClick = onVideoClick,
-                                    compact = false,
-                                )
-                            }
                         }
                     }
                 }
-            }
-            state.activeCommunityPost?.let { activePost ->
-                CommunityPostCommentsSheet(
-                    comments = state.communityComments,
-                    isLoading = state.isLoadingCommunityComments,
-                    onDismiss = onCloseCommunityPostComments,
-                    totalText = activePost.commentCountText,
-                    isLoadingMore = state.isLoadingMoreCommunityComments,
-                    onLoadMore = onLoadMoreCommunityPostComments,
-                    hasMore = state.communityCommentsContinuation != null,
-                    onLoadReplies = { comment -> onLoadCommunityCommentReplies(comment, false) },
-                    onLoadMoreReplies = { comment -> onLoadCommunityCommentReplies(comment, true) },
-                    onAuthorClick = { authorRef ->
-                        onOpenChannel(
-                            Channel(id = authorRef, name = "", thumbnailUrl = "", subscriberCount = 0L),
-                        )
-                    },
-                    onAvatarClick = { authorRef ->
-                        onOpenChannel(
-                            Channel(id = authorRef, name = "", thumbnailUrl = "", subscriberCount = 0L),
-                        )
-                    },
-                )
             }
         }
     }

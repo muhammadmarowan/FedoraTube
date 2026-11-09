@@ -1654,12 +1654,7 @@
     <string name="search_filter_all">Tümü</string>
     <string name="search_toggle_view_mode">Arama sonuçlarının görünümünü değiştir</string>
     <string name="channel_sort_latest">En yeni</string>
-    <string name="tab_posts">Gönderiler</string>
-    <string name="community_posts_empty">Topluluk gönderisi bulunamadı</string>
-    <string name="community_posts_load_failed">Topluluk gönderileri yüklenemedi</string>
     <string name="channel_search_failed">Bu kanalda arama yapılamadı</string>
-    <string name="community_post_image_content_description">Topluluk gönderisi görseli</string>
-    <string name="share_community_post">Topluluk gönderisini paylaş</string>
     <string name="deep_flow_save_history_title">İzleme geçmişine kaydet</string>
     <string name="deep_flow_save_history_subtitle">İzlenen videoları ilerleme bilgisiyle birlikte geçmişte tut. Öneri motoru yine de bunlardan öğrenmez. Kapalıysa hiçbir şey kaydedilmez.</string>
     <string name="appearance_customizer_variant_title">%1$s özel teması</string>

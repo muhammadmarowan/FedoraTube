@@ -40,7 +40,6 @@ class ChannelScreenTabTest {
                     descriptor(ChannelTabKind.Shows),
                     descriptor(ChannelTabKind.Podcasts),
                     descriptor(ChannelTabKind.Playlists),
-                    descriptor(ChannelTabKind.Posts),
                     descriptor(ChannelTabKind.Store),
                 ),
             )
@@ -54,7 +53,6 @@ class ChannelScreenTabTest {
                 ChannelTabKind.Shows,
                 ChannelTabKind.Podcasts,
                 ChannelTabKind.Playlists,
-                ChannelTabKind.Posts,
             ),
             resolved.filterNot { it.isAbout }.map { it.kind },
         )

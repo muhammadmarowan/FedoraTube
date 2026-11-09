@@ -693,6 +693,7 @@ class HomeViewModel
                                 share = FlowNeuroEngine::shareByInterest,
                                 rawNeighbours = rawNeighbours,
                                 searchOf = queriesById(discoveryPairs)::get,
+                                excludedOnScreenIds = _uiState.value.videos.mapTo(HashSet()) { it.id },
                             )
 
                         Log.d(

@@ -22,7 +22,7 @@ internal fun List<SearchResultItem>.videos(): List<Video> =
     }
 
 /**
- * Keeps what [state] asks for. Channels, playlists and posts have no watched state: they stay under
+ * Keeps what [state] asks for. Channels and playlists have no watched state: they stay under
  * Unwatched, where they are still new to the viewer, and go under Watched, which is a list of videos.
  */
 internal fun List<SearchResultItem>.withWatchState(
@@ -46,11 +46,7 @@ internal fun List<SearchResultItem>.withWatchState(
 
             is SearchResultItem.ShelfResult -> {
                 val videos = item.videos.filter { it.kept() }
-                when {
-                    videos.isNotEmpty() -> item.copy(videos = videos)
-                    item.posts.isNotEmpty() && !keepWatched -> item
-                    else -> null
-                }
+                videos.takeIf { it.isNotEmpty() }?.let { item.copy(videos = it) }
             }
         }
     }

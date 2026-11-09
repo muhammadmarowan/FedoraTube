@@ -9,8 +9,8 @@ import com.fedoratube.org.innertube.pages.renderer.videoOrNull
  * One page of `/youtubei/v1/search`.
  *
  * The feed is not a flat list of videos: a creator query returns a channel card, a "Latest from"
- * shelf, inline Shorts strips and a community-posts shelf interleaved with the results, in the
- * order YouTube arranged them. [sections] preserves that order.
+ * shelf and strips interleaved with the results, in the order YouTube arranged them. [sections]
+ * preserves that order.
  */
 data class SearchResultsPage(
     val header: SearchHeader = SearchHeader(),

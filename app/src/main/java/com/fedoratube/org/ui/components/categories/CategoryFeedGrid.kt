@@ -214,7 +214,6 @@ private fun FeedItem.gridKey(): String =
         is FeedItem.ShortItem -> "s:${video.id}"
         is FeedItem.PlaylistItem -> "p:${playlist.id}"
         is FeedItem.RelatedChannelItem -> "c:${channel.id}"
-        is FeedItem.PostItem -> "b:${post.id}"
     }
 
 private fun FeedItem.gridContentType(): String =
@@ -222,5 +221,4 @@ private fun FeedItem.gridContentType(): String =
         is FeedItem.VideoItem, is FeedItem.ShortItem -> "video"
         is FeedItem.PlaylistItem -> "playlist"
         is FeedItem.RelatedChannelItem -> "channel"
-        is FeedItem.PostItem -> "post"
     }

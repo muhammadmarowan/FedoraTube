@@ -65,16 +65,6 @@ class ShelfParserTest {
     }
 
     @Test
-    fun `reads the community posts shelf through the existing post parser`() {
-        val shelf =
-            shelves(SearchFixture.ALL_LINUS_TECH_TIPS)
-                .first { it.items.any { item -> item is FeedItem.PostItem } }
-
-        assertThat(shelf.title).isEqualTo("Latest posts from Linus Tech Tips")
-        assertThat(shelf.style).isEqualTo(FeedShelfStyle.Carousel)
-    }
-
-    @Test
     fun `a container the registry cannot parse yields no shelf rather than an empty one`() {
         val shelf = JsonObject(emptyMap()).toFeedShelf(FeedItemOwner(), 0)
 

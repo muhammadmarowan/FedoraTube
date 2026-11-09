@@ -1850,11 +1850,6 @@
     <string name="channel_metadata_unavailable">معلومات القناة غير متاحة</string>
     <string name="search_filter_all">الكل</string>
     <string name="channel_sort_latest">الأحدث</string>
-    <string name="tab_posts">المنشورات</string>
-    <string name="community_posts_empty">لا يوجد منشورات</string>
-    <string name="community_posts_load_failed">تعذر تحميل المنشورات</string>
-    <string name="community_post_image_content_description">صورة المنشور</string>
-    <string name="share_community_post">مشاركة المنشور</string>
     <string name="search_toggle_view_mode">إعرض نتائج البحث</string>
     <string name="copy_logs">نسخ السجلات</string>
     <string name="logs_copied">تم نسخ السجلات</string>

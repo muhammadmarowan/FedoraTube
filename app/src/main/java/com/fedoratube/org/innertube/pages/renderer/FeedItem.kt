@@ -46,10 +46,6 @@ sealed interface FeedItem {
     data class RelatedChannelItem(
         val channel: Channel,
     ) : FeedItem
-
-    data class PostItem(
-        val post: CommunityPost,
-    ) : FeedItem
 }
 
 internal fun FeedItem.distinctKey(): String =
@@ -58,7 +54,6 @@ internal fun FeedItem.distinctKey(): String =
         is FeedItem.ShortItem -> "s:${video.id}"
         is FeedItem.PlaylistItem -> "p:${playlist.id}"
         is FeedItem.RelatedChannelItem -> "c:${channel.id}"
-        is FeedItem.PostItem -> "b:${post.id}"
     }
 
 internal fun FeedItem.videoOrNull(): Video? =

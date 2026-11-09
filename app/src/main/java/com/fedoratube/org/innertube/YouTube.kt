@@ -94,14 +94,10 @@ import com.fedoratube.org.innertube.pages.reel.ReelSequencePage
 import com.fedoratube.org.innertube.pages.reel.toReelLockups
 import com.fedoratube.org.innertube.pages.reel.toReelOverlay
 import com.fedoratube.org.innertube.pages.reel.toReelSequencePage
-import com.fedoratube.org.innertube.pages.renderer.CommunityCommentsPage
-import com.fedoratube.org.innertube.pages.renderer.CommunityPostsPage
 import com.fedoratube.org.innertube.pages.renderer.FeedItemOwner
 import com.fedoratube.org.innertube.pages.renderer.FeedShelf
 import com.fedoratube.org.innertube.pages.renderer.collaboratorDialog
 import com.fedoratube.org.innertube.pages.renderer.lockupDateAndViews
-import com.fedoratube.org.innertube.pages.renderer.toCommunityCommentsPage
-import com.fedoratube.org.innertube.pages.renderer.toCommunityPostsPage
 import com.fedoratube.org.innertube.pages.search.SearchResultsPage
 import com.fedoratube.org.innertube.pages.search.SearchSuggestion
 import com.fedoratube.org.innertube.pages.search.parseSearchSuggestions
@@ -147,7 +143,6 @@ object YouTube {
     private val innerTube = InnerTube()
     private const val CHANNEL_VIDEOS_PARAMS = "EgZ2aWRlb3PyBgQKAjoA"
     private const val CHANNEL_LIVE_PARAMS = "EgdzdHJlYW1z8gYECgJ6AA%3D%3D"
-    private const val CHANNEL_POSTS_PARAMS = "EgVwb3N0c_IGBAoCSgA="
     private const val CHANNEL_SHORTS_PARAMS = "EgZzaG9ydHPyBgUKA5oBAA=="
 
     var locale: YouTubeLocale
@@ -802,46 +797,6 @@ object YouTube {
             MusicVideoChart(title = playlist.title, entries = page.videos.ranked())
         }
 
-    suspend fun communityPosts(
-        channelId: String,
-        channelName: String,
-        channelThumbnailUrl: String,
-    ): Result<CommunityPostsPage> = communityPostsPage(channelId, channelName, channelThumbnailUrl)
-
-    suspend fun communityPostsContinuation(
-        continuation: String,
-        channelName: String,
-        channelThumbnailUrl: String,
-        channelId: String = "",
-    ): Result<CommunityPostsPage> =
-        communityPostsPage(
-            channelId = channelId,
-            channelName = channelName,
-            channelThumbnailUrl = channelThumbnailUrl,
-            continuation = continuation,
-        )
-
-    suspend fun communityPostComments(
-        postId: String,
-        params: String?,
-    ): Result<CommunityCommentsPage> =
-        runCatching {
-            val initial = communityPostCommentsPage(postId = postId, params = params)
-            if (initial.comments.isNotEmpty() || initial.continuation == null) {
-                initial
-            } else {
-                val commentsPage = communityPostCommentsPage(continuation = initial.continuation)
-                commentsPage.copy(
-                    commentCountText = commentsPage.commentCountText ?: initial.commentCountText,
-                )
-            }
-        }
-
-    suspend fun communityPostCommentsContinuation(continuation: String): Result<CommunityCommentsPage> =
-        runCatching {
-            communityPostCommentsPage(continuation = continuation)
-        }
-
     /** A YouTube playlist's first page when [continuation] is null, otherwise the page it points to. */
     suspend fun videoPlaylistPage(
         playlistId: String,
@@ -857,49 +812,6 @@ object YouTube {
                 )
             Json.parseToJsonElement(response.bodyAsText()).toVideoPlaylistPage()
         }
-
-    private suspend fun communityPostsPage(
-        channelId: String,
-        channelName: String,
-        channelThumbnailUrl: String,
-        continuation: String? = null,
-    ): Result<CommunityPostsPage> =
-        runCatching {
-            val client = currentWebClient()
-            val response =
-                innerTube.channelBrowse(
-                    client = client,
-                    channelId = channelId.takeIf { continuation == null },
-                    params = CHANNEL_POSTS_PARAMS.takeIf { continuation == null },
-                    continuation = continuation,
-                )
-            Json.parseToJsonElement(response.bodyAsText()).toCommunityPostsPage(
-                fallbackAuthorName = channelName,
-                fallbackAuthorAvatarUrl = channelThumbnailUrl,
-                owner =
-                    com.fedoratube.org.innertube.pages.renderer.FeedItemOwner(
-                        id = channelId,
-                        name = channelName,
-                        avatarUrl = channelThumbnailUrl,
-                    ),
-            )
-        }
-
-    private suspend fun communityPostCommentsPage(
-        postId: String? = null,
-        params: String? = null,
-        continuation: String? = null,
-    ): CommunityCommentsPage {
-        val client = currentWebClient()
-        val response =
-            innerTube.postCommentsBrowse(
-                client = client,
-                postId = postId,
-                params = params,
-                continuation = continuation,
-            )
-        return Json.parseToJsonElement(response.bodyAsText()).toCommunityCommentsPage()
-    }
 
     private suspend fun channelVideosPage(
         channelId: String,

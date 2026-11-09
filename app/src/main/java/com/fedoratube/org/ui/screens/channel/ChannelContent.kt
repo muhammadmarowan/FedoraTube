@@ -52,19 +52,14 @@ import com.fedoratube.org.R
 import com.fedoratube.org.data.local.HomeFeedColumns
 import com.fedoratube.org.data.model.Video
 import com.fedoratube.org.innertube.pages.channel.ChannelTabKind
-import com.fedoratube.org.innertube.pages.renderer.CommunityPost
 import com.fedoratube.org.innertube.pages.renderer.FeedShelf
 import com.fedoratube.org.ui.components.channel.ChannelAboutSection
-import com.fedoratube.org.ui.components.channel.ChannelCommunityPosts
 import com.fedoratube.org.ui.components.channel.ChannelFilterBar
 import com.fedoratube.org.ui.components.channel.ChannelHeaderSection
 import com.fedoratube.org.ui.components.channel.ChannelReadingPane
 import com.fedoratube.org.ui.components.channel.ChannelRow
 import com.fedoratube.org.ui.components.channel.ChannelTabItems
 import com.fedoratube.org.ui.components.channel.ChannelTabRow
-import com.fedoratube.org.ui.components.channel.CommunityPostCard
-import com.fedoratube.org.ui.components.channel.CommunityPostCommentsSheet
-import com.fedoratube.org.ui.components.channel.PostsPaneMaxWidth
 import com.fedoratube.org.ui.components.layout.flowBottomContentPadding
 import com.fedoratube.org.ui.components.shared.FeedShelfActions
 import com.fedoratube.org.ui.components.shared.FeedShelfSections
@@ -77,7 +72,6 @@ import kotlin.math.roundToInt
 internal fun ChannelContent(
     uiState: ChannelUiState,
     onManageGroups: (() -> Unit)?,
-    communityUiState: ChannelCommunityUiState,
     tabStates: Map<ChannelTabKind, ChannelTabState>,
     onFilterSelected: (ChannelTabKind, Int, Int) -> Unit,
     subscribedChannelIds: Set<String>,
@@ -93,14 +87,6 @@ internal fun ChannelContent(
     onTabSelected: (ChannelTabKind) -> Unit,
     onSearchToggle: () -> Unit = {},
     onSearchQueryChange: (String) -> Unit = {},
-    onCommunityPostComments: (CommunityPost) -> Unit,
-    onCloseCommunityPostComments: () -> Unit = {},
-    onLoadMoreCommunityPostComments: () -> Unit = {},
-    onLoadCommunityCommentReplies: (com.fedoratube.org.data.model.Comment, Boolean) -> Unit = { _, _ -> },
-    communityComments: List<com.fedoratube.org.data.model.Comment> = emptyList(),
-    onCommunityPostShare: (CommunityPost) -> Unit,
-    onLoadMoreCommunityPosts: () -> Unit,
-    onRetryCommunityPosts: () -> Unit,
     initialScrollIndex: Int = 0,
     initialScrollOffset: Int = 0,
     onScrollChanged: (index: Int, offset: Int) -> Unit = { _, _ -> },
@@ -184,16 +170,14 @@ internal fun ChannelContent(
         headerOffsetPx = headerOffsetPx.coerceIn(maxOffset, 0f)
     }
 
-    val commentsOpen = communityUiState.activePost != null
-
     val nestedScrollConnection =
-        remember(collapsingHeaderHeightPx, topBarHeightPx, communityUiState.activePost?.id) {
+        remember(collapsingHeaderHeightPx, topBarHeightPx) {
             object : NestedScrollConnection {
                 override fun onPreScroll(
                     available: Offset,
                     source: NestedScrollSource,
                 ): Offset {
-                    if (commentsOpen || available.y >= 0f) return Offset.Zero
+                    if (available.y >= 0f) return Offset.Zero
                     val maxOffset = -(collapsingHeaderHeightPx - topBarHeightPx).coerceAtLeast(0f)
                     val previous = headerOffsetPx
                     val next = (previous + available.y).coerceIn(maxOffset, 0f)
@@ -206,7 +190,7 @@ internal fun ChannelContent(
                     available: Offset,
                     source: NestedScrollSource,
                 ): Offset {
-                    if (commentsOpen || available.y <= 0f) return Offset.Zero
+                    if (available.y <= 0f) return Offset.Zero
                     val maxOffset = -(collapsingHeaderHeightPx - topBarHeightPx).coerceAtLeast(0f)
                     val previous = headerOffsetPx
                     val next = (previous + available.y).coerceIn(maxOffset, 0f)
@@ -224,7 +208,6 @@ internal fun ChannelContent(
         )
     val liveListState = rememberLazyGridState()
     val playlistsListState = rememberLazyGridState()
-    val postsListState = rememberLazyListState()
     val homeListState = rememberLazyGridState()
     val searchListState = rememberLazyGridState()
     val aboutListState = rememberLazyListState()
@@ -265,7 +248,7 @@ internal fun ChannelContent(
                     .fillMaxSize()
                     .graphicsLayer { alpha = if (headerMeasured) 1f else 0f },
             verticalAlignment = Alignment.Top,
-            userScrollEnabled = !commentsOpen,
+            userScrollEnabled = true,
         ) { page ->
             val listPadding = PaddingValues(top = visibleHeaderHeightDp, bottom = flowBottomContentPadding())
             val tab = visibleTabs.getOrElse(page) { visibleTabs.first() }
@@ -275,33 +258,13 @@ internal fun ChannelContent(
                     ChannelReadingPane {
                         LazyColumn(
                             state = aboutListState,
-                            userScrollEnabled = !commentsOpen,
+                            userScrollEnabled = true,
                             modifier = Modifier.fillMaxSize(),
                             contentPadding = listPadding,
                         ) {
                             item { ChannelAboutSection(header = header) }
                             item { Spacer(Modifier.height(16.dp)) }
                         }
-                    }
-                }
-
-                tab.kind == ChannelTabKind.Posts -> {
-                    ChannelReadingPane(maxWidth = PostsPaneMaxWidth) {
-                        ChannelCommunityPosts(
-                            posts = communityUiState.posts,
-                            isLoading = communityUiState.isLoadingPosts,
-                            isLoadingMore = communityUiState.isLoadingMorePosts,
-                            hasMore = communityUiState.postsContinuation != null,
-                            errorLog = communityUiState.postsErrorLog,
-                            listState = postsListState,
-                            contentPadding = listPadding,
-                            onAuthorClick = { onChannelClick(header.id) },
-                            onCommentsClick = onCommunityPostComments,
-                            onShareClick = onCommunityPostShare,
-                            onLoadMore = onLoadMoreCommunityPosts,
-                            onRetry = onRetryCommunityPosts,
-                            userScrollEnabled = !commentsOpen,
-                        )
                     }
                 }
 
@@ -315,7 +278,7 @@ internal fun ChannelContent(
                         columnPreference = columnPreference,
                         onVideoClick = onVideoClick,
                         onRetry = { onSearchQueryChange(uiState.searchQuery) },
-                        userScrollEnabled = !commentsOpen,
+                        userScrollEnabled = true,
                     )
                 }
 
@@ -327,7 +290,7 @@ internal fun ChannelContent(
                         columnPreference = columnPreference,
                         contentPadding = listPadding,
                         topInset = visibleHeaderHeightDp,
-                        userScrollEnabled = !commentsOpen,
+                        userScrollEnabled = true,
                         actions =
                             FeedShelfActions(
                                 onVideoClick = onVideoClick,
@@ -353,17 +316,6 @@ internal fun ChannelContent(
                             ),
                         slots =
                             FeedShelfSlots(
-                                post = { post, compact ->
-                                    CommunityPostCard(
-                                        post = post,
-                                        onAuthorClick = { onChannelClick(header.id) },
-                                        onCommentsClick = { onCommunityPostComments(post) },
-                                        onShareClick = { onCommunityPostShare(post) },
-                                        showDivider = !compact,
-                                        compact = compact,
-                                        modifier = if (compact) Modifier.padding(bottom = 4.dp) else Modifier,
-                                    )
-                                },
                                 channelRow = { channel, isSubscribed ->
                                     ChannelRow(
                                         channel = channel,
@@ -392,7 +344,7 @@ internal fun ChannelContent(
                         onVideoClick = onVideoClick,
                         onPlaylistClick = onPlaylistClick,
                         onChannelClick = onChannelClick,
-                        userScrollEnabled = !commentsOpen,
+                        userScrollEnabled = true,
                     )
                 }
             }
@@ -452,21 +404,6 @@ internal fun ChannelContent(
                     )
                 }
             }
-        }
-        communityUiState.activePost?.let { activePost ->
-            CommunityPostCommentsSheet(
-                comments = communityComments,
-                isLoading = communityUiState.isLoadingComments,
-                onDismiss = onCloseCommunityPostComments,
-                totalText = activePost.commentCountText,
-                isLoadingMore = communityUiState.isLoadingMoreComments,
-                onLoadMore = onLoadMoreCommunityPostComments,
-                hasMore = communityUiState.commentsContinuation != null,
-                onLoadReplies = { comment -> onLoadCommunityCommentReplies(comment, false) },
-                onLoadMoreReplies = { comment -> onLoadCommunityCommentReplies(comment, true) },
-                onAuthorClick = onChannelClick,
-                onAvatarClick = onChannelClick,
-            )
         }
     }
 }

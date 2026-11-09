@@ -184,7 +184,7 @@ internal fun ChannelTabItems(
                         ChannelRow(channel = item.channel, onClick = { onChannelClick(item.channel.id) })
                     }
 
-                    is FeedItem.PostItem, null -> {
+                    null -> {
                         Unit
                     }
                 }
@@ -206,7 +206,7 @@ private fun LazyGridScope.fullSpanItem(
 
 private fun FeedItem?.spansRow(): Boolean =
     when (this) {
-        is FeedItem.RelatedChannelItem, is FeedItem.PostItem -> true
+        is FeedItem.RelatedChannelItem -> true
         is FeedItem.VideoItem, is FeedItem.ShortItem, is FeedItem.PlaylistItem, null -> false
     }
 
@@ -216,7 +216,6 @@ private fun FeedItem.contentType(): String =
         is FeedItem.ShortItem -> "short"
         is FeedItem.PlaylistItem -> "playlist"
         is FeedItem.RelatedChannelItem -> "channel"
-        is FeedItem.PostItem -> "post"
     }
 
 private fun FeedItem.itemKey(): String =
@@ -225,7 +224,6 @@ private fun FeedItem.itemKey(): String =
         is FeedItem.ShortItem -> "s_${video.id}"
         is FeedItem.PlaylistItem -> "p_${playlist.id}"
         is FeedItem.RelatedChannelItem -> "c_${channel.id}"
-        is FeedItem.PostItem -> "b_${post.id}"
     }
 
 private fun ChannelTabKind.emptyLabel(): Int =

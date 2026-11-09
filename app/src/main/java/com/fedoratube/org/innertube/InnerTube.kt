@@ -452,26 +452,6 @@ class InnerTube {
         }
     }
 
-    suspend fun postCommentsBrowse(
-        client: YouTubeClient,
-        postId: String? = null,
-        params: String? = null,
-        continuation: String? = null,
-    ) = webBrowse(client) { requestVisitorData ->
-        BrowseBody(
-            context = client.toContext(locale, requestVisitorData, null),
-            browseId = if (continuation == null) "FEpost_detail" else null,
-            params = if (continuation == null) params else null,
-            continuation = continuation,
-            canonicalBaseUrl =
-                if (continuation == null && params == null) {
-                    postId?.let { "/post/$it" }
-                } else {
-                    null
-                },
-        )
-    }
-
     suspend fun player(
         client: YouTubeClient,
         videoId: String,

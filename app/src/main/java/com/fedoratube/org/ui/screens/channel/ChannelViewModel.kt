@@ -12,7 +12,6 @@ import com.fedoratube.org.data.local.PlayerPreferences
 import com.fedoratube.org.data.local.SubscriptionRepository
 import com.fedoratube.org.data.local.dao.SubscriptionGroupDao
 import com.fedoratube.org.data.local.entity.SubscriptionGroupEntity
-import com.fedoratube.org.data.model.Comment
 import com.fedoratube.org.data.model.SubscriptionGroup
 import com.fedoratube.org.data.model.Video
 import com.fedoratube.org.data.model.distinctByNonBlankKey
@@ -22,7 +21,6 @@ import com.fedoratube.org.data.notes.NoteSubject
 import com.fedoratube.org.data.notes.NotesRepository
 import com.fedoratube.org.innertube.YouTube
 import com.fedoratube.org.innertube.pages.channel.ChannelTabKind
-import com.fedoratube.org.innertube.pages.renderer.CommunityPost
 import com.fedoratube.org.innertube.pages.renderer.FeedItemOwner
 import com.fedoratube.org.ui.youtubeChannelBrowseId
 import com.fedoratube.org.ui.youtubeChannelUrl
@@ -154,11 +152,8 @@ class ChannelViewModel
 
         private val _uiState = MutableStateFlow(ChannelUiState())
         val uiState: StateFlow<ChannelUiState> = _uiState.asStateFlow()
-        private val communityController = ChannelCommunityController(viewModelScope)
-        private var requestedChannelUrl: String? = null
-        internal val communityUiState: StateFlow<ChannelCommunityUiState> = communityController.state
-
         private val tabController = ChannelTabController(viewModelScope)
+        private var requestedChannelUrl: String? = null
         internal val tabStates: StateFlow<Map<ChannelTabKind, ChannelTabState>> = tabController.states
 
         private fun channelOwner(): FeedItemOwner {
@@ -228,7 +223,6 @@ class ChannelViewModel
                                 isLoading = false,
                             )
                         }
-                        communityController.reset(channelId, header.title, header.avatarUrl)
                         loadSubscriptionState(channelId)
                         observeNote(channelId)
                         onTabsResolved()
@@ -257,10 +251,6 @@ class ChannelViewModel
 
         private fun ensureTabLoaded(kind: ChannelTabKind) {
             if (kind == ChannelTabKind.Shorts) return
-            if (kind == ChannelTabKind.Posts) {
-                communityController.ensurePostsLoaded()
-                return
-            }
             tabController.ensureLoaded(kind, _uiState.value.tabParams(kind))
         }
 
@@ -322,20 +312,6 @@ class ChannelViewModel
             _uiState.update { it.copy(selectedTab = kind) }
             ensureTabLoaded(kind)
         }
-
-        fun openCommunityPostComments(post: CommunityPost) = communityController.openComments(post)
-
-        fun closeCommunityPostComments() = communityController.closeComments()
-
-        fun retryCommunityPosts() = communityController.retryPosts()
-
-        fun loadMoreCommunityPosts() = communityController.loadMorePosts()
-
-        fun loadMoreCommunityPostComments() = communityController.loadMoreComments()
-
-        fun loadCommunityCommentReplies(comment: Comment) = communityController.loadReplies(comment, append = false)
-
-        fun loadMoreCommunityCommentReplies(comment: Comment) = communityController.loadReplies(comment, append = true)
 
         // ── Channel search ────────────────────────────────────────────────────────
 

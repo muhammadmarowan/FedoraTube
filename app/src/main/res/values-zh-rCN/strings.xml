@@ -355,12 +355,7 @@
     <string name="tab_live">直播</string>
     <string name="tab_playlists">播放列表</string>
     <string name="tab_about">关于</string>
-    <string name="tab_posts">帖子</string>
-    <string name="community_posts_empty">找不到社区帖子</string>
-    <string name="community_posts_load_failed">无法加载社区帖子</string>
     <string name="channel_search_failed">无法搜索该频道</string>
-    <string name="community_post_image_content_description">社区帖子图片</string>
-    <string name="share_community_post">分享社区帖子</string>
     <string name="end_of_queue">队列末尾</string>
     <string name="no_videos_found">没有找到视频</string>
     <string name="no_shorts_found">未找到 Shorts</string>

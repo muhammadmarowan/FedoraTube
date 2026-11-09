@@ -1673,11 +1673,6 @@
     <string name="search_filter_all">Todo</string>
     <string name="search_toggle_view_mode">Cambiar vista de resultados de búsqueda</string>
     <string name="channel_sort_latest">Más recientes</string>
-    <string name="tab_posts">Publicaciones</string>
-    <string name="community_posts_empty">No se encontraron publicaciones de la comunidad</string>
-    <string name="community_posts_load_failed">No se pudrieron cargar las publicaciones de la comunidad</string>
-    <string name="community_post_image_content_description">Imagen de publicación de comunidad</string>
-    <string name="share_community_post">Compartir publicación de la comuidad</string>
     <string name="deep_flow_save_history_title">Guardar en el historial de reproducciones</string>
     <string name="appearance_customizer_variant_title">%1$s tema personalizado</string>
     <string name="appearance_role_primary_container">Contenedor primario</string>

@@ -1,8 +1,6 @@
 package com.fedoratube.org.ui.screens.channel
 
-import android.content.Intent
 import android.util.Log
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -98,14 +96,11 @@ import com.fedoratube.org.data.model.SubscriptionGroup
 import com.fedoratube.org.data.model.Video
 import com.fedoratube.org.innertube.pages.channel.ChannelHeader
 import com.fedoratube.org.innertube.pages.channel.ChannelTabKind
-import com.fedoratube.org.innertube.pages.renderer.CommunityPost
 import com.fedoratube.org.ui.components.channel.ChannelBanner
 import com.fedoratube.org.ui.components.layout.topbar.FlowTopBar
 import com.fedoratube.org.ui.components.shared.ChannelAvatarImage
 import com.fedoratube.org.ui.components.shared.CollectionEditDialog
 import com.fedoratube.org.ui.components.shared.CollectionSheetEntry
-import com.fedoratube.org.ui.components.shared.CommentSortFilter
-import com.fedoratube.org.ui.components.shared.FlowCommentsBottomSheet
 import com.fedoratube.org.ui.components.shared.FlowEmptyState
 import com.fedoratube.org.ui.components.shared.FlowErrorState
 import com.fedoratube.org.ui.components.shared.FlowLoadingIndicator
@@ -113,7 +108,6 @@ import com.fedoratube.org.ui.components.shared.FlowNoteEditorDialog
 import com.fedoratube.org.ui.components.shared.FlowSubscribeButton
 import com.fedoratube.org.ui.components.shared.FullSizeImageDialog
 import com.fedoratube.org.ui.components.shared.SaveToCollectionSheet
-import com.fedoratube.org.ui.components.shared.sortCommentsByFilter
 import com.fedoratube.org.ui.theme.extendedColors
 import com.fedoratube.org.ui.youtubeChannelUrl
 import com.fedoratube.org.utils.ThumbnailUrlResolver
@@ -140,7 +134,6 @@ fun ChannelScreen(
         }
     val isGridView by preferences.channelIsGridView.collectAsState(initial = false)
     val uiState by viewModel.uiState.collectAsState()
-    val communityUiState by viewModel.communityUiState.collectAsState()
     val tabStates by viewModel.tabStates.collectAsStateWithLifecycle()
     val subscribedChannelIds by viewModel.subscribedChannelIds.collectAsStateWithLifecycle()
     val channelNote by viewModel.channelNote.collectAsStateWithLifecycle()
@@ -150,25 +143,13 @@ fun ChannelScreen(
     var showGroupSheet by rememberSaveable { mutableStateOf(false) }
     var showCreateGroupDialog by rememberSaveable { mutableStateOf(false) }
 
-    // Shelves and posts have their own layout; only the item grids can switch.
     val showLayoutToggle =
-        uiState.selectedTab != null &&
-            uiState.selectedTab !in setOf(ChannelTabKind.Home, ChannelTabKind.Posts)
+        uiState.selectedTab != null && uiState.selectedTab != ChannelTabKind.Home
 
     LaunchedEffect(channelUrl) { viewModel.loadChannel(channelUrl) }
 
     var showCollapsedChannelTitle by remember(channelUrl) { mutableStateOf(false) }
     val collapsedChannelTitle = uiState.header?.title.orEmpty()
-    var communityCommentSort by rememberSaveable { mutableStateOf(CommentSortFilter.TOP) }
-    val sortedCommunityComments =
-        remember(communityUiState.comments, communityCommentSort) {
-            sortCommentsByFilter(communityUiState.comments, communityCommentSort)
-        }
-
-    LaunchedEffect(communityUiState.activePost?.id) {
-        communityCommentSort = CommentSortFilter.TOP
-    }
-
     Box(
         modifier =
             modifier
@@ -191,7 +172,6 @@ fun ChannelScreen(
             uiState.header != null -> {
                 ChannelContent(
                     uiState = uiState,
-                    communityUiState = communityUiState,
                     tabStates = tabStates,
                     onFilterSelected = viewModel::selectTabFilter,
                     subscribedChannelIds = subscribedChannelIds,
@@ -208,32 +188,6 @@ fun ChannelScreen(
                     onTabSelected = { viewModel.selectTab(it) },
                     onSearchToggle = { viewModel.setSearchActive(!uiState.searchActive) },
                     onSearchQueryChange = { viewModel.searchInChannel(it) },
-                    onCommunityPostComments = viewModel::openCommunityPostComments,
-                    onCloseCommunityPostComments = viewModel::closeCommunityPostComments,
-                    onLoadMoreCommunityPostComments = viewModel::loadMoreCommunityPostComments,
-                    onLoadCommunityCommentReplies = { comment, append ->
-                        if (append) {
-                            viewModel.loadMoreCommunityCommentReplies(comment)
-                        } else {
-                            viewModel.loadCommunityCommentReplies(comment)
-                        }
-                    },
-                    communityComments = sortedCommunityComments,
-                    onCommunityPostShare = { post ->
-                        val shareIntent =
-                            Intent(Intent.ACTION_SEND).apply {
-                                type = "text/plain"
-                                putExtra(Intent.EXTRA_TEXT, "https://www.youtube.com/post/${post.id}")
-                            }
-                        context.startActivity(
-                            Intent.createChooser(
-                                shareIntent,
-                                context.getString(R.string.share_community_post),
-                            ),
-                        )
-                    },
-                    onLoadMoreCommunityPosts = viewModel::loadMoreCommunityPosts,
-                    onRetryCommunityPosts = viewModel::retryCommunityPosts,
                     initialScrollIndex = viewModel.listScrollIndex,
                     initialScrollOffset = viewModel.listScrollOffset,
                     onScrollChanged = { idx, off -> viewModel.saveScrollPosition(idx, off) },
@@ -297,9 +251,6 @@ fun ChannelScreen(
             }
         }
 
-        BackHandler(enabled = communityUiState.activePost != null) {
-            viewModel.closeCommunityPostComments()
-        }
     }
 
     val channelId = uiState.header?.id.orEmpty()

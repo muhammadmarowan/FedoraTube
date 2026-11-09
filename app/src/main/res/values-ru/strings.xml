@@ -1847,11 +1847,6 @@
     <string name="settings_home_nav_tab_subtitle">Показывать вкладку «Главная» в нижней панели навигации</string>
     <string name="settings_home_nav_tab_title">Вкладка «Главная»</string>
     <string name="channel_metadata_unavailable">Информация о канале недоступна</string>
-    <string name="tab_posts">Записи</string>
-    <string name="community_posts_empty">Нет записей сообщества</string>
-    <string name="community_posts_load_failed">Не удалось загрузить записи сообщества</string>
-    <string name="share_community_post">Поделиться записью сообщества</string>
-    <string name="community_post_image_content_description">Изображение записи сообщества</string>
     <string name="copy_logs">Скопировать отчет</string>
     <string name="logs_copied">Отчет скопирован</string>
     <string name="logs_copy_failed">Не удалось скопировать отчет</string>

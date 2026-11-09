@@ -45,7 +45,6 @@ import androidx.compose.ui.unit.dp
 import com.fedoratube.org.data.local.HomeFeedColumns
 import com.fedoratube.org.data.model.Channel
 import com.fedoratube.org.data.model.Video
-import com.fedoratube.org.innertube.pages.renderer.CommunityPost
 import com.fedoratube.org.innertube.pages.renderer.FeedItem
 import com.fedoratube.org.innertube.pages.renderer.FeedShelf
 import com.fedoratube.org.innertube.pages.renderer.FeedShelfStyle
@@ -104,10 +103,6 @@ internal fun ShelfItem(
         is FeedItem.RelatedChannelItem -> {
             slots.channelRow?.invoke(item.channel, item.channel.id in actions.subscribedChannelIds)
         }
-
-        is FeedItem.PostItem -> {
-            slots.post?.invoke(item.post, false)
-        }
     }
 }
 
@@ -145,38 +140,6 @@ private fun ShelfVideoCard(
             onClick = onClick,
             thumbnailWidth = rowThumbnailWidth,
         )
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-internal fun PostsShelf(
-    posts: List<CommunityPost>,
-    post: @Composable (post: CommunityPost, compact: Boolean) -> Unit,
-) {
-    val shape = MaterialTheme.shapes.medium
-    HorizontalMultiBrowseCarousel(
-        state = rememberCarouselState { posts.size },
-        preferredItemWidth = PostShelfCardWidth,
-        itemSpacing = 12.dp,
-        contentPadding = PaddingValues(horizontal = 12.dp),
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .height(PostShelfHeight),
-    ) { index ->
-        val item = posts[index]
-        Card(
-            shape = shape,
-            colors = CardDefaults.outlinedCardColors(),
-            modifier =
-                Modifier
-                    .fillMaxHeight()
-                    .maskClip(shape)
-                    .maskBorder(CardDefaults.outlinedCardBorder(), shape),
-        ) {
-            post(item, true)
-        }
     }
 }
 
@@ -233,7 +196,4 @@ internal fun ShelfExpander(
     }
 }
 
-private val PostShelfCardWidth = 380.dp
 
-/** Header, four lines of text, a 16:9 crop of the item width and the action row. */
-private val PostShelfHeight = 440.dp

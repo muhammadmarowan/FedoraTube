@@ -354,12 +354,7 @@
     <string name="tab_live">Trực tiếp</string>
     <string name="tab_playlists">Danh sách phát</string>
     <string name="tab_about">Giới thiệu</string>
-    <string name="tab_posts">Bài đăng</string>
-    <string name="community_posts_empty">Không có bài đăng cộng đồng</string>
-    <string name="community_posts_load_failed">Không tải được bài đăng</string>
     <string name="channel_search_failed">Không tìm kiếm được trên kênh này</string>
-    <string name="community_post_image_content_description">Ảnh bài đăng cộng đồng</string>
-    <string name="share_community_post">Chia sẻ bài đăng</string>
     <string name="end_of_queue">Hết hàng chờ</string>
     <string name="no_videos_found">Không tìm thấy video</string>
     <string name="no_shorts_found">Không tìm thấy shorts</string>

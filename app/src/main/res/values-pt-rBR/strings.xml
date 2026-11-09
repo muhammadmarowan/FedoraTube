@@ -656,12 +656,7 @@
     <string name="search_toggle_view_mode">Alternar visualização dos resultados de pesquisa</string>
     <string name="date_any">Qualquer data</string>
     <string name="channel_sort_latest">Mais recente</string>
-    <string name="tab_posts">Postagens</string>
-    <string name="community_posts_empty">Nenhuma postagem da comunidade encontrada</string>
-    <string name="community_posts_load_failed">Não foi possível carregar as postagens da comunidade</string>
     <string name="channel_search_failed">Não foi possível pesquisar neste canal</string>
-    <string name="community_post_image_content_description">Imagem de postagem da comunidade</string>
-    <string name="share_community_post">Compartilhar postagem da comunidade</string>
     <string name="music_history">Histórico de Música</string>
     <string name="settings_reset_brain_body">Isso apaga seu perfil do FedoraTube Brain.\n\n• Tópicos aprendidos são esquecidos.\n• Os traços de personalidade são redefinidos.\n• As recomendações retornão ao padrão.\n\nIsto não pode ser desfeito.</string>
     <string name="deep_flow_mode_title">Modo Profundo do FedoraTube</string>

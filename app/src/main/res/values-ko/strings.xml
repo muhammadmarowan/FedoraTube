@@ -354,12 +354,7 @@
     <string name="tab_live">실시간</string>
     <string name="tab_playlists">재생목록</string>
     <string name="tab_about">정보</string>
-    <string name="tab_posts">게시물</string>
-    <string name="community_posts_empty">커뮤니티 게시물을 찾을 수 없습니다</string>
-    <string name="community_posts_load_failed">커뮤니티 게시물을 불러올 수 없습니다</string>
     <string name="channel_search_failed">이 채널을 검색할 수 없습니다</string>
-    <string name="community_post_image_content_description">커뮤니티 게시물 이미지</string>
-    <string name="share_community_post">커뮤니티 게시물 공유</string>
     <string name="end_of_queue">대기열 끝</string>
     <string name="no_videos_found">동영상을 찾을 수 없습니다</string>
     <string name="no_shorts_found">Shorts를 찾을 수 없습니다</string>

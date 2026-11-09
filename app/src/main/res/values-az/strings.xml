@@ -355,12 +355,7 @@
     <string name="tab_live">Canlı</string>
     <string name="tab_playlists">Pleylistlər</string>
     <string name="tab_about">Haqqında</string>
-    <string name="tab_posts">Paylaşımlar</string>
-    <string name="community_posts_empty">İcma paylaşımı tapılmadı</string>
-    <string name="community_posts_load_failed">İcma paylaşımlarını yükləmək mümkün olmadı</string>
     <string name="channel_search_failed">Bu kanalda axtarış etmək mümkün olmadı</string>
-    <string name="community_post_image_content_description">İcma paylaşımının şəkli</string>
-    <string name="share_community_post">İcma paylaşımını paylaş</string>
     <string name="end_of_queue">Növbənin sonu</string>
     <string name="no_videos_found">Video tapılmadı</string>
     <string name="no_shorts_found">Shorts videosu tapılmadı</string>
