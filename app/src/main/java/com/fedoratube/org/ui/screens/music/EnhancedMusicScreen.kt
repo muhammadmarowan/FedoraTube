@@ -268,9 +268,10 @@ fun EnhancedMusicScreen(
                     // Raw concatenation is only the placeholder until the VM's
                     // brain-ranked speed dial lands.
                     val fallbackSpeedDial =
-                        remember(uiState.history, uiState.forYouTracks, uiState.listenAgain) {
-                            (uiState.history + uiState.forYouTracks + uiState.listenAgain)
+                        remember(uiState.history, uiState.forYouTracks, uiState.recommendedForYouTracks, uiState.listenAgain) {
+                            (uiState.recommendedForYouTracks + uiState.forYouTracks + uiState.history + uiState.listenAgain)
                                 .audioMusicOnly()
+                                .distinctBy { it.videoId }
                                 .take(26)
                         }
                     val speedDialTracks = uiState.speedDialTracks.ifEmpty { fallbackSpeedDial }

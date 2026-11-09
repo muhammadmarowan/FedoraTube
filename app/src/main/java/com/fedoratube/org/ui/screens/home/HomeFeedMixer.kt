@@ -41,22 +41,23 @@ internal fun homeFeedQuotas(
     val subs =
         when {
             subCount <= 0 -> 0
-            totalInteractions > 50 -> (slots * 0.40).toInt()
-            else -> (slots * 0.35).toInt()
+            // The Subscriptions page exists to show followed creators; Home is the discovery
+            // surface. A couple of fresh uploads are pinned on top by the assembly, so the blended
+            // portion keeps only a minority share — roughly one card in six — no matter the
+            // interaction count.
+            totalInteractions > 50 -> (slots * 0.15).toInt()
+            else -> (slots * 0.10).toInt()
         }.coerceAtLeast(0)
     val related =
         when {
-            subCount <= 0 -> (slots * 0.35).toInt()
-            totalInteractions > 50 -> (slots * 0.25).toInt()
+            subCount <= 0 -> (slots * 0.40).toInt()
+            totalInteractions > 50 -> (slots * 0.35).toInt()
             else -> (slots * 0.30).toInt()
         }.coerceAtLeast(0)
-    val discovery =
-        when {
-            subCount <= 0 -> (slots * 0.45).toInt()
-            else -> (slots * 0.25).toInt()
-        }.coerceAtLeast(0)
     // The remainder, about an eighth of the page: the share the retired trending lane used to get.
-    val remainder = (slots - subs - related - discovery).coerceAtLeast(0)
+    val remainder = (slots - subs - related - (slots * 0.33).toInt()).coerceAtLeast(0)
+    // Discovery takes whatever the other lanes don't, so cutting the subs share doesn't strand slots.
+    val discovery = (slots - subs - related - remainder).coerceAtLeast(0)
     // Neighbours share it once the viewer has channels of their own to point at them.
     val neighbours = if (hasNeighbours && totalInteractions > 50) minOf(remainder / 2, (slots * 0.10).toInt()) else 0
 

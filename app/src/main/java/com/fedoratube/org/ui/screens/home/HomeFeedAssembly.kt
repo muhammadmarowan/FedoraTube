@@ -14,8 +14,10 @@ internal const val CHANNEL_GAP = 10
 // Followed-channel videos past the first page's rhythm wait for later pages while it keeps this many.
 internal const val FIRST_PAGE_MIN_SIZE = 30
 
-// Fresh subs pinned to the very top; the rest interleave via the SUBS lane.
-private const val FRESH_SUBS_PIN_TOP = 2
+// Fresh subs pinned to the very top; the rest interleave via the SUBS lane. Home is an interest
+// surface, so only a couple of followed-channel uploads are pinned — Subscriptions is the page for
+// "my channels", and the blend keeps the rest.
+private const val FRESH_SUBS_PIN_TOP = 1
 
 // Seen fresh uploads follow this many ranked subs: on the first page, but not the first card again.
 private const val SHOWN_FRESH_AFTER_SUBS = 3

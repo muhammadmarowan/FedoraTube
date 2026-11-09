@@ -169,16 +169,21 @@ class MusicViewModel
                     }
             }
 
-            // Speed dial ranked by the comfort surface, so the tiles are the
-            // truest "most yours" rather than raw shelf concatenation order.
-            // Writing speedDialTracks re-emits _uiState, but the source triple is
-            // unchanged then, so distinctUntilChanged breaks the loop.
+            // Speed dial: tracks from your listening history expand through the taste model, so the
+            // tiles are recommendations related to what you play (history-seeded), not the
+            // YT 'Listen again' shelf. Writing speedDialTracks re-emits _uiState, but the source
+            // quadruple is unchanged then, so distinctUntilChanged breaks the loop.
             viewModelScope.launch(PerformanceDispatcher.parsing) {
                 _uiState
-                    .map { Triple(it.history, it.forYouTracks, it.listenAgain) }
+                    .map { Triple(it.history, it.forYouTracks + it.recommendedForYouTracks, it.listenAgain) }
                     .distinctUntilChanged()
-                    .collectLatest { (history, forYou, listenAgain) ->
-                        val pool = (history + forYou + listenAgain).audioMusicOnly().take(40)
+                    .collectLatest { (history, taste, listenAgain) ->
+                        // Taste-ranked picks lead; raw history rides along so familiar tracks still
+                        // fill the dial, never outnumbering the picks.
+                        val pool = (taste + history + listenAgain)
+                            .audioMusicOnly()
+                            .distinctBy { it.videoId }
+                            .take(40)
                         if (pool.isEmpty()) return@collectLatest
                         val ranked = musicBrain.rankTracks(pool, "heavy_rotation").take(26)
                         if (ranked.isNotEmpty()) {

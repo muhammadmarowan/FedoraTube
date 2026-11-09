@@ -33,8 +33,21 @@ internal object GraphSeedSelector {
         topicScores: Map<String, Double> = emptyMap(),
         communityOf: ((String) -> String)? = null,
         communityMass: Map<String, Double> = emptyMap(),
+        maxPerChannel: Int = Int.MAX_VALUE,
     ): List<String> {
         if (candidates.isEmpty() || maxSeeds <= 0) return emptyList()
+        val channelOf = candidates.associateBy({ it.id }, { it.channelId })
+        val channelCounts = HashMap<String, Int>()
+        fun hasChannelBudget(id: String): Boolean {
+            val channel = channelOf[id].orEmpty()
+            if (channel.isBlank()) return true
+            return (channelCounts[channel] ?: 0) < maxPerChannel
+        }
+
+        fun consume(id: String) {
+            val channel = channelOf[id].orEmpty()
+            if (channel.isNotBlank()) channelCounts[channel] = (channelCounts[channel] ?: 0) + 1
+        }
         val ranked =
             candidates
                 .asSequence()
@@ -56,12 +69,35 @@ internal object GraphSeedSelector {
                 .toList()
 
         // A light interest gets fewer seeds than [maxPerCluster], so a burst of one new interest takes one
-        // seed rather than half of them (#907). Interests with no known weight get one each.
+        // seed rather than half of them (#907). Interests with no known weight get one each. One channel
+        // never takes more than [maxPerChannel] seeds — a binge is not variety.
         val presentMass = ranked.map { it.clusterKey }.distinct().sumOf { communityMass[it] ?: 0.0 }
-        if (presentMass <= 0.0) return NeuroScoring.pickDiverseSeeds(ranked, maxSeeds, maxPerCluster)
-        return NeuroScoring.pickDiverseSeeds(ranked, maxSeeds, maxPerCluster) { community ->
-            communityMass[community]?.let { mass -> (maxSeeds * mass / presentMass).roundToInt().coerceIn(1, maxPerCluster) } ?: 1
+        val spread =
+            if (presentMass <= 0.0) {
+                NeuroScoring.pickDiverseSeeds(ranked, maxSeeds, maxPerCluster)
+            } else {
+                NeuroScoring.pickDiverseSeeds(ranked, maxSeeds, maxPerCluster) { community ->
+                    communityMass[community]?.let { mass -> (maxSeeds * mass / presentMass).roundToInt().coerceIn(1, maxPerCluster) } ?: 1
+                }
+            }
+        if (maxPerChannel == Int.MAX_VALUE) return spread
+
+        val usedSpreadIds = HashSet<String>(spread.size)
+        val keptIds = ArrayList<String>(spread.size)
+        for (id in spread) {
+            usedSpreadIds.add(id)
+            if (hasChannelBudget(id)) keptIds.add(id).also { consume(id) }
         }
+        if (keptIds.size >= maxSeeds) return keptIds.take(maxSeeds)
+        // Backfill one per distinct remaining channel, best-first, to keep the count.
+        val overflow =
+            ranked.asSequence()
+                .filter { it.id !in usedSpreadIds && hasChannelBudget(it.id) }
+                .distinctBy { channelOf[it.id].orEmpty().ifBlank { it.id } }
+                .take(maxSeeds - keptIds.size)
+                .map { it.id.also { id -> consume(id) } }
+                .toList()
+        return keptIds + overflow
     }
 
     /**
@@ -79,6 +115,7 @@ internal object GraphSeedSelector {
         cooledIds: Set<String> = emptySet(),
         excludedChannelIds: Set<String> = emptySet(),
         topicScores: Map<String, Double> = emptyMap(),
+        maxPerChannel: Int = Int.MAX_VALUE,
     ): List<String> {
         fun pick(from: List<GraphSeedInput>) =
             select(
@@ -89,6 +126,7 @@ internal object GraphSeedSelector {
                 topicScores = topicScores,
                 communityOf = communityOf,
                 communityMass = communityMass,
+                maxPerChannel = maxPerChannel,
             )
 
         // Cooled seeds come back only when no other seed qualifies: half-watched history never does,

@@ -40,6 +40,8 @@
 - Subscriptions layout is tighter: the subscribed-channel row sits closer under the Subs indicator, and the "All" (arrow) button is redesigned as a tonal circle (secondary-container with a larger arrow icon and proper ripple) instead of a flat placeholder disc
 - Home feed never re-shows a video you have already watched (exact watch-history dedup, including subscribed-channel uploads, RSS fresh-subs and cache paths) — no setting required — and the Related/similar lane now spreads one video per channel round-robin before repeats, so a watch no longer turns the feed into that channel again and again
 - Music feed has a new "Recommended for You" shelf seeded from what you actually play: recent distinct-artist history expands through related recall and the genres/moods you listen most, ranked by the on-device brain (new in the section order and hideable in settings); next song also auto-plays on an empty queue via "Endless radio" (on by default, Settings > Playback)
+- Music Speed dial now shows history-derived recommendations: each tile is a track the taste model ranks from what you listen to (related picks seeded by your history and the genres you keep most), replaces favorites as the dial pool (fallback in refresh order)
+- Home feed is interest-first like YouTube: subscriptions are kept to the minimum pinned slots and one blended quota by the interest split, Related/Discovery lanes lead the blend, related seeds can never take more than one seed per channel (a binge stops being treated as variety), and the Related lane itself round-robins across channels before repeating
 
 # Fedora Tube v1.7.7
 

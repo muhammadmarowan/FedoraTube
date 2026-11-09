@@ -1789,6 +1789,8 @@ class FlowNeuroEngine internal constructor(
                     cooledIds = recentSeedIds,
                     excludedChannelIds = excludedChannelIds,
                     topicScores = topicScores,
+                    // One seed per channel: a binge of one channel is not variety.
+                    maxPerChannel = 1,
                 )
             if (selected.isNotEmpty()) {
                 val deepFlow = isLearningPaused()

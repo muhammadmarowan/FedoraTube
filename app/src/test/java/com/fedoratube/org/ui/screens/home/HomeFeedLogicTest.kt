@@ -249,8 +249,8 @@ class HomeFeedLogicTest {
     fun `a mature viewer's neighbours share the memory lane's remainder`() {
         val quotas = homeFeedQuotas(40, subCount = 12, totalInteractions = 200, hasNeighbours = true)
 
-        assertThat(quotas[FeedSource.NEIGHBOURS]).isEqualTo(2)
-        assertThat(quotas[FeedSource.CHANNEL_MEMORY]).isEqualTo(2)
+        assertThat(quotas[FeedSource.NEIGHBOURS]).isEqualTo(4)
+        assertThat(quotas[FeedSource.CHANNEL_MEMORY]).isEqualTo(3)
         assertThat(quotas.values.sum()).isEqualTo(40)
     }
 
@@ -261,11 +261,11 @@ class HomeFeedLogicTest {
                 FeedSource.SUBS,
                 0,
                 FeedSource.RELATED,
-                14,
+                16,
                 FeedSource.DISCOVERY,
-                18,
+                13,
                 FeedSource.CHANNEL_MEMORY,
-                8,
+                11,
                 FeedSource.NEIGHBOURS,
                 0,
             )
@@ -273,13 +273,13 @@ class HomeFeedLogicTest {
         assertThat(homeFeedQuotas(40, subCount = 12, totalInteractions = 20))
             .containsExactly(
                 FeedSource.SUBS,
-                14,
+                4,
                 FeedSource.RELATED,
                 12,
                 FeedSource.DISCOVERY,
-                10,
+                13,
                 FeedSource.CHANNEL_MEMORY,
-                4,
+                11,
                 FeedSource.NEIGHBOURS,
                 0,
             )
@@ -287,13 +287,13 @@ class HomeFeedLogicTest {
         assertThat(homeFeedQuotas(40, subCount = 12, totalInteractions = 200))
             .containsExactly(
                 FeedSource.SUBS,
-                16,
+                6,
                 FeedSource.RELATED,
-                10,
+                14,
                 FeedSource.DISCOVERY,
-                10,
+                13,
                 FeedSource.CHANNEL_MEMORY,
-                4,
+                7,
                 FeedSource.NEIGHBOURS,
                 0,
             )
