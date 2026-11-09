@@ -27,7 +27,6 @@ import androidx.compose.material.icons.outlined.Download
 import androidx.compose.material.icons.outlined.DownloadDone
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.MoreVert
-import androidx.compose.material.icons.outlined.SaveAs
 import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -84,7 +83,6 @@ internal data class PlaylistHeaderState(
     val canSave: Boolean = false,
     val canAddAll: Boolean = false,
     val canEdit: Boolean = false,
-    val canExport: Boolean = false,
     val downloadProgress: Float? = null,
     /** Saved as a downloaded collection; downloading again picks up only what is new. */
     val isDownloaded: Boolean = false,
@@ -98,7 +96,6 @@ internal class PlaylistHeaderActions(
     val onSaveToggle: () -> Unit,
     val onAddAll: () -> Unit,
     val onShare: () -> Unit,
-    val onExport: () -> Unit,
     val onEdit: () -> Unit,
     val onDelete: () -> Unit,
 )
@@ -243,7 +240,7 @@ private fun PlaylistSecondaryActions(
         IconButton(onClick = actions.onShare) {
             Icon(Icons.Outlined.Share, contentDescription = stringResource(R.string.share))
         }
-        if (state.canEdit || state.canExport) PlaylistOverflowMenu(state, actions)
+        if (state.canEdit) PlaylistOverflowMenu(state, actions)
     }
 }
 
@@ -258,17 +255,6 @@ private fun PlaylistOverflowMenu(
             Icon(Icons.Outlined.MoreVert, contentDescription = stringResource(R.string.more_options))
         }
         DropdownMenu(expanded = open, onDismissRequest = { open = false }) {
-            if (state.canExport) {
-                DropdownMenuItem(
-                    text = { Text(stringResource(R.string.export_playlist_action)) },
-                    leadingIcon = { Icon(Icons.Outlined.SaveAs, contentDescription = null) },
-                    onClick = {
-                        open = false
-                        actions.onExport()
-                    },
-                )
-            }
-            if (!state.canEdit) return@DropdownMenu
             DropdownMenuItem(
                 text = { Text(stringResource(R.string.edit_playlist_action)) },
                 leadingIcon = { Icon(Icons.Outlined.Edit, contentDescription = null) },

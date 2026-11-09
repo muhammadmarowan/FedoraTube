@@ -2,8 +2,6 @@ package com.fedoratube.org.ui.screens.playlists
 
 import android.content.Context
 import androidx.activity.compose.BackHandler
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
@@ -49,7 +47,6 @@ import com.fedoratube.org.ui.components.shared.quickactions.sharedQuickActionsVi
 import com.fedoratube.org.ui.components.shared.rememberFlowPaneState
 import com.fedoratube.org.ui.components.shared.rememberReorderableLazyListState
 import com.fedoratube.org.ui.components.shared.rememberShareLinksWithoutText
-import com.fedoratube.org.utils.PLAYLIST_FILE_MIME_TYPE
 import com.fedoratube.org.utils.filterBySearch
 import com.fedoratube.org.utils.sharePlaylist
 import com.fedoratube.org.utils.sharePlaylistFile
@@ -85,10 +82,6 @@ fun PlaylistDetailScreen(
             if (isSearching) displayVideos.withIndex().associate { (index, video) -> video.id to index + 1 } else emptyMap()
         }
     val scope = rememberCoroutineScope()
-    val exportLauncher =
-        rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument(PLAYLIST_FILE_MIME_TYPE)) { target ->
-            target?.let(viewModel::exportTo)
-        }
     val listState = rememberLazyListState()
     val panes = rememberFlowPaneState()
     val twoPane = panes.showsSidePane
@@ -168,7 +161,6 @@ fun PlaylistDetailScreen(
                     }
                 }
             },
-            onExport = { exportLauncher.launch(viewModel.exportFileName) },
             onEdit = { dialog = PlaylistDialog.Edit },
             onDelete = { dialog = PlaylistDialog.Delete },
         )

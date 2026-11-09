@@ -6,7 +6,7 @@ import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.AnimationVector1D
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
-import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -37,6 +37,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.input.pointer.PointerInputChange
+import androidx.compose.ui.input.pointer.changedToUp
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.util.VelocityTracker
 import androidx.compose.ui.input.pointer.util.addPointerInputChange
@@ -248,12 +251,39 @@ fun FlowBottomSheet(
         contentAlignment = Alignment.BottomCenter,
     ) {
         if (dismissOnOutsideTap) {
+            // The area above the sheet must be modal: a tap dismisses the sheet, and a vertical
+            // drag is consumed here instead of scrolling the feed behind the sheet (which is a
+            // sibling, not an ancestor, so nested-scroll chaining alone cannot stop it).
             Box(
                 modifier =
                     Modifier
                         .fillMaxSize()
                         .pointerInput(Unit) {
-                            detectTapGestures { animateOut() }
+                            awaitPointerEventScope {
+                                while (true) {
+                                    val down = awaitFirstDown(requireUnconsumed = false)
+                                    val downId = down.id
+                                    val downPosition: Offset = down.position
+                                    var movedPastSlop = false
+                                    while (true) {
+                                        val event = awaitPointerEvent()
+                                        val change: PointerInputChange? = event.changes.find { it.id == downId }
+                                        if (change == null) break
+                                        if (change.changedToUp()) {
+                                            change.consume()
+                                            if (!movedPastSlop) animateOut()
+                                            break
+                                        }
+                                        val verticalDelta = (change.position - downPosition).y
+                                        if (kotlin.math.abs(verticalDelta) > viewConfiguration.touchSlop) {
+                                            movedPastSlop = true
+                                        }
+                                        if (movedPastSlop) {
+                                            event.changes.forEach { it.consume() }
+                                        }
+                                    }
+                                }
+                            }
                         },
             )
         }

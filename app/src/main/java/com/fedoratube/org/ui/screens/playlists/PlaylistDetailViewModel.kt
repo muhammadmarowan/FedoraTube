@@ -22,7 +22,6 @@ import com.fedoratube.org.data.migration.WatchLaterMetadataMigrator
 import com.fedoratube.org.data.model.PlaylistInfo
 import com.fedoratube.org.data.model.Video
 import com.fedoratube.org.data.music.YouTubeMusicService
-import com.fedoratube.org.data.playlist.PlaylistFileCodec
 import com.fedoratube.org.data.playlist.PlaylistTransfer
 import com.fedoratube.org.data.repository.RemotePlaylistPage
 import com.fedoratube.org.data.repository.YouTubePlaylistRepository
@@ -277,17 +276,6 @@ class PlaylistDetailViewModel
         ) {
             viewModelScope.launch {
                 _messages.send(createVideoPlaylistAndMerge(repository, _uiState.value.videos, name, description))
-            }
-        }
-
-        /** The name offered when the viewer saves this playlist as a file. */
-        val exportFileName: String get() = PlaylistFileCodec.fileName(_uiState.value.playlistName)
-
-        fun exportTo(target: Uri) {
-            viewModelScope.launch {
-                val state = _uiState.value
-                val saved = transfer.writeTo(target, state.playlistName, state.description, state.videos)
-                _messages.send(PlaylistUiMessage(stringRes = if (saved) R.string.playlist_exported else R.string.playlist_export_failed))
             }
         }
 

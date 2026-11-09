@@ -34,6 +34,9 @@
 - Focus mode has no Shorts anywhere: no Shorts tab in the navigation bar, no Shorts player (Shorts open in the regular player), no Shorts tab/shelves on channel pages, no Shorts strip in search results or Subscriptions, no Shorts in History/Library
 - YouTube-style top categories: Home, Subscriptions, Music chips under the FedoraTube wordmark. Subscriptions and Music left the bottom navigation bar (bottom bar is now Home/Shorts/Library only)
 - Search is context-aware: Music search opens from Music, Subscription search from Subscriptions, normal search from Home. Tapping Home chip from Subscriptions/Music returns to Home; tapping the active chip scrolls to top
+- Post comments no longer let the feed behind them scroll: the area above the comments sheet is modal now — a tap closes the sheet and a vertical swipe is swallowed instead of scrolling the Subscriptions/channel feed underneath (the sheet's own comment list still scrolls normally)
+- Playlist and Watch Later pages no longer offer "Save as file": the 3-dot menu's save-to-file action and its file-picker system are removed, so Watch Later (and other non-editable playlists) no longer show a 3-dot menu at all — only editable playlists keep a 3-dot menu with Edit/Delete
+- Subscriptions search now finds channels: tapping the search icon in Subscriptions opens the full search (with channel results and subscribe) instead of only filtering the already-subscribed list, which could never find a new channel
 
 # Fedora Tube v1.7.7
 

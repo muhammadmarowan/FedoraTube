@@ -78,6 +78,7 @@ fun SubscriptionsScreen(
     topCategoryTabs: List<com.fedoratube.org.ui.components.layout.navigation.FlowTab> = emptyList(),
     onCategorySelected: (com.fedoratube.org.ui.components.layout.navigation.FlowTab) -> Unit = {},
     onNotificationClick: () -> Unit = {},
+    onSearchClick: () -> Unit = {},
     modifier: Modifier = Modifier,
     openMusicSubscriptions: Boolean = false,
     onMusicSubscriptionsOpened: () -> Unit = {},
@@ -93,7 +94,7 @@ fun SubscriptionsScreen(
     val feedGridState = rememberLazyGridState()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
-    var isManagingSubs by remember { mutableStateOf(false) }
+    var isManagingSubs by rememberSaveable { mutableStateOf(false) }
     var manageShowsMusic by rememberSaveable { mutableStateOf(false) }
     LaunchedEffect(openMusicSubscriptions) {
         if (!openMusicSubscriptions) return@LaunchedEffect
@@ -101,7 +102,7 @@ fun SubscriptionsScreen(
         isManagingSubs = true
         onMusicSubscriptionsOpened()
     }
-    var searchQuery by remember { mutableStateOf("") }
+    var searchQuery by rememberSaveable { mutableStateOf("") }
     var showSortMenu by remember { mutableStateOf(false) }
     var showGroupsDialog by remember { mutableStateOf(false) }
     var showCreateGroupDialog by remember { mutableStateOf(false) }
@@ -228,10 +229,7 @@ fun SubscriptionsScreen(
                                     contentDescription = stringResource(R.string.notifications),
                                 )
                             }
-                            IconButton(onClick = {
-                                manageShowsMusic = false
-                                isManagingSubs = true
-                            }) {
+                            IconButton(onClick = onSearchClick) {
                                 Icon(
                                     imageVector = Icons.Outlined.Search,
                                     contentDescription = stringResource(R.string.search_subscriptions),

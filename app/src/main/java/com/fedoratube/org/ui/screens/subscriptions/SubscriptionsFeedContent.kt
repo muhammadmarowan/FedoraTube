@@ -124,6 +124,8 @@ internal fun SubscriptionsFeedContent(
             LazyVerticalGrid(
                 columns = androidx.compose.foundation.lazy.grid.GridCells.Fixed(1),
                 state = gridState,
+                // While the post comments sheet is open the feed behind it must not scroll.
+                userScrollEnabled = state.activeCommunityPost == null,
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(top = FeedTopPadding, bottom = flowBottomContentPadding()),
                 verticalArrangement = Arrangement.spacedBy(16.dp),

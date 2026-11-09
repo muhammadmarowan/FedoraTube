@@ -152,6 +152,9 @@ fun NavGraphBuilder.flowAppGraph(
             onNotificationClick = {
                 navController.navigate("notifications")
             },
+            onSearchClick = {
+                navController.navigate("search")
+            },
         )
     }
 
