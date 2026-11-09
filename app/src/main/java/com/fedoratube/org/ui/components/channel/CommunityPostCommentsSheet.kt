@@ -24,14 +24,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
-import androidx.compose.ui.input.nestedscroll.NestedScrollSource
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
 import com.fedoratube.org.R
 import com.fedoratube.org.data.model.Comment
@@ -115,26 +109,6 @@ fun CommunityPostCommentsSheet(
             }
         },
     ) {
-        val scrollBlock =
-            remember {
-                object : NestedScrollConnection {
-                    override fun onPreScroll(
-                        available: Offset,
-                        source: NestedScrollSource,
-                    ): Offset = available
-
-                    override fun onPostScroll(
-                        consumed: Offset,
-                        available: Offset,
-                        source: NestedScrollSource,
-                    ): Offset = available
-
-                    override suspend fun onPostFling(
-                        consumed: Velocity,
-                        available: Velocity,
-                    ): Velocity = available
-                }
-            }
         FlowCommentsList(
             comments = comments,
             isLoading = isLoading,
@@ -151,8 +125,7 @@ fun CommunityPostCommentsSheet(
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .weight(1f)
-                    .nestedScroll(scrollBlock),
+                    .weight(1f),
             contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp),
         )
     }
