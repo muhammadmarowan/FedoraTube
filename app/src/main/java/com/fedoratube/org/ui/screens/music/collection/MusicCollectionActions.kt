@@ -11,7 +11,6 @@ import androidx.compose.material.icons.rounded.HeartBroken
 import androidx.compose.material.icons.rounded.LibraryAdd
 import androidx.compose.material.icons.rounded.QueuePlayNext
 import androidx.compose.material.icons.rounded.RemoveCircleOutline
-import androidx.compose.material.icons.rounded.SaveAs
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.fedoratube.org.R
@@ -25,17 +24,11 @@ internal fun collectionMenu(
     onAddAll: () -> Unit,
     onEdit: () -> Unit,
     onDelete: () -> Unit,
-    onExport: () -> Unit,
     onSaveAsPlaylist: () -> Unit,
 ): List<CollectionMenuItem> =
     buildList {
         if (state.kind == MusicCollectionKind.DAILY_MIX) {
             add(CollectionMenuItem(stringResource(R.string.save_as_playlist), Icons.Rounded.LibraryAdd, onClick = onSaveAsPlaylist))
-        }
-        if (state.canExport) {
-            add(
-                CollectionMenuItem(stringResource(R.string.export_playlist_action), Icons.Rounded.SaveAs, onClick = onExport),
-            )
         }
         if (state.isOwn) {
             add(CollectionMenuItem(stringResource(R.string.ui_add_songs), Icons.Rounded.Add, onClick = onAddSongs))

@@ -37,10 +37,12 @@ internal fun ChannelCommunityPosts(
     onShareClick: (CommunityPost) -> Unit,
     onLoadMore: () -> Unit,
     onRetry: () -> Unit,
+    userScrollEnabled: Boolean = true,
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(
         state = listState,
+        userScrollEnabled = userScrollEnabled,
         modifier = modifier.fillMaxSize(),
         contentPadding = contentPadding,
     ) {

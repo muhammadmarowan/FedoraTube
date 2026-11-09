@@ -104,6 +104,7 @@ fun FeedShelfSections(
     actions: FeedShelfActions,
     slots: FeedShelfSlots = FeedShelfSlots(),
     showChannelInfo: Boolean = false,
+    userScrollEnabled: Boolean = true,
 ) {
     val renderable = remember(sections, slots) { sections.filter { it.hasRenderableItems(slots) } }
     if (renderable.isEmpty()) {
@@ -129,6 +130,7 @@ fun FeedShelfSections(
         LazyVerticalGrid(
             columns = feedLayout.cells,
             state = listState,
+            userScrollEnabled = userScrollEnabled,
             modifier = Modifier.fillMaxSize(),
             contentPadding = padding,
             verticalArrangement = Arrangement.spacedBy(if (feedLayout.columns > 1) feedLayout.cardSpacing else 0.dp),

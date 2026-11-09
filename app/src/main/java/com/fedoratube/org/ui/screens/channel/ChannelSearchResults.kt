@@ -40,6 +40,7 @@ internal fun ChannelSearchResults(
     columnPreference: HomeFeedColumns,
     onVideoClick: (Video) -> Unit,
     onRetry: () -> Unit,
+    userScrollEnabled: Boolean = true,
 ) {
     when {
         uiState.isSearching -> {
@@ -102,6 +103,7 @@ internal fun ChannelSearchResults(
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(1),
                     state = listState,
+                    userScrollEnabled = userScrollEnabled,
                     modifier = Modifier.fillMaxSize(),
                     contentPadding = PaddingValues(
                         top = contentPadding.calculateTopPadding(),

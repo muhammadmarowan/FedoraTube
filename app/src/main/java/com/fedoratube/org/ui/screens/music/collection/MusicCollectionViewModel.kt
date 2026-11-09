@@ -19,7 +19,6 @@ import com.fedoratube.org.data.model.PlaylistInfo
 import com.fedoratube.org.data.music.YouTubeMusicService
 import com.fedoratube.org.data.music.model.MusicTrack
 import com.fedoratube.org.data.music.model.PlaylistDetails
-import com.fedoratube.org.data.playlist.PlaylistFileCodec
 import com.fedoratube.org.data.playlist.PlaylistTransfer
 import com.fedoratube.org.data.recommendation.music.DailyMixStore
 import com.fedoratube.org.data.recommendation.music.graph.MusicGraphStore
@@ -283,25 +282,6 @@ class MusicCollectionViewModel
             }
         }
 
-        /** The name offered when the viewer saves this collection as a file. */
-        val exportFileName: String get() =
-            PlaylistFileCodec.fileName(
-                _state.value.details
-                    ?.title
-                    .orEmpty(),
-            )
-
-        /** Saves every song, all pages of them, as a music playlist file in [target]. */
-        fun exportTo(target: Uri) {
-            viewModelScope.launch(PerformanceDispatcher.networkIO) {
-                val details = loadAll()
-                val saved =
-                    details != null &&
-                        transfer.writeTo(target, details.title, details.description.orEmpty(), fileVideos(details), isMusic = true)
-                _messages.send(CollectionMessage(stringRes = if (saved) R.string.playlist_exported else R.string.playlist_export_failed))
-            }
-        }
-
         /** This collection as a file another app can read, or null when it could not be written. */
         suspend fun shareableFile(): Uri? {
             val details = loadAll() ?: return null
@@ -545,8 +525,6 @@ data class MusicCollectionUiState(
     val sharesAsFile: Boolean get() =
         kind == MusicCollectionKind.OWN || kind == MusicCollectionKind.LIKED ||
             kind == MusicCollectionKind.DAILY_MIX
-
-    val canExport: Boolean get() = kind == MusicCollectionKind.OWN || kind == MusicCollectionKind.SAVED || kind == MusicCollectionKind.LIKED
 
     val showsSuggestions: Boolean get() = kind != null && kind != MusicCollectionKind.ALBUM && kind != MusicCollectionKind.DAILY_MIX
 }

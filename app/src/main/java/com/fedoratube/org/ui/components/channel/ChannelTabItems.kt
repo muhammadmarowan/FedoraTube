@@ -59,6 +59,7 @@ internal fun ChannelTabItems(
     onVideoClick: (Video) -> Unit,
     onPlaylistClick: (String) -> Unit,
     onChannelClick: (String) -> Unit,
+    userScrollEnabled: Boolean = true,
 ) {
     if (pagingItems == null || pagingItems.loadState.refresh is LoadState.Loading) {
         FlowLoadingIndicator(modifier = Modifier.padding(top = topInset))
@@ -118,6 +119,7 @@ internal fun ChannelTabItems(
         LazyVerticalGrid(
             columns = gridColumns,
             state = listState,
+            userScrollEnabled = userScrollEnabled,
             modifier = Modifier.fillMaxSize(),
             contentPadding = padding,
             horizontalArrangement = Arrangement.spacedBy(0.dp),

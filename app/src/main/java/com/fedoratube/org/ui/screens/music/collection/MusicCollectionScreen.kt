@@ -1,8 +1,6 @@
 package com.fedoratube.org.ui.screens.music.collection
 
 import androidx.activity.compose.BackHandler
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
@@ -45,7 +43,6 @@ import com.fedoratube.org.ui.components.shared.quickactions.sharedQuickActionsVi
 import com.fedoratube.org.ui.components.shared.rememberFlowPaneState
 import com.fedoratube.org.ui.components.shared.rememberReorderableLazyListState
 import com.fedoratube.org.ui.components.shared.rememberShareLinksWithoutText
-import com.fedoratube.org.utils.PLAYLIST_FILE_MIME_TYPE
 import com.fedoratube.org.utils.filterBySearch
 import com.fedoratube.org.utils.shareLink
 import com.fedoratube.org.utils.sharePlaylistFile
@@ -124,10 +121,6 @@ private fun CollectionContent(
     val scope = rememberCoroutineScope()
     val shareFailed = stringResource(R.string.playlist_share_failed)
     val shareLinkOnly by rememberShareLinksWithoutText()
-    val exportLauncher =
-        rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument(PLAYLIST_FILE_MIME_TYPE)) { target ->
-            target?.let(viewModel::exportTo)
-        }
     val musicMenus = LocalMusicMenus.current
     var sheet by remember { mutableStateOf<CollectionSheet?>(null) }
     var searchQuery by rememberSaveable { mutableStateOf<String?>(null) }
@@ -229,7 +222,6 @@ private fun CollectionContent(
                     onAddAll = { sheet = CollectionSheet.AddTo(null) },
                     onEdit = { sheet = CollectionSheet.Edit },
                     onDelete = { sheet = CollectionSheet.Delete },
-                    onExport = { exportLauncher.launch(viewModel.exportFileName) },
                     onSaveAsPlaylist = viewModel::saveAsPlaylist,
                 ),
         )

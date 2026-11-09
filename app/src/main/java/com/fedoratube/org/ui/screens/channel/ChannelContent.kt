@@ -184,9 +184,10 @@ internal fun ChannelContent(
         headerOffsetPx = headerOffsetPx.coerceIn(maxOffset, 0f)
     }
 
+    val commentsOpen = communityUiState.activePost != null
+
     val nestedScrollConnection =
         remember(collapsingHeaderHeightPx, topBarHeightPx, communityUiState.activePost?.id) {
-            val commentsOpen = communityUiState.activePost != null
             object : NestedScrollConnection {
                 override fun onPreScroll(
                     available: Offset,
@@ -264,7 +265,7 @@ internal fun ChannelContent(
                     .fillMaxSize()
                     .graphicsLayer { alpha = if (headerMeasured) 1f else 0f },
             verticalAlignment = Alignment.Top,
-            userScrollEnabled = communityUiState.activePost == null,
+            userScrollEnabled = !commentsOpen,
         ) { page ->
             val listPadding = PaddingValues(top = visibleHeaderHeightDp, bottom = flowBottomContentPadding())
             val tab = visibleTabs.getOrElse(page) { visibleTabs.first() }
@@ -274,6 +275,7 @@ internal fun ChannelContent(
                     ChannelReadingPane {
                         LazyColumn(
                             state = aboutListState,
+                            userScrollEnabled = !commentsOpen,
                             modifier = Modifier.fillMaxSize(),
                             contentPadding = listPadding,
                         ) {
@@ -298,6 +300,7 @@ internal fun ChannelContent(
                             onShareClick = onCommunityPostShare,
                             onLoadMore = onLoadMoreCommunityPosts,
                             onRetry = onRetryCommunityPosts,
+                            userScrollEnabled = !commentsOpen,
                         )
                     }
                 }
@@ -312,6 +315,7 @@ internal fun ChannelContent(
                         columnPreference = columnPreference,
                         onVideoClick = onVideoClick,
                         onRetry = { onSearchQueryChange(uiState.searchQuery) },
+                        userScrollEnabled = !commentsOpen,
                     )
                 }
 
@@ -323,6 +327,7 @@ internal fun ChannelContent(
                         columnPreference = columnPreference,
                         contentPadding = listPadding,
                         topInset = visibleHeaderHeightDp,
+                        userScrollEnabled = !commentsOpen,
                         actions =
                             FeedShelfActions(
                                 onVideoClick = onVideoClick,
@@ -387,6 +392,7 @@ internal fun ChannelContent(
                         onVideoClick = onVideoClick,
                         onPlaylistClick = onPlaylistClick,
                         onChannelClick = onChannelClick,
+                        userScrollEnabled = !commentsOpen,
                     )
                 }
             }
