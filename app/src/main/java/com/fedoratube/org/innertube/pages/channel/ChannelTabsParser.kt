@@ -29,6 +29,10 @@ internal fun JsonElement.toChannelTabs(): List<ChannelTabDescriptor> =
 private fun JsonObject.toTabDescriptor(isFirst: Boolean): ChannelTabDescriptor? {
     val endpoint = this["endpoint"].objectOrNull()
     val title = this["title"].youtubeText()?.trim()?.takeIf(String::isNotEmpty)
+    val segment = endpoint?.webCommandUrl()?.substringBefore('?')?.trimEnd('/')?.substringAfterLast('/')?.lowercase()
+    // Posts were removed app-wide; their deep-link URLs still arrive and would otherwise render as an
+    // "Unknown" tab titled "Posts".
+    if (segment == "community" || segment == "posts") return null
     val resolved = endpoint?.webCommandUrl().toChannelTabKind()
     // YouTube publishes the landing tab without a /featured suffix and sometimes without an
     // endpoint at all; it is always first.
