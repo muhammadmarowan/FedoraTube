@@ -362,10 +362,6 @@
     <string name="group_name_label">Naziv Grupe</string>
     <string name="no_groups_yet">Još nema grupa. Napravite grupu da biste filtrirali svoj feed.</string>
     <string name="search_channels_hint">Pretraži kanale…</string>
-    <string name="channel_search_hint">Pretraži Kanal</string>
-    <string name="channel_search_open">Pretraži Kanal</string>
-    <string name="channel_search_close">Zatvori pretragu</string>
-    <string name="channel_search_no_results">Nisu pronađeni rezultati za %1$s</string>
     <string name="deep_flow_enabled_message">Deep FedoraTube uključen</string>
     <string name="deep_flow_disabled_message">Deep FedoraTube isključen</string>
     <string name="deep_flow_expired_message">Deep FedoraTube tajmer je istekao</string>
@@ -466,4 +462,5 @@
     <string name="subscriptions_sort_default">zadano</string>
 
     <string name="section_recommended_for_you">Recommended for You</string>
+    <string name="channel_sort_open">Sort channel videos</string>
 </resources>

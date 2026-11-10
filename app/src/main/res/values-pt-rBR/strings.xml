@@ -348,8 +348,6 @@
     <string name="unlike">Descurtir</string>
     <string name="tab_shorts">Shorts</string>
     <string name="subscribers_count_template">%1$s Inscritos</string>
-    <string name="channel_search_hint">Pesquisar no canal</string>
-    <string name="channel_search_open">Pesquisar no canal</string>
     <string name="deep_flow_mode_subtitle">Pausar o aprendizado enquanto navega</string>
     <string name="deep_flow_learning_paused">APRENDIZADO PAUSADO</string>
     <string name="deep_flow_expires_in">Expira em %s</string>
@@ -418,8 +416,6 @@
     <string name="player_show_title_title">Exibir Título do Vídeo</string>
     <string name="search_subscriptions">Pesquisar Inscrições</string>
     <string name="search_channels_hint">Pesquisar canais…</string>
-    <string name="channel_search_close">Fechar pesquisa</string>
-    <string name="channel_search_no_results">Nenhum resultado encontrado para %1$s</string>
     <string name="content_settings_header_nav_tabs">Abas de Navegação</string>
     <string name="content_settings_nav_order_title">Ordem e aba padrão</string>
     <string name="settings_shorts_nav_tab_title">Aba Shorts na navegação</string>
@@ -656,7 +652,6 @@
     <string name="search_toggle_view_mode">Alternar visualização dos resultados de pesquisa</string>
     <string name="date_any">Qualquer data</string>
     <string name="channel_sort_latest">Mais recente</string>
-    <string name="channel_search_failed">Não foi possível pesquisar neste canal</string>
     <string name="music_history">Histórico de Música</string>
     <string name="settings_reset_brain_body">Isso apaga seu perfil do FedoraTube Brain.\n\n• Tópicos aprendidos são esquecidos.\n• Os traços de personalidade são redefinidos.\n• As recomendações retornão ao padrão.\n\nIsto não pode ser desfeito.</string>
     <string name="deep_flow_mode_title">Modo Profundo do FedoraTube</string>
@@ -3732,4 +3727,5 @@
         <item quantity="many">%d de músicas da biblioteca do YouTube Music</item>
         <item quantity="other">%d músicas da biblioteca do YouTube Music</item>
     </plurals>
+    <string name="channel_sort_open">Sort channel videos</string>
 </resources>

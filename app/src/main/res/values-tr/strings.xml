@@ -265,10 +265,6 @@
     <string name="no_playlists_found">Hiçbir oynatma listesi bulunamadı</string>
     <string name="subscribers_count_template">%1$s abone</string>
     <string name="views_count_short_template">%1$s görüntüleme</string>
-    <string name="channel_search_hint">Kanalda ara</string>
-    <string name="channel_search_open">Kanalda ara</string>
-    <string name="channel_search_close">Aramayı kapat</string>
-    <string name="channel_search_no_results">%1$s için hiçbir sonuç bulunamadı</string>
     <string name="notif_interval_15m">15 dakika</string>
     <string name="notif_interval_30m">30 dakika</string>
     <string name="notif_interval_1h">1 saat</string>
@@ -1654,7 +1650,6 @@
     <string name="search_filter_all">Tümü</string>
     <string name="search_toggle_view_mode">Arama sonuçlarının görünümünü değiştir</string>
     <string name="channel_sort_latest">En yeni</string>
-    <string name="channel_search_failed">Bu kanalda arama yapılamadı</string>
     <string name="deep_flow_save_history_title">İzleme geçmişine kaydet</string>
     <string name="deep_flow_save_history_subtitle">İzlenen videoları ilerleme bilgisiyle birlikte geçmişte tut. Öneri motoru yine de bunlardan öğrenmez. Kapalıysa hiçbir şey kaydedilmez.</string>
     <string name="appearance_customizer_variant_title">%1$s özel teması</string>
@@ -2077,4 +2072,5 @@
     <string name="fallback_your_watch_later_list">Daha Sonra İzle listen</string>
     <string name="fallback_downloaded_locally">Cihaza indirildi</string>
     <string name="fallback_more_results">Daha fazla sonuç</string>
+    <string name="channel_sort_open">Sort channel videos</string>
 </resources>

@@ -379,10 +379,6 @@
     <string name="delete_group">Видалити групу</string>
     <string name="group_name_label">Назва групи</string>
     <string name="search_channels_hint">Пошук каналів…</string>
-    <string name="channel_search_hint">Пошук в каналі</string>
-    <string name="channel_search_open">Пошук в каналі</string>
-    <string name="channel_search_close">Закрити пошук</string>
-    <string name="channel_search_no_results">Результати пошуку відсутні для %1$s</string>
     <string name="deep_flow_mode_title">Режим Deep FedoraTube</string>
     <string name="deep_flow_mode_subtitle">Призупинити навчання, поки переглядаєте вебсторінки</string>
     <string name="deep_flow_learning_paused">НАВЧАННЯ ПРИЗУПИНЕНЕ</string>
@@ -1854,7 +1850,6 @@
     <string name="search_filter_all">Усе</string>
     <string name="search_toggle_view_mode">Перемкнути вигляд результатів пошуку</string>
     <string name="channel_sort_latest">Останні</string>
-    <string name="channel_search_failed">Не вдалося виконати пошук у цьому каналі</string>
     <string name="player_portrait_seekbar_width_title">Ширина повзунка в портретному режимі</string>
     <string name="player_portrait_seekbar_width_spaced">З інтервалом</string>
     <string name="content_settings_home_reselect_refresh_title">Оновлювати «Головну» при повторному виборі</string>
@@ -4370,4 +4365,5 @@
     <string name="search_watch_empty_unwatched">Тут немає непереглянутих відео</string>
     <string name="deep_flow_on_search_title">Показати у результатах пошуку</string>
     <string name="deep_flow_on_search_subtitle">Перемикач «Deep FedoraTube» над останніми пошуковими запитами</string>
+    <string name="channel_sort_open">Sort channel videos</string>
 </resources>

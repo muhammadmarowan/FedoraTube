@@ -85,8 +85,6 @@ internal fun ChannelContent(
     onUnsubscribeClick: () -> Unit,
     onNotificationChange: (Boolean) -> Unit,
     onTabSelected: (ChannelTabKind) -> Unit,
-    onSearchToggle: () -> Unit = {},
-    onSearchQueryChange: (String) -> Unit = {},
     initialScrollIndex: Int = 0,
     initialScrollOffset: Int = 0,
     onScrollChanged: (index: Int, offset: Int) -> Unit = { _, _ -> },
@@ -209,7 +207,6 @@ internal fun ChannelContent(
     val liveListState = rememberLazyGridState()
     val playlistsListState = rememberLazyGridState()
     val homeListState = rememberLazyGridState()
-    val searchListState = rememberLazyGridState()
     val aboutListState = rememberLazyListState()
     val genericListState = rememberLazyGridState()
 
@@ -266,20 +263,6 @@ internal fun ChannelContent(
                             item { Spacer(Modifier.height(16.dp)) }
                         }
                     }
-                }
-
-                uiState.searchActive && uiState.searchQuery.isNotBlank() && tab.kind == ChannelTabKind.Videos -> {
-                    ChannelSearchResults(
-                        uiState = uiState,
-                        listState = searchListState,
-                        contentPadding = listPadding,
-                        topInset = visibleHeaderHeightDp,
-                        isGridView = isGridView,
-                        columnPreference = columnPreference,
-                        onVideoClick = onVideoClick,
-                        onRetry = { onSearchQueryChange(uiState.searchQuery) },
-                        userScrollEnabled = true,
-                    )
                 }
 
                 tab.kind == ChannelTabKind.Home -> {
@@ -374,6 +357,9 @@ internal fun ChannelContent(
                     note = channelNote,
                     onEditNote = onEditNote,
                     showSubscribe = !isFocusModeEnabled,
+                    filterGroups = activeFilters,
+                    filterSelection = activeSelection,
+                    onFilterSelected = { groupIndex, optionIndex -> onFilterSelected(settledTab.kind, groupIndex, optionIndex) },
                 )
             }
 
@@ -395,12 +381,7 @@ internal fun ChannelContent(
                     ChannelFilterBar(
                         filterGroups = activeFilters,
                         selected = activeSelection,
-                        searchActive = uiState.searchActive,
-                        searchQuery = uiState.searchQuery,
-                        showListControls = true,
                         onFilterSelected = { group, option -> onFilterSelected(settledTab.kind, group, option) },
-                        onSearchToggle = onSearchToggle,
-                        onSearchQueryChange = onSearchQueryChange,
                     )
                 }
             }

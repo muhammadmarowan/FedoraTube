@@ -696,10 +696,6 @@
     <string name="edit_group">Редактировать группу</string>
     <string name="delete_group">Удалить группу</string>
     <string name="group_name_label">Название группы</string>
-    <string name="channel_search_hint">Поиск по каналу</string>
-    <string name="channel_search_open">Поиск по каналу</string>
-    <string name="channel_search_close">Закрыть поиск</string>
-    <string name="channel_search_no_results">Результаты поиска для %1$s не найдена</string>
     <string name="deep_flow_mode_subtitle">Пауза обучения – просматривайте контент без влияния на профиль</string>
     <string name="deep_flow_learning_paused">НА ПАУЗЕ</string>
     <string name="deep_flow_expires_in">Истекает через %s</string>
@@ -1853,7 +1849,6 @@
     <string name="channel_error_log_clip_label">Отчет об ошибке FedoraTube</string>
     <string name="add_comment_placeholder">Оставьте комментарий...</string>
     <string name="search_empty_prompt">Поиск видео, музыки и не только</string>
-    <string name="channel_search_failed">Не удалось выполнить поиск по каналу</string>
     <string name="player_portrait_seekbar_width_title">Ширина прогресс-бара в портретном режиме</string>
     <string name="player_portrait_seekbar_width_spaced">С отступами</string>
     <string name="playback_speed_multiplier">%1$s×</string>
@@ -2643,4 +2638,5 @@
     <string name="search_feature_3d">3D</string>
     <string name="search_feature_location">Локация</string>
     <string name="search_feature_purchased">Приобретено</string>
+    <string name="channel_sort_open">Sort channel videos</string>
 </resources>

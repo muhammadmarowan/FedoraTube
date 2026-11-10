@@ -262,10 +262,6 @@
     <string name="no_playlists_found">Keine Playlists gefunden</string>
     <string name="subscribers_count_template">%1$s Abonnenten</string>
     <string name="views_count_short_template">%1$s Aufrufe</string>
-    <string name="channel_search_hint">Suche im Kanal</string>
-    <string name="channel_search_open">Suche im Kanal</string>
-    <string name="channel_search_close">Suche schließen</string>
-    <string name="channel_search_no_results">Keine Ergebnisse gefunden für %1$s</string>
     <string name="music_history">Musik-Verlauf</string>
     <string name="remove_from_history">Aus dem Verlauf entfernen</string>
     <string name="share_song_chooser">Song teilen</string>
@@ -1032,7 +1028,6 @@
     <string name="search_filter_all">Alle</string>
     <string name="search_toggle_view_mode">Ansicht der Suchergebnisse umschalten</string>
     <string name="channel_sort_latest">Aktuellste</string>
-    <string name="channel_search_failed">Dieser Kanal konnte nicht durchsucht werden</string>
     <string name="appearance_customizer_variant_title">%1$s benutzerdefiniertes Design</string>
     <string name="appearance_role_primary_container">Primärbehälter</string>
     <string name="appearance_role_on_primary_container">Auf dem Primärcontainer</string>
@@ -2280,4 +2275,5 @@
     <string name="home_load_more_failed">Es konnten keine weiteren Videos geladen werden</string>
     <string name="home_load_more_failed_body">Überprüfen Sie Ihre Verbindung</string>
     <string name="home_refresh_failed">Dein Feed konnte nicht aktualisiert werden</string>
+    <string name="channel_sort_open">Sort channel videos</string>
 </resources>

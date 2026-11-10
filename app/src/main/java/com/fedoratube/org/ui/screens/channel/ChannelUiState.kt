@@ -1,6 +1,5 @@
 package com.fedoratube.org.ui.screens.channel
 
-import com.fedoratube.org.data.model.Video
 import com.fedoratube.org.innertube.pages.channel.ChannelHeader
 import com.fedoratube.org.innertube.pages.channel.ChannelTabDescriptor
 import com.fedoratube.org.innertube.pages.channel.ChannelTabKind
@@ -18,13 +17,6 @@ data class ChannelUiState(
     val isNotificationsEnabled: Boolean = false,
     /** Null until the tab list lands: the channel decides which tab is first, not the app. */
     val selectedTab: ChannelTabKind? = null,
-    val searchActive: Boolean = false,
-    val searchQuery: String = "",
-    val searchResults: List<Video> = emptyList(),
-    val isSearching: Boolean = false,
-    val searchErrorLog: String? = null,
-    val searchContinuation: String? = null,
-    val isLoadingMoreSearch: Boolean = false,
 ) {
     fun tabParams(kind: ChannelTabKind): String? = tabs.firstOrNull { it.kind == kind }?.params ?: kind.defaultParams
 

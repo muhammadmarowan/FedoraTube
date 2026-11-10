@@ -2,4 +2,5 @@
 <resources>
 
     <string name="section_recommended_for_you">Recommended for You</string>
+    <string name="channel_sort_open">Sort channel videos</string>
 </resources>

@@ -13,8 +13,6 @@ import com.fedoratube.org.data.local.SubscriptionRepository
 import com.fedoratube.org.data.local.dao.SubscriptionGroupDao
 import com.fedoratube.org.data.local.entity.SubscriptionGroupEntity
 import com.fedoratube.org.data.model.SubscriptionGroup
-import com.fedoratube.org.data.model.Video
-import com.fedoratube.org.data.model.distinctByNonBlankKey
 import com.fedoratube.org.data.model.toUiModel
 import com.fedoratube.org.data.notes.NoteKind
 import com.fedoratube.org.data.notes.NoteSubject
@@ -311,90 +309,5 @@ class ChannelViewModel
         fun selectTab(kind: ChannelTabKind) {
             _uiState.update { it.copy(selectedTab = kind) }
             ensureTabLoaded(kind)
-        }
-
-        // ── Channel search ────────────────────────────────────────────────────────
-
-        fun setSearchActive(active: Boolean) {
-            _uiState.update {
-                it.copy(
-                    searchActive = active,
-                    searchQuery = if (!active) "" else it.searchQuery,
-                    searchResults = if (!active) emptyList() else it.searchResults,
-                    searchErrorLog = null,
-                )
-            }
-        }
-
-        fun searchInChannel(query: String) {
-            val channelId = _uiState.value.channelId ?: return
-            val header = _uiState.value.header ?: return
-            val trimmed = query.trim()
-
-            _uiState.update {
-                it.copy(
-                    searchQuery = query,
-                    searchErrorLog = null,
-                )
-            }
-
-            if (trimmed.isBlank()) {
-                _uiState.update { it.copy(searchResults = emptyList(), isSearching = false) }
-                return
-            }
-
-            viewModelScope.launch(PerformanceDispatcher.networkIO) {
-                _uiState.update { it.copy(isSearching = true) }
-                try {
-                    val result =
-                        YouTube.channelSearch(
-                            channelId = channelId,
-                            channelName = header.title,
-                            channelThumbnailUrl = header.avatarUrl,
-                            query = trimmed,
-                        )
-                    result.fold(
-                        onSuccess = { page ->
-                            _uiState.update {
-                                it.copy(
-                                    searchResults = page.videos.distinctByNonBlankKey(Video::id),
-                                    searchContinuation = page.continuation,
-                                    isSearching = false,
-                                    searchErrorLog = null,
-                                )
-                            }
-                        },
-                        onFailure = { e ->
-                            Log.e(TAG, "Channel search failed", e)
-                            _uiState.update {
-                                it.copy(
-                                    isSearching = false,
-                                    searchErrorLog =
-                                        buildChannelRequestErrorLog(
-                                            operation = "channel_search",
-                                            channelId = channelId,
-                                            query = trimmed,
-                                            error = e,
-                                        ),
-                                )
-                            }
-                        },
-                    )
-                } catch (e: Exception) {
-                    Log.e(TAG, "Channel search error", e)
-                    _uiState.update {
-                        it.copy(
-                            isSearching = false,
-                            searchErrorLog =
-                                buildChannelRequestErrorLog(
-                                    operation = "channel_search",
-                                    channelId = channelId,
-                                    query = trimmed,
-                                    error = e,
-                                ),
-                        )
-                    }
-                }
-            }
         }
     }

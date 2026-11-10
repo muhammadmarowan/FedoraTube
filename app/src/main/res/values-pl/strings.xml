@@ -311,10 +311,6 @@
     <string name="no_shorts_found">Nie znaleziono filmów Shorts</string>
     <string name="no_playlists_found">Brak playlist filmowych</string>
     <string name="views_count_short_template">%1$s wyświetleń</string>
-    <string name="channel_search_hint">Wyszukaj w kanale</string>
-    <string name="channel_search_open">Wyszukaj w kanale</string>
-    <string name="channel_search_close">Zamknij wyszukiwanie</string>
-    <string name="channel_search_no_results">Brak wyników dla %1$s</string>
     <string name="remove_from_history">Usuń z historii</string>
     <string name="share_song_chooser">Udostępnuj utwór</string>
     <string name="time_today">Dzisiaj</string>
@@ -1527,7 +1523,6 @@
     <string name="toggle_view_mode">Przełącz tryb podglądu</string>
     <string name="search_toggle_view_mode">Przełącz widok wyników wyszukiwania</string>
     <string name="channel_sort_latest">Najnowsze</string>
-    <string name="channel_search_failed">Nie udało się przeszukać tego kanału</string>
     <string name="music_history">Historia muzyki</string>
     <string name="appearance_customizer_variant_title">%1$s niestandardowy motyw</string>
     <string name="appearance_role_primary_container">Główny Kontener</string>
@@ -2262,4 +2257,5 @@
     <string name="crash_full_report">Pełny raport</string>
     <string name="crash_share">Udostępnij raport</string>
     <string name="crash_subtitle">Ten raport pozostanie na Twoim urządzeniu, dopóki go nie udostępnisz.</string>
+    <string name="channel_sort_open">Sort channel videos</string>
 </resources>

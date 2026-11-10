@@ -858,10 +858,6 @@
     <string name="no_groups_yet">Pas encore de groupes. Créez-en un pour filtrer vos recommandations.</string>
     <string name="search_channels_hint">Recherche de chaînes…</string>
     <string name="end_of_queue">Fin de la file d\'attente</string>
-    <string name="channel_search_hint">Rechercher dans la chaîne</string>
-    <string name="channel_search_open">Rechercher dans la chaîne</string>
-    <string name="channel_search_close">Fermer la recherche</string>
-    <string name="channel_search_no_results">Aucun résultat trouvé pour %1$s</string>
     <string name="deep_flow_mode_title">Mode Deep FedoraTube</string>
     <string name="deep_flow_mode_subtitle">Mettre l\'apprentissage en pause — naviguer sans influencer votre profil</string>
     <string name="deep_flow_learning_paused">APPRENTISSAGE EN PAUSE</string>
@@ -1892,7 +1888,6 @@
     <string name="search_filter_all">Tout</string>
     <string name="search_toggle_view_mode">Basculer l\'affichage des résultats de recherche</string>
     <string name="channel_sort_latest">Les plus récentes</string>
-    <string name="channel_search_failed">Impossible d\'effectuer une recherche sur cette chaîne</string>
     <string name="add_comment_placeholder">Ajouter un commentaire...</string>
     <string name="search_empty_prompt">Rechercher des vidéos, de la musique et bien plus encore</string>
     <string name="player_portrait_seekbar_width_title">Largeur de la barre de recherche en mode portrait</string>
@@ -2771,4 +2766,5 @@
         <item quantity="many">Vérification de %1$d sur %2$d chaines pour les shorts et live</item>
         <item quantity="other">Vérification de %1$d sur %2$d chaines pour les shorts et live</item>
     </plurals>
+    <string name="channel_sort_open">Sort channel videos</string>
 </resources>

@@ -186,8 +186,6 @@ fun ChannelScreen(
                     onNotificationChange = { viewModel.setNotificationState(it) },
                     onManageGroups = { showGroupSheet = true },
                     onTabSelected = { viewModel.selectTab(it) },
-                    onSearchToggle = { viewModel.setSearchActive(!uiState.searchActive) },
-                    onSearchQueryChange = { viewModel.searchInChannel(it) },
                     initialScrollIndex = viewModel.listScrollIndex,
                     initialScrollOffset = viewModel.listScrollOffset,
                     onScrollChanged = { idx, off -> viewModel.saveScrollPosition(idx, off) },

@@ -354,17 +354,12 @@
     <string name="tab_live">Trực tiếp</string>
     <string name="tab_playlists">Danh sách phát</string>
     <string name="tab_about">Giới thiệu</string>
-    <string name="channel_search_failed">Không tìm kiếm được trên kênh này</string>
     <string name="end_of_queue">Hết hàng chờ</string>
     <string name="no_videos_found">Không tìm thấy video</string>
     <string name="no_shorts_found">Không tìm thấy shorts</string>
     <string name="no_playlists_found">Không tìm thấy danh sách phát</string>
     <string name="subscribers_count_template">%1$s người đăng ký</string>
     <string name="views_count_short_template">%1$s lượt xem</string>
-    <string name="channel_search_hint">Tìm trong kênh</string>
-    <string name="channel_search_open">Tìm trong kênh</string>
-    <string name="channel_search_close">Đóng tìm kiếm</string>
-    <string name="channel_search_no_results">Không tìm thấy kết quả cho %1$s</string>
     <string name="music_history">Lịch sử nhạc</string>
     <string name="remove_from_history">Xóa khỏi lịch sử</string>
     <string name="share_song_chooser">Chia sẻ bài hát</string>
@@ -2319,4 +2314,5 @@
     <string name="sync_expires_seconds">%1$dg</string>
     <string name="sync_done_stats_summary">%1$d đã thêm · %2$d đã cập nhật · %3$d đã bỏ qua</string>
     <string name="sync_scanning_hint">Đưa mã trên thiết bị còn lại vào trong khung.</string>
+    <string name="channel_sort_open">Sort channel videos</string>
 </resources>

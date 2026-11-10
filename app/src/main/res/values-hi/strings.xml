@@ -1154,4 +1154,5 @@
     <string name="playlist_video_added_template">%1$s जोड़ा गया</string>
     <string name="upcoming_label">आगामी</string>
     <string name="upcoming_waiting_count">%1$s का इंतजार</string>
+    <string name="channel_sort_open">Sort channel videos</string>
 </resources>

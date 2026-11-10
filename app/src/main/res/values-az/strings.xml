@@ -355,17 +355,12 @@
     <string name="tab_live">Canlı</string>
     <string name="tab_playlists">Pleylistlər</string>
     <string name="tab_about">Haqqında</string>
-    <string name="channel_search_failed">Bu kanalda axtarış etmək mümkün olmadı</string>
     <string name="end_of_queue">Növbənin sonu</string>
     <string name="no_videos_found">Video tapılmadı</string>
     <string name="no_shorts_found">Shorts videosu tapılmadı</string>
     <string name="no_playlists_found">Pleylist tapılmadı</string>
     <string name="subscribers_count_template">%1$s abunəçi</string>
     <string name="views_count_short_template">%1$s baxış</string>
-    <string name="channel_search_hint">Kanalda axtar</string>
-    <string name="channel_search_open">Kanalda axtar</string>
-    <string name="channel_search_close">Axtarışı bağla</string>
-    <string name="channel_search_no_results">“%1$s” üçün nəticə tapılmadı</string>
     <string name="music_history">Musiqi tarixçəsi</string>
     <string name="remove_from_history">Tarixçədən sil</string>
     <string name="share_song_chooser">Mahnını paylaş</string>
@@ -2075,4 +2070,5 @@
     <string name="fallback_your_watch_later_list">“Sonra bax” siyahınız</string>
     <string name="fallback_downloaded_locally">Cihaza endirilib</string>
     <string name="fallback_more_results">Daha çox nəticə</string>
+    <string name="channel_sort_open">Sort channel videos</string>
 </resources>

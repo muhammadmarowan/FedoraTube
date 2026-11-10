@@ -1262,10 +1262,6 @@
     <string name="sb_settings_subtitle">Azioni sui segmenti, controlli di DeArrow e impostazioni del conteggio dei non mi piace</string>
     <string name="sb_settings_general_header">Generale</string>
     <string name="tap_to_close">Tocca per chiudere</string>
-    <string name="channel_search_hint">Cerca nel canale</string>
-    <string name="channel_search_open">Cerca nel canale</string>
-    <string name="channel_search_close">Chiudi ricerca</string>
-    <string name="channel_search_no_results">Nessun risultato trovato per %1$s</string>
     <string name="player_appearance_fullscreen_header">Schermo intero</string>
     <string name="player_show_title_title">Mostra titolo del video</string>
     <string name="player_show_title_subtitle">Mostra il titolo del video sotto la barra superiore in modalità schermo intero</string>
@@ -1853,7 +1849,6 @@
     <string name="logs_copy_failed">Impossibile copiare i log</string>
     <string name="add_comment_placeholder">Aggiungi un commento…</string>
     <string name="search_empty_prompt">Cerca video, musica e altro</string>
-    <string name="channel_search_failed">Impossibile cercare questo canale</string>
     <string name="player_portrait_seekbar_width_title">Larghezza barra di scorrimento in modalità verticale</string>
     <string name="player_portrait_seekbar_width_spaced">Con spaziatura</string>
     <string name="playback_speed_multiplier">%1$s×</string>
@@ -2822,4 +2817,5 @@
     <string name="ui_crashed_last_session">FedoraTube si è interrotto in modo anomalo durante l\'ultima sessione</string>
     <string name="ui_copy_log_description">Copia il log sottostante e incollalo in una segnalazione su GitHub in modo che possa essere risolto.</string>
     <string name="ui_search_settings">Cerca impostazioni…</string>
+    <string name="channel_sort_open">Sort channel videos</string>
 </resources>

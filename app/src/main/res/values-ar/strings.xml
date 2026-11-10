@@ -1264,10 +1264,6 @@
     <string name="search_channels_hint">بحث في القنوات…</string>
     <string name="dearrow_badge_toggle">أظهر شارة DeArrow</string>
     <string name="dearrow_badge_toggle_subtitle">إعرض شارة على الصور المصغرة تعرض (تم التصحيح بواسطة DeArrow)</string>
-    <string name="channel_search_hint">البحث في القناة</string>
-    <string name="channel_search_open">البحث في القناة</string>
-    <string name="channel_search_no_results">لم يتم العثور على نتائج لـ %1$s</string>
-    <string name="channel_search_close">إلغاء البحث</string>
     <string name="tap_to_close">أنقر للإغلاق</string>
     <string name="player_appearance_fullscreen_header">ملء الشاشة</string>
     <string name="player_show_title_title">إظهار عنوان الفيديو</string>
@@ -1855,7 +1851,6 @@
     <string name="logs_copied">تم نسخ السجلات</string>
     <string name="logs_copy_failed">تعذر نسخ السجلات</string>
     <string name="channel_error_log_clip_label">سجل أخطاء قناة FedoraTube</string>
-    <string name="channel_search_failed">تعذر البحث في هذه القناة</string>
     <string name="add_comment_placeholder">كتابة تعليق…</string>
     <string name="search_empty_prompt">إبحث عن مقاطع الفيديو، الموسيقى والمزيد</string>
     <string name="audio_track_number_template">%1$s %2$d</string>
@@ -4630,4 +4625,5 @@
     <string name="auto_tab_queue">قائمة التشغيل</string>
     <string name="taste_unknown_channel">قناة غير معروفة</string>
     <string name="settings_library_summary">اختر الأقسام التي تظهر في المكتبة</string>
+    <string name="channel_sort_open">Sort channel videos</string>
 </resources>

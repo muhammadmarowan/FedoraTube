@@ -339,10 +339,6 @@
     <string name="no_shorts_found">Tidak ada shorts ditemukan</string>
     <string name="no_playlists_found">Tidak ada daftar putar ditemukan</string>
     <string name="subscribers_count_template">%1$s pelanggan</string>
-    <string name="channel_search_hint">Cari di saluran</string>
-    <string name="channel_search_open">Cari di saluran</string>
-    <string name="channel_search_close">Tutup pencarian</string>
-    <string name="channel_search_no_results">Tidak ada hasil untuk %1$s</string>
     <string name="time_earlier">Sebelumnya</string>
     <string name="clear_all_notifications">Hapus semua notifikasi</string>
     <string name="delete">Hapus</string>
@@ -1848,7 +1844,6 @@
     <string name="search_filter_all">Semua</string>
     <string name="search_toggle_view_mode">Alihkan tampilan hasil pencarian</string>
     <string name="channel_sort_latest">Terbaru</string>
-    <string name="channel_search_failed">Tidak dapat mencari kanal ini</string>
     <string name="player_portrait_seekbar_width_title">Lebar bilah pencarian mode potret</string>
     <string name="player_portrait_seekbar_width_spaced">Renggang</string>
     <string name="content_settings_home_reselect_refresh_title">Segarkan Beranda saat dipilih kembali</string>
@@ -3844,4 +3839,5 @@
     <string name="scrobbling_import_failed">Tidak dapat membaca artis teratas Anda</string>
     <string name="music_home_lastfm_discover">Temukan musik melalui Last.fm</string>
     <string name="music_home_lastfm_discover_subtitle">Dipilih oleh pendengar Last.fm berdasarkan lagu yang sering Anda putar</string>
+    <string name="channel_sort_open">Sort channel videos</string>
 </resources>

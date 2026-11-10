@@ -16,7 +16,14 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Check
+import androidx.compose.material.icons.rounded.KeyboardArrowDown
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -31,6 +38,7 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.onLongClick
@@ -39,6 +47,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.fedoratube.org.R
+import com.fedoratube.org.innertube.pages.channel.ChannelFilterGroup
 import com.fedoratube.org.innertube.pages.channel.ChannelHeader
 import com.fedoratube.org.ui.components.shared.ChannelAvatarImage
 import com.fedoratube.org.ui.components.shared.FlowNoteCard
@@ -62,6 +71,10 @@ internal fun ChannelHeaderSection(
     onEditNote: (() -> Unit)?,
     // Focus mode hides the whole subscribe system on channel pages.
     showSubscribe: Boolean = true,
+    // The tab's sort/filter dropdown (e.g. Latest/Popular/Oldest) shown at the banner's top-right.
+    filterGroups: List<ChannelFilterGroup> = emptyList(),
+    filterSelection: List<Int> = emptyList(),
+    onFilterSelected: ((groupIndex: Int, optionIndex: Int) -> Unit)? = null,
 ) {
     val bannerUrl = remember(header.bannerUrl) { ThumbnailUrlResolver.resolveChannelBanner(header.bannerUrl, targetWidth = 2048) }
     var showFullSizeAvatar by remember(header.id) { mutableStateOf(false) }
@@ -84,6 +97,16 @@ internal fun ChannelHeaderSection(
                 modifier = Modifier.fillMaxWidth(),
             ) {
                 ChannelBanner(imageUrl = bannerUrl)
+
+                ChannelSortArrow(
+                    groups = filterGroups,
+                    selection = filterSelection,
+                    onFilterSelected = onFilterSelected,
+                    modifier =
+                        Modifier
+                            .align(Alignment.TopEnd)
+                            .padding(top = 8.dp, end = 8.dp),
+                )
 
                 Row(
                     modifier =
@@ -158,6 +181,11 @@ internal fun ChannelHeaderSection(
                         onAddNote = onEditNote,
                     )
                 }
+                ChannelSortArrow(
+                    groups = filterGroups,
+                    selection = filterSelection,
+                    onFilterSelected = onFilterSelected,
+                )
             }
         }
 
@@ -193,6 +221,69 @@ internal fun ChannelHeaderSection(
                     onEdit = onEditNote,
                     modifier = Modifier.padding(top = 8.dp),
                 )
+            }
+        }
+    }
+}
+
+/**
+ * The tab's sort/filter dropdown (Latest / Popular / Oldest…) as one arrow in the banner's top-right
+ * corner. [groups] is the tab's full filter list — only the groups YouTube marks as dropdowns (the
+ * sort control) are listed; chips stay rendered as chips in the filter bar. "Latest" is the server's
+ * default and stays selected until the viewer picks something else, as it does in the bar.
+ */
+@Composable
+private fun ChannelSortArrow(
+    groups: List<ChannelFilterGroup>,
+    selection: List<Int>,
+    onFilterSelected: ((groupIndex: Int, optionIndex: Int) -> Unit)?,
+    modifier: Modifier = Modifier,
+) {
+    val dropdowns = groups.withIndex().filter { it.value.isDropdown }
+    if (dropdowns.isEmpty() || onFilterSelected == null) return
+
+    var open by remember { mutableStateOf(false) }
+
+    Box(modifier = modifier) {
+        Surface(
+            onClick = { open = true },
+            shape = CircleShape,
+            color = Color.Black.copy(alpha = 0.45f),
+            modifier = Modifier.size(38.dp),
+        ) {
+            Icon(
+                imageVector = Icons.Rounded.KeyboardArrowDown,
+                contentDescription = stringResource(R.string.channel_sort_open),
+                tint = Color.White,
+                modifier = Modifier.size(22.dp).align(Alignment.Center),
+            )
+        }
+        DropdownMenu(expanded = open, onDismissRequest = { open = false }) {
+            dropdowns.forEach { (groupIndex, group) ->
+                val selectedIndex = selection.getOrElse(groupIndex) { -1 }
+                val activeIndex = if (selectedIndex >= 0) selectedIndex else group.selectedIndex.coerceAtLeast(0)
+                group.options.forEachIndexed { index, option ->
+                    val isActive = index == activeIndex
+                    DropdownMenuItem(
+                        text = { Text(option.label) },
+                        onClick = {
+                            open = false
+                            onFilterSelected(groupIndex, index)
+                        },
+                        leadingIcon =
+                            if (isActive) {
+                                {
+                                    Icon(
+                                        imageVector = Icons.Rounded.Check,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(18.dp),
+                                    )
+                                }
+                            } else {
+                                null
+                            },
+                    )
+                }
             }
         }
     }

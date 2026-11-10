@@ -355,17 +355,12 @@
     <string name="tab_live">直播</string>
     <string name="tab_playlists">播放列表</string>
     <string name="tab_about">关于</string>
-    <string name="channel_search_failed">无法搜索该频道</string>
     <string name="end_of_queue">队列末尾</string>
     <string name="no_videos_found">没有找到视频</string>
     <string name="no_shorts_found">未找到 Shorts</string>
     <string name="no_playlists_found">未找到播放列表</string>
     <string name="subscribers_count_template">%1$s订阅者</string>
     <string name="views_count_short_template">%1$s 浏览次数</string>
-    <string name="channel_search_hint">在频道中搜索</string>
-    <string name="channel_search_open">在频道中搜索</string>
-    <string name="channel_search_close">关闭搜索</string>
-    <string name="channel_search_no_results">没有找到“%1$s”的结果</string>
     <string name="music_history">音乐播放历史</string>
     <string name="remove_from_history">从历史记录中删除</string>
     <string name="share_song_chooser">分享歌曲</string>
@@ -1954,4 +1949,5 @@
     <string name="discord_presence_account">Discord账号</string>
     <string name="discord_presence_privacy_section">隐私和账号风险</string>
     <string name="discord_presence_privacy_title">隐私</string>
+    <string name="channel_sort_open">Sort channel videos</string>
 </resources>

@@ -609,10 +609,6 @@
     <string name="no_playlists_found">找不到播放清單</string>
     <string name="subscribers_count_template">%1$s 位訂閱者</string>
     <string name="views_count_short_template">%1$s 次觀看</string>
-    <string name="channel_search_hint">在頻道中搜尋</string>
-    <string name="channel_search_open">在頻道中搜尋</string>
-    <string name="channel_search_close">關閉搜尋</string>
-    <string name="channel_search_no_results">找不到符合「%1$s」的結果</string>
     <string name="music_history">音樂播放記錄</string>
     <string name="remove_from_history">從記錄中移除</string>
     <string name="share_song_chooser">分享歌曲</string>
@@ -1004,7 +1000,6 @@
     <string name="channel_about_more_info">更多資訊</string>
     <string name="channel_post_image_count">%1$d / %2$d</string>
     <string name="channel_post_poll_votes">%1$s</string>
-    <string name="channel_search_failed">無法搜尋此頻道</string>
     <string name="peace_and_quiet">一片靜悄悄</string>
     <plurals name="deep_flow_duration_hours">
         <item quantity="other">%1$d 小時</item>
@@ -4113,4 +4108,5 @@
     <string name="auto_tab_queue">佇列</string>
     <string name="taste_unknown_channel">未知頻道</string>
     <string name="settings_library_summary">選擇媒體庫要顯示的區塊</string>
+    <string name="channel_sort_open">Sort channel videos</string>
 </resources>
