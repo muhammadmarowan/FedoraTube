@@ -45,7 +45,9 @@
 - Refreshing Home no longer re-pins the same followed-channel upload to the top of the feed: fresh-subscription pinning is also skipped for videos that were on screen last time (the on-screen exclusion now applies to refresh rebuilds too), so the one-slot pin can't glue a single older upload in place forever
 - Home feed is interest-first like YouTube: subscriptions are kept to the minimum pinned slots and one blended quota by the interest split, Related/Discovery lanes lead the blend, related seeds can never take more than one seed per channel (a binge stops being treated as variety), and the Related lane itself round-robins across channels before repeating
 - Community posts are removed entirely, everywhere: no Posts tab on channel pages, no posts in the Subscriptions feed / Home shelves, no post comments sheet, no search posts strip, no posts anywhere in the UI — and the code (parsers, controllers, screens, strings, InnerTube posts browsing) is deleted, not just hidden
-- Channel page's sort/filter selector (Latest / Popular / Oldest…) now lives as a translucent down-arrow in the banner's top-right corner: the current tab's dropdown is listed there, Latest stays selected by default, and picking one re-applies the list exactly as before; the chips bar now only appears when a tab actually has chips, and every channel in-channel search icon and search code path is deleted outright
+- Channel page's sort/filter selector (Latest / Popular / Oldest…) now lives as a translucent down-arrow in the banner's top-right corner: the current tab's dropdown is listed there, Latest sent as server default is selected by default, and picking one re-applies the list exactly as before; the chips bar now only appears when a tab actually has chips
+- Channel in-channel search is deleted outright, every icon, field, and code path
+- Channel Live tab's sort control is now the same banner arrow (Latest / Oldest — Popular is dropped for livestreams), and channel Playlists still shows its own sort menu through the same arrow; the arrow itself matches the back button (translucent black circle, white icon)
 
 # Fedora Tube v1.7.7
 

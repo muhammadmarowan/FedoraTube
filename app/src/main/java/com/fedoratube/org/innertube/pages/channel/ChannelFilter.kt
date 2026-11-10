@@ -33,7 +33,29 @@ data class ChannelFilterOption(
     val params: String? = null,
 )
 
-internal fun JsonElement.channelFilterGroups(): List<ChannelFilterGroup> {
+private val SORT_LIKE_LABELS =
+    setOf(
+        "latest",
+        "oldest",
+        "newest",
+        "popular",
+        "top",
+        "views",
+        "most views",
+        "trending",
+        "date added",
+        "date added (newest)",
+        "date added (oldest)",
+        "last video added",
+    )
+
+/** A chip row whose every chip is a sort-ish label is the tab's sort control — promote it to a dropdown. */
+private fun List<ChannelFilterOption>.looksLikeSort(): Boolean =
+    size >= 2 && all { it.label.trim().lowercase() in SORT_LIKE_LABELS }
+
+internal fun JsonElement.channelFilterGroups(
+    kind: ChannelTabKind? = null,
+): List<ChannelFilterGroup> {
     val groups = mutableListOf<ChannelFilterGroup>()
     val chips = mutableListOf<ChannelFilterOption>()
 
@@ -53,7 +75,11 @@ internal fun JsonElement.channelFilterGroups(): List<ChannelFilterGroup> {
         }
 
     if (chips.isNotEmpty()) {
-        groups += ChannelFilterGroup(title = null, isDropdown = false, options = chips)
+        if (chips.looksLikeSort()) {
+            groups += ChannelFilterGroup(title = null, isDropdown = true, options = chips)
+        } else {
+            groups += ChannelFilterGroup(title = null, isDropdown = false, options = chips)
+        }
     }
 
     findFirstRenderer("sortFilterSubMenuRenderer").objectOrNull()?.let { menu ->
@@ -72,6 +98,15 @@ internal fun JsonElement.channelFilterGroups(): List<ChannelFilterGroup> {
                 }
         if (options.isNotEmpty()) {
             groups += ChannelFilterGroup(title = menu["title"].youtubeText(), isDropdown = true, options = options)
+        }
+    }
+
+    // The Live tab's sort bar ships Popular, but a livestream is sorted by recency anyway — keep Latest and Oldest only.
+    if (kind == ChannelTabKind.Live) {
+        return groups.map { group ->
+            if (!group.isDropdown) return@map group
+            val filtered = group.options.filterNot { it.label.trim().equals("popular", ignoreCase = true) }
+            if (filtered.size == group.options.size) group else group.copy(options = filtered)
         }
     }
 

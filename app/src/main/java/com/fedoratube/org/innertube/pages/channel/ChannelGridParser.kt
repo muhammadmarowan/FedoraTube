@@ -36,7 +36,7 @@ internal fun JsonElement.toChannelTabContent(
                     .distinctBy { it.distinctKey() }
             },
         sections = sections,
-        filters = channelFilterGroups(),
+        filters = channelFilterGroups(kind),
         continuation = channelItemContinuation(),
         owner = owner,
     )

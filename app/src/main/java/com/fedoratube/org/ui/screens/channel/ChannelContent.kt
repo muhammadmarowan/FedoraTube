@@ -265,7 +265,7 @@ internal fun ChannelContent(
                     }
                 }
 
-                tab.kind == ChannelTabKind.Home -> {
+        tab.kind == ChannelTabKind.Home -> {
                     FeedShelfSections(
                         sections = tabStates[tab.kind]?.sections.orEmpty(),
                         isLoading = tabStates[tab.kind]?.sections.isNullOrEmpty(),

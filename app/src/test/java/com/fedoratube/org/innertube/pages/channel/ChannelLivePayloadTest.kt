@@ -144,13 +144,16 @@ class ChannelLivePayloadTest {
     }
 
     @Test
-    fun `the shorts and live tabs expose three plain sort chips`() {
-        listOf("shorts", "live").forEach { name ->
-            val groups = fixture(name).channelFilterGroups()
-            assertEquals(name, 1, groups.size)
-            assertTrue(name, !groups.single().isDropdown)
-            assertEquals(name, listOf("Latest", "Popular", "Oldest"), groups.single().options.map { it.label })
-        }
+    fun `the shorts tab promotes sort chips to a dropdown, and live keeps only Latest and Oldest`() {
+        val shortsGroups = fixture("shorts").channelFilterGroups(ChannelTabKind.Shorts)
+        assertEquals(1, shortsGroups.size)
+        assertTrue(shortsGroups.single().isDropdown)
+        assertEquals(listOf("Latest", "Popular", "Oldest"), shortsGroups.single().options.map { it.label })
+
+        val liveGroups = fixture("live").channelFilterGroups(ChannelTabKind.Live)
+        assertEquals(1, liveGroups.size)
+        assertTrue(liveGroups.single().isDropdown)
+        assertEquals(listOf("Latest", "Oldest"), liveGroups.single().options.map { it.label })
     }
 
     @Test
