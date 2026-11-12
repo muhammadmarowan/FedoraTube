@@ -99,6 +99,7 @@ class HomeViewModel
         private val chipFeeds: HomeChipFeeds,
         private val snapshotRecorder: HomeSnapshotRecorder,
         private val neighbourChannels: NeighbourChannelsRepository,
+        private val homeFeedLanguageReset: HomeFeedLanguageReset,
         savedStateHandle: SavedStateHandle,
         @ApplicationContext private val appContext: Context,
     ) : ViewModel() {
@@ -332,6 +333,15 @@ class HomeViewModel
                     } else if (_uiState.value.shorts.isEmpty() && !_uiState.value.isLoading) {
                         reloadFeed()
                     }
+                }
+            }
+
+            // A language/region switch cleared both Home caches after YouTube.locale was updated;
+            // drop the chip results too and rebuild so the feed actually follows the new locale.
+            viewModelScope.launch {
+                homeFeedLanguageReset.resets.collect {
+                    chipFeeds.onLocaleChanged()
+                    reloadFeed()
                 }
             }
         }

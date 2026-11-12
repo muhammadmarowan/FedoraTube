@@ -153,6 +153,22 @@ class HomeChipFeeds
             load(chip, force = true)
         }
 
+        /**
+         * A language or region switch: every cached result was fetched for the old locale, so the
+         * cache is dropped and the open chip refetched instead of serving stale rows until its TTL.
+         */
+        fun onLocaleChanged() {
+            cache.clear()
+            loadJob?.cancel()
+            val chip = chipFor(chipsState.value.selected) ?: return
+            if (chip == HomeChip.All) {
+                chipsState.update { it.copy(feed = null) }
+                return
+            }
+            chipsState.update { it.copy(feed = ChipFeed.Loading, isRefreshing = true) }
+            load(chip, force = true)
+        }
+
         private fun chipFor(key: String): HomeChip? =
             visibleChips(interests, emptySet(), hasMixSeeds = true, hasWatched = true, selected = key).firstOrNull { it.key == key }
 

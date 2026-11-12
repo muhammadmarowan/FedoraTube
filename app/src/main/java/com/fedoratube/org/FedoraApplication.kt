@@ -10,6 +10,7 @@ import coil3.SingletonImageLoader
 import dagger.hilt.android.HiltAndroidApp
 import com.fedoratube.org.data.local.PlayerPreferences
 import com.fedoratube.org.data.local.SubscriptionRepository
+import com.fedoratube.org.data.music.MusicCache
 import com.fedoratube.org.data.repository.NewPipeDownloader
 import com.fedoratube.org.data.repository.YouTubeRepository
 import com.fedoratube.org.discord.DiscordPresenceRuntime
@@ -190,6 +191,9 @@ class FedoraApplication :
                 )
                 Log.d(TAG, "Dynamic YouTube Locale updated: gl=${newLocale.gl}, hl=${newLocale.hl}")
                 homeFeedLanguageReset.onContentLanguage(newLocale.hl)
+                // A region switch orphans the Home caches the same way a language one does:
+                // discovery searches, related lanes and the saved feed all carried the old gl.
+                homeFeedLanguageReset.onTrendingRegion(newLocale.gl)
             }
         }
 
@@ -199,6 +203,9 @@ class FedoraApplication :
                 if (lastRegion != null && lastRegion != region) {
                     Log.d(TAG, "Trending region changed from $lastRegion to $region. Invalidate visitor data.")
                     YouTube.visitorData = null
+                    // Search/genre/related music results were fetched for the old country;
+                    // trending is region-keyed, the rest must simply go.
+                    runCatching { MusicCache.clearAll() }
 
                     YouTube
                         .visitorData()

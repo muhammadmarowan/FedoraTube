@@ -5,6 +5,8 @@
 
 ## Highlights
 
+- Home feed now actually follows your trending region: switching region (or content language) clears every Home cache — the saved feed, discovery searches, related lanes and the category chips — and rebuilds immediately with the new country/language, instead of keeping the old locale's feed until it expired
+- Music now follows your region too: trending/chart results are cached per country, and switching region clears the music search/genre/related caches, so the Music feed shows your selected region's trending rather than stale worldwide or old-region rows
 - Bottom navigation now hides while scrolling in the Subscriptions and Music sections too (as it already did on Home) and returns on the way up, so feeds get the whole screen
 - The onboarding welcome screen fills its top edge: the moving thumbnail wall now runs through the band above the title instead of leaving a black strip at the top
 - On setup, the alerts step now opens the "check in the background" battery exemption prompt by itself as a new user reaches the page (once — stepping back never re-prompts), so background alert checks can run on time

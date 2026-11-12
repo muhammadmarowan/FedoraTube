@@ -27,10 +27,13 @@ object MusicCache {
     // Check if cache entry is still valid
     private fun <T> CacheEntry<T>.isValid(): Boolean = System.currentTimeMillis() - timestamp < CACHE_EXPIRY_MS
 
-    // Trending music
+    // Trending music — keyed by region: YouTube ranks charts per country, so a cache written
+    // for one gl must not answer a request for another (region switch used to show stale rows).
+    private fun trendingKey(limit: Int): String = "trending_${limit}_${com.fedoratube.org.innertube.YouTube.locale.gl}"
+
     suspend fun getTrendingMusic(limit: Int): List<MusicTrack>? =
         mutex.withLock {
-            val key = "trending_$limit"
+            val key = trendingKey(limit)
             trendingCache[key]?.takeIf { it.isValid() }?.data
         }
 
@@ -38,7 +41,7 @@ object MusicCache {
         limit: Int,
         tracks: List<MusicTrack>,
     ) = mutex.withLock {
-        val key = "trending_$limit"
+        val key = trendingKey(limit)
         trendingCache[key] = CacheEntry(tracks)
     }
 

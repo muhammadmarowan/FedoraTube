@@ -200,6 +200,12 @@ internal class ChipResultCache {
         entries[chip.key]?.let { entries[chip.key] = feed to it.second }
     }
 
+    /** A locale switch orphans everything: the results were fetched for the old language/region. */
+    @Synchronized
+    fun clear() {
+        entries.clear()
+    }
+
     /** Chips whose fresh result was empty: hidden until it expires. */
     @Synchronized
     fun emptyKeys(
