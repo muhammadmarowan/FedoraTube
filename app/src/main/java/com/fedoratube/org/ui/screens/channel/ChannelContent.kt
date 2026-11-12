@@ -64,6 +64,7 @@ import com.fedoratube.org.ui.components.layout.flowBottomContentPadding
 import com.fedoratube.org.ui.components.shared.FeedShelfActions
 import com.fedoratube.org.ui.components.shared.FeedShelfSections
 import com.fedoratube.org.ui.components.shared.FeedShelfSlots
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
@@ -99,7 +100,9 @@ internal fun ChannelContent(
                 .PlayerPreferences(context)
         }
     val isGridView by preferences.channelIsGridView.collectAsState(initial = false)
-    val isFocusModeEnabled by preferences.focusModeEnabled.collectAsState(initial = false)
+    // Null until DataStore answers: in focus mode the subscribe button has to be out from the very
+    // first frame — drawing it and then hiding it reads as a broken animation.
+    val isFocusModeEnabled by preferences.focusModeEnabled.map<Boolean, Boolean?> { it }.collectAsState(initial = null)
     val columnPreference by preferences.homeFeedColumns.collectAsState(initial = HomeFeedColumns.AUTO)
     val coroutineScope = rememberCoroutineScope()
 
@@ -306,7 +309,7 @@ internal fun ChannelContent(
                                         isSubscribed = isSubscribed,
                                         onSubscribeClick = { onSubscribeChannel(channel, true) },
                                         onUnsubscribeClick = { onSubscribeChannel(channel, false) },
-                                        showSubscribe = !isFocusModeEnabled,
+                                        showSubscribe = isFocusModeEnabled == false,
                                     )
                                 },
                             ),
@@ -356,7 +359,7 @@ internal fun ChannelContent(
                     onManageGroups = onManageGroups.takeIf { uiState.isSubscribed },
                     note = channelNote,
                     onEditNote = onEditNote,
-                    showSubscribe = !isFocusModeEnabled,
+                    showSubscribe = isFocusModeEnabled == false,
                     filterGroups = activeFilters,
                     filterSelection = activeSelection,
                     onFilterSelected = { groupIndex, optionIndex -> onFilterSelected(settledTab.kind, groupIndex, optionIndex) },

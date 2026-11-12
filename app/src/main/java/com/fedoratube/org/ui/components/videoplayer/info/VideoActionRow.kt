@@ -123,7 +123,7 @@ internal fun VideoActionRow(
         }
 
         // Focus mode strips the engagement actions and leaves only the things a viewer acts on
-        // while watching: share, download, save and notes.
+        // while watching: share, download and save. Notes go with the subscribe system.
         if (!isFocusMode) {
             item(key = "action_subscribe") {
                 if (collaborators.size > 1) {
@@ -182,7 +182,7 @@ internal fun VideoActionRow(
             )
         }
 
-        if (onNoteClick != null) {
+        if (onNoteClick != null && !isFocusMode) {
             item(key = "action_note") {
                 ActionToggle(
                     icon = if (hasNote) Icons.Filled.StickyNote2 else Icons.Outlined.StickyNote2,

@@ -5,6 +5,7 @@
 
 ## Highlights
 
+- Focus mode is consistent about hiding the subscribe system: on a channel page the Subscribe button is gone from the first frame (no show-then-hide flash), search results no longer show a Subscribe button on the channel card ("Go to channel" takes the row), and the player's action row drops the "Add note" button along with subscribe/like
 - Shorts comments animation is now smooth and synced both ways: opening comments slides the sheet up while the video shrinks to the top in the same motion, and closing (drag down or back) slides it back down while the video grows to full screen — one shared animation instead of two fighting ones, with overlays fading in step
 - Shorts comment sheet is cleaner, YouTube-style: no sort-category chips (Top/Newest) and no cross (close) button — drag the sheet down or press back to close; the regular video player's comment sheet is unchanged
 - Shorts feed can be refreshed like Home: pull down on the first Short (or tap the refresh icon at the top) to reload with a top indicator, the current feed staying on screen until the new one lands

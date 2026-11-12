@@ -59,6 +59,8 @@ fun SearchChannelHeroCard(
     latestTitle: String? = null,
     latestVideos: List<Video> = emptyList(),
     onVideoClick: (Video) -> Unit = {},
+    // Focus mode hides the subscribe system; "Go to channel" takes the row alone.
+    showSubscribe: Boolean = true,
 ) {
     val tint = rememberMediaArtworkTint(channel.thumbnailUrl)
 
@@ -96,6 +98,7 @@ fun SearchChannelHeroCard(
                             onSubscribeToggle = onSubscribeToggle,
                             onOpen = onClick,
                             tint = tint,
+                            showSubscribe = showSubscribe,
                             modifier = Modifier.width(InlineActionsColumn),
                         )
                     }
@@ -107,6 +110,7 @@ fun SearchChannelHeroCard(
                         onSubscribeToggle = onSubscribeToggle,
                         onOpen = onClick,
                         tint = tint,
+                        showSubscribe = showSubscribe,
                         modifier = Modifier.fillMaxWidth().padding(horizontal = CardHorizontalPadding),
                     )
                 }
@@ -174,20 +178,23 @@ private fun ChannelActions(
     onOpen: () -> Unit,
     tint: MediaArtworkTint,
     modifier: Modifier = Modifier,
+    showSubscribe: Boolean = true,
 ) {
     Row(
         modifier = modifier,
         horizontalArrangement = Arrangement.spacedBy(ActionSpacing),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        FlowSubscribeButton(
-            isSubscribed = isSubscribed,
-            onSubscribeClick = onSubscribeToggle,
-            onUnsubscribeClick = onSubscribeToggle,
-            size = FlowSubscribeButtonSize.Wide,
-            tint = tint,
-            modifier = if (isSubscribed) Modifier else Modifier.weight(1f),
-        )
+        if (showSubscribe) {
+            FlowSubscribeButton(
+                isSubscribed = isSubscribed,
+                onSubscribeClick = onSubscribeToggle,
+                onUnsubscribeClick = onSubscribeToggle,
+                size = FlowSubscribeButtonSize.Wide,
+                tint = tint,
+                modifier = if (isSubscribed) Modifier else Modifier.weight(1f),
+            )
+        }
         OutlinedButton(
             onClick = onOpen,
             shapes = ButtonDefaults.shapes(),

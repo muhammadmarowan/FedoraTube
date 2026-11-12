@@ -84,6 +84,8 @@ fun SearchScreen(
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
     val state = rememberSearchState(viewModel)
+    val focusPreferences = remember(context) { com.fedoratube.org.data.local.PlayerPreferences(context) }
+    val isFocusModeEnabled by focusPreferences.focusModeEnabled.collectAsState(initial = false)
 
     val quickActions: QuickActionsViewModel = sharedQuickActionsViewModel()
     val subscribedIds by quickActions.subscribedChannelIds.collectAsStateWithLifecycle()
@@ -213,7 +215,14 @@ fun SearchScreen(
                     }
 
                     else -> {
-                        SearchResults(pagingItems, gridState, feedLayout, state.isGridMode, actions)
+                        SearchResults(
+                            pagingItems,
+                            gridState,
+                            feedLayout,
+                            state.isGridMode,
+                            actions,
+                            showSubscribe = !isFocusModeEnabled,
+                        )
                     }
                 }
             }

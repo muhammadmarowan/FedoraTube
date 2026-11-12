@@ -48,6 +48,8 @@ fun SearchResults(
     isGridMode: Boolean,
     actions: SearchResultActions,
     modifier: Modifier = Modifier,
+    // Focus mode hides the subscribe system on search results too.
+    showSubscribe: Boolean = true,
 ) {
     // The toggle's stored flag is named for its icon: set means the thumbnail-left rows, which are a
     // single full-width column at every size.
@@ -93,6 +95,7 @@ fun SearchResults(
                         latestTitle = item.latestTitle,
                         latestVideos = item.latestVideos,
                         onVideoClick = actions.onVideoClick,
+                        showSubscribe = showSubscribe,
                     )
                 }
 
