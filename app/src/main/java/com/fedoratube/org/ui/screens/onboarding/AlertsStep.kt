@@ -19,9 +19,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.BatterySaver
 import androidx.compose.material.icons.outlined.NewReleases
 import androidx.compose.material.icons.outlined.Notifications
+import androidx.compose.material.icons.outlined.Public
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,10 +38,13 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import com.fedoratube.org.R
 import com.fedoratube.org.notification.BackgroundWorkPolicy
+import com.fedoratube.org.ui.components.shared.FlowChoice
+import com.fedoratube.org.ui.components.shared.FlowChoiceDialog
 import com.fedoratube.org.ui.components.shared.FlowNavRow
 import com.fedoratube.org.ui.components.shared.FlowSegmentedGap
 import com.fedoratube.org.ui.components.shared.FlowSwitchRow
 import com.fedoratube.org.ui.components.shared.flowRowGroupShape
+import com.fedoratube.org.utils.RegionCatalog
 
 private val FootnotePadding = 16.dp
 
@@ -49,12 +54,21 @@ internal fun AlertsStep(
     newVideoAlerts: Boolean,
     onNewVideoAlertsChange: (Boolean) -> Unit,
     contentPadding: PaddingValues,
+    // A new user lands here before background checks can ever run on time, so the exemption is
+    // asked for as the page opens — once per onboarding; stepping back never re-prompts.
+    promptBackgroundOnEntry: Boolean,
+    onBackgroundPromptShown: () -> Unit,
+    // Trending region: the same preference Settings writes, offered here so a new user picks
+    // their country before ever opening the Explore/Trending tab.
+    trendingRegion: String,
+    onTrendingRegionChange: (String) -> Unit,
 ) {
     val context = LocalContext.current
     val asksPermission = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
     var notificationsAllowed by remember { mutableStateOf(notificationsAllowed(context)) }
     var backgroundAllowed by remember { mutableStateOf(BackgroundWorkPolicy.isBackgroundWorkUnrestricted(context)) }
     var askedOnce by rememberSaveable { mutableStateOf(false) }
+    var showRegionDialog by rememberSaveable { mutableStateOf(false) }
     val permission =
         rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
             notificationsAllowed = granted
@@ -64,8 +78,14 @@ internal fun AlertsStep(
         notificationsAllowed = notificationsAllowed(context)
         backgroundAllowed = BackgroundWorkPolicy.isBackgroundWorkUnrestricted(context)
     }
+    LaunchedEffect(Unit) {
+        if (promptBackgroundOnEntry && !BackgroundWorkPolicy.isBackgroundWorkUnrestricted(context)) {
+            onBackgroundPromptShown()
+            BackgroundWorkPolicy.requestUnrestrictedBackgroundWork(context)
+        }
+    }
     val allowedText = stringResource(R.string.onboarding_alerts_allowed)
-    val rowCount = if (asksPermission) 3 else 2
+    val rowCount = if (asksPermission) 4 else 3
     val offset = if (asksPermission) 1 else 0
 
     LazyColumn(modifier = Modifier.fillMaxSize(), contentPadding = contentPadding) {
@@ -111,6 +131,13 @@ internal fun AlertsStep(
                     shape = flowRowGroupShape(offset + 1, rowCount),
                     onClick = { if (!backgroundAllowed) BackgroundWorkPolicy.requestUnrestrictedBackgroundWork(context) },
                 )
+                FlowNavRow(
+                    title = stringResource(R.string.settings_item_region),
+                    supportingText = RegionCatalog.displayName(trendingRegion),
+                    leadingIcon = Icons.Outlined.Public,
+                    shape = flowRowGroupShape(offset + 2, rowCount),
+                    onClick = { showRegionDialog = true },
+                )
             }
         }
         item(key = "footnote") {
@@ -121,6 +148,20 @@ internal fun AlertsStep(
                 modifier = Modifier.padding(FootnotePadding),
             )
         }
+    }
+
+    if (showRegionDialog) {
+        val regionOptions = remember { RegionCatalog.sorted().map { (code, name) -> FlowChoice(code, name) } }
+        FlowChoiceDialog(
+            title = stringResource(R.string.settings_region_dialog_title),
+            options = regionOptions,
+            selected = trendingRegion,
+            onSelect = { code ->
+                onTrendingRegionChange(code)
+                showRegionDialog = false
+            },
+            onDismiss = { showRegionDialog = false },
+        )
     }
 }
 

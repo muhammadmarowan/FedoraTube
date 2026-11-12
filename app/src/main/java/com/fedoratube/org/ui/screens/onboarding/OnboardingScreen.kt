@@ -3,15 +3,21 @@ package com.fedoratube.org.ui.screens.onboarding
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -27,6 +33,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -35,6 +42,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.fedoratube.org.data.backup.BackupOperation
 import com.fedoratube.org.data.backup.ImportKind
+import com.fedoratube.org.ui.components.shared.FedoraThumbnailsWallpaper
+import com.fedoratube.org.ui.components.shared.FedoraWallpaperRowPitch
 import com.fedoratube.org.ui.components.shared.FlowMaxContentWidth
 import com.fedoratube.org.ui.utils.LocalWindowSizeClass
 import com.fedoratube.org.ui.utils.isExpandedWidth
@@ -103,6 +112,42 @@ fun OnboardingScreen(
     }
 
     Box(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
+        // The step's own wallpaper starts below this screen's top-bar band, so this strip
+        // continues the same grid upward — offset by one row pitch, so the rows land exactly
+        // where the step's wall takes over below. It stays composed through the first steps
+        // (the backdrop behind the scaffold covers it), and the scrim matches the welcome
+        // gradient's top stop so the seam reads as one wall.
+        val bandVisible = state.step == OnboardingStep.WELCOME || shownStep == OnboardingStep.WELCOME
+        AnimatedVisibility(
+            visible = bandVisible,
+            enter = fadeIn(MaterialTheme.motionScheme.defaultEffectsSpec<Float>()),
+            exit = fadeOut(MaterialTheme.motionScheme.defaultEffectsSpec<Float>()),
+        ) {
+            Box(
+                modifier = Modifier.fillMaxWidth().height(TopBarHeight).clipToBounds(),
+                contentAlignment = Alignment.TopCenter,
+            ) {
+                // Two pitches of wall, pushed up two rows: the band shows the bottom of one row
+                // plus its gap, and the next row lands exactly at the band's edge, where the
+                // step's own wallpaper (also starting at the top-bar height) takes over.
+                Box(
+                    modifier =
+                        Modifier
+                            .widthIn(max = FlowMaxContentWidth)
+                            .fillMaxWidth()
+                            .requiredHeight(TopBarHeight + FedoraWallpaperRowPitch * 2)
+                            .offset(y = TopBarHeight - FedoraWallpaperRowPitch * 2),
+                ) {
+                    FedoraThumbnailsWallpaper(Modifier.fillMaxSize())
+                    Box(
+                        modifier =
+                            Modifier
+                                .fillMaxSize()
+                                .background(MaterialTheme.colorScheme.background.copy(alpha = 0.20f)),
+                    )
+                }
+            }
+        }
         if (shownStep != OnboardingStep.WELCOME) {
             Spacer(
                 Modifier

@@ -26,6 +26,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.fedoratube.org.R
 
@@ -33,6 +34,10 @@ private val CardWidth = 144.dp
 private val CardHeight = 84.dp
 private val CardSpacing = 8.dp
 private val RowSpacing = 8.dp
+
+/** Tile height plus the gap under it: the pitch a second wallpaper instance needs to line its
+ *  rows up with the first, so two instances read as one continuous wall. */
+internal val FedoraWallpaperRowPitch: Dp = CardHeight + RowSpacing
 
 private val Row0Thumbs =
     listOf(

@@ -71,9 +71,21 @@ class OnboardingViewModel
         val isFocusMode: StateFlow<Boolean> =
             preferences.focusModeEnabled.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), false)
 
+        /** Trending region picked on the alerts step; same preference Settings writes. */
+        val trendingRegion: StateFlow<String> =
+            preferences.trendingRegion.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), "US")
+
+        fun setTrendingRegion(region: String) {
+            viewModelScope.launch { preferences.setTrendingRegion(region) }
+        }
+
         private var searchJob: Job? = null
         private var completion: Job? = null
         private var pendingSource: ImportSource? = null
+
+        /** The battery-exemption dialog is opened once per onboarding: stepping back and
+         *  returning to the alerts page must not nag with it again. */
+        var backgroundPromptShown = false
 
         init {
             if (_state.value.query.isNotBlank()) search(_state.value.query)

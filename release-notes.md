@@ -5,6 +5,10 @@
 
 ## Highlights
 
+- Bottom navigation now hides while scrolling in the Subscriptions and Music sections too (as it already did on Home) and returns on the way up, so feeds get the whole screen
+- The onboarding welcome screen fills its top edge: the moving thumbnail wall now runs through the band above the title instead of leaving a black strip at the top
+- On setup, the alerts step now opens the "check in the background" battery exemption prompt by itself as a new user reaches the page (once — stepping back never re-prompts), so background alert checks can run on time
+- The setup alerts step also lets a new user pick their trending region right there (a "Trending Region" row opening the country list — same setting as Settings › Region), so Trending opens localized from the first visit
 - Focus mode is consistent about hiding the subscribe system: on a channel page the Subscribe button is gone from the first frame (no show-then-hide flash), search results no longer show a Subscribe button on the channel card ("Go to channel" takes the row), and the player's action row drops the "Add note" button along with subscribe/like
 - Shorts comments animation is now smooth and synced both ways: opening comments slides the sheet up while the video shrinks to the top in the same motion, and closing (drag down or back) slides it back down while the video grows to full screen — one shared animation instead of two fighting ones, with overlays fading in step
 - Shorts comment sheet is cleaner, YouTube-style: no sort-category chips (Top/Newest) and no cross (close) button — drag the sheet down or press back to close; the regular video player's comment sheet is unchanged

@@ -164,11 +164,16 @@ private fun StepBody(
         }
 
         OnboardingStep.ALERTS -> {
+            val trendingRegion by viewModel.trendingRegion.collectAsStateWithLifecycle()
             AlertsStep(
                 header = header,
                 newVideoAlerts = newVideoAlerts,
                 onNewVideoAlertsChange = viewModel::setNewVideoAlerts,
                 contentPadding = contentPadding,
+                promptBackgroundOnEntry = !viewModel.backgroundPromptShown,
+                onBackgroundPromptShown = { viewModel.backgroundPromptShown = true },
+                trendingRegion = trendingRegion,
+                onTrendingRegionChange = viewModel::setTrendingRegion,
             )
         }
 

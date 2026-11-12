@@ -77,6 +77,9 @@ import com.fedoratube.org.ui.utils.isMediumWidth
 import kotlinx.coroutines.flow.first
 import kotlin.math.roundToInt
 
+/** The routes whose bottom bar hides while the page under it scrolls down (and returns on scroll up). */
+private val BAR_HIDES_ON_SCROLL_ROUTES = setOf("home", "subscriptions", "music")
+
 @UnstableApi
 @Composable
 fun FlowApp(
@@ -200,12 +203,14 @@ fun FlowApp(
         needsOnboarding = needsOnboarding,
     )
 
-    val isHomeRoute = currentRoute.value == "home"
+    // The bar gets out of the way while scrolling the feeds it overlays: Home, Subscriptions and
+    // Music. Every other route either pages vertically itself or has no list, so the bar stays put.
+    val hidesBarOnScroll = currentRoute.value in BAR_HIDES_ON_SCROLL_ROUTES
     val navScrollState =
         rememberFlowNavigationScrollState(
-            hideOnScroll = bottomNavHideOnScroll && isHomeRoute && !isFocusModeEnabled,
+            hideOnScroll = bottomNavHideOnScroll && hidesBarOnScroll && !isFocusModeEnabled,
             routeKey = currentRoute.value,
-            locked = (!isHomeRoute) || isFocusModeEnabled,
+            locked = (!hidesBarOnScroll) || isFocusModeEnabled,
         )
 
     val isInPipMode by GlobalPlayerState.isInPipMode.collectAsState()

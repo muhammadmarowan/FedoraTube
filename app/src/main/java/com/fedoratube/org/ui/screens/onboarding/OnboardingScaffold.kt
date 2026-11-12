@@ -44,7 +44,8 @@ import com.fedoratube.org.ui.components.shared.drawSegmentedProgress
 /** Draws the current step's hero at the given size; the screen builds it so it can be shared between steps. */
 internal typealias HeroSlot = @Composable (size: Dp) -> Unit
 
-private val TopBarHeight = 64.dp
+/** Height of every step's top bar; the welcome wallpaper continues its grid through this band. */
+internal val TopBarHeight = 64.dp
 private val TopBarStartPadding = 24.dp
 private val TopBarEndPadding = 8.dp
 private val ProgressHeight = 6.dp
