@@ -5,6 +5,8 @@
 
 ## Highlights
 
+- The share-QR dialog is polished: the logo circle floating in the middle of the QR code is gone (a clean, fully scannable code), the title fits on one line, and Quick Share and Close are full-width stacked buttons — "Quick Share" no longer wraps and gets cut off
+- The Report row no longer shows the email address: its subtitle now reads "Report a bug or share feedback" (the mail app still opens addressed to the developer on tap)
 - The update notification now previews what's new: the collapsed notification lists the release's first three "what's new" lines (with "Tap to update" under them), and the shade's down arrow expands it to the rest of the list
 - Settings › About's Report row is actually visible now: "Report a problem" sits in Settings home's About section (right under Check for updates) and opens your email app addressed to the developer — the earlier row landed on an unreachable page
 - The "Download FedoraTube" QR dialog got a full redesign: the app badge sits above the title, the app logo floats in the middle of the QR code, and Quick Share and Close sit side by side at the bottom — the GitHub link under the QR and the line under Quick Share are gone

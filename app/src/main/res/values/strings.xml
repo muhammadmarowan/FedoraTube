@@ -1850,7 +1850,7 @@
     <string name="section_device">Device</string>
     <string name="section_report">Report</string>
     <string name="about_report">Report a problem</string>
-    <string name="about_report_email">muhammadmarowan2007@gmail.com</string>
+    <string name="about_report_subtitle">Report a bug or share feedback</string>
     <string name="report_email_subject">FedoraTube report</string>
     <string name="report_no_email_app">No email app found</string>
     <string name="donate_item_title">Donate</string>

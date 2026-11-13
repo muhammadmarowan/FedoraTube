@@ -5,8 +5,6 @@ import android.content.Intent
 import android.net.Uri
 import android.widget.Toast
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -217,7 +215,7 @@ fun ShareAppQrDialog(
                 Spacer(modifier = Modifier.height(14.dp))
                 Text(
                     text = stringResource(R.string.share_app_qr_title),
-                    style = MaterialTheme.typography.headlineSmall,
+                    style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface,
                     textAlign = TextAlign.Center,
@@ -233,84 +231,63 @@ fun ShareAppQrDialog(
                 LatestReleasePill(tag = latestTag, resolved = resolved)
                 Spacer(modifier = Modifier.height(18.dp))
 
-                // QR card with the app badge floating in its middle
-                Box(contentAlignment = Alignment.Center) {
-                    Box(
-                        modifier =
-                            Modifier
-                                .size(236.dp)
-                                .clip(RoundedCornerShape(24.dp))
-                                .background(Color.White)
-                                .padding(14.dp),
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        QrCodeImage(
-                            text = downloadUrl,
-                            modifier = Modifier.fillMaxSize(),
-                        )
-                    }
-                    Box(
-                        modifier =
-                            Modifier
-                                .size(60.dp)
-                                .clip(CircleShape)
-                                .background(Color.White)
-                                .border(1.dp, Color.White.copy(alpha = 0.35f), CircleShape),
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_notification_logo),
-                            contentDescription = null,
-                            modifier = Modifier.size(34.dp),
-                            tint = MaterialTheme.colorScheme.onSurface,
-                        )
-                    }
+                // QR card
+                Box(
+                    modifier =
+                        Modifier
+                            .size(236.dp)
+                            .clip(RoundedCornerShape(24.dp))
+                            .background(Color.White)
+                            .padding(14.dp),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    QrCodeImage(
+                        text = downloadUrl,
+                        modifier = Modifier.fillMaxSize(),
+                    )
                 }
 
                 Spacer(modifier = Modifier.height(24.dp))
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(10.dp),
-                ) {
-                    Button(
-                        onClick = {
-                            if (preparing) return@Button
-                            preparing = true
-                            scope.launch {
-                                val uris = runCatching { prepareApkUris(context) }.getOrDefault(emptyList())
-                                preparing = false
-                                if (uris.isEmpty()) {
-                                    Toast.makeText(context, R.string.share_app_qr_share_failed, Toast.LENGTH_SHORT).show()
-                                } else {
-                                    startShare(context, uris)
-                                }
+                // Full-width buttons: side by side squeezed "Quick Share" onto two lines.
+                Button(
+                    onClick = {
+                        if (preparing) return@Button
+                        preparing = true
+                        scope.launch {
+                            val uris = runCatching { prepareApkUris(context) }.getOrDefault(emptyList())
+                            preparing = false
+                            if (uris.isEmpty()) {
+                                Toast.makeText(context, R.string.share_app_qr_share_failed, Toast.LENGTH_SHORT).show()
+                            } else {
+                                startShare(context, uris)
                             }
-                        },
-                        enabled = !preparing,
-                        modifier = Modifier.weight(1.3f).height(48.dp),
-                    ) {
-                        if (preparing) {
-                            CircularProgressIndicator(
-                                modifier = Modifier.size(18.dp),
-                                strokeWidth = 2.dp,
-                            )
-                        } else {
-                            Icon(Icons.Rounded.Share, contentDescription = null, modifier = Modifier.size(18.dp))
                         }
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            text =
-                                stringResource(
-                                    if (preparing) R.string.share_app_qr_preparing else R.string.share_app_qr_share,
-                                ),
+                    },
+                    enabled = !preparing,
+                    modifier = Modifier.fillMaxWidth().height(48.dp),
+                ) {
+                    if (preparing) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(18.dp),
+                            strokeWidth = 2.dp,
                         )
+                    } else {
+                        Icon(Icons.Rounded.Share, contentDescription = null, modifier = Modifier.size(18.dp))
                     }
-                    FilledTonalButton(
-                        onClick = onDismiss,
-                        modifier = Modifier.weight(1f).height(48.dp),
-                    ) {
-                        Text(stringResource(R.string.close))
-                    }
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text =
+                            stringResource(
+                                if (preparing) R.string.share_app_qr_preparing else R.string.share_app_qr_share,
+                            ),
+                    )
+                }
+                Spacer(modifier = Modifier.height(10.dp))
+                FilledTonalButton(
+                    onClick = onDismiss,
+                    modifier = Modifier.fillMaxWidth().height(48.dp),
+                ) {
+                    Text(stringResource(R.string.close))
                 }
             }
         }
