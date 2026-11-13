@@ -6,4 +6,8 @@
     <cache-path
         name="playlists"
         path="playlists/" />
+    <!-- The installed APK, copied here so Quick Share can hand it to the system Sharesheet. -->
+    <cache-path
+        name="apk"
+        path="apk/" />
 </paths>

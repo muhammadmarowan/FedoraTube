@@ -10,13 +10,20 @@ import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
 
 /**
- * One row of a tab's filter bar. A tab can carry several: the Videos tab shows a sort dropdown
- * *and* a visibility chip row, and they filter independently.
+ * One control inside a tab's filter menu. A tab can carry several — the Videos tab offers its sort
+ * entries *and* a visibility choice (Members only & the like) — and they filter independently.
+ * Every group is listed in the banner's top-right arrow; none draws its own chip row any more.
  */
 data class ChannelFilterGroup(
     val title: String?,
     val isDropdown: Boolean,
     val options: List<ChannelFilterOption>,
+    /**
+     * Sort controls arrive with nothing flagged: the server's default (Latest) is implicit and the
+     * menu marks the first entry itself. Chips flag their own selection, so an empty
+     * [selectedIndex] there means nothing was picked rather than the first option.
+     */
+    val marksFirstByDefault: Boolean = false,
 ) {
     val selectedIndex: Int get() = options.indexOfFirst { it.selected }
 }
@@ -68,18 +75,28 @@ internal fun JsonElement.channelFilterGroups(
             val chip = entry.objectOrNull()?.get("chipViewModel").objectOrNull() ?: return@forEach
             val dropdown = chip.dropdownOptions()
             if (dropdown.isNotEmpty()) {
-                groups += ChannelFilterGroup(title = null, isDropdown = true, options = dropdown)
+                groups +=
+                    ChannelFilterGroup(
+                        title = null,
+                        isDropdown = true,
+                        options = dropdown,
+                        marksFirstByDefault = true,
+                    )
                 return@forEach
             }
             chip.asChip()?.let(chips::add)
         }
 
     if (chips.isNotEmpty()) {
-        if (chips.looksLikeSort()) {
-            groups += ChannelFilterGroup(title = null, isDropdown = true, options = chips)
-        } else {
-            groups += ChannelFilterGroup(title = null, isDropdown = false, options = chips)
-        }
+        // The visibility chips join the sort entries in the banner's arrow: the sort control may
+        // itself arrive as plain chips, and Members only must not keep a second row under the tabs.
+        groups +=
+            ChannelFilterGroup(
+                title = null,
+                isDropdown = true,
+                options = chips,
+                marksFirstByDefault = chips.looksLikeSort(),
+            )
     }
 
     findFirstRenderer("sortFilterSubMenuRenderer").objectOrNull()?.let { menu ->
@@ -97,7 +114,13 @@ internal fun JsonElement.channelFilterGroups(
                     )
                 }
         if (options.isNotEmpty()) {
-            groups += ChannelFilterGroup(title = menu["title"].youtubeText(), isDropdown = true, options = options)
+            groups +=
+                ChannelFilterGroup(
+                    title = menu["title"].youtubeText(),
+                    isDropdown = true,
+                    options = options,
+                    marksFirstByDefault = true,
+                )
         }
     }
 

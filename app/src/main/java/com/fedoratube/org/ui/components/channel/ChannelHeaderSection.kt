@@ -21,6 +21,7 @@ import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.KeyboardArrowDown
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -227,10 +228,11 @@ internal fun ChannelHeaderSection(
 }
 
 /**
- * The tab's sort/filter dropdown (Latest / Popular / Oldest…) as one arrow in the banner's top-right
- * corner. [groups] is the tab's full filter list — only the groups YouTube marks as dropdowns (the
- * sort control) are listed; chips stay rendered as chips in the filter bar. "Latest" is the server's
- * default and stays selected until the viewer picks something else, as it does in the bar.
+ * The tab's filter menu (Latest / Popular / Oldest… and the visibility chips, Members only & the
+ * like) as one arrow in the banner's top-right corner. [groups] is the tab's full filter list:
+ * every group is listed here — a chip row under the tabs would only duplicate it — with a divider
+ * where one control ends and the next begins. "Latest" is the server's default and stays selected
+ * until the viewer picks something else.
  */
 @Composable
 private fun ChannelSortArrow(
@@ -259,9 +261,25 @@ private fun ChannelSortArrow(
             )
         }
         DropdownMenu(expanded = open, onDismissRequest = { open = false }) {
-            dropdowns.forEach { (groupIndex, group) ->
+            dropdowns.forEachIndexed { position, (groupIndex, group) ->
+                if (position > 0) {
+                    HorizontalDivider(modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp))
+                }
+                group.title?.let { title ->
+                    Text(
+                        text = title,
+                        style = MaterialTheme.typography.labelLarge,
+                        color = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 2.dp),
+                    )
+                }
                 val selectedIndex = selection.getOrElse(groupIndex) { -1 }
-                val activeIndex = if (selectedIndex >= 0) selectedIndex else group.selectedIndex.coerceAtLeast(0)
+                val activeIndex =
+                    when {
+                        selectedIndex >= 0 -> selectedIndex
+                        group.marksFirstByDefault -> 0
+                        else -> -1
+                    }
                 group.options.forEachIndexed { index, option ->
                     val isActive = index == activeIndex
                     DropdownMenuItem(

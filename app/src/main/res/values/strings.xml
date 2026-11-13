@@ -1848,6 +1848,11 @@
     <string name="section_contact">Contact</string>
     <string name="section_legal">Legal</string>
     <string name="section_device">Device</string>
+    <string name="section_report">Report</string>
+    <string name="about_report">Report a problem</string>
+    <string name="about_report_email">muhammadmarowan2007@gmail.com</string>
+    <string name="report_email_subject">FedoraTube report</string>
+    <string name="report_no_email_app">No email app found</string>
     <string name="donate_item_title">Donate</string>
     <string name="support_dev_subtitle">Support development</string>
     <string name="btn_ok">OK</string>
@@ -3726,6 +3731,14 @@
     <string name="share_app_qr">Share app</string>
     <string name="share_app_qr_title">Download FedoraTube</string>
     <string name="share_app_qr_subtitle">Scan this QR code with another phone to download the app directly</string>
+    <string name="share_app_qr_latest_template">Latest release · %1$s</string>
+    <string name="share_app_qr_checking_latest">Checking for the latest…</string>
+    <string name="share_app_qr_source">github.com/muhammadmarowan/FedoraTube</string>
+    <string name="share_app_qr_share">Quick Share</string>
+    <string name="share_app_qr_share_hint">Send this APK to another phone directly — the other side needs no internet</string>
+    <string name="share_app_qr_preparing">Preparing APK…</string>
+    <string name="share_app_qr_share_chooser">Share FedoraTube APK</string>
+    <string name="share_app_qr_share_failed">Could not share the APK</string>
     <string name="settings_keywords_thumbnails">thumbnail, images, data saver, data usage, hide thumbnails, no images</string>
     <string name="settings_quality_wifi">On Wi-Fi</string>
     <string name="settings_quality_mobile">On mobile data</string>

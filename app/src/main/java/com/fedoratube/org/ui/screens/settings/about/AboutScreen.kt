@@ -1,6 +1,10 @@
 package com.fedoratube.org.ui.screens.settings.about
 
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.os.Build
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -11,6 +15,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Description
+import androidx.compose.material.icons.outlined.Email
 import androidx.compose.material.icons.outlined.Extension
 import androidx.compose.material.icons.outlined.Gavel
 import androidx.compose.material.icons.outlined.History
@@ -54,6 +59,7 @@ private const val CREATOR_URL = "https://github.com/muhammadmarowan"
 private const val NEWPIPE_URL = "https://github.com/TeamNewPipe/NewPipeExtractor"
 private const val LICENSE_URL = "https://github.com/muhammadmarowan/FedoraTube/blob/main/License"
 private const val CREATOR_AVATAR_URL = "https://github.com/muhammadmarowan.png?size=144"
+private const val REPORT_EMAIL = "muhammadmarowan2007@gmail.com"
 
 private val LogoSize = 72.dp
 private val HeaderPadding = 24.dp
@@ -67,6 +73,7 @@ internal fun AboutScreen(
     highlight: String?,
 ) {
     val uriHandler = LocalUriHandler.current
+    val context = LocalContext.current
     var dialog by rememberSaveable { mutableStateOf<AboutDialog?>(null) }
     val open = { url: String -> runCatching { uriHandler.openUri(url) } }
 
@@ -86,6 +93,9 @@ internal fun AboutScreen(
             nav(AboutIndex.website, icon = Icons.Outlined.Public, showChevron = false, onClick = { open(WEBSITE_URL) })
             nav(AboutIndex.github, iconRes = R.drawable.ic_github, showChevron = false, onClick = { open(GITHUB_URL) })
             nav(AboutIndex.reddit, icon = IconReddit, showChevron = false, onClick = { open(REDDIT_URL) })
+        }
+        group(key = "about.report", header = R.string.section_report) {
+            nav(AboutIndex.report, icon = Icons.Outlined.Email, showChevron = false, onClick = { openReport(context) })
         }
         group(key = "about.legal", header = R.string.section_legal) {
             nav(AboutIndex.license, icon = Icons.Outlined.Description, showChevron = false, onClick = { open(LICENSE_URL) })
@@ -109,6 +119,17 @@ internal fun AboutScreen(
         AboutDialog.NOTICES -> NoticesDialog(onDismiss = { dialog = null })
         null -> Unit
     }
+}
+
+/** Hands the report straight to the viewer's email client, addressed to the developer. */
+private fun openReport(context: Context) {
+    val intent =
+        Intent(Intent.ACTION_SENDTO).apply {
+            data = Uri.parse("mailto:$REPORT_EMAIL")
+            putExtra(Intent.EXTRA_SUBJECT, context.getString(R.string.report_email_subject))
+        }
+    runCatching { context.startActivity(intent) }
+        .onFailure { Toast.makeText(context, R.string.report_no_email_app, Toast.LENGTH_SHORT).show() }
 }
 
 @Composable

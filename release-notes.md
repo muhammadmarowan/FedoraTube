@@ -5,6 +5,10 @@
 
 ## Highlights
 
+- Settings › About has a new "Report" section: tapping "Report a problem" opens your email app addressed to the developer (muhammadmarowan2007@gmail.com) with the subject pre-filled, so feedback goes straight to an email
+- Channel pages with a "Members only" system are tidied up: those filter chips moved off their row under the tabs and into the banner's top-right arrow together with Latest/Popular/Oldest — one arrow holds the whole filter menu, with a divider between sort and visibility entries
+- The "Download FedoraTube" QR dialog is redesigned (app icon, clearer text, a "Latest release · v…" pill and a tidier code card) and the QR now always points at the newest release — it asks GitHub when the dialog opens, including prereleases, instead of the old link that skipped them
+- New "Quick Share" button in the QR dialog: it hands your installed APK to the system Sharesheet, so you can send the app to another phone straight over Quick Share/Nearby Share — the receiving side needs no internet connection at all
 - Bottom navigation bar icons are a bit bigger (26 dp) with a better look and animation: the selected tab's icon pops in with a soft spring, the outline→filled morph is springier, and unselected tabs sit slightly dimmer so the current tab reads clearly without an indicator
 - Player Settings "More" now looks exactly like the Player Settings front page: one continuous grouped row list in the same style (no blue section labels splitting it into blocks), so entering More reads as the same sheet
 - Related/recommendation videos under the player now fetch the moment a video opens — alongside stream resolution instead of after playback starts — so the rows are on screen right away (and no longer wait for the first frame when videos start paused)

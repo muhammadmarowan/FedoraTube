@@ -54,7 +54,6 @@ import com.fedoratube.org.data.model.Video
 import com.fedoratube.org.innertube.pages.channel.ChannelTabKind
 import com.fedoratube.org.innertube.pages.renderer.FeedShelf
 import com.fedoratube.org.ui.components.channel.ChannelAboutSection
-import com.fedoratube.org.ui.components.channel.ChannelFilterBar
 import com.fedoratube.org.ui.components.channel.ChannelHeaderSection
 import com.fedoratube.org.ui.components.channel.ChannelReadingPane
 import com.fedoratube.org.ui.components.channel.ChannelRow
@@ -133,7 +132,6 @@ internal fun ChannelContent(
     val activeState = tabStates[settledTab.kind]
     val activeFilters = activeState?.filters.orEmpty()
     val activeSelection = activeState?.selected.orEmpty()
-    val showFilterBar = activeFilters.isNotEmpty() && !settledTab.isAbout
 
     var collapsingHeaderHeightPx by remember { mutableFloatStateOf(0f) }
     var stickySectionHeightPx by remember { mutableFloatStateOf(0f) }
@@ -380,13 +378,6 @@ internal fun ChannelContent(
                         coroutineScope.launch { pagerState.animateScrollToPage(idx) }
                     },
                 )
-                if (showFilterBar) {
-                    ChannelFilterBar(
-                        filterGroups = activeFilters,
-                        selected = activeSelection,
-                        onFilterSelected = { group, option -> onFilterSelected(settledTab.kind, group, option) },
-                    )
-                }
             }
         }
     }
