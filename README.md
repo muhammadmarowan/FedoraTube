@@ -8,51 +8,36 @@
 
 [![Latest Release](https://img.shields.io/github/v/release/muhammadmarowan/FedoraTube?include_prereleases&style=for-the-badge&color=0072EF&logo=github&label=Release)](https://github.com/muhammadmarowan/FedoraTube/releases)
 [![Platform](https://img.shields.io/badge/Platform-Android_8.0+-3DDC84?style=for-the-badge&logo=android&logoColor=white)](https://github.com/muhammadmarowan/FedoraTube/releases)
-[![Shorts Blocked](https://img.shields.io/badge/Shorts-100%25_Blocked-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](#-100--shorts-free)
+[![Shorts Blocked](https://img.shields.io/badge/Shorts-100%25_Blocked-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](#shorts-free)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg?style=for-the-badge)](License)
-
-<br>
-
-
 
 </div>
 
 ## ⛶ Screenshots
 
 <div align="center">
-  <table>
-    <tr>
-      <td align="center" width="25%">
-        <b>Home</b><br>
-        <sub>Subscription & recommendation feed</sub><br><br>
-        <img src="Assets/shot_home.jpg" width="200" alt="Home feed">
-      </td>
-      <td align="center" width="25%">
-        <b>Music</b><br>
-        <sub>Trending, global charts & top artists</sub><br><br>
-        <img src="Assets/shot_music.jpg" width="200" alt="Music hub">
-      </td>
-      <td align="center" width="25%">
-        <b>Focus Mode</b><br>
-        <sub>Minimal search-first canvas</sub><br><br>
-        <img src="Assets/shot_search.png" width="200" alt="Search">
-      </td>
-      <td align="center" width="25%">
-        <b>Player</b><br>
-        <sub>Comments, actions & related videos</sub><br><br>
-        <img src="Assets/shot_player.jpg" width="200" alt="Video player">
-      </td>
-    </tr>
-  </table>
+
+**Home** — Subscription & recommendation feed
+
+<img src="Assets/shot_home.jpg" width="280" alt="Home feed">
+
+**Music** — Trending, global charts & top artists
+
+<img src="Assets/shot_music.jpg" width="280" alt="Music hub">
+
+**Focus Mode** — Minimal search-first canvas
+
+<img src="Assets/shot_search.png" width="280" alt="Focus Mode">
+
+**Player** — Comments, actions & related videos
+
+<img src="Assets/shot_player.jpg" width="280" alt="Video player">
+
 </div>
 
 ---
 
 ## ✨ Features
-
-<table>
-  <tr>
-    <td width="50%">
 
 ### Shorts-free
 - **No Shorts, ever** — Shorts shelves and feeds are stripped out across the whole app.
@@ -72,9 +57,6 @@
 - **Background play & PiP** — audio keeps playing with the screen off or in picture-in-picture.
 - **Quality & speed control** — pick resolution, playback speed and double-tap seek behavior.
 
-    </td>
-    <td width="50%">
-
 ### Private by design
 - **No account, no tracking** — no Google login, no analytics, no telemetry, no ads. See [privacy.md](privacy.md).
 - **On-device recommendations** — your watch habits are computed locally and never leave your phone.
@@ -91,10 +73,6 @@
 ### Made for everyone
 - **30 languages** — fully translated UI, from Arabic to Vietnamese.
 - **Lightweight** — five ABI builds (universal, arm64-v8a, armeabi-v7a, x86, x86_64) so you only download what your device needs.
-
-    </td>
-  </tr>
-</table>
 
 ---
 
