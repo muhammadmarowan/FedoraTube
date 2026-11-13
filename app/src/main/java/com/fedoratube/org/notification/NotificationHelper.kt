@@ -9,6 +9,8 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.os.Build
+import android.view.View
+import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
@@ -32,6 +34,50 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import java.net.URL
+
+/** Characters that still fit one line of the collapsed update notification's body. */
+private const val WHATS_NEW_PREVIEW_CHARS = 44
+
+/** Cap for the expanded body; the shade clips anything taller than its max height anyway. */
+private const val WHATS_NEW_MAX_CHARS = 1_200
+
+/**
+ * The release notes as "what's new" items: the markdown bullets with their decoration stripped,
+ * or the first content lines when a release carries no bullet list.
+ */
+private fun whatsNewBullets(notes: String): List<String> {
+    val bullets =
+        notes
+            .lineSequence()
+            .map { it.trim() }
+            .filter { it.startsWith("- ") || it.startsWith("* ") }
+            .map { it.substring(2).trim() }
+            .map { it.replace("**", "").replace("`", "").trim() }
+            .filter { it.isNotEmpty() }
+            .toList()
+    if (bullets.isNotEmpty()) return bullets
+    return notes
+        .lineSequence()
+        .map { it.trim() }
+        .filter { it.isNotEmpty() && !it.startsWith("#") }
+        .map { it.replace("**", "").replace("`", "").trim() }
+        .filter { it.isNotEmpty() }
+        .take(3)
+        .toList()
+}
+
+/** [text] cut to one visual line of the collapsed view, preferring a word boundary. */
+private fun clampToLine(
+    text: String,
+    maxChars: Int,
+): String =
+    if (text.length <= maxChars) {
+        text
+    } else {
+        val cut = text.take(maxChars)
+        val wordBreak = cut.lastIndexOf(' ')
+        (if (wordBreak > maxChars / 2) cut.take(wordBreak) else cut).trimEnd() + "…"
+    }
 
 /**
  * Comprehensive notification helper for the app
@@ -691,7 +737,11 @@ object NotificationHelper {
     // ========== UPDATE NOTIFICATIONS ==========
 
     /**
-     * Show notification for new app update
+     * Show notification for new app update.
+     *
+     * The collapsed view lists the release's first three "what's new" lines; the shade's expand
+     * arrow swaps in the big view with the rest of the list, so the whole changelog is one tap
+     * away without a wall of text up front.
      */
     fun showUpdateNotification(
         context: Context,
@@ -714,12 +764,38 @@ object NotificationHelper {
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
             )
 
+        val title = context.getString(R.string.notification_update_available, release.version)
+        val tapToUpdate = context.getString(R.string.notification_tap_to_update)
+        val bullets = whatsNewBullets(release.notes)
+        val preview = bullets.take(3).joinToString("\n") { clampToLine(it, WHATS_NEW_PREVIEW_CHARS) }
+        val full =
+            bullets
+                .joinToString("\n")
+                .let { text -> if (text.length > WHATS_NEW_MAX_CHARS) text.take(WHATS_NEW_MAX_CHARS).trimEnd() + "…" else text }
+
+        val collapsed =
+            RemoteViews(context.packageName, R.layout.notification_update_collapsed).apply {
+                setTextViewText(R.id.update_title, title)
+                setTextViewText(R.id.update_body, preview)
+                setTextViewText(R.id.update_action, tapToUpdate)
+                if (preview.isEmpty()) setViewVisibility(R.id.update_body, View.GONE)
+            }
+        val expanded =
+            RemoteViews(context.packageName, R.layout.notification_update_expanded).apply {
+                setTextViewText(R.id.update_title, title)
+                setTextViewText(R.id.update_body, full)
+                setTextViewText(R.id.update_action, tapToUpdate)
+                if (full.isEmpty()) setViewVisibility(R.id.update_body, View.GONE)
+            }
+
         val notification =
             NotificationCompat
                 .Builder(context, CHANNEL_UPDATES)
                 .setSmallIcon(R.drawable.ic_notification_logo)
-                .setContentTitle(context.getString(R.string.notification_update_available, release.version))
-                .setContentText(context.getString(R.string.notification_tap_to_update))
+                .setContentTitle(title)
+                .setContentText(preview.ifEmpty { tapToUpdate })
+                .setCustomContentView(collapsed)
+                .setCustomBigContentView(expanded)
                 .setContentIntent(pendingIntent)
                 .setAutoCancel(true)
                 .setPriority(NotificationCompat.PRIORITY_LOW)

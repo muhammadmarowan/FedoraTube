@@ -6,6 +6,7 @@ import android.net.Uri
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,13 +18,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Download
 import androidx.compose.material.icons.rounded.Share
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -150,6 +152,10 @@ private fun startShare(
         .onFailure { Toast.makeText(context, R.string.share_app_qr_share_failed, Toast.LENGTH_SHORT).show() }
 }
 
+/**
+ * Share sheet for the app itself: the newest-release QR under the app's badge, and a Quick Share
+ * button that hands the installed APK to the system Sharesheet for an offline transfer.
+ */
 @Composable
 fun ShareAppQrDialog(
     onDismiss: () -> Unit,
@@ -179,9 +185,9 @@ fun ShareAppQrDialog(
 
     Dialog(onDismissRequest = onDismiss) {
         Surface(
-            shape = RoundedCornerShape(24.dp),
-            color = MaterialTheme.colorScheme.surface,
-            tonalElevation = 6.dp,
+            shape = RoundedCornerShape(28.dp),
+            color = MaterialTheme.colorScheme.surfaceContainerHigh,
+            tonalElevation = 8.dp,
             modifier = Modifier.fillMaxWidth().padding(16.dp),
         ) {
             Column(
@@ -189,100 +195,122 @@ fun ShareAppQrDialog(
                     Modifier
                         .fillMaxWidth()
                         .verticalScroll(rememberScrollState())
-                        .padding(24.dp),
+                        .padding(horizontal = 24.dp, vertical = 24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_notification_logo),
-                    contentDescription = null,
-                    modifier = Modifier.size(44.dp),
-                    tint = MaterialTheme.colorScheme.onSurface,
-                )
-                Spacer(modifier = Modifier.height(12.dp))
+                // App badge
+                Box(
+                    modifier =
+                        Modifier
+                            .size(56.dp)
+                            .clip(CircleShape)
+                            .background(MaterialTheme.colorScheme.surfaceContainerHighest),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_notification_logo),
+                        contentDescription = null,
+                        modifier = Modifier.size(32.dp),
+                        tint = MaterialTheme.colorScheme.onSurface,
+                    )
+                }
+                Spacer(modifier = Modifier.height(14.dp))
                 Text(
                     text = stringResource(R.string.share_app_qr_title),
-                    style = MaterialTheme.typography.titleLarge,
+                    style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface,
+                    textAlign = TextAlign.Center,
                 )
                 Spacer(modifier = Modifier.height(6.dp))
                 Text(
                     text = stringResource(R.string.share_app_qr_subtitle),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    textAlign = TextAlign.Center,
-                )
-                Spacer(modifier = Modifier.height(14.dp))
-                LatestReleasePill(tag = latestTag, resolved = resolved)
-                Spacer(modifier = Modifier.height(16.dp))
-                Box(
-                    modifier =
-                        Modifier
-                            .size(220.dp)
-                            .clip(RoundedCornerShape(20.dp))
-                            .background(Color.White)
-                            .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(20.dp))
-                            .padding(12.dp),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    QrCodeImage(
-                        text = downloadUrl,
-                        modifier = Modifier.fillMaxSize(),
-                    )
-                }
-                Spacer(modifier = Modifier.height(10.dp))
-                Text(
-                    text = stringResource(R.string.share_app_qr_source),
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-                Spacer(modifier = Modifier.height(20.dp))
-                Button(
-                    onClick = {
-                        if (preparing) return@Button
-                        preparing = true
-                        scope.launch {
-                            val uris = runCatching { prepareApkUris(context) }.getOrDefault(emptyList())
-                            preparing = false
-                            if (uris.isEmpty()) {
-                                Toast.makeText(context, R.string.share_app_qr_share_failed, Toast.LENGTH_SHORT).show()
-                            } else {
-                                startShare(context, uris)
-                            }
-                        }
-                    },
-                    enabled = !preparing,
-                    modifier = Modifier.fillMaxWidth(),
-                ) {
-                    if (preparing) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(18.dp),
-                            strokeWidth = 2.dp,
-                        )
-                    } else {
-                        Icon(Icons.Rounded.Share, contentDescription = null, modifier = Modifier.size(18.dp))
-                    }
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text =
-                            stringResource(
-                                if (preparing) R.string.share_app_qr_preparing else R.string.share_app_qr_share,
-                            ),
-                    )
-                }
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = stringResource(R.string.share_app_qr_share_hint),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center,
                 )
                 Spacer(modifier = Modifier.height(16.dp))
-                FilledTonalButton(
-                    onClick = onDismiss,
+                LatestReleasePill(tag = latestTag, resolved = resolved)
+                Spacer(modifier = Modifier.height(18.dp))
+
+                // QR card with the app badge floating in its middle
+                Box(contentAlignment = Alignment.Center) {
+                    Box(
+                        modifier =
+                            Modifier
+                                .size(236.dp)
+                                .clip(RoundedCornerShape(24.dp))
+                                .background(Color.White)
+                                .padding(14.dp),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        QrCodeImage(
+                            text = downloadUrl,
+                            modifier = Modifier.fillMaxSize(),
+                        )
+                    }
+                    Box(
+                        modifier =
+                            Modifier
+                                .size(60.dp)
+                                .clip(CircleShape)
+                                .background(Color.White)
+                                .border(1.dp, Color.White.copy(alpha = 0.35f), CircleShape),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_notification_logo),
+                            contentDescription = null,
+                            modifier = Modifier.size(34.dp),
+                            tint = MaterialTheme.colorScheme.onSurface,
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(24.dp))
+                Row(
                     modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
                 ) {
-                    Text(stringResource(R.string.close))
+                    Button(
+                        onClick = {
+                            if (preparing) return@Button
+                            preparing = true
+                            scope.launch {
+                                val uris = runCatching { prepareApkUris(context) }.getOrDefault(emptyList())
+                                preparing = false
+                                if (uris.isEmpty()) {
+                                    Toast.makeText(context, R.string.share_app_qr_share_failed, Toast.LENGTH_SHORT).show()
+                                } else {
+                                    startShare(context, uris)
+                                }
+                            }
+                        },
+                        enabled = !preparing,
+                        modifier = Modifier.weight(1.3f).height(48.dp),
+                    ) {
+                        if (preparing) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(18.dp),
+                                strokeWidth = 2.dp,
+                            )
+                        } else {
+                            Icon(Icons.Rounded.Share, contentDescription = null, modifier = Modifier.size(18.dp))
+                        }
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text =
+                                stringResource(
+                                    if (preparing) R.string.share_app_qr_preparing else R.string.share_app_qr_share,
+                                ),
+                        )
+                    }
+                    FilledTonalButton(
+                        onClick = onDismiss,
+                        modifier = Modifier.weight(1f).height(48.dp),
+                    ) {
+                        Text(stringResource(R.string.close))
+                    }
                 }
             }
         }

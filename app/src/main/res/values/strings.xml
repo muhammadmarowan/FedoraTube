@@ -3733,9 +3733,7 @@
     <string name="share_app_qr_subtitle">Scan this QR code with another phone to download the app directly</string>
     <string name="share_app_qr_latest_template">Latest release · %1$s</string>
     <string name="share_app_qr_checking_latest">Checking for the latest…</string>
-    <string name="share_app_qr_source">github.com/muhammadmarowan/FedoraTube</string>
     <string name="share_app_qr_share">Quick Share</string>
-    <string name="share_app_qr_share_hint">Send this APK to another phone directly — the other side needs no internet</string>
     <string name="share_app_qr_preparing">Preparing APK…</string>
     <string name="share_app_qr_share_chooser">Share FedoraTube APK</string>
     <string name="share_app_qr_share_failed">Could not share the APK</string>

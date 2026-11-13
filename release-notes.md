@@ -5,6 +5,9 @@
 
 ## Highlights
 
+- The update notification now previews what's new: the collapsed notification lists the release's first three "what's new" lines (with "Tap to update" under them), and the shade's down arrow expands it to the rest of the list
+- Settings › About's Report row is actually visible now: "Report a problem" sits in Settings home's About section (right under Check for updates) and opens your email app addressed to the developer — the earlier row landed on an unreachable page
+- The "Download FedoraTube" QR dialog got a full redesign: the app badge sits above the title, the app logo floats in the middle of the QR code, and Quick Share and Close sit side by side at the bottom — the GitHub link under the QR and the line under Quick Share are gone
 - Settings › About has a new "Report" section: tapping "Report a problem" opens your email app addressed to the developer (muhammadmarowan2007@gmail.com) with the subject pre-filled, so feedback goes straight to an email
 - Channel pages with a "Members only" system are tidied up: those filter chips moved off their row under the tabs and into the banner's top-right arrow together with Latest/Popular/Oldest — one arrow holds the whole filter menu, with a divider between sort and visibility entries
 - The "Download FedoraTube" QR dialog is redesigned (app icon, clearer text, a "Latest release · v…" pill and a tidier code card) and the QR now always points at the newest release — it asks GitHub when the dialog opens, including prereleases, instead of the old link that skipped them

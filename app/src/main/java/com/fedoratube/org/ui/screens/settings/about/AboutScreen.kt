@@ -122,7 +122,7 @@ internal fun AboutScreen(
 }
 
 /** Hands the report straight to the viewer's email client, addressed to the developer. */
-private fun openReport(context: Context) {
+internal fun openReport(context: Context) {
     val intent =
         Intent(Intent.ACTION_SENDTO).apply {
             data = Uri.parse("mailto:$REPORT_EMAIL")

@@ -3,8 +3,10 @@ package com.fedoratube.org.ui.screens.settings.home
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.CenterFocusStrong
 import androidx.compose.material.icons.outlined.CleaningServices
+import androidx.compose.material.icons.outlined.Email
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import com.fedoratube.org.BuildConfig
 import com.fedoratube.org.R
@@ -19,6 +21,8 @@ import com.fedoratube.org.ui.components.shared.DeepFlowState
 import com.fedoratube.org.ui.components.shared.FlowNavRow
 import com.fedoratube.org.ui.components.shared.FlowSwitchRow
 import com.fedoratube.org.ui.components.shared.deepFlowStatus
+import com.fedoratube.org.ui.screens.settings.about.openReport
+import com.fedoratube.org.ui.screens.settings.index.AboutIndex
 import com.fedoratube.org.ui.screens.settings.index.DestinationIndex
 import com.fedoratube.org.ui.screens.settings.index.HomeIndex
 
@@ -93,8 +97,8 @@ internal fun SettingsListScope.homeContent(
         page(SettingsDestination.WELLBEING)
         page(SettingsDestination.LANGUAGE_REGION)
     }
-    if (BuildConfig.UPDATER_ENABLED) {
-        group(key = "home.about", header = R.string.settings_header_about) {
+    group(key = "home.about", header = R.string.settings_header_about) {
+        if (BuildConfig.UPDATER_ENABLED) {
             nav(
                 HomeIndex.checkForUpdates,
                 onClick = actions.onCheckForUpdates,
@@ -102,6 +106,17 @@ internal fun SettingsListScope.homeContent(
                 enabled = state.updateCheckingLabel == null,
                 showChevron = false,
                 icon = HomeRowIcons.Updates,
+            )
+        }
+        row(AboutIndex.report.key) { shape ->
+            val context = LocalContext.current
+            FlowNavRow(
+                title = stringResource(AboutIndex.report.title),
+                supportingText = AboutIndex.report.summary?.let { stringResource(it) },
+                onClick = { openReport(context) },
+                leadingIcon = Icons.Outlined.Email,
+                showChevron = false,
+                shape = shape,
             )
         }
     }
