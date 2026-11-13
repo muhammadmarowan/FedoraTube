@@ -5,6 +5,8 @@
 
 ## Highlights
 
+- Bottom navigation bar icons are a bit bigger (26 dp) with a better look and animation: the selected tab's icon pops in with a soft spring, the outline→filled morph is springier, and unselected tabs sit slightly dimmer so the current tab reads clearly without an indicator
+- Player Settings "More" now looks exactly like the Player Settings front page: one continuous grouped row list in the same style (no blue section labels splitting it into blocks), so entering More reads as the same sheet
 - Related/recommendation videos under the player now fetch the moment a video opens — alongside stream resolution instead of after playback starts — so the rows are on screen right away (and no longer wait for the first frame when videos start paused)
 - Player Settings "More" section icons are redesigned to match the front page: same solid icon style as Quality/Speed/Captions instead of thin outline glyphs (SponsorBlock, notes, ambient mode, loop, skip silence, stable volume)
 - Comment sort chips (Top/Newest/Oldest/Timed) now hide while you scroll the comments and come back when you scroll up — in focus mode's comment panel and in the regular comment sheet, like YouTube

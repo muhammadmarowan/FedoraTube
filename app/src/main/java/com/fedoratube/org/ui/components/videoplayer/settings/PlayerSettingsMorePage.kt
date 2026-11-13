@@ -19,20 +19,18 @@ import com.fedoratube.org.player.EnhancedPlayerState
 import com.fedoratube.org.ui.components.equalizer.equalizerSummary
 import com.fedoratube.org.ui.components.shared.FlowNavRow
 import com.fedoratube.org.ui.components.shared.FlowRowGroup
-import com.fedoratube.org.ui.components.shared.FlowSectionHeader
 import com.fedoratube.org.ui.components.shared.FlowSwitchRow
 import com.fedoratube.org.ui.components.shared.flowRowGroupShape
 import com.fedoratube.org.utils.formatDurationMillis
-
-private const val PLAYBACK_ROWS = 3
-private const val OVERLAY_ROWS = 2
-private const val EFFECT_ROWS = 3
-private const val DISPLAY_ROWS = 1
 
 /**
  * The settings behind the front page's "More": everything YouTube's six rows leave out — playback
  * toggles, notes, the overlay controls, audio effects and display. No "Cast to TV": casting is out
  * of the app.
+ *
+ * Laid out as the one continuous grouped list the front page shows — same rows, same group, no
+ * section labels splitting it — so entering More reads as a page of the same sheet rather than a
+ * different screen.
  */
 @Composable
 internal fun PlayerSettingsMorePage(
@@ -53,14 +51,22 @@ internal fun PlayerSettingsMorePage(
     notePositionMs: Long? = null,
     onAddNote: () -> Unit = {},
 ) {
-    val playbackRows = if (sponsorBlockSegmentCount > 0) PLAYBACK_ROWS + 1 else PLAYBACK_ROWS
-    FlowSectionHeader(stringResource(R.string.playback_header))
+    // The conditional SponsorBlock and note rows shift every row under them, so the group's
+    // count and each row's index inside it are worked out first. Eight rows are unconditional:
+    // loop, autoplay, PiP, sleep timer, equalizer, skip silence, stable voice and ambient mode.
+    val sponsorBlockRows = if (sponsorBlockSegmentCount > 0) 1 else 0
+    val noteRows = if (notePositionMs != null) 1 else 0
+    val rows = 8 + sponsorBlockRows + noteRows
+    val overlayIndex = 2 + sponsorBlockRows + noteRows
+    val effectsIndex = overlayIndex + 2
+    val displayIndex = effectsIndex + 3
+
     FlowRowGroup {
         FlowSwitchRow(
             leadingIcon = Icons.Filled.Repeat,
             title = stringResource(R.string.loop_video),
             checked = playerState.isLooping,
-            shape = flowRowGroupShape(0, playbackRows),
+            shape = flowRowGroupShape(0, rows),
             onCheckedChange = onLoopToggle,
         )
         FlowSwitchRow(
@@ -68,7 +74,7 @@ internal fun PlayerSettingsMorePage(
             title = stringResource(R.string.autoplay_next),
             checked = autoplayEnabled,
             enabled = !playerState.isLooping,
-            shape = flowRowGroupShape(1, playbackRows),
+            shape = flowRowGroupShape(1, rows),
             onCheckedChange = onAutoplayToggle,
         )
         if (sponsorBlockSegmentCount > 0) {
@@ -78,72 +84,56 @@ internal fun PlayerSettingsMorePage(
                 supportingText =
                     pluralStringResource(R.plurals.sb_video_segments, sponsorBlockSegmentCount, sponsorBlockSegmentCount),
                 checked = !sponsorBlockOffForVideo,
-                shape = flowRowGroupShape(2, playbackRows),
+                shape = flowRowGroupShape(2, rows),
                 onCheckedChange = { on -> onSponsorBlockToggle(!on) },
             )
         }
-    }
-
-    if (notePositionMs != null) {
-        FlowSectionHeader(stringResource(R.string.note_title))
-        FlowRowGroup {
+        if (notePositionMs != null) {
             FlowNavRow(
                 leadingIcon = Icons.Filled.MoreTime,
                 title = stringResource(R.string.note_at_time, formatDurationMillis(notePositionMs)),
-                shape = flowRowGroupShape(0, 1),
+                shape = flowRowGroupShape(2 + sponsorBlockRows, rows),
                 onClick = onAddNote,
             )
         }
-    }
-
-    FlowSectionHeader(stringResource(R.string.player_settings_overlay_controls))
-    FlowRowGroup {
         FlowNavRow(
             leadingIcon = Icons.Filled.PictureInPicture,
             title = stringResource(R.string.pip_mode),
-            shape = flowRowGroupShape(0, OVERLAY_ROWS),
+            shape = flowRowGroupShape(overlayIndex, rows),
             onClick = onPipClick,
         )
         FlowNavRow(
             leadingIcon = Icons.Filled.Bedtime,
             title = stringResource(R.string.sleep_timer),
-            shape = flowRowGroupShape(1, OVERLAY_ROWS),
+            shape = flowRowGroupShape(overlayIndex + 1, rows),
             onClick = onSleepTimerClick,
         )
-    }
-
-    FlowSectionHeader(stringResource(R.string.audio_effects))
-    FlowRowGroup {
         FlowNavRow(
             leadingIcon = Icons.Filled.Equalizer,
             title = stringResource(R.string.equalizer),
             trailingText = equalizerSummary(),
-            shape = flowRowGroupShape(0, EFFECT_ROWS),
+            shape = flowRowGroupShape(effectsIndex, rows),
             onClick = { onNavigateToPage(PlayerSettingsPage.Equalizer) },
         )
         FlowSwitchRow(
             leadingIcon = Icons.Filled.GraphicEq,
             title = stringResource(R.string.player_settings_skip_silence),
             checked = playerState.isSkipSilenceEnabled,
-            shape = flowRowGroupShape(1, EFFECT_ROWS),
+            shape = flowRowGroupShape(effectsIndex + 1, rows),
             onCheckedChange = onSkipSilenceToggle,
         )
         FlowSwitchRow(
             leadingIcon = Icons.AutoMirrored.Filled.VolumeUp,
             title = stringResource(R.string.player_settings_stable_voice),
             checked = playerState.isStableVolumeEnabled,
-            shape = flowRowGroupShape(2, EFFECT_ROWS),
+            shape = flowRowGroupShape(effectsIndex + 2, rows),
             onCheckedChange = onStableVolumeToggle,
         )
-    }
-
-    FlowSectionHeader(stringResource(R.string.player_settings_display))
-    FlowRowGroup {
         FlowSwitchRow(
             leadingIcon = Icons.Filled.BlurCircular,
             title = stringResource(R.string.player_settings_ambient_mode),
             checked = ambientModeEnabled,
-            shape = flowRowGroupShape(0, DISPLAY_ROWS),
+            shape = flowRowGroupShape(displayIndex, rows),
             onCheckedChange = onAmbientModeToggle,
         )
     }

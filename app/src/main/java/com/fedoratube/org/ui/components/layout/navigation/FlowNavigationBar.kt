@@ -1,5 +1,6 @@
 package com.fedoratube.org.ui.components.layout.navigation
 
+import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
@@ -20,6 +21,7 @@ import androidx.compose.material3.ShortNavigationBarItem
 import androidx.compose.material3.ShortNavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,9 +37,16 @@ import com.fedoratube.org.ui.utils.isMediumWidth
 
 private const val MAX_BAR_TABS = 5
 
+/** A touch over the 24 dp default: the bar is icon-only, so the icon is the whole tab. */
+private val NavIconSize = 26.dp
+
+/** Unselected tabs sit back a step so the selected one reads without an indicator pill. */
+private const val UNSELECTED_ICON_ALPHA = 0.75f
+
 /**
  * The bottom navigation bar. YouTube-style: icon-only, no pill indicator,
- * selected icon morphs outline → filled with a smooth cross-fade + scale.
+ * selected icon morphs outline → filled with a smooth cross-fade + scale, and the icon that
+ * just won springs in a touch oversized so a tap reads as a pop.
  * Material allows at most five destinations in a bar, so a sixth and
  * seventh enabled tab move behind a "More" item; the rail has room for all of them.
  */
@@ -104,8 +113,25 @@ private fun AnimatedNavIcon(
                 ),
             label = "navIconMorph",
         )
+    // The icon that just won lands oversized and springs back to rest, so selecting a tab
+    // reads as a pop rather than a quiet swap of two glyphs.
+    val pop = remember { Animatable(1f) }
+    LaunchedEffect(selected) {
+        if (selected) {
+            pop.snapTo(0.84f)
+            pop.animateTo(
+                1f,
+                spring(
+                    dampingRatio = Spring.DampingRatioLowBouncy,
+                    stiffness = Spring.StiffnessMediumLow,
+                ),
+            )
+        } else {
+            pop.animateTo(1f, spring(stiffness = Spring.StiffnessMediumLow))
+        }
+    }
     Box(
-        modifier = Modifier.size(24.dp),
+        modifier = Modifier.size(NavIconSize),
         contentAlignment = Alignment.Center,
     ) {
         Icon(
@@ -114,11 +140,11 @@ private fun AnimatedNavIcon(
             modifier =
                 Modifier
                     .graphicsLayer {
-                        alpha = 1f - progress
-                        scaleX = 1f - 0.08f * progress
-                        scaleY = 1f - 0.08f * progress
+                        alpha = (UNSELECTED_ICON_ALPHA * (1f - progress)).coerceIn(0f, 1f)
+                        scaleX = 1f - 0.10f * progress
+                        scaleY = 1f - 0.10f * progress
                     }
-                    .size(24.dp),
+                    .size(NavIconSize),
         )
         Icon(
             imageVector = tab.icon(selected = true),
@@ -126,11 +152,12 @@ private fun AnimatedNavIcon(
             modifier =
                 Modifier
                     .graphicsLayer {
-                        alpha = progress
-                        scaleX = 0.88f + 0.12f * progress
-                        scaleY = 0.88f + 0.12f * progress
+                        alpha = progress.coerceIn(0f, 1f)
+                        val scale = (0.84f + 0.16f * progress) * pop.value
+                        scaleX = scale
+                        scaleY = scale
                     }
-                    .size(24.dp),
+                    .size(NavIconSize),
         )
     }
 }
@@ -149,7 +176,13 @@ private fun OverflowItem(
         ShortNavigationBarItem(
             selected = selectedTab in tabs,
             onClick = { expanded = true },
-            icon = { Icon(imageVector = Icons.Filled.MoreHoriz, contentDescription = stringResource(R.string.nav_more)) },
+            icon = {
+                Icon(
+                    imageVector = Icons.Filled.MoreHoriz,
+                    contentDescription = stringResource(R.string.nav_more),
+                    modifier = Modifier.size(NavIconSize),
+                )
+            },
             label = null,
             iconPosition = iconPosition,
             colors =
