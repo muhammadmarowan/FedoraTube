@@ -1,19 +1,19 @@
 <div align="center">
 
-<img src="Assets/logo.png" width="120" alt="FedoraTube Logo" style="border-radius: 24px; box-shadow: 0 8px 24px rgba(0, 114, 239, 0.35);">
+<img src="Assets/banner.png" width="420" alt="FedoraTube">
 
-# FedoraTube
+<br><br>
 
-**A fast, elegant, and distraction-free YouTube and Music streaming client designed for Android.**
+### A fast, elegant, and distraction-free YouTube & music streaming client for Android.
 
-<br>
-
-[![Latest Release](https://img.shields.io/github/v/release/muhammadmarowan/FedoraTube?style=for-the-badge&color=0072EF&logo=github&label=Release)](https://github.com/muhammadmarowan/FedoraTube/releases/latest)
-[![Platform](https://img.shields.io/badge/Platform-Android_8.0+-3DDC84?style=for-the-badge&logo=android&logoColor=white)](https://github.com/muhammadmarowan/FedoraTube/releases/latest)
-[![Shorts Blocked](https://img.shields.io/badge/Shorts-100%25_Blocked-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://github.com/muhammadmarowan/FedoraTube)
+[![Latest Release](https://img.shields.io/github/v/release/muhammadmarowan/FedoraTube?include_prereleases&style=for-the-badge&color=0072EF&logo=github&label=Release)](https://github.com/muhammadmarowan/FedoraTube/releases)
+[![Platform](https://img.shields.io/badge/Platform-Android_8.0+-3DDC84?style=for-the-badge&logo=android&logoColor=white)](https://github.com/muhammadmarowan/FedoraTube/releases)
+[![Shorts Blocked](https://img.shields.io/badge/Shorts-100%25_Blocked-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](#-100--shorts-free)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg?style=for-the-badge)](License)
 
 <br>
+
+[⬇️ Install](#-install) &nbsp;&nbsp;·&nbsp;&nbsp; [✨ Features](#-features) &nbsp;&nbsp;·&nbsp;&nbsp; [📱 Screenshots](#-screenshots) &nbsp;&nbsp;·&nbsp;&nbsp; [🔒 Privacy](#-privacy) &nbsp;&nbsp;·&nbsp;&nbsp; [📄 License](#-license)
 
 </div>
 
@@ -24,63 +24,123 @@
 <div align="center">
   <table>
     <tr>
-      <td align="center" width="33%">
-        <b>Home Feed</b><br>
-        <sub>Clean subscription & recommendation feed</sub><br><br>
-        <img src="Assets/home.png" width="220" alt="Home Feed">
+      <td align="center" width="25%">
+        <b>Home</b><br>
+        <sub>Subscription & recommendation feed</sub><br><br>
+        <img src="Assets/shot_home.jpg" width="200" alt="Home feed">
       </td>
-      <td align="center" width="33%">
-        <b>Music Hub</b><br>
-        <sub>Top charts, artists & mood playlists</sub><br><br>
-        <img src="Assets/music.png" width="220" alt="Music Hub">
+      <td align="center" width="25%">
+        <b>Music</b><br>
+        <sub>Trending, global charts & top artists</sub><br><br>
+        <img src="Assets/shot_music.jpg" width="200" alt="Music hub">
       </td>
-      <td align="center" width="33%">
-        <b>Focus Mode</b><br>
-        <sub>Minimalist search-first canvas</sub><br><br>
-        <img src="Assets/focus_mode.png" width="220" alt="Focus Mode">
+      <td align="center" width="25%">
+        <b>Search</b><br>
+        <sub>Minimal search-first canvas</sub><br><br>
+        <img src="Assets/shot_search.png" width="200" alt="Search">
+      </td>
+      <td align="center" width="25%">
+        <b>Player</b><br>
+        <sub>Comments, actions & related videos</sub><br><br>
+        <img src="Assets/shot_player.jpg" width="200" alt="Video player">
       </td>
     </tr>
   </table>
 </div>
 
-<br>
+---
+
+## ✨ Features
+
+<table>
+  <tr>
+    <td width="50%">
+
+### 🚫 100% Shorts-free
+- **No Shorts, ever** — Shorts shelves and feeds are stripped out across the whole app.
+- **Anti-doomscroll** — long-form, high-value content without algorithmic distraction.
+
+### 🎯 Focus Mode
+- **Search-first canvas** — a clean, distraction-free screen centered on discovery and playback.
+- **No algorithmic clutter** — suppress noisy home feeds when you just want to find something.
+
+### 🎵 Music Hub
+- **Trending & charts** — daily trending tracks, Global Top 100 and top artists worldwide.
+- **Synced lyrics** — real-time lyrics with quick album-art flipping while you sing along.
+- **Lockscreen artwork** — dynamic artwork on the lockscreen and player background.
+
+### ⚡ Player
+- **SponsorBlock** — automatically skip sponsored segments, intros, outros and subscription reminders.
+- **Background play & PiP** — audio keeps playing with the screen off or in picture-in-picture.
+- **Quality & speed control** — pick resolution, playback speed and double-tap seek behavior.
+
+    </td>
+    <td width="50%">
+
+### 🔒 Private by design
+- **No account, no tracking** — no Google login, no analytics, no telemetry, no ads. See [privacy.md](privacy.md).
+- **On-device recommendations** — your watch habits are computed locally and never leave your phone.
+- **Backup & restore** — export and import subscriptions, history and playlists anytime.
+
+### 📲 Share with anyone
+- **Share-app QR** — always points at the newest release, prereleases included.
+- **Quick Share** — send the installed APK to a nearby phone over the system Sharesheet, no internet needed.
+
+### 🔔 Smart updates
+- **What's-new notification** — update notifications preview the first lines of the changelog; expand for the rest.
+- **In-app updater** — check for, download and install updates without leaving the app.
+
+### 🌍 Made for everyone
+- **30 languages** — fully translated UI, from Arabic to Vietnamese.
+- **Lightweight** — five ABI builds (universal, arm64-v8a, armeabi-v7a, x86, x86_64) so you only download what your device needs.
+
+    </td>
+  </tr>
+</table>
 
 ---
 
-## ✨ Highlights & Key Features
+## ⬇️ Install
 
-### 🚫 100% Shorts-Free & Anti-Doomscroll
-* **Zero Shorts Feeds:** YouTube Shorts are permanently disabled and stripped out across the entire application.
-* **No Reel Addiction:** Say goodbye to endless vertical scrolling traps—FedoraTube eliminates Shorts shelves.
-* **Mindful Consumption:** Enjoy long-form, educational, and high-value content without algorithmic distraction.
+Download the latest APK from the **[Releases page](https://github.com/muhammadmarowan/FedoraTube/releases)**:
 
-### 🎯 Minimalist Focus Mode
-* **Search-First Experience:** A clean, distraction-free interface centered on discovery and playback.
-* **No Algorithmic Clutter:** Suppress noisy home feeds and intrusive recommendations.
+| APK | For |
+|---|---|
+| `app-github-universal-release.apk` | Any device — safest choice |
+| `app-github-arm64-v8a-release.apk` | Modern phones (most devices since ~2017) |
+| `app-github-armeabi-v7a-release.apk` | Older 32-bit phones |
+| `app-github-x86_64-release.apk` | x86_64 emulators & devices |
+| `app-github-x86-release.apk` | x86 emulators |
 
-### 🎵 Full Music Player & Hub
-* **Music Hub:** Explore trending hits, Top 100 charts, artist discographies, and mood-based stations.
-* **Live Synced Lyrics:** Sing along with dynamic, real-time lyrics and quick album-art flipping.
-* **Lockscreen & Background Sync:** Dynamic artwork updates on lockscreen and player background upon track change.
+- **Requires Android 8.0 (API 26) or newer.**
+- Updates are announced in-app and via notification — install once and you will never miss a release.
 
-### ⚡ Ad-Free Streaming & Background Play
-* **Built-in SponsorBlock:** Automatically skip sponsored segments, intros, outros, and subscription reminders.
-* **Background Play & PiP:** Keep audio playing while your screen is off or in Picture-in-Picture popup window mode.
+<details>
+<summary><b>Building from source</b></summary>
 
-### 🔒 100% Private, Lightweight & Offline First
-* **On-Device Recommendation Engine:** Recommendations are computed privately on your device. Your watch habits never leave your phone.
-* **No Google Account Required:** Access subscriptions, playlists, and history without logging in.
-* **Backup & Restore:** Easily export and import your subscriptions, history, and addons anytime.
+```bash
+git clone https://github.com/muhammadmarowan/FedoraTube.git
+cd FedoraTube
+./gradlew :app:assembleGithubRelease
+```
+
+APKs land in `app/build/outputs/apk/github/release/`. CI also runs on every push and publishes the same artifacts.
+
+</details>
 
 ---
 
-<div align="center">
+## 🔒 Privacy
+
+FedoraTube has **no account system, no analytics, no crash reporting and no advertising identifier**. Watch history, subscriptions, playlists and recommendations live in a local database on your device and leave it only if you start a backup export or a device-to-device sync over your own local network.
+
+Full details: **[privacy.md](privacy.md)**
+
+---
 
 ## 📄 License
 
-This project is Free and Open Source Software distributed under the **GNU General Public License v3 (GPLv3)**.  
+This project is Free and Open Source Software distributed under the **[GNU General Public License v3 (GPLv3)](License)**.
 In accordance with GPLv3, all source code and derivative modifications remain completely open and freely accessible.
 
 Copyright © 2026 **FedoraTube Contributors**
-
-</div>
