@@ -5,6 +5,9 @@
 
 ## Highlights
 
+- Related/recommendation videos under the player now fetch the moment a video opens — alongside stream resolution instead of after playback starts — so the rows are on screen right away (and no longer wait for the first frame when videos start paused)
+- Player Settings "More" section icons are redesigned to match the front page: same solid icon style as Quality/Speed/Captions instead of thin outline glyphs (SponsorBlock, notes, ambient mode, loop, skip silence, stable volume)
+- Comment sort chips (Top/Newest/Oldest/Timed) now hide while you scroll the comments and come back when you scroll up — in focus mode's comment panel and in the regular comment sheet, like YouTube
 - Home feed now actually follows your trending region: switching region (or content language) clears every Home cache — the saved feed, discovery searches, related lanes and the category chips — and rebuilds immediately with the new country/language, instead of keeping the old locale's feed until it expired
 - Music now follows your region too: trending/chart results are cached per country, and switching region clears the music search/genre/related caches, so the Music feed shows your selected region's trending rather than stale worldwide or old-region rows
 - Bottom navigation now hides while scrolling in the Subscriptions and Music sections too (as it already did on Home) and returns on the way up, so feeds get the whole screen

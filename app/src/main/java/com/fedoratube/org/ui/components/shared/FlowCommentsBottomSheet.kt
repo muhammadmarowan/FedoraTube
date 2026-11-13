@@ -1,5 +1,10 @@
 package com.fedoratube.org.ui.components.shared
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -74,6 +79,7 @@ fun FlowCommentsBottomSheet(
     val sheetState = rememberFlowBottomSheetState()
     val commentsListState = rememberLazyListState()
     val tint = rememberMediaArtworkTint(artworkUrl)
+    val chipsVisible = rememberCommentSortChipsVisible(commentsListState)
 
     LaunchedEffect(selectedFilter) {
         commentsListState.scrollToItem(0)
@@ -102,6 +108,7 @@ fun FlowCommentsBottomSheet(
                 onFilterChanged = onFilterChanged,
                 onClose = { sheetState.dismiss() },
                 showSortChips = showSortChips,
+                sortChipsVisible = chipsVisible,
                 showCloseButton = showCloseButton,
                 dragModifier = dragModifier,
             )
@@ -141,6 +148,7 @@ private fun CommentsSheetHeader(
     onClose: () -> Unit,
     dragModifier: Modifier,
     showSortChips: Boolean = true,
+    sortChipsVisible: Boolean = true,
     showCloseButton: Boolean = true,
 ) {
     Column(modifier = dragModifier) {
@@ -189,13 +197,19 @@ private fun CommentsSheetHeader(
                 }
             }
             if (showSortChips) {
-                CommentSortChips(
-                    selected = selectedFilter,
-                    onSelect = onFilterChanged,
-                    timedOnly = timedOnly,
-                    onTimedChange = onTimedChange,
-                    modifier = Modifier.padding(top = 2.dp),
-                )
+                AnimatedVisibility(
+                    visible = sortChipsVisible,
+                    enter = expandVertically(expandFrom = Alignment.Top) + fadeIn(),
+                    exit = shrinkVertically(shrinkTowards = Alignment.Top) + fadeOut(),
+                ) {
+                    CommentSortChips(
+                        selected = selectedFilter,
+                        onSelect = onFilterChanged,
+                        timedOnly = timedOnly,
+                        onTimedChange = onTimedChange,
+                        modifier = Modifier.padding(top = 2.dp),
+                    )
+                }
             }
         }
         HorizontalDivider(

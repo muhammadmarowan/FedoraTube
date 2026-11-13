@@ -1,19 +1,19 @@
 package com.fedoratube.org.ui.components.videoplayer.settings
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.rounded.VolumeUp
+import androidx.compose.material.icons.automirrored.filled.VolumeUp
 import androidx.compose.material.icons.filled.Bedtime
+import androidx.compose.material.icons.filled.Block
+import androidx.compose.material.icons.filled.BlurCircular
 import androidx.compose.material.icons.filled.Equalizer
+import androidx.compose.material.icons.filled.GraphicEq
+import androidx.compose.material.icons.filled.MoreTime
 import androidx.compose.material.icons.filled.PictureInPicture
+import androidx.compose.material.icons.filled.Repeat
 import androidx.compose.material.icons.filled.SkipNext
-import androidx.compose.material.icons.outlined.MoreTime
-import androidx.compose.material.icons.rounded.GraphicEq
-import androidx.compose.material.icons.rounded.Repeat
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import com.fedoratube.org.R
 import com.fedoratube.org.player.EnhancedPlayerState
 import com.fedoratube.org.ui.components.equalizer.equalizerSummary
@@ -57,7 +57,7 @@ internal fun PlayerSettingsMorePage(
     FlowSectionHeader(stringResource(R.string.playback_header))
     FlowRowGroup {
         FlowSwitchRow(
-            leadingIcon = Icons.Rounded.Repeat,
+            leadingIcon = Icons.Filled.Repeat,
             title = stringResource(R.string.loop_video),
             checked = playerState.isLooping,
             shape = flowRowGroupShape(0, playbackRows),
@@ -73,7 +73,7 @@ internal fun PlayerSettingsMorePage(
         )
         if (sponsorBlockSegmentCount > 0) {
             FlowSwitchRow(
-                leadingIcon = ImageVector.vectorResource(R.drawable.ic_block),
+                leadingIcon = Icons.Filled.Block,
                 title = stringResource(R.string.player_settings_sponsorblock_video),
                 supportingText =
                     pluralStringResource(R.plurals.sb_video_segments, sponsorBlockSegmentCount, sponsorBlockSegmentCount),
@@ -88,7 +88,7 @@ internal fun PlayerSettingsMorePage(
         FlowSectionHeader(stringResource(R.string.note_title))
         FlowRowGroup {
             FlowNavRow(
-                leadingIcon = Icons.Outlined.MoreTime,
+                leadingIcon = Icons.Filled.MoreTime,
                 title = stringResource(R.string.note_at_time, formatDurationMillis(notePositionMs)),
                 shape = flowRowGroupShape(0, 1),
                 onClick = onAddNote,
@@ -122,14 +122,14 @@ internal fun PlayerSettingsMorePage(
             onClick = { onNavigateToPage(PlayerSettingsPage.Equalizer) },
         )
         FlowSwitchRow(
-            leadingIcon = Icons.Rounded.GraphicEq,
+            leadingIcon = Icons.Filled.GraphicEq,
             title = stringResource(R.string.player_settings_skip_silence),
             checked = playerState.isSkipSilenceEnabled,
             shape = flowRowGroupShape(1, EFFECT_ROWS),
             onCheckedChange = onSkipSilenceToggle,
         )
         FlowSwitchRow(
-            leadingIcon = Icons.AutoMirrored.Rounded.VolumeUp,
+            leadingIcon = Icons.AutoMirrored.Filled.VolumeUp,
             title = stringResource(R.string.player_settings_stable_voice),
             checked = playerState.isStableVolumeEnabled,
             shape = flowRowGroupShape(2, EFFECT_ROWS),
@@ -140,7 +140,7 @@ internal fun PlayerSettingsMorePage(
     FlowSectionHeader(stringResource(R.string.player_settings_display))
     FlowRowGroup {
         FlowSwitchRow(
-            leadingIcon = ImageVector.vectorResource(R.drawable.ic_ambient_mode),
+            leadingIcon = Icons.Filled.BlurCircular,
             title = stringResource(R.string.player_settings_ambient_mode),
             checked = ambientModeEnabled,
             shape = flowRowGroupShape(0, DISPLAY_ROWS),

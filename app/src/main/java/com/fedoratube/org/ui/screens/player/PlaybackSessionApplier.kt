@@ -133,6 +133,21 @@ internal class PlaybackSessionApplier(
 
     fun startDislikeLoad(load: LoadContext) = dislikeCounts.start(load)
 
+    /**
+     * Arms the related lane the moment a load starts — alongside the stream resolution, without
+     * waiting for the first frame. The rows below the video belong to the screen that opens, so
+     * they arrive while /player is still resolving instead of after playback has begun.
+     */
+    fun armRelatedVideos(load: LoadContext) {
+        if (!isLoadCurrent(load.token)) return
+        secondaryMetadata.loadRelatedVideos(
+            videoId = load.videoId,
+            primaryCandidates = emptyList(),
+            loadToken = load.token,
+            awaitPlayback = false,
+        )
+    }
+
     suspend fun prepareLocalMedia(
         load: LoadContext,
         localFilePath: String,

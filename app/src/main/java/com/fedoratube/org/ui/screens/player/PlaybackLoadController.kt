@@ -188,6 +188,9 @@ internal class PlaybackLoadController(
 
         val load = LoadContext(videoId, loadToken)
         val sessionApplier = collaborators.sessionApplier
+        // The recommendation rows are part of the screen the user just opened, so they fetch
+        // alongside the stream resolution rather than behind the first frame.
+        sessionApplier.armRelatedVideos(load)
         activeLoadJob =
             scope.launch(networkDispatcher) {
                 Log.d(TAG, "Starting loadVideoInfo for $videoId")

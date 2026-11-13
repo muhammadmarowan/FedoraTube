@@ -67,7 +67,8 @@ internal fun Video?.withDownloadIdentity(
  *
  * `chapters`, `offlineSponsorBlockSegments`, `localFilePath` and `localFileVideoId` are deliberately
  * left as the load left them — chapters arrive separately off the watch response, and the local-copy
- * fields belong to the download step.
+ * fields belong to the download step. An empty `relatedVideos` is left alone too: the resolver never
+ * carries any, so the lane the fetch armed at load start already gathered survives this step.
  */
 internal fun VideoPlayerUiState.applyVodStreams(
     cachedVideo: Video,
@@ -87,7 +88,7 @@ internal fun VideoPlayerUiState.applyVodStreams(
     copy(
         cachedVideo = cachedVideo.keepingLateFieldsOf(this.cachedVideo),
         isArchivedLivestream = isArchivedLivestream,
-        relatedVideos = relatedVideos,
+        relatedVideos = relatedVideos.ifEmpty { this.relatedVideos },
         videoStream = videoStream,
         audioStream = audioStream,
         availableQualities = availableQualities,
@@ -129,7 +130,7 @@ internal fun VideoPlayerUiState.applyLiveStreams(
     hlsUrl: String?,
 ): VideoPlayerUiState =
     copy(
-        relatedVideos = relatedVideos,
+        relatedVideos = relatedVideos.ifEmpty { this.relatedVideos },
         isLoading = false,
         error = null,
         errorHint = null,
@@ -148,19 +149,19 @@ internal fun VideoPlayerUiState.applyVodFailure(
 ): VideoPlayerUiState =
     copy(
         isLoading = false,
-        relatedVideos = relatedVideos,
+        relatedVideos = relatedVideos.ifEmpty { this.relatedVideos },
         error = videoError.message,
         errorHint = videoError.hint,
     )
 
-/** Nothing resolved. A null [relatedVideos] leaves the lane the screen is already showing alone. */
+/** Nothing resolved. An empty or null [relatedVideos] leaves the lane the screen is already showing alone. */
 internal fun VideoPlayerUiState.applyPlaybackFailure(
     relatedVideos: List<Video>?,
     videoError: VideoErrorMapper.VideoError,
 ): VideoPlayerUiState =
     copy(
         isLoading = false,
-        relatedVideos = relatedVideos ?: this.relatedVideos,
+        relatedVideos = relatedVideos?.ifEmpty { this.relatedVideos } ?: this.relatedVideos,
         error = videoError.message,
         errorHint = videoError.hint,
     )

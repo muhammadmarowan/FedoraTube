@@ -1,5 +1,10 @@
 package com.fedoratube.org.ui.components.videoplayer.sheet
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -26,6 +31,7 @@ import com.fedoratube.org.data.model.Comment
 import com.fedoratube.org.ui.components.shared.CommentSortChips
 import com.fedoratube.org.ui.components.shared.CommentSortFilter
 import com.fedoratube.org.ui.components.shared.FlowCommentsList
+import com.fedoratube.org.ui.components.shared.rememberCommentSortChipsVisible
 import com.fedoratube.org.ui.components.shared.rememberMediaArtworkTint
 
 /**
@@ -55,6 +61,7 @@ fun PlayerCommentsPanel(
 ) {
     val listState = rememberLazyListState()
     val tint = rememberMediaArtworkTint(artworkUrl)
+    val chipsVisible = rememberCommentSortChipsVisible(listState)
     LaunchedEffect(selectedFilter) {
         listState.scrollToItem(0)
     }
@@ -90,13 +97,19 @@ fun PlayerCommentsPanel(
                 }
             }
         }
-        CommentSortChips(
-            selected = selectedFilter,
-            onSelect = onFilterChanged,
-            timedOnly = timedOnly,
-            onTimedChange = onTimedChange,
-            modifier = Modifier.padding(start = 16.dp, bottom = 6.dp),
-        )
+        AnimatedVisibility(
+            visible = chipsVisible,
+            enter = expandVertically(expandFrom = Alignment.Top) + fadeIn(),
+            exit = shrinkVertically(shrinkTowards = Alignment.Top) + fadeOut(),
+        ) {
+            CommentSortChips(
+                selected = selectedFilter,
+                onSelect = onFilterChanged,
+                timedOnly = timedOnly,
+                onTimedChange = onTimedChange,
+                modifier = Modifier.padding(start = 16.dp, bottom = 6.dp),
+            )
+        }
         HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.2f))
         FlowCommentsList(
             comments = comments,
