@@ -55,6 +55,6 @@ class NotificationSettingsViewModel
         fun setGeneral(value: Boolean) = write { preferences.setNotifGeneralEnabled(value) }
 
         companion object {
-            const val DEFAULT_INTERVAL_MINUTES = 360
+            const val DEFAULT_INTERVAL_MINUTES = 15
         }
     }

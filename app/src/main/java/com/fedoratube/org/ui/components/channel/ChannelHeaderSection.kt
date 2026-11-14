@@ -48,6 +48,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.fedoratube.org.R
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MenuDefaults
+import androidx.compose.ui.unit.sp
 import com.fedoratube.org.innertube.pages.channel.ChannelFilterGroup
 import com.fedoratube.org.innertube.pages.channel.ChannelHeader
 import com.fedoratube.org.ui.components.shared.ChannelAvatarImage
@@ -250,27 +253,44 @@ private fun ChannelSortArrow(
         Surface(
             onClick = { open = true },
             shape = CircleShape,
-            color = Color.Black.copy(alpha = 0.45f),
-            modifier = Modifier.size(38.dp),
+            color = Color.Black.copy(alpha = 0.50f),
+            modifier = Modifier.size(36.dp),
         ) {
-            Icon(
-                imageVector = Icons.Rounded.KeyboardArrowDown,
-                contentDescription = stringResource(R.string.channel_sort_open),
-                tint = Color.White,
-                modifier = Modifier.size(22.dp).align(Alignment.Center),
-            )
+            Box(contentAlignment = Alignment.Center) {
+                Icon(
+                    imageVector = Icons.Rounded.KeyboardArrowDown,
+                    contentDescription = stringResource(R.string.channel_sort_open),
+                    tint = Color.White,
+                    modifier = Modifier.size(20.dp),
+                )
+            }
         }
-        DropdownMenu(expanded = open, onDismissRequest = { open = false }) {
+        DropdownMenu(
+            expanded = open,
+            onDismissRequest = { open = false },
+            containerColor = Color(0xFF212121),
+            shape = RoundedCornerShape(12.dp),
+            border = androidx.compose.foundation.BorderStroke(0.5.dp, Color.White.copy(alpha = 0.12f)),
+            modifier = Modifier.background(Color(0xFF212121)),
+        ) {
             dropdowns.forEachIndexed { position, (groupIndex, group) ->
                 if (position > 0) {
-                    HorizontalDivider(modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp))
+                    HorizontalDivider(
+                        color = Color.White.copy(alpha = 0.08f),
+                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
+                    )
                 }
-                group.title?.let { title ->
+                val headerTitle = group.title ?: if (dropdowns.size > 1 || group.options.any { it.label.contains("date", ignoreCase = true) || it.label.contains("latest", ignoreCase = true) }) "Sort by" else null
+                if (headerTitle != null) {
                     Text(
-                        text = title,
-                        style = MaterialTheme.typography.labelLarge,
-                        color = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 2.dp),
+                        text = headerTitle,
+                        style =
+                            MaterialTheme.typography.titleSmall.copy(
+                                fontSize = 13.5.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                color = Color(0xFF3EA6FF), // Authentic YouTube blue sort header
+                            ),
+                        modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 10.dp, bottom = 6.dp),
                     )
                 }
                 val selectedIndex = selection.getOrElse(groupIndex) { -1 }
@@ -283,7 +303,17 @@ private fun ChannelSortArrow(
                 group.options.forEachIndexed { index, option ->
                     val isActive = index == activeIndex
                     DropdownMenuItem(
-                        text = { Text(option.label) },
+                        text = {
+                            Text(
+                                text = option.label,
+                                style =
+                                    MaterialTheme.typography.bodyMedium.copy(
+                                        fontSize = 14.5.sp,
+                                        fontWeight = FontWeight.Normal,
+                                        color = if (isActive) Color.White else Color(0xFFE0E0E0),
+                                    ),
+                            )
+                        },
                         onClick = {
                             open = false
                             onFilterSelected(groupIndex, index)
@@ -294,12 +324,18 @@ private fun ChannelSortArrow(
                                     Icon(
                                         imageVector = Icons.Rounded.Check,
                                         contentDescription = null,
+                                        tint = Color.White,
                                         modifier = Modifier.size(18.dp),
                                     )
                                 }
                             } else {
                                 null
                             },
+                        colors =
+                            androidx.compose.material3.MenuDefaults.itemColors(
+                                textColor = Color.White,
+                                leadingIconColor = Color.White,
+                            ),
                     )
                 }
             }

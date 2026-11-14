@@ -3,6 +3,7 @@ package com.fedoratube.org.ui.screens.player
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
@@ -246,8 +247,21 @@ internal fun EnhancedVideoPlayerScreen(
                             }
                         }
                     } else {
+                        val relatedListState = rememberLazyListState()
+                        LaunchedEffect(relatedListState, uiState.relatedVideos.size) {
+                            snapshotFlow {
+                                val lastVisible = relatedListState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
+                                val total = relatedListState.layoutInfo.totalItemsCount
+                                total > 0 && lastVisible >= total - 3
+                            }.collect { nearEnd ->
+                                if (nearEnd) {
+                                    viewModel.loadMoreRelatedVideos()
+                                }
+                            }
+                        }
                         LazyColumn(
-                            Modifier.fillMaxSize(),
+                            state = relatedListState,
+                            modifier = Modifier.fillMaxSize(),
                             contentPadding = PaddingValues(bottom = maxOf(ListEndPadding, dockReserve + QueueDockGap)),
                         ) {
                             item {

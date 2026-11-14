@@ -2290,11 +2290,11 @@ class PlayerPreferences(
         }
     }
 
-    // Subscription check interval (default: 360 minutes / 6 hours)
+    // Subscription check interval (default: 15 minutes)
     val subscriptionCheckIntervalMinutes: Flow<Int> =
         context.playerPreferencesDataStore.data
             .map { preferences ->
-                preferences[Keys.SUBSCRIPTION_CHECK_INTERVAL_MINUTES] ?: 360
+                preferences[Keys.SUBSCRIPTION_CHECK_INTERVAL_MINUTES] ?: 15
             }
 
     suspend fun setSubscriptionCheckIntervalMinutes(minutes: Int) {

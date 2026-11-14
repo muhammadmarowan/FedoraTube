@@ -22,78 +22,21 @@ internal object FlowNavTransitions {
         return if (fromIndex != -1 && toIndex != -1 && fromIndex != toIndex) fromIndex < toIndex else null
     }
 
-    // YouTube-style: fluid directional horizontal slide between Home, Subs, and Music tabs,
-    // combined with seamless fade.
+    // Smooth, seamless fade transitions across tabs without jarring full-page slide displacement
     val enter: AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition = {
-        when (isTabForward()) {
-            true ->
-                slideIntoContainer(
-                    AnimatedContentTransitionScope.SlideDirection.Start,
-                    animationSpec = tween(220, easing = FastOutSlowInEasing),
-                ) + fadeIn(animationSpec = tween(180, easing = FastOutSlowInEasing))
-
-            false ->
-                slideIntoContainer(
-                    AnimatedContentTransitionScope.SlideDirection.End,
-                    animationSpec = tween(220, easing = FastOutSlowInEasing),
-                ) + fadeIn(animationSpec = tween(180, easing = FastOutSlowInEasing))
-
-            null -> fadeIn(animationSpec = tween(150, easing = FastOutSlowInEasing))
-        }
+        fadeIn(animationSpec = tween(180, easing = FastOutSlowInEasing))
     }
 
     val exit: AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition = {
-        when (isTabForward()) {
-            true ->
-                slideOutOfContainer(
-                    AnimatedContentTransitionScope.SlideDirection.Start,
-                    animationSpec = tween(200, easing = FastOutLinearInEasing),
-                ) + fadeOut(animationSpec = tween(160, easing = FastOutLinearInEasing))
-
-            false ->
-                slideOutOfContainer(
-                    AnimatedContentTransitionScope.SlideDirection.End,
-                    animationSpec = tween(200, easing = FastOutLinearInEasing),
-                ) + fadeOut(animationSpec = tween(160, easing = FastOutLinearInEasing))
-
-            null -> fadeOut(animationSpec = tween(120, easing = FastOutLinearInEasing))
-        }
+        fadeOut(animationSpec = tween(140, easing = FastOutLinearInEasing))
     }
 
     val popEnter: AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition = {
-        when (isTabForward()) {
-            true ->
-                slideIntoContainer(
-                    AnimatedContentTransitionScope.SlideDirection.Start,
-                    animationSpec = tween(220, easing = FastOutSlowInEasing),
-                ) + fadeIn(animationSpec = tween(180, easing = FastOutSlowInEasing))
-
-            false ->
-                slideIntoContainer(
-                    AnimatedContentTransitionScope.SlideDirection.End,
-                    animationSpec = tween(220, easing = FastOutSlowInEasing),
-                ) + fadeIn(animationSpec = tween(180, easing = FastOutSlowInEasing))
-
-            null -> fadeIn(animationSpec = tween(150, easing = FastOutSlowInEasing))
-        }
+        fadeIn(animationSpec = tween(180, easing = FastOutSlowInEasing))
     }
 
     val popExit: AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition = {
-        when (isTabForward()) {
-            true ->
-                slideOutOfContainer(
-                    AnimatedContentTransitionScope.SlideDirection.Start,
-                    animationSpec = tween(200, easing = FastOutLinearInEasing),
-                ) + fadeOut(animationSpec = tween(160, easing = FastOutLinearInEasing))
-
-            false ->
-                slideOutOfContainer(
-                    AnimatedContentTransitionScope.SlideDirection.End,
-                    animationSpec = tween(200, easing = FastOutLinearInEasing),
-                ) + fadeOut(animationSpec = tween(160, easing = FastOutLinearInEasing))
-
-            null -> fadeOut(animationSpec = tween(120, easing = FastOutLinearInEasing))
-        }
+        fadeOut(animationSpec = tween(140, easing = FastOutLinearInEasing))
     }
 
     // A back gesture seeks these by its progress, so every part shares one linear duration.

@@ -9,17 +9,17 @@ import org.junit.Test
 class FedoraTabTest {
     @Test
     fun hiddenHomeFallsBackToFirstVisibleDestination() {
-        val visibility = NavigationVisibility(home = false, shorts = false, music = false)
+        val visibility = NavigationVisibility(home = false, music = false)
 
         val resolved =
             resolveDefaultFlowTab(
                 preferredId = FlowTab.Home.id,
-                order = listOf(0, 4, 3, 1, 2, 5, 6),
+                order = listOf(0, 4, 2, 5, 6),
                 visibility = visibility,
             )
 
         assertEquals(FlowTab.Library, resolved)
-        assertFalse(visibleFlowTabs(listOf(0, 4, 3), visibility).contains(FlowTab.Home))
+        assertFalse(visibleFlowTabs(listOf(0, 4), visibility).contains(FlowTab.Home))
     }
 
     @Test
@@ -27,7 +27,7 @@ class FedoraTabTest {
         val resolved =
             resolveDefaultFlowTab(
                 preferredId = FlowTab.Home.id,
-                order = listOf(3, 0, 4),
+                order = listOf(2, 0, 4),
                 visibility = NavigationVisibility(home = true),
             )
 
@@ -38,12 +38,12 @@ class FedoraTabTest {
     fun tabsFollowTheSavedOrder() {
         val tabs =
             visibleFlowTabs(
-                order = listOf(4, 3, 2, 1, 0),
+                order = listOf(4, 2, 0),
                 visibility = NavigationVisibility(),
             )
 
         assertEquals(
-            listOf(FlowTab.Library, FlowTab.Subscriptions, FlowTab.Music, FlowTab.Shorts, FlowTab.Home),
+            listOf(FlowTab.Library, FlowTab.Music, FlowTab.Home),
             tabs,
         )
     }
@@ -52,15 +52,13 @@ class FedoraTabTest {
     fun aSavedOrderMissingNewerTabsAppendsThemInDefaultOrder() {
         val tabs =
             visibleFlowTabs(
-                order = listOf(3, 0),
+                order = listOf(0),
                 visibility = NavigationVisibility(search = true, categories = true),
             )
 
         assertEquals(
             listOf(
-                FlowTab.Subscriptions,
                 FlowTab.Home,
-                FlowTab.Shorts,
                 FlowTab.Music,
                 FlowTab.Library,
                 FlowTab.Search,
@@ -72,7 +70,7 @@ class FedoraTabTest {
 
     @Test
     fun unknownPersistedIdsAreIgnored() {
-        val tabs = visibleFlowTabs(order = listOf(42, 4, -1, 3), visibility = NavigationVisibility())
+        val tabs = visibleFlowTabs(order = listOf(42, 4, -1), visibility = NavigationVisibility())
 
         assertEquals(FlowTab.Library, tabs.first())
         assertEquals(tabs.distinct(), tabs)
@@ -84,36 +82,30 @@ class FedoraTabTest {
         FlowTab.entries.forEach { tab -> assertEquals(tab, FlowTab.fromId(tab.id)) }
     }
 
-    /**
-     * Settings and Notifications live in the top bar of every root destination, which only works if
-     * a root destination always exists. Subscriptions and Library are unconditional in
-     * [visibleFlowTabs]; this pins that down so hiding tabs can never orphan those screens.
-     */
     @Test
     fun everyVisibilityCombinationKeepsAnUnhideableRootDestination() {
         val orders =
             listOf(
                 DEFAULT_NAV_TAB_ORDER,
-                listOf(6, 5, 4, 3, 2, 1, 0),
-                listOf(4, 3),
+                listOf(6, 5, 4, 2, 0),
+                listOf(4, 2),
                 emptyList(),
             )
 
-        for (bits in 0 until 32) {
+        for (bits in 0 until 16) {
             val visibility =
                 NavigationVisibility(
                     home = bits and 1 != 0,
-                    shorts = bits and 2 != 0,
-                    music = bits and 4 != 0,
-                    search = bits and 8 != 0,
-                    categories = bits and 16 != 0,
+                    music = bits and 2 != 0,
+                    search = bits and 4 != 0,
+                    categories = bits and 8 != 0,
                 )
 
             for (order in orders) {
                 val visible = visibleFlowTabs(order, visibility)
                 assertTrue(
                     "no unhideable root destination for $visibility / $order",
-                    visible.contains(FlowTab.Subscriptions) || visible.contains(FlowTab.Library),
+                    visible.contains(FlowTab.Library),
                 )
 
                 val resolved = resolveDefaultFlowTab(FlowTab.Home.id, order, visibility)

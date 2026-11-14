@@ -88,6 +88,9 @@ class VideoPlayerViewModel
         private val _uiState = MutableStateFlow(VideoPlayerUiState())
         val uiState: StateFlow<VideoPlayerUiState> = _uiState.asStateFlow()
 
+        private var isLoadingMoreRelated = false
+        private val seenRelatedSeedIds = mutableSetOf<String>()
+
         private val notes = PlayerNotes(notesRepository, playerPreferences, viewModelScope)
 
         val videoNote: StateFlow<String?> = notes.note
@@ -323,6 +326,8 @@ class VideoPlayerViewModel
             }
 
             loads.nextToken()
+            seenRelatedSeedIds.clear()
+            isLoadingMoreRelated = false
             takeOverPlayback()
             armStartPaused(video.id, userOpened)
             autoDownload.onOpened(video, userOpened)
@@ -589,4 +594,37 @@ class VideoPlayerViewModel
         fun toggleSkipSilence(isEnabled: Boolean) = settings.toggleSkipSilence(isEnabled)
 
         fun toggleStableVolume(isEnabled: Boolean) = settings.toggleStableVolume(isEnabled)
+
+        /**
+         * Loads more related videos continuously as the viewer scrolls down, matching YouTube's infinite recommended feed.
+         */
+        fun loadMoreRelatedVideos() {
+            val currentVideos = _uiState.value.relatedVideos
+            if (isLoadingMoreRelated || currentVideos.isEmpty()) return
+            val currentVideoId = _uiState.value.cachedVideo?.id ?: return
+
+            val seedVideo = currentVideos.firstOrNull { it.id !in seenRelatedSeedIds && it.id != currentVideoId }
+            val seedId = seedVideo?.id ?: currentVideos.lastOrNull()?.id ?: return
+            seenRelatedSeedIds.add(seedId)
+
+            isLoadingMoreRelated = true
+            viewModelScope.launch(networkDispatcher) {
+                try {
+                    val newCandidates = repository.getRelatedCandidates(seedId)
+                    if (newCandidates.isNotEmpty()) {
+                        val existingIds = _uiState.value.relatedVideos.map { it.id }.toSet()
+                        val uniqueNew = newCandidates.filter { it.id !in existingIds && it.id != currentVideoId }
+                        if (uniqueNew.isNotEmpty()) {
+                            _uiState.update { current ->
+                                current.copy(relatedVideos = current.relatedVideos + uniqueNew)
+                            }
+                        }
+                    }
+                } catch (e: Exception) {
+                    android.util.Log.e("VideoPlayerViewModel", "Failed to load more related videos", e)
+                } finally {
+                    isLoadingMoreRelated = false
+                }
+            }
+        }
     }

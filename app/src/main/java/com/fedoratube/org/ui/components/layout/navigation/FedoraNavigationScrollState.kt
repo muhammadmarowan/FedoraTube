@@ -14,7 +14,7 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 
-private val HideThreshold = 32.dp
+private val HideThreshold = 24.dp
 
 /**
  * Hides the bottom bar while the user scrolls content down and brings it back on the way up.
@@ -37,7 +37,7 @@ class FlowNavigationScrollState internal constructor(
                 available: Offset,
                 source: NestedScrollSource,
             ): Offset {
-                if (!hideOnScroll || locked || source != NestedScrollSource.UserInput) return Offset.Zero
+                if (!hideOnScroll || locked) return Offset.Zero
                 val delta = available.y
                 if (delta == 0f) return Offset.Zero
                 if (accumulated != 0f && (accumulated > 0f) != (delta > 0f)) accumulated = 0f

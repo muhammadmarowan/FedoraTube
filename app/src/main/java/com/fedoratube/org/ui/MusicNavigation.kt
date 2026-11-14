@@ -80,8 +80,8 @@ internal fun NavGraphBuilder.musicRoutes(
                     navController.navigate("moodsAndGenres")
                 }
             },
-            topCategoryTabs = topCategoryTabs,
-            onCategorySelected = onCategorySelected,
+            topCategoryTabs = emptyList(), // Music is now in the bottom navigation bar
+            onCategorySelected = {},
             onNotificationClick = {
                 navController.navigate("notifications")
             },

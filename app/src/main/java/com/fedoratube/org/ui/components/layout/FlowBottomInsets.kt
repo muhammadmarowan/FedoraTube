@@ -43,7 +43,7 @@ class FlowBottomInsets(
     private val miniPlayerSpanPx: State<ClosedFloatingPointRange<Float>> = mutableStateOf(0f..Float.MAX_VALUE),
 ) {
     /** Bottom space the settled chrome covers: gesture area, the bar when shown, the mini player when shown. */
-    val contentBottom: Dp get() = systemInset.value + barBottom + if (miniPlayerShown.value) miniPlayerHeight.value else 0.dp
+    val contentBottom: Dp get() = systemInset.value + barHeight.value + if (miniPlayerShown.value) miniPlayerHeight.value else 0.dp
 
     /** The bar's height while it is shown and settled, else zero. */
     val barBottom: Dp get() = if (barShown.value) barHeight.value else 0.dp

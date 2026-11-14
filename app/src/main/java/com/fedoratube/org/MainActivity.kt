@@ -337,29 +337,12 @@ class MainActivity : ComponentActivity() {
                                     }
                                 }
 
-                                // Animated Splash Screen Overlay
+                                // YouTube-style Minimal Centered Emblem Splash Overlay
                                 var isSplashVisible by remember { mutableStateOf(true) }
                                 val splashAlpha = remember { Animatable(1f) }
-                                val logoAlpha = remember { Animatable(0f) }
-                                val logoScale = remember { Animatable(0.90f) }
 
                                 LaunchedEffect(Unit) {
-                                    launch {
-                                        logoAlpha.animateTo(
-                                            1f,
-                                            animationSpec = tween(400, easing = FastOutSlowInEasing),
-                                        )
-                                    }
-                                    launch {
-                                        logoScale.animateTo(
-                                            1f,
-                                            animationSpec = spring(
-                                                dampingRatio = Spring.DampingRatioLowBouncy,
-                                                stiffness = Spring.StiffnessLow,
-                                            ),
-                                        )
-                                    }
-                                    delay(750)
+                                    delay(400)
                                     splashAlpha.animateTo(
                                         0f,
                                         animationSpec = tween(280, easing = FastOutLinearInEasing),
@@ -374,80 +357,28 @@ class MainActivity : ComponentActivity() {
                                                 .fillMaxSize()
                                                 .graphicsLayer { alpha = splashAlpha.value }
                                                 .background(Color(0xFF0F0F0F)),
+                                        contentAlignment = Alignment.Center,
                                     ) {
-                                        Column(
+                                        // Official YouTube-style centered Fedora emblem (emblem only, matching YouTube splash)
+                                        Box(
                                             modifier =
                                                 Modifier
-                                                    .align(Alignment.Center)
-                                                    .graphicsLayer {
-                                                        scaleX = logoScale.value
-                                                        scaleY = logoScale.value
-                                                        alpha = logoAlpha.value
-                                                    },
-                                            horizontalAlignment = Alignment.CenterHorizontally,
+                                                    .size(width = 72.dp, height = 50.dp)
+                                                    .clip(RoundedCornerShape(14.dp))
+                                                    .background(Color(0xFF0072EF)),
+                                            contentAlignment = Alignment.Center,
                                         ) {
-                                            // YouTube-style iconic Fedora emblem
-                                            Box(
-                                                modifier =
-                                                    Modifier
-                                                        .size(width = 72.dp, height = 50.dp)
-                                                        .clip(RoundedCornerShape(14.dp))
-                                                        .background(Color(0xFF0072EF)),
-                                                contentAlignment = Alignment.Center,
-                                            ) {
-                                                androidx.compose.foundation.Canvas(modifier = Modifier.size(20.dp)) {
-                                                    val playPath =
-                                                        androidx.compose.ui.graphics.Path().apply {
-                                                            moveTo(size.width * 0.28f, size.height * 0.16f)
-                                                            lineTo(size.width * 0.82f, size.height * 0.50f)
-                                                            lineTo(size.width * 0.28f, size.height * 0.84f)
-                                                            close()
-                                                        }
-                                                    drawPath(playPath, color = Color.White)
-                                                }
-                                            }
-
-                                            Spacer(modifier = Modifier.height(16.dp))
-
-                                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                                Text(
-                                                    text = "Fedora",
-                                                    style =
-                                                        MaterialTheme.typography.titleLarge.copy(
-                                                            fontSize = 22.sp,
-                                                            fontWeight = FontWeight.Bold,
-                                                            color = Color(0xFF0072EF),
-                                                            letterSpacing = (-0.5).sp,
-                                                        ),
-                                                )
-                                                Text(
-                                                    text = "Tube",
-                                                    style =
-                                                        MaterialTheme.typography.titleLarge.copy(
-                                                            fontSize = 22.sp,
-                                                            fontWeight = FontWeight.Bold,
-                                                            color = Color.White,
-                                                            letterSpacing = (-0.5).sp,
-                                                        ),
-                                                )
+                                            androidx.compose.foundation.Canvas(modifier = Modifier.size(20.dp)) {
+                                                val playPath =
+                                                    androidx.compose.ui.graphics.Path().apply {
+                                                        moveTo(size.width * 0.28f, size.height * 0.16f)
+                                                        lineTo(size.width * 0.82f, size.height * 0.50f)
+                                                        lineTo(size.width * 0.28f, size.height * 0.84f)
+                                                        close()
+                                                    }
+                                                drawPath(playPath, color = Color.White)
                                             }
                                         }
-
-                                        Text(
-                                            text = "from Fedora",
-                                            style =
-                                                MaterialTheme.typography.labelMedium.copy(
-                                                    fontSize = 11.sp,
-                                                    fontWeight = FontWeight.Medium,
-                                                    color = Color(0xFF717171),
-                                                    letterSpacing = 0.8.sp,
-                                                ),
-                                            modifier =
-                                                Modifier
-                                                    .align(Alignment.BottomCenter)
-                                                    .padding(bottom = 36.dp)
-                                                    .graphicsLayer { alpha = logoAlpha.value },
-                                        )
                                     }
                                 }
                             }

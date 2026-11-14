@@ -70,9 +70,7 @@ data class NavigationVisibility(
 /**
  * The bottom-bar tabs, in the user's order. Library cannot be hidden: every root
  * destination carries Notifications and Settings in its top bar, so one must always exist.
- * Subscriptions and Music live in the top category chips (see [topCategoryTabs]) and are
- * intentionally absent here, YouTube-style. Downloads sits directly after Home, whatever order
- * was persisted before they existed.
+ * Downloads lives in the Library section, YouTube-style. Music lives in the bottom navigation bar.
  */
 fun visibleFlowTabs(
     order: List<Int>,
@@ -81,38 +79,25 @@ fun visibleFlowTabs(
     val enabled =
         buildSet {
             if (visibility.home) add(FlowTab.Home)
-            add(FlowTab.Downloads)
+            if (visibility.music) add(FlowTab.Music)
             add(FlowTab.Library)
             if (visibility.search) add(FlowTab.Search)
             if (visibility.categories) add(FlowTab.Explore)
         }
-    var tabs =
-        (order + DEFAULT_NAV_TAB_ORDER)
-            .distinct()
-            .mapNotNull(FlowTab::fromId)
-            .filter { enabled.contains(it) }
-    if (FlowTab.Downloads in tabs) {
-        val withoutDownloads = tabs - FlowTab.Downloads
-        val anchorIndex = withoutDownloads.indexOf(FlowTab.Home)
-        tabs =
-            if (anchorIndex >= 0) {
-                withoutDownloads.toMutableList().apply { add(anchorIndex + 1, FlowTab.Downloads) }
-            } else {
-                listOf(FlowTab.Downloads) + withoutDownloads
-            }
-    }
-    return tabs
+    return (order + DEFAULT_NAV_TAB_ORDER)
+        .distinct()
+        .mapNotNull(FlowTab::fromId)
+        .filter { enabled.contains(it) }
 }
 
 /**
- * The three top chips under the app wordmark, YouTube-style: Home, Subscriptions, Music.
- * Respects the Home/Music toggles; Subscriptions is always present.
+ * The top chips under the app wordmark, YouTube-style: Home and Subscriptions.
+ * Music now lives in the bottom navigation bar.
  */
 fun topCategoryTabs(visibility: NavigationVisibility): List<FlowTab> =
     buildList {
         if (visibility.home) add(FlowTab.Home)
         add(FlowTab.Subscriptions)
-        if (visibility.music) add(FlowTab.Music)
     }
 
 fun resolveDefaultFlowTab(

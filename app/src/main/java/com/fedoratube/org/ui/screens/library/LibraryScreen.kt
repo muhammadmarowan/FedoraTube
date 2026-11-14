@@ -67,6 +67,7 @@ fun LibraryScreen(
     onNavigateToWatchLater: () -> Unit,
     onNavigateToLocalMedia: () -> Unit = {},
     onNavigateToNotes: () -> Unit,
+    onNavigateToDownloads: () -> Unit = {},
     onManageData: () -> Unit = {},
     onNavigateToSettings: () -> Unit = {},
     onOpenRecap: (RecapPeriod?) -> Unit,
@@ -150,7 +151,12 @@ fun LibraryScreen(
                         subtitle = LibrarySection.WATCH_LATER.subtitle(counts),
                         onClick = onNavigateToWatchLater,
                     )
-                    // Downloads lives in its own bottom-bar tab next to Shorts now.
+                    LibraryNavigationRow(
+                        icon = LibrarySection.DOWNLOADS.icon,
+                        title = LibrarySection.DOWNLOADS.title,
+                        subtitle = LibrarySection.DOWNLOADS.subtitle(counts),
+                        onClick = onNavigateToDownloads,
+                    )
                     if (notes != null && notes > 0) {
                         LibraryNavigationRow(
                             icon = LibrarySection.NOTES.icon,

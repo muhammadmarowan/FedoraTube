@@ -185,6 +185,9 @@ fun NavGraphBuilder.flowAppGraph(
             onNavigateToNotes = {
                 navController.navigate("notes")
             },
+            onNavigateToDownloads = {
+                navController.navigate("downloads")
+            },
             onManageData = {
                 navController.navigate("settings")
             },

@@ -9,9 +9,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -224,7 +227,20 @@ internal fun PlayerDetailSideColumn(
                             }
 
                             else -> {
+                                val sideListState = rememberLazyListState()
+                                LaunchedEffect(sideListState, uiState.relatedVideos.size) {
+                                    snapshotFlow {
+                                        val lastVisible = sideListState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
+                                        val total = sideListState.layoutInfo.totalItemsCount
+                                        total > 0 && lastVisible >= total - 3
+                                    }.collect { nearEnd ->
+                                        if (nearEnd) {
+                                            viewModel.loadMoreRelatedVideos()
+                                        }
+                                    }
+                                }
                                 LazyColumn(
+                                    state = sideListState,
                                     modifier = paneModifier,
                                     contentPadding = PaddingValues(bottom = 80.dp),
                                 ) {
