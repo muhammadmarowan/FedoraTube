@@ -153,6 +153,7 @@ fun FedoraApp(
             TabScrollEventBus.emitScrollToTop(tab.route)
         } else {
             currentRoute.value = tab.route
+            TabScrollEventBus.emitScrollToTop(tab.route)
             navController.navigateToTab(tab, defaultStartRoute)
         }
     }

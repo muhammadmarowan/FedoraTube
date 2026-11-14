@@ -6,13 +6,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -48,7 +48,7 @@ internal fun VideoCardStacked(
         VideoCardThumbnail(
             state = state,
             isUpcoming = video.isUpcoming,
-            shape = RoundedCornerShape(VideoCardDefaults.ThumbnailCornerRadius),
+            shape = RectangleShape,
             modifier = Modifier.fillMaxWidth(),
         )
 

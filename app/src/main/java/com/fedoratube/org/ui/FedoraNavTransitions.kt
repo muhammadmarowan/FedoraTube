@@ -9,25 +9,22 @@ import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
 import androidx.navigation.NavBackStackEntry
 
 internal object FlowNavTransitions {
-    // Modern YouTube-style: fluid fade + subtle depth scale, no horizontal slide.
+    // YouTube-style: seamless fade only, no scale or slide. This ensures switching between Home,
+    // Subscriptions, and Music tabs has ZERO screen shake or jitter.
     val enter: AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition = {
-        fadeIn(animationSpec = tween(220, easing = FastOutSlowInEasing)) +
-            scaleIn(initialScale = 0.98f, animationSpec = tween(220, easing = FastOutSlowInEasing))
+        fadeIn(animationSpec = tween(150, easing = FastOutSlowInEasing))
     }
     val exit: AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition = {
-        fadeOut(animationSpec = tween(180, easing = FastOutLinearInEasing))
+        fadeOut(animationSpec = tween(120, easing = FastOutLinearInEasing))
     }
     val popEnter: AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition = {
-        fadeIn(animationSpec = tween(220, easing = FastOutSlowInEasing))
+        fadeIn(animationSpec = tween(150, easing = FastOutSlowInEasing))
     }
     val popExit: AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition = {
-        fadeOut(animationSpec = tween(180, easing = FastOutLinearInEasing)) +
-            scaleOut(targetScale = 0.98f, animationSpec = tween(180, easing = FastOutLinearInEasing))
+        fadeOut(animationSpec = tween(120, easing = FastOutLinearInEasing))
     }
 
     // A back gesture seeks these by its progress, so every part shares one linear duration.

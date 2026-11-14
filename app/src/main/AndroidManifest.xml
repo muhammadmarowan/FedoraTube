@@ -178,7 +178,7 @@
                 <data android:mimeType="text/plain" />
             </intent-filter>
 
-            <!-- A playlist file shared from Flow opens here and is imported. -->
+            <!-- A playlist file shared from FedoraTube opens here and is imported. -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <action android:name="android.intent.action.SEND" />
@@ -209,7 +209,7 @@
             </intent-filter>
         </service>
 
-        <!-- Media3 playback resumption: a headset's Play after Flow was killed reaches the music
+        <!-- Media3 playback resumption: a headset's Play after FedoraTube was killed reaches the music
              service (the only MediaLibraryService), which resumes the saved queue. -->
         <receiver
             android:name="androidx.media3.session.MediaButtonReceiver"
@@ -229,7 +229,7 @@
             android:name=".data.video.downloader.work.DownloadActionReceiver"
             android:exported="false" />
 
-        <!-- Device Sync (FLOW-SYNC/1) foreground service: keeps the LAN WebSocket
+        <!-- Device Sync (FEDORA-SYNC/1) foreground service: keeps the LAN WebSocket
              transfer alive while the screen is off / app is backgrounded. -->
         <service
             android:name=".sync.transport.SyncForegroundService"
@@ -268,7 +268,7 @@
             android:exported="false" />
 
         <!-- App Icon Variants (via activity-alias)                          -->
-        <!-- Default: Flow Red -->
+        <!-- Default: Fedora Red -->
         <activity-alias
             android:name=".IconFedoraRed"
             android:enabled="true"
@@ -282,7 +282,7 @@
             </intent-filter>
         </activity-alias>
 
-        <!-- Flow Light -->
+        <!-- Fedora Light -->
         <activity-alias
             android:name=".IconFedoraLight"
             android:enabled="false"
@@ -296,7 +296,7 @@
             </intent-filter>
         </activity-alias>
 
-        <!-- Flow Play (white background, red video frame + play mark) -->
+        <!-- Fedora Play (white background, red video frame + play mark) -->
         <activity-alias
             android:name=".IconFedoraPlay"
             android:enabled="false"

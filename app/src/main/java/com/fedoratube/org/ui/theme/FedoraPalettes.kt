@@ -11,6 +11,8 @@ import androidx.compose.ui.graphics.Color
  * DARK is Flow Default, LAVENDER_MIST is Lavender, NORDIC_HORIZON is Nord, OCEAN_BLUE is Deep Ocean
  * and CREAM_LIGHT is Cream Paper.
  */
+typealias FedoraPalettes = FlowPalettes
+
 object FlowPalettes {
     private val palettes: Map<ThemeMode, PalettePair> =
         mapOf(

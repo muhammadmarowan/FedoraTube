@@ -273,3 +273,26 @@ fun FlowSubscribeButton(
         }
     }
 }
+
+typealias FedoraSubscribeButtonSize = FlowSubscribeButtonSize
+
+@Composable
+fun FedoraSubscribeButton(
+    isSubscribed: Boolean,
+    onSubscribeClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    size: FlowSubscribeButtonSize = FlowSubscribeButtonSize.Default,
+    isNotificationsEnabled: Boolean = false,
+    onUnsubscribeClick: () -> Unit = onSubscribeClick,
+    onNotificationChange: (Boolean) -> Unit = {},
+    onAddNote: (() -> Unit)? = null,
+) = FlowSubscribeButton(
+    isSubscribed = isSubscribed,
+    onSubscribeClick = onSubscribeClick,
+    modifier = modifier,
+    size = size,
+    isNotificationsEnabled = isNotificationsEnabled,
+    onUnsubscribeClick = onUnsubscribeClick,
+    onNotificationChange = onNotificationChange,
+    onAddNote = onAddNote,
+)

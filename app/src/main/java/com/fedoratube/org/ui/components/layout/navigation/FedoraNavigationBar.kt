@@ -28,30 +28,32 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.fedoratube.org.R
 import com.fedoratube.org.ui.utils.LocalWindowSizeClass
 import com.fedoratube.org.ui.utils.isMediumWidth
 
 private const val MAX_BAR_TABS = 5
 
-/** A touch over the 24 dp default: the bar is icon-only, so the icon is the whole tab. */
-private val NavIconSize = 26.dp
+/** Modern YouTube icon size: 24 dp with clear label underneath. */
+private val NavIconSize = 24.dp
 
-/** Unselected tabs sit back a step so the selected one reads without an indicator pill. */
-private const val UNSELECTED_ICON_ALPHA = 0.75f
+/** Unselected tabs sit back subtly so the selected one reads with high clarity. */
+private const val UNSELECTED_ICON_ALPHA = 0.70f
 
 /**
- * The bottom navigation bar. YouTube-style: icon-only, no pill indicator,
- * selected icon morphs outline → filled with a smooth cross-fade + scale, and the icon that
- * just won springs in a touch oversized so a tap reads as a pop.
- * Material allows at most five destinations in a bar, so a sixth and
- * seventh enabled tab move behind a "More" item; the rail has room for all of them.
+ * Modern YouTube-style bottom navigation bar with subtle top divider, icon + label layout,
+ * smooth spring transitions, and refined elevation.
  */
 @Composable
-internal fun FlowNavigationBar(
+internal fun FedoraNavigationBar(
     tabs: List<FlowTab>,
     selectedTab: FlowTab?,
     onTabSelected: (FlowTab) -> Unit,
@@ -61,9 +63,18 @@ internal fun FlowNavigationBar(
     val iconPosition = if (horizontalItems) NavigationItemIconPosition.Start else NavigationItemIconPosition.Top
     val barTabs = if (tabs.size <= MAX_BAR_TABS) tabs else tabs.take(MAX_BAR_TABS - 1)
     val overflowTabs = tabs.drop(barTabs.size)
+    val topBorderColor = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.20f)
 
     ShortNavigationBar(
-        modifier = modifier,
+        modifier =
+            modifier.drawBehind {
+                drawLine(
+                    color = topBorderColor,
+                    start = Offset(0f, 0f),
+                    end = Offset(size.width, 0f),
+                    strokeWidth = 1.dp.toPx(),
+                )
+            },
         containerColor = MaterialTheme.colorScheme.surface,
         arrangement =
             if (horizontalItems) ShortNavigationBarArrangement.Centered else ShortNavigationBarArrangement.EqualWeight,
@@ -74,15 +85,26 @@ internal fun FlowNavigationBar(
                 selected = selected,
                 onClick = { onTabSelected(tab) },
                 icon = { AnimatedNavIcon(tab = tab, selected = selected) },
-                label = null,
+                label = {
+                    Text(
+                        text = stringResource(tab.labelRes),
+                        style =
+                            MaterialTheme.typography.labelSmall.copy(
+                                fontSize = 10.5.sp,
+                                fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Medium,
+                            ),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                },
                 iconPosition = iconPosition,
                 colors =
                     ShortNavigationBarItemDefaults.colors(
                         selectedIconColor = MaterialTheme.colorScheme.onSurface,
-                        unselectedIconColor = MaterialTheme.colorScheme.onSurface,
+                        unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
                         selectedTextColorTopIconPosition = MaterialTheme.colorScheme.onSurface,
                         selectedTextColorStartIconPosition = MaterialTheme.colorScheme.onSurface,
-                        unselectedTextColor = MaterialTheme.colorScheme.onSurface,
+                        unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f),
                         selectedIndicatorColor = androidx.compose.ui.graphics.Color.Transparent,
                     ),
             )
@@ -97,6 +119,14 @@ internal fun FlowNavigationBar(
         }
     }
 }
+
+@Composable
+internal fun FlowNavigationBar(
+    tabs: List<FlowTab>,
+    selectedTab: FlowTab?,
+    onTabSelected: (FlowTab) -> Unit,
+    modifier: Modifier = Modifier,
+) = FedoraNavigationBar(tabs, selectedTab, onTabSelected, modifier)
 
 @Composable
 private fun AnimatedNavIcon(

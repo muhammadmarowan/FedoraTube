@@ -110,16 +110,28 @@ fun EnhancedMusicScreen(
         }
     val musicListState = rememberLazyListState()
     val quickPicksGridState = rememberLazyGridState()
-    // Reset on every Music entry (not saveable) so re-entering Music always
-    // lands at the top with Trending first instead of a restored scroll offset.
-    var musicFirstScrollFixed by remember { androidx.compose.runtime.mutableStateOf(false) }
-    LaunchedEffect(Unit) { musicListState.scrollToItem(0, 0) }
-    LaunchedEffect(uiState.trendingSongs.isNotEmpty() || uiState.dynamicSections.isNotEmpty()) {
-        if ((uiState.trendingSongs.isNotEmpty() || uiState.dynamicSections.isNotEmpty()) && !musicFirstScrollFixed) {
-            musicFirstScrollFixed = true
-            if (musicListState.firstVisibleItemIndex != 0 || musicListState.firstVisibleItemScrollOffset != 0) {
-                musicListState.scrollToItem(0, 0)
-            }
+    // Ensure the feed always starts at index 0 offset 0, and doesn't get pushed down as
+    // asynchronous shelves (playlists, subscriptions, trending, speed dial) arrive progressively.
+    var userHasScrolled by remember { androidx.compose.runtime.mutableStateOf(false) }
+    LaunchedEffect(musicListState.isScrollInProgress) {
+        if (musicListState.isScrollInProgress) {
+            userHasScrolled = true
+        }
+    }
+    LaunchedEffect(Unit) {
+        userHasScrolled = false
+        musicListState.scrollToItem(0, 0)
+    }
+    LaunchedEffect(
+        uiState.trendingSongs.size,
+        uiState.dynamicSections.size,
+        uiState.speedDialTracks.size,
+        uiState.listenAgain.size,
+        ownPlaylists.size,
+        musicSubscriptions.size,
+    ) {
+        if (!userHasScrolled && (musicListState.firstVisibleItemIndex != 0 || musicListState.firstVisibleItemScrollOffset != 0)) {
+            musicListState.scrollToItem(0, 0)
         }
     }
 

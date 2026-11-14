@@ -46,6 +46,8 @@ enum class FlowTab(
     }
 }
 
+typealias FedoraTab = FlowTab
+
 @Composable
 fun FlowTab.icon(selected: Boolean): ImageVector =
     when (this) {

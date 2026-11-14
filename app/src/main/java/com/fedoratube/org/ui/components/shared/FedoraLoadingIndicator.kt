@@ -10,41 +10,53 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.LoadingIndicator
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 /**
- * Full-surface loading state. Only ever composed while a surface has nothing else to show, so the
- * indicator morph runs while it is on screen and leaves the tree with it.
+ * Full-surface loading state with sleek YouTube-style circular indicator.
  */
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun FlowLoadingIndicator(modifier: Modifier = Modifier) {
     Box(
         modifier = modifier.fillMaxSize(),
         contentAlignment = Alignment.Center,
     ) {
-        LoadingIndicator()
+        CircularProgressIndicator(
+            modifier = Modifier.size(36.dp),
+            strokeWidth = 3.dp,
+            color = MaterialTheme.colorScheme.primary,
+        )
     }
 }
+
+@Composable
+fun FedoraLoadingIndicator(modifier: Modifier = Modifier) = FlowLoadingIndicator(modifier)
 
 /**
  * Inline loading row for a feed continuation or a paged list tail.
  */
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun FlowFeedProgress(modifier: Modifier = Modifier) {
     Box(
         modifier =
             modifier
                 .fillMaxWidth()
-                .padding(vertical = 24.dp),
+                .padding(vertical = 20.dp),
         contentAlignment = Alignment.Center,
     ) {
-        LoadingIndicator()
+        CircularProgressIndicator(
+            modifier = Modifier.size(26.dp),
+            strokeWidth = 2.5.dp,
+            color = MaterialTheme.colorScheme.primary,
+        )
     }
 }
+
+@Composable
+fun FedoraFeedProgress(modifier: Modifier = Modifier) = FlowFeedProgress(modifier)
