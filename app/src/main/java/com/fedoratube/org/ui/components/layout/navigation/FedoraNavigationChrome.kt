@@ -41,7 +41,7 @@ object FlowNavigationDefaults {
      * The bar's height above the system navigation inset: Material's short navigation bar
      * container. The bar reports its real height, which grows past this at large font scales.
      */
-    val BarHeight: Dp = 64.dp
+    val BarHeight: Dp = 48.dp
 }
 
 /**

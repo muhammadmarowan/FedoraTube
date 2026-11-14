@@ -24,7 +24,6 @@ internal object DestinationIndex {
             ?.let(SettingsDestination::fromId)
 
     val REMOVED_DESTINATIONS: Set<SettingsDestination> = setOf(
-        SettingsDestination.TASTE,
         SettingsDestination.APPEARANCE,
         SettingsDestination.THEME,
         SettingsDestination.FONT,

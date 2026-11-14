@@ -79,6 +79,7 @@ fun visibleFlowTabs(
     val enabled =
         buildSet {
             if (visibility.home) add(FlowTab.Home)
+            add(FlowTab.Subscriptions)
             if (visibility.music) add(FlowTab.Music)
             add(FlowTab.Library)
             if (visibility.search) add(FlowTab.Search)

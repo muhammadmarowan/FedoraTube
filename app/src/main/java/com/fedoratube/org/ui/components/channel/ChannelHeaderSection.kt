@@ -280,7 +280,7 @@ private fun ChannelSortArrow(
                         modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
                     )
                 }
-                val headerTitle = group.title ?: if (dropdowns.size > 1 || group.options.any { it.label.contains("date", ignoreCase = true) || it.label.contains("latest", ignoreCase = true) }) "Sort by" else null
+                val headerTitle = group.title
                 if (headerTitle != null) {
                     Text(
                         text = headerTitle,
@@ -318,19 +318,18 @@ private fun ChannelSortArrow(
                             open = false
                             onFilterSelected(groupIndex, index)
                         },
-                        leadingIcon =
+                        leadingIcon = {
                             if (isActive) {
-                                {
-                                    Icon(
-                                        imageVector = Icons.Rounded.Check,
-                                        contentDescription = null,
-                                        tint = Color.White,
-                                        modifier = Modifier.size(18.dp),
-                                    )
-                                }
+                                Icon(
+                                    imageVector = Icons.Rounded.Check,
+                                    contentDescription = null,
+                                    tint = Color.White,
+                                    modifier = Modifier.size(18.dp),
+                                )
                             } else {
-                                null
-                            },
+                                Spacer(modifier = Modifier.size(18.dp))
+                            }
+                        },
                         colors =
                             androidx.compose.material3.MenuDefaults.itemColors(
                                 textColor = Color.White,

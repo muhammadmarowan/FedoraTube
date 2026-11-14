@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.CleaningServices
+import androidx.compose.material.icons.outlined.PlayCircleOutline
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.Timer
 import androidx.compose.material3.Icon
@@ -51,6 +52,7 @@ internal fun SettingsHomeScreen(
     val preferences = remember(context) { PlayerPreferences(context) }
     val isFocusModeEnabled by preferences.focusModeEnabled.collectAsStateWithLifecycle(initialValue = false)
     val autoClearCacheHours by preferences.autoClearCacheHours.collectAsStateWithLifecycle(initialValue = 12)
+    val feedPlaybackMode by preferences.feedPlaybackMode.collectAsStateWithLifecycle(initialValue = com.fedoratube.org.data.local.FeedPlaybackMode.ALWAYS)
     val coroutineScope = rememberCoroutineScope()
 
     val deepFlow by viewModel.deepFlow.collectAsStateWithLifecycle()
@@ -62,6 +64,7 @@ internal fun SettingsHomeScreen(
     var highlight by remember { mutableStateOf<String?>(null) }
     var showDurationDialog by rememberSaveable { mutableStateOf(false) }
     var showAutoClearDialog by rememberSaveable { mutableStateOf(false) }
+    var showFeedPlaybackDialog by rememberSaveable { mutableStateOf(false) }
 
     val checkingLabel = stringResource(R.string.checking_for_updates)
     val searchable = rememberSearchableSettings()
@@ -122,6 +125,7 @@ internal fun SettingsHomeScreen(
                         updateCheckingLabel = checkingLabel.takeIf { updateCheck == UpdateCheckState.Checking },
                         isFocusModeEnabled = isFocusModeEnabled,
                         autoClearCacheHours = autoClearCacheHours,
+                        feedPlaybackMode = feedPlaybackMode,
                     ),
                 actions =
                     SettingsHomeActions(
@@ -139,9 +143,31 @@ internal fun SettingsHomeScreen(
                             coroutineScope.launch { preferences.setFocusModeEnabled(enabled) }
                         },
                         onAutoClearCacheClick = { showAutoClearDialog = true },
+                        onFeedPlaybackClick = { showFeedPlaybackDialog = true },
                     ),
             )
         }
+    }
+
+    if (showFeedPlaybackDialog) {
+        val options =
+            listOf(
+                FlowChoice(com.fedoratube.org.data.local.FeedPlaybackMode.ALWAYS, stringResource(R.string.feed_playback_always)),
+                FlowChoice(com.fedoratube.org.data.local.FeedPlaybackMode.WIFI_ONLY, stringResource(R.string.feed_playback_wifi)),
+                FlowChoice(com.fedoratube.org.data.local.FeedPlaybackMode.OFF, stringResource(R.string.feed_playback_off)),
+            )
+        FlowChoiceDialog(
+            title = stringResource(R.string.feed_playback_title),
+            description = stringResource(R.string.feed_playback_summary),
+            icon = Icons.Outlined.PlayCircleOutline,
+            options = options,
+            selected = feedPlaybackMode,
+            onSelect = { mode ->
+                coroutineScope.launch { preferences.setFeedPlaybackMode(mode) }
+                showFeedPlaybackDialog = false
+            },
+            onDismiss = { showFeedPlaybackDialog = false },
+        )
     }
 
     if (showAutoClearDialog) {

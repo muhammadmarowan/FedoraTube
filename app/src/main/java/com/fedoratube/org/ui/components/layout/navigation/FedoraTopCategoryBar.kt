@@ -119,10 +119,10 @@ fun FlowTopCategoryBar(
             (1f - (scrollBehavior.state.heightOffset / limit)).coerceIn(0f, 1f)
         }
     if (fraction <= 0.01f) return
-    val fullHeight = 46.dp
+    val fullHeight = 38.dp
     val density = LocalDensity.current
     val indicatorWidthPx = with(density) { 28.dp.toPx() }
-    val indicatorHeight = 3.dp
+    val indicatorHeight = 2.5.dp
 
     val targetBounds = CategoryIndicatorMemory.bounds[selectedTab?.id]
     val animatedLeft = CategoryIndicatorMemory.leftAnimatable.value

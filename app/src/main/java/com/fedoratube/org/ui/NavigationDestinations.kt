@@ -29,8 +29,8 @@ internal fun NavController.navigateToTab(
     }
 }
 
-/** Search is a tab, but it keeps the back-button layout of the other search screens, so no bar. */
-internal fun FlowTab?.showsNavigationBar(): Boolean = this != null && this != FlowTab.Search
+/** Search and Downloads are not displayed with the bottom navigation bar. */
+internal fun FlowTab?.showsNavigationBar(): Boolean = this != null && this != FlowTab.Search && this != FlowTab.Downloads
 
 internal fun youtubeChannelUrl(channelIdOrHandle: String): String? {
     val value = channelIdOrHandle.trim()

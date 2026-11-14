@@ -452,7 +452,7 @@ fun NavGraphBuilder.flowAppGraph(
             )
 
         com.fedoratube.org.ui.screens.library.DownloadsScreen(
-            isTabRoot = true,
+            isTabRoot = false,
             onSearchClick = { navController.navigate(com.fedoratube.org.ui.components.layout.navigation.FlowTab.Search.route) },
             onBackClick = { navController.popBackStack() },
             onVideoClick = { videos, index ->

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">FedoraTube</string>
-    <string name="app_launcher_name" translatable="false">FedoraTube</string>
+    <string name="app_launcher_name" translatable="false">fTube</string>
     <string name="subscriptions_search_placeholder">Search subscriptions ...</string>
     <string name="subscriptions_sort_label">Sort channels</string>
     <string name="subscriptions_sort_default">Default</string>
@@ -738,14 +738,19 @@
     <string name="notif_check_interval_off_new_videos">Off while New Videos is off</string>
     <string name="notif_check_interval_dialog_title">Check Interval</string>
     <string name="notif_check_interval_dialog_body">How often FedoraTube checks your subscriptions for new videos.</string>
-    <string name="notif_interval_15m">15 minutes</string>
+    <string name="notif_interval_15m">15 minutes (default)</string>
     <string name="notif_interval_30m">30 minutes</string>
     <string name="notif_interval_1h">1 hour</string>
     <string name="notif_interval_2h">2 hours</string>
     <string name="notif_interval_3h">3 hours</string>
-    <string name="notif_interval_6h">6 hours (default)</string>
+    <string name="notif_interval_6h">6 hours</string>
     <string name="notif_interval_12h">12 hours</string>
     <string name="notif_interval_24h">24 hours</string>
+    <string name="feed_playback_title">Playback in feeds</string>
+    <string name="feed_playback_summary">Choose whether videos play as you browse</string>
+    <string name="feed_playback_always">Always on</string>
+    <string name="feed_playback_wifi">Wi-Fi only</string>
+    <string name="feed_playback_off">Off</string>
     <string name="settings_item_theme">Theme</string>
     <string name="settings_item_app_icon">App Icon</string>
     <string name="settings_item_app_icon_subtitle">Customize your launcher icon</string>

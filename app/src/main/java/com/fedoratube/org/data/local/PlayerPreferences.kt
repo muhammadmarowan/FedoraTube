@@ -1,10 +1,12 @@
 package com.fedoratube.org.data.local
 
 import android.content.Context
+import androidx.annotation.StringRes
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.*
+import com.fedoratube.org.R
 import com.fedoratube.org.data.model.SponsorBlockCategories
 import com.fedoratube.org.data.playlist.PlaylistListOrder
 import com.fedoratube.org.data.video.downloader.work.RetagResult
@@ -227,6 +229,7 @@ class PlayerPreferences(
         val HOME_FEED_COLUMNS = stringPreferencesKey("home_feed_columns")
         val HOME_FEED_ENABLED = booleanPreferencesKey("home_feed_enabled")
         val REFRESH_HOME_ON_RESELECT = booleanPreferencesKey("refresh_home_on_reselect")
+        val FEED_PLAYBACK_MODE = stringPreferencesKey("feed_playback_mode")
         val RELATED_CARD_STYLE = stringPreferencesKey("related_card_style")
 
         // SponsorBlock per-category action keys
@@ -957,6 +960,12 @@ class PlayerPreferences(
                 preferences[Keys.FOCUS_MODE_ENABLED] ?: false
             }
 
+    val feedPlaybackMode: Flow<FeedPlaybackMode> =
+        context.playerPreferencesDataStore.data
+            .map { preferences ->
+                FeedPlaybackMode.fromId(preferences[Keys.FEED_PLAYBACK_MODE])
+            }
+
     /**
      * Master switch for Shorts (reels) as content. When OFF the app hides every reel surface and the
      * five granular Shorts toggles below are overridden — read the `effective*` flows, never the raw
@@ -1212,6 +1221,12 @@ class PlayerPreferences(
     suspend fun setFocusModeEnabled(enabled: Boolean) {
         context.playerPreferencesDataStore.edit { preferences ->
             preferences[Keys.FOCUS_MODE_ENABLED] = enabled
+        }
+    }
+
+    suspend fun setFeedPlaybackMode(mode: FeedPlaybackMode) {
+        context.playerPreferencesDataStore.edit { preferences ->
+            preferences[Keys.FEED_PLAYBACK_MODE] = mode.id
         }
     }
 
@@ -4074,6 +4089,16 @@ enum class SharedLinkAction {
 
     /** Always offer the video's menu. */
     ALWAYS_ASK,
+}
+
+enum class FeedPlaybackMode(val id: String, @StringRes val titleRes: Int) {
+    ALWAYS("always", R.string.feed_playback_always),
+    WIFI_ONLY("wifi_only", R.string.feed_playback_wifi),
+    OFF("off", R.string.feed_playback_off);
+
+    companion object {
+        fun fromId(id: String?): FeedPlaybackMode = entries.firstOrNull { it.id == id } ?: ALWAYS
+    }
 }
 
 const val LYRICS_ALIGN_LEFT = "left"

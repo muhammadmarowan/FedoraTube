@@ -10,18 +10,25 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.fedoratube.org.data.local.FeedPlaybackMode
+import com.fedoratube.org.data.local.PlayerPreferences
 import com.fedoratube.org.data.model.Video
 import com.fedoratube.org.ui.components.shared.ChannelAvatarStack
 import com.fedoratube.org.ui.components.shared.videoMetadataLine
+import com.fedoratube.org.ui.utils.rememberIsOnWifi
 
 /** The thumbnail across the full width with the details beneath: feeds and grids. */
 @Composable
@@ -38,6 +45,18 @@ internal fun VideoCardStacked(
     val cardPreferences = LocalVideoCardPreferences.current
     val actions = LocalVideoCardActions.current
 
+    val context = LocalContext.current
+    val preferences = remember(context) { PlayerPreferences(context) }
+    val feedPlaybackMode by preferences.feedPlaybackMode.collectAsStateWithLifecycle(initialValue = FeedPlaybackMode.ALWAYS)
+    val isOnWifi = rememberIsOnWifi()
+    val isFeedPlaybackEligible = remember(feedPlaybackMode, isOnWifi, video.isUpcoming, video.isLive) {
+        !video.isUpcoming && !video.isLive && when (feedPlaybackMode) {
+            FeedPlaybackMode.ALWAYS -> true
+            FeedPlaybackMode.WIFI_ONLY -> isOnWifi
+            FeedPlaybackMode.OFF -> false
+        }
+    }
+
     Column(
         modifier =
             modifier
@@ -50,6 +69,7 @@ internal fun VideoCardStacked(
             isUpcoming = video.isUpcoming,
             shape = RectangleShape,
             modifier = Modifier.fillMaxWidth(),
+            isFeedPlaybackEligible = isFeedPlaybackEligible,
         )
 
         // Modern YouTube card details layout: 36 dp avatar, 12 dp margin, sleek 14.5 sp typography,
