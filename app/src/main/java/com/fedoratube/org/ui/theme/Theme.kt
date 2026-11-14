@@ -146,7 +146,7 @@ val LocalExtendedColors =
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun FlowTheme(
+fun FedoraTheme(
     themeMode: ThemeMode = ThemeMode.SYSTEM,
     themeVariant: ThemeVariant = ThemeVariant.DARK,
     customTheme: CustomTheme? = null,
@@ -186,6 +186,27 @@ fun FlowTheme(
         )
     }
 }
+
+@Composable
+fun FlowTheme(
+    themeMode: ThemeMode = ThemeMode.SYSTEM,
+    themeVariant: ThemeVariant = ThemeVariant.DARK,
+    customTheme: CustomTheme? = null,
+    systemLightThemeMode: ThemeMode = ThemeMode.DARK,
+    systemDarkThemeMode: ThemeMode = ThemeMode.DARK,
+    systemDarkThemeVariant: ThemeVariant = ThemeVariant.DARK,
+    fontFamily: FontFamily = FlowFontFamily,
+    content: @Composable () -> Unit,
+) = FedoraTheme(
+    themeMode = themeMode,
+    themeVariant = themeVariant,
+    customTheme = customTheme,
+    systemLightThemeMode = systemLightThemeMode,
+    systemDarkThemeMode = systemDarkThemeMode,
+    systemDarkThemeVariant = systemDarkThemeVariant,
+    fontFamily = fontFamily,
+    content = content,
+)
 
 /**
  * Non-composable resolution of the app's active color scheme. Single source of truth

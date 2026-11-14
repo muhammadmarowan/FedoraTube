@@ -221,11 +221,10 @@ fun HomeScreen(
                 FlowTopBar(
                     title = {
                         if (!isFocusModeEnabled) {
-                            Image(
-                                painter = painterResource(R.drawable.ic_fedora_tube_wordmark),
-                                contentDescription = stringResource(R.string.app_name),
-                                modifier = Modifier.height(28.dp),
-                                contentScale = ContentScale.FillHeight,
+                            FedoraBrandWordmark(
+                                isDeepFlowActive = deepFlowActive,
+                                onLongPress = toggleDeepFlow,
+                                longPressLabel = deepFlowLabel,
                             )
                         }
                     },

@@ -21,6 +21,9 @@ object VideoCardDefaults {
     /** The card's side inset, and the gap between its thumbnail, avatar and text. */
     val Inset: Dp = 12.dp
 
+    /** Modern YouTube rounded thumbnail corner radius. */
+    val ThumbnailCornerRadius: Dp = 12.dp
+
     val AvatarSize: Dp = 40.dp
 
     val RowVerticalPadding: Dp = 8.dp

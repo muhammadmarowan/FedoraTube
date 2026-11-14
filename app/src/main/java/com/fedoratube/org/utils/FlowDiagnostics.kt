@@ -13,10 +13,12 @@ import java.util.Locale
  *
  * Reads logcat output for the current process (no special permissions required —
  * apps may always read their own PID's logs since API 18) and surfaces crash
- * reports that FlowCrashHandler persisted to disk.
+ * reports that FedoraCrashHandler persisted to disk.
  */
-object FlowDiagnostics {
-    private const val TAG = "FlowDiagnostics"
+typealias FlowDiagnostics = FedoraDiagnostics
+
+object FedoraDiagnostics {
+    private const val TAG = "FedoraDiagnostics"
     private const val RECENT_EXITS = 5
 
     // -------------------------------------------------------------------------
@@ -72,7 +74,7 @@ object FlowDiagnostics {
         buildString {
             val ts = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss", Locale.US))
             appendLine("=".repeat(60))
-            appendLine("FLOW DIAGNOSTICS REPORT")
+            appendLine("FEDORATUBE DIAGNOSTICS REPORT")
             appendLine("Generated: $ts")
             appendLine("=".repeat(60))
             appendLine()

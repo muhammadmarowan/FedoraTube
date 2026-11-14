@@ -4,13 +4,24 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.height
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.PathParser
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import com.fedoratube.org.R
 
 // SVG path data — a single unbreakable token, so the line-length rule cannot be satisfied by wrapping.
 @Suppress("ktlint:standard:max-line-length")
@@ -88,4 +99,44 @@ internal fun FlowHeaderLogoIcon(
     isDeepFlowActive: Boolean,
     modifier: Modifier = Modifier,
 ) = FedoraHeaderLogoIcon(isDeepFlowActive, modifier)
+
+@Composable
+internal fun FedoraBrandWordmark(
+    isDeepFlowActive: Boolean = false,
+    onLongPress: (() -> Unit)? = null,
+    longPressLabel: String = "",
+    modifier: Modifier = Modifier,
+) {
+    val scale by animateFloatAsState(
+        targetValue = if (isDeepFlowActive) 0.96f else 1f,
+        animationSpec = tween(durationMillis = 220),
+        label = "brandWordmarkScale",
+    )
+    Row(
+        modifier =
+            modifier
+                .then(
+                    if (onLongPress != null) {
+                        Modifier.deepFlowLongPress(longPressLabel, onLongPress)
+                    } else {
+                        Modifier
+                    },
+                ),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(6.dp),
+    ) {
+        Image(
+            painter = painterResource(R.drawable.ic_fedora_tube_wordmark),
+            contentDescription = stringResource(R.string.app_name),
+            modifier =
+                Modifier
+                    .height(28.dp)
+                    .graphicsLayer {
+                        scaleX = scale
+                        scaleY = scale
+                    },
+            contentScale = ContentScale.FillHeight,
+        )
+    }
+}
 

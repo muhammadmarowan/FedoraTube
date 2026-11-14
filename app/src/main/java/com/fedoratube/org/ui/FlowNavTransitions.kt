@@ -9,22 +9,25 @@ import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.navigation.NavBackStackEntry
 
 internal object FlowNavTransitions {
-    // YouTube-style: fade only, no horizontal slide. A slide here reads as a screen
-    // shake when switching top categories or going back.
+    // Modern YouTube-style: fluid fade + subtle depth scale, no horizontal slide.
     val enter: AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition = {
-        fadeIn(animationSpec = tween(200, easing = FastOutSlowInEasing))
+        fadeIn(animationSpec = tween(220, easing = FastOutSlowInEasing)) +
+            scaleIn(initialScale = 0.98f, animationSpec = tween(220, easing = FastOutSlowInEasing))
     }
     val exit: AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition = {
         fadeOut(animationSpec = tween(180, easing = FastOutLinearInEasing))
     }
     val popEnter: AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition = {
-        fadeIn(animationSpec = tween(200, easing = FastOutSlowInEasing))
+        fadeIn(animationSpec = tween(220, easing = FastOutSlowInEasing))
     }
     val popExit: AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition = {
-        fadeOut(animationSpec = tween(180, easing = FastOutLinearInEasing))
+        fadeOut(animationSpec = tween(180, easing = FastOutLinearInEasing)) +
+            scaleOut(targetScale = 0.98f, animationSpec = tween(180, easing = FastOutLinearInEasing))
     }
 
     // A back gesture seeks these by its progress, so every part shares one linear duration.
@@ -35,5 +38,7 @@ internal object FlowNavTransitions {
         fadeOut(animationSpec = tween(PREDICTIVE_BACK_DURATION_MS, easing = LinearEasing))
     }
 }
+
+internal typealias FedoraNavTransitions = FlowNavTransitions
 
 private const val PREDICTIVE_BACK_DURATION_MS = 300

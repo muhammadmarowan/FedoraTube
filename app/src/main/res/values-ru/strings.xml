@@ -1907,8 +1907,8 @@
     <string name="content_settings_restored_music_mini_player_subtitle">Автоматически восстанавливать последний музыкальный сеанс</string>
     <string name="content_settings_hide_unplayable_subscriptions_title">Скрывать неподдерживаемые видео из подписок</string>
     <string name="content_settings_hide_unplayable_subscriptions_subtitle">Скрывать видео 18+, приватные, удаленные и доступные только спонсорам после неудачного воспроизведения</string>
-    <string name="about_creator_name">A-EDev</string>
-    <string name="about_website_address">flow.aedev.me</string>
+    <string name="about_creator_name">muhammadmarowan</string>
+    <string name="about_website_address">github.com/muhammadmarowan/FedoraTube</string>
     <string name="about_reddit">Reddit</string>
     <string name="about_reddit_subtitle">GitHub Discussions</string>
     <string name="about_license_name">GNU GPL v3</string>

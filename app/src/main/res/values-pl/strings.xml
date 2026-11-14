@@ -1604,8 +1604,8 @@
     <string name="location_internal_app_desc">Dostępne wyłącznie dla aplikacji — pliki mogą zostać usunięte w przypadku odinstalowania aplikacji</string>
     <string name="location_manual_hint">/storage/emulated/0/…</string>
     <string name="location_badge_active">Aktywny</string>
-    <string name="about_creator_name">A-EDev</string>
-    <string name="about_website_address">flow.aedev.me</string>
+    <string name="about_creator_name">muhammadmarowan</string>
+    <string name="about_website_address">github.com/muhammadmarowan/FedoraTube</string>
     <string name="about_reddit">Reddit</string>
     <string name="about_license_name">GNU GPL v3</string>
     <string name="section_device">Urządzenie</string>

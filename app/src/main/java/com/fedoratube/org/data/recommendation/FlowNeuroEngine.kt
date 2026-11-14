@@ -1,15 +1,11 @@
 /*
- * Copyright (C) 2025-2026 Flow | A-EDev
+ * Copyright (C) 2026 FedoraTube Contributors
  *
  * This file is part of Fedora Tube (https://github.com/muhammadmarowan/FedoraTube).
  *
- * Flow is free software: you can redistribute it and/or modify
+ * FedoraTube is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, version 3 of the License.
- *
- * This recommendation algorithm (FlowNeuroEngine) is the intellectual property
- * of the Flow project. Any use of this code in other projects must
- * explicitly credit "Flow Android Client" and link back to the original repository.
  */
 
 package com.fedoratube.org.data.recommendation
@@ -45,7 +41,7 @@ import kotlin.math.ln
 import kotlin.math.log10
 
 /**
- * Flow Neuro Engine (V10.0 — Channel Intelligence + Shorts Vector + Anti-Rec + Momentum)
+ * Fedora Engine (V11.0 — Region + Interest + Search + Watch History Intelligence)
  *
  * Client-side hybrid recommendation: Vector Space Model + Heuristic Rules.
  *
@@ -55,9 +51,9 @@ import kotlin.math.log10
  * - NeuroVectorMath.kt — vector algebra (cosine similarity, vector adjustment)
  * - NeuroTokenizer.kt  — tokenization, IDF, feature extraction
  * - NeuroStorage.kt    — DataStore persistence, export/import, migration
- * - NeuroDiscovery.kt  — smart query generation (V2)
+ * - NeuroDiscovery.kt  — smart query generation (V4 + Regional & Search Intent)
  */
-class FlowNeuroEngine internal constructor(
+class FedoraEngine internal constructor(
     private val appContext: Context,
     private val storage: NeuroStorage,
     private val contentStore: NeuroContentStore,
@@ -69,7 +65,7 @@ class FlowNeuroEngine internal constructor(
     constructor(appContext: Context) : this(appContext, NeuroStorage(appContext), NeuroContentStore(appContext))
 
     companion object {
-        private const val TAG = "FlowNeuroEngine"
+        private const val TAG = "FedoraEngine"
 
         // ── Orchestrator-only constants ──
         // Trace sections the startup and Home benchmarks read (#1301).
@@ -129,17 +125,17 @@ class FlowNeuroEngine internal constructor(
         internal const val HISTORY_BOOTSTRAP_MAX_INTERACTIONS = NeuroScoring.ONBOARDING_WARMUP_INTERACTIONS
 
         @Volatile
-        private var instance: FlowNeuroEngine? = null
+        private var instance: FedoraEngine? = null
 
-        fun getInstance(context: Context): FlowNeuroEngine =
+        fun getInstance(context: Context): FedoraEngine =
             instance ?: synchronized(this) {
-                instance ?: FlowNeuroEngine(context.applicationContext).also {
+                instance ?: FedoraEngine(context.applicationContext).also {
                     instance = it
                 }
             }
 
-        private fun requireInstance(): FlowNeuroEngine =
-            instance ?: error("FlowNeuroEngine not initialized. Call initialize(context) first.")
+        private fun requireInstance(): FedoraEngine =
+            instance ?: error("FedoraEngine not initialized. Call initialize(context) first.")
 
         // ── Backward-compatible forwarding API ──
 
@@ -154,8 +150,11 @@ class FlowNeuroEngine internal constructor(
 
         suspend fun recordFeedImpressions(ids: List<String>) = requireInstance().recordFeedImpressions(ids)
 
-        suspend fun generateDiscoveryQueries(resetDepth: Boolean = false): List<String> =
-            requireInstance().generateDiscoveryQueries(resetDepth)
+        suspend fun generateDiscoveryQueries(
+            resetDepth: Boolean = false,
+            regionCode: String? = null,
+            recentSearchQueries: List<String> = emptyList(),
+        ): List<String> = requireInstance().generateDiscoveryQueries(resetDepth, regionCode, recentSearchQueries)
 
         suspend fun selectRelatedSeeds(
             candidates: List<GraphSeedInput>,
@@ -1628,7 +1627,11 @@ class FlowNeuroEngine internal constructor(
     // DISCOVERY QUERY GENERATION
     // =================================================
 
-    suspend fun generateDiscoveryQueries(resetDepth: Boolean = false): List<String> =
+    suspend fun generateDiscoveryQueries(
+        resetDepth: Boolean = false,
+        regionCode: String? = null,
+        recentSearchQueries: List<String> = emptyList(),
+    ): List<String> =
         withContext(Dispatchers.Default) {
             val deepFlow = isLearningPaused()
             withBrainLock {
@@ -1647,6 +1650,8 @@ class FlowNeuroEngine internal constructor(
                         brain,
                         depth = depth,
                         channelEdges = coWatchEdges(brain),
+                        regionCode = regionCode,
+                        recentSearchQueries = recentSearchQueries,
                     ) { b -> getPersona(b) }
 
                 var candidates =
@@ -1663,7 +1668,7 @@ class FlowNeuroEngine internal constructor(
                         if (preferred.isNotEmpty()) {
                             preferred.shuffled().take(5)
                         } else {
-                            NeuroDiscovery.STARTER_QUERIES
+                            NeuroDiscovery.regionalStarterQueries(regionCode)
                         }
                     }
 
@@ -3215,3 +3220,5 @@ class FlowNeuroEngine internal constructor(
         }
     }
 }
+
+typealias FlowNeuroEngine = FedoraEngine

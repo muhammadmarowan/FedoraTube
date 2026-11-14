@@ -82,7 +82,7 @@ private val BAR_HIDES_ON_SCROLL_ROUTES = setOf("home", "subscriptions", "music")
 
 @UnstableApi
 @Composable
-fun FlowApp(
+fun FedoraApp(
     currentTheme: ThemeMode,
     themeVariant: ThemeVariant,
     systemLightThemeMode: ThemeMode,
@@ -597,3 +597,33 @@ fun FlowApp(
         // link handling can enable it from Settings instead.
     }
 }
+
+@UnstableApi
+@Composable
+fun FlowApp(
+    currentTheme: ThemeMode,
+    themeVariant: ThemeVariant,
+    systemLightThemeMode: ThemeMode,
+    systemDarkThemeMode: ThemeMode,
+    deeplinkVideoId: String? = null,
+    isSharedLink: Boolean = false,
+    openMusicPlayerRequest: Int = 0,
+    openMusicLyricsRequest: Int = 0,
+    onDeeplinkConsumed: () -> Unit = {},
+    pendingRoute: String? = null,
+    onPendingRouteConsumed: () -> Unit = {},
+    onStartDestinationKnown: () -> Unit = {},
+) = FedoraApp(
+    currentTheme = currentTheme,
+    themeVariant = themeVariant,
+    systemLightThemeMode = systemLightThemeMode,
+    systemDarkThemeMode = systemDarkThemeMode,
+    deeplinkVideoId = deeplinkVideoId,
+    isSharedLink = isSharedLink,
+    openMusicPlayerRequest = openMusicPlayerRequest,
+    openMusicLyricsRequest = openMusicLyricsRequest,
+    onDeeplinkConsumed = onDeeplinkConsumed,
+    pendingRoute = pendingRoute,
+    onPendingRouteConsumed = onPendingRouteConsumed,
+    onStartDestinationKnown = onStartDestinationKnown,
+)

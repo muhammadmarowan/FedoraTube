@@ -1,7 +1,7 @@
 /*
- * Copyright (C) 2025-2026 Flow | A-EDev
+ * Copyright (C) 2026 FedoraTube Contributors
  *
- * This file is part of Flow (https://github.com/A-EDev/Flow).
+ * This file is part of FedoraTube (https://github.com/muhammadmarowan/FedoraTube).
  */
 
 package com.fedoratube.org.data.recommendation

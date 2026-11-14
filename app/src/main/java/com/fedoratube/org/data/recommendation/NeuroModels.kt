@@ -1,15 +1,11 @@
 /*
- * Copyright (C) 2025-2026 Flow | A-EDev
+ * Copyright (C) 2026 FedoraTube Contributors
  *
  * This file is part of Fedora Tube (https://github.com/muhammadmarowan/FedoraTube).
  *
- * Flow is free software: you can redistribute it and/or modify
+ * FedoraTube is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, version 3 of the License.
- *
- * This recommendation algorithm (FlowNeuroEngine) is the intellectual property
- * of the Flow project. Any use of this code in other projects must
- * explicitly credit "Flow Android Client" and link back to the original repository.
  */
 
 package com.fedoratube.org.data.recommendation
@@ -190,6 +186,8 @@ enum class FlowPersona(
     SPECIALIST(R.string.persona_specialist_title, R.string.persona_specialist_description, "🎯"),
     EXPLORER(R.string.persona_explorer_title, R.string.persona_explorer_description, "🧭"),
 }
+
+typealias FedoraPersona = FlowPersona
 
 // ── Topic Category (Onboarding) ──
 

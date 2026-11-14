@@ -54,9 +54,9 @@ android {
     defaultConfig {
         applicationId = "com.fedoratube.org"
         minSdk = 26
-        targetSdk = 36
-        versionCode = 46
-        versionName = "1.7.8"
+        targetSdk = 37
+        versionCode = 47
+        versionName = "1.7.9"
 
         buildConfigField("String", "APP_LANGUAGE_TAGS", "\"${(listOf("en") + translatedLocaleTags()).joinToString(",")}\"")
         // Last.fm keys come from the CI secrets; builds without them ask the viewer for their own key.
@@ -292,9 +292,6 @@ dependencies {
     // Serialization & JSON
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.gson)
-
-    // conscrypt for OkHttp TLS support on older Android versions
-    implementation(libs.conscrypt.android)
 
     // --- Media Playback ---
     implementation(libs.androidx.media3.exoplayer)

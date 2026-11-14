@@ -53,15 +53,39 @@ internal val FEED_ITEM_PARSERS: Map<String, FeedItemParser> =
  */
 internal fun JsonElement?.toFeedItem(owner: FeedItemOwner): FeedItem? {
     val node = objectOrNull() ?: return null
+    if (node.isAdOrPromotedNode()) return null
     val content =
         node["richItemRenderer"]
             .objectOrNull()
             ?.get("content")
             .objectOrNull()
             ?: node
+    if (content.isAdOrPromotedNode()) return null
     return FEED_ITEM_PARSERS.firstNotNullOfOrNull { (key, parser) ->
-        content[key].objectOrNull()?.let { parser.parse(it, owner) }
+        content[key].objectOrNull()?.takeUnless { it.isAdOrPromotedNode() }?.let { parser.parse(it, owner) }
     }
+}
+
+private val AD_RENDERER_KEYS =
+    setOf(
+        "adSlotRenderer",
+        "promotedSparklesWebRenderer",
+        "promotedSparklesTextSearchRenderer",
+        "promotedVideoRenderer",
+        "compactPromotedVideoRenderer",
+        "inFeedAdLayoutRenderer",
+        "searchPyvRenderer",
+        "mastheadAdRenderer",
+        "displayAdRenderer",
+        "statementBannerRenderer",
+        "brandInteractionRenderer",
+    )
+
+internal fun JsonObject.isAdOrPromotedNode(): Boolean {
+    if (AD_RENDERER_KEYS.any { containsKey(it) }) return true
+    val badges = this["badges"].metadataBadges()
+    if (badges.any { it.equals("Sponsored", ignoreCase = true) || it.equals("Ad", ignoreCase = true) }) return true
+    return false
 }
 
 internal fun JsonElement?.toFeedItems(owner: FeedItemOwner): List<FeedItem> =

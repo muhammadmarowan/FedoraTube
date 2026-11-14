@@ -1,9 +1,9 @@
 /*
- * Copyright (C) 2026 Flow | A-EDev
+ * Copyright (C) 2026 FedoraTube Contributors
  *
- * This file is part of Fedora Tube (https://github.com/muhammadmarowan/FedoraTube).
+ * This file is part of FedoraTube (https://github.com/muhammadmarowan/FedoraTube).
  *
- * Flow is free software: you can redistribute it and/or modify
+ * FedoraTube is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * any later version.

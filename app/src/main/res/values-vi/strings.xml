@@ -1193,9 +1193,9 @@
     <string name="donation_prompt_later">Để sau</string>
     <string name="donation_prompt_never">Không hiện lại</string>
     <string name="about_creator">Tác giả</string>
-    <string name="about_creator_name">A-EDev</string>
+    <string name="about_creator_name">muhammadmarowan</string>
     <string name="about_website">Trang web</string>
-    <string name="about_website_address">flow.aedev.me</string>
+    <string name="about_website_address">github.com/muhammadmarowan/FedoraTube</string>
     <string name="about_reddit">Reddit</string>
     <string name="about_reddit_subtitle">GitHub Discussions</string>
     <string name="github_subtitle">Mã nguồn &amp; Vấn đề</string>

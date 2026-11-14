@@ -73,7 +73,7 @@ fun MediaThumbnail(
             videoId = videoId,
             model = thumbnailUrl,
             contentDescription = null,
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize().thumbnailGradientOverlay(alpha = 0.28f, startFraction = 0.65f),
             contentScale = ContentScale.Crop,
             onImageKey = reportImageKey,
         )

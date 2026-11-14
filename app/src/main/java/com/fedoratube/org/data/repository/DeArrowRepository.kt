@@ -54,7 +54,7 @@ object DeArrowRepository {
                     Request
                         .Builder()
                         .url("$BRANDING_BASE_URL?videoID=$videoId")
-                        .header("User-Agent", "FlowYouTube/1.0")
+                        .header("User-Agent", "FedoraTube/1.7.9")
                         .build()
 
                 client.newCall(request).execute().use { response ->

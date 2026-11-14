@@ -1,11 +1,7 @@
 /*
- * Copyright (C) 2025-2026 Flow | A-EDev
+ * Copyright (C) 2026 FedoraTube Contributors
  *
  * This file is part of Fedora Tube (https://github.com/muhammadmarowan/FedoraTube).
- *
- * This recommendation algorithm (FlowNeuroEngine) is the intellectual property
- * of the Flow project. Any use of this code in other projects must
- * explicitly credit "Flow Android Client" and link back to the original repository.
  */
 
 package com.fedoratube.org.data.recommendation

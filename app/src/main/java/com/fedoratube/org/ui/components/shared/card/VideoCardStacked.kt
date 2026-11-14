@@ -6,17 +6,19 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.fedoratube.org.data.model.Video
 import com.fedoratube.org.ui.components.shared.ChannelAvatarStack
 import com.fedoratube.org.ui.components.shared.videoMetadataLine
@@ -46,7 +48,7 @@ internal fun VideoCardStacked(
         VideoCardThumbnail(
             state = state,
             isUpcoming = video.isUpcoming,
-            shape = RectangleShape,
+            shape = RoundedCornerShape(VideoCardDefaults.ThumbnailCornerRadius),
             modifier = Modifier.fillMaxWidth(),
         )
 
@@ -57,7 +59,7 @@ internal fun VideoCardStacked(
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .padding(start = if (showChannel) 8.dp else 12.dp, top = 12.dp, bottom = 12.dp),
+                    .padding(start = if (showChannel) 4.dp else 8.dp, top = 10.dp, bottom = 14.dp),
             avatar = {
                 if (showChannel) {
                     ChannelAvatarStack(
@@ -81,10 +83,14 @@ internal fun VideoCardStacked(
                 )
             },
         ) {
-            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            Column(verticalArrangement = Arrangement.spacedBy(3.dp)) {
                 Text(
                     text = state.title,
-                    style = MaterialTheme.typography.titleMedium,
+                    style =
+                        MaterialTheme.typography.titleMedium.copy(
+                            fontWeight = FontWeight.SemiBold,
+                            lineHeight = 21.sp,
+                        ),
                     color = MaterialTheme.colorScheme.onSurface,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,

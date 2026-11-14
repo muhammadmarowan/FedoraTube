@@ -4,13 +4,17 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-data class FlowCrashBreadcrumb(
+typealias FlowCrashBreadcrumb = FedoraCrashBreadcrumb
+typealias FlowCrashReportSnapshot = FedoraCrashReportSnapshot
+typealias FlowCrashReportFormatter = FedoraCrashReportFormatter
+
+data class FedoraCrashBreadcrumb(
     val timestampMs: Long,
     val phase: String,
     val detail: String
 )
 
-data class FlowCrashReportSnapshot(
+data class FedoraCrashReportSnapshot(
     val timestampMs: Long,
     val threadName: String,
     val threadId: Long,
@@ -19,17 +23,17 @@ data class FlowCrashReportSnapshot(
     val stackTrace: String,
     val deviceInfo: String,
     val memoryInfo: String,
-    val breadcrumbs: List<FlowCrashBreadcrumb>
+    val breadcrumbs: List<FedoraCrashBreadcrumb>
 )
 
-object FlowCrashReportFormatter {
+object FedoraCrashReportFormatter {
     private const val TOP_FRAME_COUNT = 8
     private val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.US)
     private val timeFormat = SimpleDateFormat("HH:mm:ss.SSS", Locale.US)
 
-    fun build(snapshot: FlowCrashReportSnapshot): String = buildString {
+    fun build(snapshot: FedoraCrashReportSnapshot): String = buildString {
         appendLine("=".repeat(60))
-        appendLine("CRASH REPORT - ${dateFormat.format(Date(snapshot.timestampMs))}")
+        appendLine("FEDORATUBE CRASH REPORT - ${dateFormat.format(Date(snapshot.timestampMs))}")
         appendLine("=".repeat(60))
         appendLine()
         appendLine("Crash Input")

@@ -1861,8 +1861,8 @@
     <string name="playback_speed_multiplier">%1$s×</string>
     <string name="playback_speed_multiplier_precise">%1$.2f×</string>
     <string name="channel_metadata_unavailable">Informasi kanal tidak tersedia</string>
-    <string name="about_creator_name">A-EDev</string>
-    <string name="about_website_address">flow.aedev.me</string>
+    <string name="about_creator_name">muhammadmarowan</string>
+    <string name="about_website_address">github.com/muhammadmarowan/FedoraTube</string>
     <string name="about_reddit">Reddit</string>
     <string name="about_reddit_subtitle">GitHub Discussions</string>
     <string name="about_license_name">GNU GPL v3</string>

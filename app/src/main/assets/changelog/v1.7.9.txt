@@ -1,0 +1,17 @@
+FEDORATUBE CHANGE LOG
+VERSION: 1.7.9
+DATE: 2026-11-14
+STATUS: PRE-RELEASE
+
+NEW FEATURES
+- Introduced FedoraEngine 2.0 recommendation engine powered by user region, watch history, search history, and personal interests
+- Added regional discovery & trending blend tailored to your selected country/region
+- Integrated recent search history signals directly into Home feed suggestions
+- Full Android 17 (API 37) support with edge-to-edge UI and modern system bar integration
+
+UI AND STYLE ENHANCEMENTS
+- Complete modern YouTube-style UI redesign across Home, Shorts, Subscriptions, Music, Library, Search, and Video Player
+- Added FedoraTube branded header with logo icon and wordmark across top bars
+- Added fluid spring animations, rounded thumbnails, press-scale micro-interactions, and smooth category chip transitions
+- Optimized APK size to stay well under 25 MB across all architectures
+- Hardened ad-free video and music playback with enhanced InnerTube ad-slot filtering

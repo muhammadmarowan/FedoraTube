@@ -23,7 +23,7 @@ import com.fedoratube.org.player.PlaybackShutdown
 import com.fedoratube.org.player.SleepTimerManager
 import com.fedoratube.org.ui.screens.home.HomeFeedLanguageReset
 import com.fedoratube.org.utils.AppLanguageManager
-import com.fedoratube.org.utils.FlowCrashHandler
+import com.fedoratube.org.utils.FedoraCrashHandler
 import com.fedoratube.org.utils.PerformanceDispatcher
 import com.fedoratube.org.utils.cipher.PipePipeNsigDecoder
 import com.fedoratube.org.utils.contentYouTubeLocale
@@ -47,11 +47,9 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
 import okhttp3.OkHttpClient
-import org.conscrypt.Conscrypt
 import org.schabi.newpipe.extractor.NewPipe
 import org.schabi.newpipe.extractor.localization.ContentCountry
 import org.schabi.newpipe.extractor.services.youtube.extractors.YoutubeStreamExtractor
-import java.security.Security
 import java.util.Locale
 import javax.inject.Inject
 
@@ -96,13 +94,8 @@ class FedoraApplication :
 
         val playerPreferences = PlayerPreferences(this)
 
-        // Injects modern TLS/SSL certificates so OkHttp and Ktor don't crash
-        if (android.os.Build.VERSION.SDK_INT <= android.os.Build.VERSION_CODES.N_MR1) {
-            Security.insertProviderAt(Conscrypt.newProvider(), 1)
-        }
-
         // Install crash handler for real-time monitoring
-        FlowCrashHandler.install(this)
+        FedoraCrashHandler.install(this)
 
         try {
             // Seeded from the device locale so the very first extraction is already localized; the
@@ -260,14 +253,14 @@ class FedoraApplication :
 
     override fun onLowMemory() {
         super.onLowMemory()
-        FlowCrashHandler.recordPhase("memory", "FedoraApplication.onLowMemory")
+        FedoraCrashHandler.recordPhase("memory", "FedoraApplication.onLowMemory")
         releaseVolatileMemory()
     }
 
     @Suppress("DEPRECATION")
     override fun onTrimMemory(level: Int) {
         super.onTrimMemory(level)
-        FlowCrashHandler.recordPhase("memory", "FedoraApplication.onTrimMemory level=$level")
+        FedoraCrashHandler.recordPhase("memory", "FedoraApplication.onTrimMemory level=$level")
         if (level >= ComponentCallbacks2.TRIM_MEMORY_RUNNING_LOW) {
             releaseVolatileMemory()
         }

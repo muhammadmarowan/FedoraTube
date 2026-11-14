@@ -1,15 +1,11 @@
 /*
- * Copyright (C) 2025-2026 Flow | A-EDev
+ * Copyright (C) 2026 FedoraTube Contributors
  *
  * This file is part of Fedora Tube (https://github.com/muhammadmarowan/FedoraTube).
  *
- * Flow is free software: you can redistribute it and/or modify
+ * FedoraTube is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, version 3 of the License.
- *
- * This recommendation algorithm (FlowNeuroEngine) is the intellectual property
- * of the Flow project. Any use of this code in other projects must
- * explicitly credit "Flow Android Client" and link back to the original repository.
  */
 
 package com.fedoratube.org.data.recommendation
@@ -47,6 +43,53 @@ internal class NeuroDiscovery(
 
         /** How much a viewer must take to a format before searches ask for it. */
         private const val FORMAT_QUERY_MIN_AFFINITY = 0.2
+
+        /** Regional discovery anchors so cold-start and ongoing discovery reflect the user's region. */
+        val REGIONAL_DISCOVERY_MAP: Map<String, List<String>> =
+            mapOf(
+                "BD" to listOf("Bangladesh News", "Bangla Natok", "Bangla Music", "Bangladesh Tech", "Cricket Highlights"),
+                "IN" to listOf("India Trending", "Hindi Music", "Tech India", "Cricket Highlights", "Indian Cinema"),
+                "PK" to listOf("Pakistan News", "Pakistani Drama", "Coke Studio Pakistan", "Cricket Highlights", "Pakistan Tech"),
+                "US" to listOf("US News", "Tech Review", "Billboard Music", "Science Documentary", "Gaming Highlights"),
+                "GB" to listOf("UK News", "Premier League Highlights", "UK Music", "BBC Documentary", "Tech Review"),
+                "CA" to listOf("Canada News", "Tech Review", "NHL Highlights", "Music Hits", "Science Documentary"),
+                "AU" to listOf("Australia News", "Cricket Highlights", "AFL Highlights", "Tech Review", "Music Hits"),
+                "ID" to listOf("Berita Terkini", "Musik Indonesia", "Teknologi", "Sepak Bola", "hiburan"),
+                "MY" to listOf("Malaysia News", "Lagu Melayu", "Tech Malaysia", "Football Highlights", "Documentary"),
+                "SA" to listOf("السعودية", "أخبار التقنية", "ملخصات مباريات", "وثائقي", "موسيقى"),
+                "AE" to listOf("UAE News", "Dubai Tech", "أخبار الإمارات", "Football Highlights", "Documentary"),
+                "EG" to listOf("أخبار مصر", "ملخصات مباريات", "أغاني مصرية", "وثائقي", "تقنية"),
+                "TR" to listOf("Türkiye Haber", "Türkçe Müzik", "Teknoloji", "Süper Lig Özet", "Belgesel"),
+                "DE" to listOf("Nachrichten", "Technik Test", "Bundesliga Highlights", "Dokumentation", "Musik"),
+                "FR" to listOf("Actualités", "High Tech", "Ligue 1 Résumé", "Documentaire", "Musique"),
+                "ES" to listOf("Noticias", "Tecnología", "LaLiga Resumen", "Documental", "Música"),
+                "IT" to listOf("Notizie", "Tecnologia", "Serie A Highlights", "Documentario", "Musica"),
+                "PL" to listOf("Wiadomości", "Technologia", "Muzyka", "Dokument", "Sport"),
+                "RU" to listOf("Новости технологий", "Документальный фильм", "Музыка", "Наука", "Обзор"),
+                "VN" to listOf("Tin tức", "Nhạc trẻ", "Công nghệ", "Bóng đá", "Khám phá"),
+                "BR" to listOf("Notícias", "Música Brasileira", "Tecnologia", "Futebol Melhores Momentos", "Documentário"),
+                "JP" to listOf("ニュース", "音楽", "テクノロジー", "アニメ", "ゲーム"),
+                "KR" to listOf("뉴스", "K-POP", "테크", "게임", "다큐멘터리"),
+            )
+
+        fun resolveRegionCode(regionCode: String?): String {
+            val cleaned = regionCode?.trim()?.uppercase().orEmpty()
+            return if (cleaned.length == 2 && cleaned != "SY") {
+                cleaned
+            } else {
+                java.util.Locale.getDefault().country.uppercase().takeIf { it.length == 2 }.orEmpty()
+            }
+        }
+
+        fun regionalStarterQueries(regionCode: String?): List<String> {
+            val code = resolveRegionCode(regionCode)
+            val regional = REGIONAL_DISCOVERY_MAP[code].orEmpty()
+            return if (regional.isNotEmpty()) {
+                (regional.take(3) + STARTER_QUERIES).distinct().take(6)
+            } else {
+                STARTER_QUERIES
+            }
+        }
     }
 
     // ═══════════════════════════════════════════════
@@ -538,6 +581,8 @@ internal class NeuroDiscovery(
         now: Long = System.currentTimeMillis(),
         depth: Int = 0,
         channelEdges: Map<String, Double> = emptyMap(),
+        regionCode: String? = null,
+        recentSearchQueries: List<String> = emptyList(),
         personaProvider: (UserBrain) -> FlowPersona,
     ): List<DiscoveryQuery> {
         val persona = personaProvider(brain)
@@ -571,11 +616,13 @@ internal class NeuroDiscovery(
         val queries = mutableListOf<DiscoveryQuery>()
 
         addDirectQueries(queries, selection, brain, isMatureBrain, depth)
+        addSearchHistoryQueries(queries, recentSearchQueries, blocked)
         addCombinationQueries(queries, selection, isMatureBrain)
         addAffinityQueries(queries, brain)
         addTimeContextQueries(queries, brain, bucket, selection)
         addChannelQueries(queries, brain)
         addFreshQueries(queries, selection, currentYear, brain, isMatureBrain)
+        addRegionalQueries(queries, regionCode, selection, blocked, depth)
         addFormatQueries(queries, selection, brain, persona, isMatureBrain)
         addExplorationQueries(queries, brain)
         if (isMatureBrain) addPreferredTopicAnchors(queries, brain)
@@ -1118,6 +1165,74 @@ internal class NeuroDiscovery(
                 ),
             )
         }
+    }
+
+    // ═══════════════════════════════════════════════
+    // STRATEGY 10: USER SEARCH HISTORY SIGNALS
+    // Recent searches directly reflect explicit user intent.
+    // ═══════════════════════════════════════════════
+
+    private fun addSearchHistoryQueries(
+        queries: MutableList<DiscoveryQuery>,
+        recentSearchQueries: List<String>,
+        blocked: Set<String>,
+    ) {
+        if (recentSearchQueries.isEmpty()) return
+        recentSearchQueries
+            .asSequence()
+            .map { it.trim() }
+            .filter { it.length >= 2 }
+            .distinctBy { it.lowercase() }
+            .filterNot { q -> blocked.any { b -> q.lowercase().contains(b) } }
+            .take(3)
+            .forEachIndexed { index, searchQuery ->
+                val sanitized = sanitizeQuery(searchQuery) ?: return@forEachIndexed
+                queries.add(
+                    DiscoveryQuery(
+                        query = sanitized,
+                        strategy = QueryStrategy.DEEP_DIVE,
+                        confidence = (0.86 - index * 0.05).coerceIn(0.65, 0.90),
+                        reasoning = "Recent search: $sanitized",
+                        clusterKey = "search_intent_$index",
+                    ),
+                )
+            }
+    }
+
+    // ═══════════════════════════════════════════════
+    // STRATEGY 11: REGIONAL INTEREST & DISCOVERY
+    // Grounds feed suggestions in the user's region.
+    // ═══════════════════════════════════════════════
+
+    private fun addRegionalQueries(
+        queries: MutableList<DiscoveryQuery>,
+        regionCode: String?,
+        selection: TopicSelection,
+        blocked: Set<String>,
+        depth: Int,
+    ) {
+        if (regionCode == null) return
+        val resolvedRegion = resolveRegionCode(regionCode)
+        val regionalPool = REGIONAL_DISCOVERY_MAP[resolvedRegion].orEmpty()
+        if (regionalPool.isEmpty()) return
+
+        val filteredPool =
+            regionalPool.filterNot { q ->
+                blocked.any { b -> q.lowercase().contains(b) }
+            }
+        if (filteredPool.isEmpty()) return
+
+        val pickIndex = depth.coerceAtLeast(0) % filteredPool.size
+        val regionalPick = filteredPool[pickIndex]
+        queries.add(
+            DiscoveryQuery(
+                query = regionalPick,
+                strategy = QueryStrategy.TRENDING,
+                confidence = if (selection.allTopics().isEmpty()) 0.80 else 0.62,
+                reasoning = "Regional ($resolvedRegion): $regionalPick",
+                clusterKey = "region_${resolvedRegion.lowercase()}",
+            ),
+        )
     }
 
     // ═══════════════════════════════════════════════

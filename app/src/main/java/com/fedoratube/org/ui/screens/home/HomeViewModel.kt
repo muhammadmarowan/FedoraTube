@@ -100,9 +100,14 @@ class HomeViewModel
         private val snapshotRecorder: HomeSnapshotRecorder,
         private val neighbourChannels: NeighbourChannelsRepository,
         private val homeFeedLanguageReset: HomeFeedLanguageReset,
+        private val searchHistoryRepository: com.fedoratube.org.data.local.SearchHistoryRepository,
         savedStateHandle: SavedStateHandle,
         @ApplicationContext private val appContext: Context,
     ) : ViewModel() {
+        private suspend fun recentUserSearches(): List<String> =
+            runCatching {
+                searchHistoryRepository.getRecentSearches(limit = 6).map { it.query }.filter { it.isNotBlank() }
+            }.getOrDefault(emptyList())
         fun shortsShelfSource(
             shelf: List<com.fedoratube.org.data.model.Video>,
             tapped: com.fedoratube.org.data.model.Video,
@@ -569,13 +574,20 @@ class HomeViewModel
                     try {
                         discoveryQueries.clear()
                         searchPages.reset()
+                        val region = playerPreferences.trendingRegion.first()
+                        val recentSearches = recentUserSearches()
                         // A refresh restarts the discovery tree at its roots (broad pass);
                         // load-more regenerations then dig deeper per cluster.
-                        discoveryQueries.addAll(FlowNeuroEngine.generateDiscoveryQueries(resetDepth = true))
+                        discoveryQueries.addAll(
+                            FlowNeuroEngine.generateDiscoveryQueries(
+                                resetDepth = true,
+                                regionCode = region,
+                                recentSearchQueries = recentSearches,
+                            ),
+                        )
                         currentQueryIndex = 0
 
                         val userSubs = subscriptionScope().boosted
-                        val region = playerPreferences.trendingRegion.first()
                         val fetchStart = System.currentTimeMillis()
 
                         // ── Wave 1: first 3 queries + related lanes; subscriptions come from the store ──
@@ -1206,7 +1218,18 @@ class HomeViewModel
                 }
 
                 if (currentQueryIndex >= discoveryQueries.size) {
-                    discoveryQueries.addAll(unaskedQueries(FlowNeuroEngine.generateDiscoveryQueries(), discoveryQueries))
+                    val region = runCatching { playerPreferences.trendingRegion.first() }.getOrNull()
+                    val recentSearches = recentUserSearches()
+                    discoveryQueries.addAll(
+                        unaskedQueries(
+                            FlowNeuroEngine.generateDiscoveryQueries(
+                                resetDepth = false,
+                                regionCode = region,
+                                recentSearchQueries = recentSearches,
+                            ),
+                            discoveryQueries,
+                        ),
+                    )
                 }
 
                 // The next page of a search already filling Home takes one of the two searches.

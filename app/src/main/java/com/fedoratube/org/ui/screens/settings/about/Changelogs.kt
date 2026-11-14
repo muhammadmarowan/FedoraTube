@@ -86,7 +86,8 @@ internal fun parseChangelog(
                 items += line.removePrefix(bullet).trim()
             }
 
-            line.equals("FLOW CHANGE LOG", ignoreCase = true) -> {
+            line.equals("FEDORATUBE CHANGE LOG", ignoreCase = true) ||
+                line.equals("FLOW CHANGE LOG", ignoreCase = true) -> {
                 Unit
             }
 

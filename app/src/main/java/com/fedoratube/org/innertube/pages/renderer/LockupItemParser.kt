@@ -16,6 +16,7 @@ import kotlinx.serialization.json.JsonObject
 private const val LOCKUP_CONTENT_TYPE_COURSE = "LOCKUP_CONTENT_TYPE_COURSE"
 
 internal fun JsonObject.toLockupItem(owner: FeedItemOwner): FeedItem? {
+    if (this["contentType"].stringOrNull() == "LOCKUP_CONTENT_TYPE_AD") return null
     val contentId = this["contentId"].stringOrNull()?.takeIf(String::isNotBlank) ?: return null
     val metadata = this["metadata"].objectOrNull()?.get("lockupMetadataViewModel").objectOrNull()
     val title = metadata?.get("title").youtubeText()?.takeIf(String::isNotBlank) ?: return null
@@ -25,7 +26,9 @@ internal fun JsonObject.toLockupItem(owner: FeedItemOwner): FeedItem? {
     val byline = metadata.lockupByline() ?: collaborators.bylineOwner(metadata.metadataParts())
     val itemOwner = byline?.let { owner.copy(id = it.id, name = it.name, avatarUrl = it.avatarUrl) } ?: owner
     val parts = metadata.metadataParts().filterNot { it == byline?.name }
+    if (parts.any { it.equals("Sponsored", ignoreCase = true) || it.startsWith("Sponsored ·", ignoreCase = true) }) return null
     val badges = lockupBadges()
+    if (badges.any { it.equals("Sponsored", ignoreCase = true) || it.equals("Ad", ignoreCase = true) }) return null
     val membersOnly = metadata.membersOnlyBadge()
 
     val contentType = this["contentType"].stringOrNull()

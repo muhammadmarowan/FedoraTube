@@ -97,7 +97,7 @@ class SponsorBlockRepository
                             .addQueryParameter("endTime", endTime.toString())
                             .addQueryParameter("category", category)
                             .addQueryParameter("userID", userId)
-                            .addQueryParameter("userAgent", "FlowYouTube/1.0")
+                            .addQueryParameter("userAgent", "FedoraTube/1.7.9")
                             .addQueryParameter("UUID", uuid)
                             .addQueryParameter("duration", duration.toString())
                             .build()

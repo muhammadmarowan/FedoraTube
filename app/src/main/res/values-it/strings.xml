@@ -1887,8 +1887,8 @@
     <string name="playlist_filter_owned">Posseduto</string>
     <string name="content_settings_hide_unplayable_subscriptions_title">Nascondi i video non riproducibili dalle Iscrizioni</string>
     <string name="content_settings_hide_unplayable_subscriptions_subtitle">Nascondi i video privati, rimossi e limitati che non riescono ad essere riprodotti</string>
-    <string name="about_creator_name">A-EDev</string>
-    <string name="about_website_address">flow.aedev.me</string>
+    <string name="about_creator_name">muhammadmarowan</string>
+    <string name="about_website_address">github.com/muhammadmarowan/FedoraTube</string>
     <string name="about_reddit">Reddit</string>
     <string name="about_reddit_subtitle">GitHub Discussions</string>
     <string name="about_license_name">GNU GPL v3</string>

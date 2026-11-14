@@ -1432,8 +1432,8 @@
     <string name="donation_prompt_title">Gefällt dir „FedoraTube“?</string>
     <string name="donation_prompt_message">FedoraTube ist kostenlos, Open Source und ohne Werbung oder Tracker entwickelt. Wenn die App sich einen Platz auf Ihrem Gerät verdient hat, denken Sie bitte darüber nach, die Entwicklung zu unterstützen – das trägt wirklich dazu bei, das Projekt am Leben zu erhalten.</string>
     <string name="about_creator">Entwickler</string>
-    <string name="about_creator_name">A-EDev</string>
-    <string name="about_website_address">flow.aedev.me</string>
+    <string name="about_creator_name">muhammadmarowan</string>
+    <string name="about_website_address">github.com/muhammadmarowan/FedoraTube</string>
     <string name="about_reddit">Reddit</string>
     <string name="about_reddit_subtitle">GitHub Discussions</string>
     <string name="github_subtitle">Quellcode &amp; Probleme</string>

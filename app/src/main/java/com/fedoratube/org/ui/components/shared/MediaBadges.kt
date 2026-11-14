@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025-2026 Flow | A-EDev
+ * Copyright (C) 2026 FedoraTube Contributors
  *
  * This file is part of Fedora Tube (https://github.com/muhammadmarowan/FedoraTube).
  */
@@ -32,9 +32,9 @@ import com.fedoratube.org.ui.theme.artworkScrim
 import com.fedoratube.org.utils.formatDuration
 
 private val BadgeSpacing = 4.dp
-private val BadgeHorizontalPadding = 5.dp
-private val BadgeVerticalPadding = 2.dp
-private const val BADGE_SCRIM_ALPHA = 0.72f
+private val BadgeHorizontalPadding = 6.dp
+private val BadgeVerticalPadding = 2.5.dp
+private const val BADGE_SCRIM_ALPHA = 0.82f
 private val BadgeIconSize = 13.dp
 private val BadgeIconPadding = 4.dp
 
@@ -88,7 +88,7 @@ fun MediaTextBadge(
 ) {
     Surface(
         modifier = modifier,
-        shape = MaterialTheme.shapes.extraSmall,
+        shape = androidx.compose.foundation.shape.RoundedCornerShape(6.dp),
         color = containerColor,
         contentColor = contentColor,
     ) {

@@ -1,3 +1,21 @@
+# Fedora Tube v1.7.9 (Prerelease)
+
+**Release date:** 2026-11-14
+**Status:** Prerelease
+
+## Highlights
+
+- **Complete FedoraTube Rebrand & Architecture Rewrite**: Replaced all legacy upstream headers, crash/diagnostic identifiers, user-agents, localized contributor references, and core engine/UI symbols (`FedoraEngine`, `FedoraApp`, `FedoraTheme`, `FedoraCrashHandler`, `FedoraDiagnostics`).
+- **Upgraded FedoraEngine (Region + Interest + Search + Watch History Feed Intelligence)**: Home feed recommendations and discovery queries now combine your selected/system **Region**, learned **Interests** & topic clusters, recent **Search History** queries, and **Watch History** completion signals so feed suggestions immediately reflect what you search, watch, and care about in your region.
+- **Strict Ad-Free Video & Music Playback**: Hardened InnerTube feed, search, and lockup parsers to strip all ad slots, promoted sparkles/video renderers, statement banners, and sponsored items across video and music streams.
+- **Modern YouTube UI Redesign & Smooth Animations**:
+  - Sleek 12 dp rounded video card thumbnails with subtle bottom gradient scrims, refined 6 dp rounded duration/LIVE badges, and bold 2-line typography.
+  - Modern YouTube-style high-contrast filter chips with tactile press-scale micro-animations and clean pill styling.
+  - Animated `FedoraBrandWordmark` top header retaining FedoraTube's signature logo and AMOLED/dark color themes.
+  - Redesigned elevated Comments preview card with expand affordance and fluid fade + subtle scale navigation transitions.
+- **Android 17 Support (`compileSdk = 37`, `targetSdk = 37`)**: Full compatibility with Android 17.
+- **Lightweight APK (< 25 MB)**: Removed unused native TLS bloat (`libconscrypt_jni.so`), bringing every release APK (including Universal) well under 25 MB (~15.4 MB).
+
 # Fedora Tube v1.7.8 (Prerelease)
 
 **Release date:** 2026-11-09
