@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">FedoraTube</string>
-    <string name="app_launcher_name" translatable="false">fTube</string>
+    <string name="app_launcher_name" translatable="false">FedoraTube</string>
     <string name="subscriptions_search_placeholder">Search subscriptions ...</string>
     <string name="subscriptions_sort_label">Sort channels</string>
     <string name="subscriptions_sort_default">Default</string>

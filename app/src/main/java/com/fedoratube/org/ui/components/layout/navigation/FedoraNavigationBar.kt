@@ -16,6 +16,11 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.only
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreHoriz
 import androidx.compose.material3.DropdownMenuGroup
@@ -46,12 +51,12 @@ import com.fedoratube.org.R
 
 private const val MAX_BAR_TABS = 5
 
-/** Modern YouTube icon size: 22 dp with compact label underneath. */
-private val NavIconSize = 22.dp
+/** Modern YouTube icon size: 24 dp (icon-only bottom bar). */
+private val NavIconSize = 24.dp
 
 /**
- * Modern YouTube-style bottom navigation bar with subtle top divider, icon + label layout,
- * smooth spring transitions, slim 48dp profile, and refined elevation.
+ * Modern YouTube-style bottom navigation bar with subtle top divider, icon-only layout,
+ * smooth spring transitions, slim 48dp profile, and navigation bar insets.
  */
 @Composable
 internal fun FedoraNavigationBar(
@@ -64,67 +69,52 @@ internal fun FedoraNavigationBar(
     val overflowTabs = tabs.drop(barTabs.size)
     val topBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f)
 
-    Row(
+    Column(
         modifier =
             modifier
                 .fillMaxWidth()
-                .height(FlowNavigationDefaults.BarHeight)
                 .background(MaterialTheme.colorScheme.background)
-                .drawBehind {
-                    drawLine(
-                        color = topBorderColor,
-                        start = Offset(0f, 0f),
-                        end = Offset(size.width, 0f),
-                        strokeWidth = 0.5.dp.toPx(),
-                    )
-                },
-        verticalAlignment = Alignment.CenterVertically,
+                .windowInsetsPadding(WindowInsets.navigationBars.only(WindowInsetsSides.Bottom)),
     ) {
-        barTabs.forEach { tab ->
-            val selected = tab == selectedTab
-            Box(
-                modifier =
-                    Modifier
-                        .weight(1f)
-                        .fillMaxHeight()
-                        .clickable(
-                            interactionSource = remember { MutableInteractionSource() },
-                            indication = ripple(bounded = false, radius = 24.dp),
-                            onClick = { onTabSelected(tab) },
-                        ),
-                contentAlignment = Alignment.Center,
-            ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center,
+        Row(
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .height(FlowNavigationDefaults.BarHeight)
+                    .drawBehind {
+                        drawLine(
+                            color = topBorderColor,
+                            start = Offset(0f, 0f),
+                            end = Offset(size.width, 0f),
+                            strokeWidth = 0.5.dp.toPx(),
+                        )
+                    },
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            barTabs.forEach { tab ->
+                val selected = tab == selectedTab
+                Box(
+                    modifier =
+                        Modifier
+                            .weight(1f)
+                            .fillMaxHeight()
+                            .clickable(
+                                interactionSource = remember { MutableInteractionSource() },
+                                indication = ripple(bounded = false, radius = 24.dp),
+                                onClick = { onTabSelected(tab) },
+                            ),
+                    contentAlignment = Alignment.Center,
                 ) {
                     AnimatedNavIcon(tab = tab, selected = selected)
-                    Spacer(modifier = Modifier.height(2.dp))
-                    Text(
-                        text = stringResource(tab.labelRes),
-                        style =
-                            MaterialTheme.typography.labelSmall.copy(
-                                fontSize = 10.sp,
-                                fontWeight = if (selected) FontWeight.Medium else FontWeight.Normal,
-                            ),
-                        color =
-                            if (selected) {
-                                MaterialTheme.colorScheme.onSurface
-                            } else {
-                                MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.75f)
-                            },
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
                 }
             }
-        }
-        if (overflowTabs.isNotEmpty()) {
-            OverflowItem(
-                tabs = overflowTabs,
-                selectedTab = selectedTab,
-                onTabSelected = onTabSelected,
-            )
+            if (overflowTabs.isNotEmpty()) {
+                OverflowItem(
+                    tabs = overflowTabs,
+                    selectedTab = selectedTab,
+                    onTabSelected = onTabSelected,
+                )
+            }
         }
     }
 }
@@ -195,29 +185,12 @@ private fun RowScope.OverflowItem(
                 ),
         contentAlignment = Alignment.Center,
     ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-        ) {
-            Icon(
-                imageVector = Icons.Filled.MoreHoriz,
-                contentDescription = stringResource(R.string.nav_more),
-                tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.75f),
-                modifier = Modifier.size(NavIconSize),
-            )
-            Spacer(modifier = Modifier.height(2.dp))
-            Text(
-                text = stringResource(R.string.nav_more),
-                style =
-                    MaterialTheme.typography.labelSmall.copy(
-                        fontSize = 10.sp,
-                        fontWeight = FontWeight.Normal,
-                    ),
-                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.75f),
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-        }
+        Icon(
+            imageVector = Icons.Filled.MoreHoriz,
+            contentDescription = stringResource(R.string.nav_more),
+            tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.75f),
+            modifier = Modifier.size(NavIconSize),
+        )
         DropdownMenuPopup(expanded = expanded, onDismissRequest = { expanded = false }) {
             DropdownMenuGroup(shapes = MenuDefaults.groupShape(index = 0, count = 1)) {
                 tabs.forEachIndexed { index, tab ->
