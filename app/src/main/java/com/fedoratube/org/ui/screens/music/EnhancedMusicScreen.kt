@@ -148,14 +148,20 @@ fun EnhancedMusicScreen(
     // a cold brain has nothing personal to say, a mature one leads with taste.
     val sectionOrder =
         remember(uiState.sessionSeed, uiState.brainMaturity) {
-            val defaultOrder = HomeSectionType.entries
+            val excludedSections =
+                setOf(
+                    HomeSectionType.CHARTS,
+                    HomeSectionType.NEW_RELEASES,
+                    HomeSectionType.POPULAR_ARTISTS,
+                )
+            val defaultOrder = HomeSectionType.entries.filterNot { it in excludedSections }
             val anchored =
                 when (uiState.brainMaturity) {
                     "cold_start" -> {
                         listOf(
-                            HomeSectionType.CHARTS,
+                            HomeSectionType.QUICK_PICKS,
                             HomeSectionType.MOODS_AND_GENRES,
-                            HomeSectionType.NEW_RELEASES,
+                            HomeSectionType.RECOMMENDED_FOR_YOU,
                         )
                     }
 
@@ -176,11 +182,9 @@ fun EnhancedMusicScreen(
                             HomeSectionType.DAILY_DISCOVER,
                         )
                     }
-                }
+                }.filterNot { it in excludedSections }
             val dynamicPool = defaultOrder - anchored
-            // Trending (CHARTS) always leads when entering Music.
-            val ordered = (anchored + dynamicPool.shuffled(Random(uiState.sessionSeed))).distinct()
-            (listOf(HomeSectionType.CHARTS) + ordered).distinct()
+            (anchored + dynamicPool.shuffled(Random(uiState.sessionSeed))).distinct()
         }
 
     // Scroll to top and refresh when tapping the music tab while already on this screen

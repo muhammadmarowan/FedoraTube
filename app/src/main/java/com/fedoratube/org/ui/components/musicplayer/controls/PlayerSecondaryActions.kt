@@ -81,15 +81,6 @@ fun PlayerSecondaryActions(
             onClick = onLyricsClick,
         )
         PlayerToggleButton(
-            checked = shuffleEnabled,
-            checkedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-            checkedContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-            icon = Icons.Rounded.Shuffle,
-            contentDescription = stringResource(R.string.shuffle),
-            uncheckedShape = RoundedCornerShape(SegmentEdgeRadius),
-            onClick = onShuffleClick,
-        )
-        PlayerToggleButton(
             checked = repeatMode != RepeatMode.OFF,
             checkedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
             checkedContentColor = MaterialTheme.colorScheme.onSecondaryContainer,

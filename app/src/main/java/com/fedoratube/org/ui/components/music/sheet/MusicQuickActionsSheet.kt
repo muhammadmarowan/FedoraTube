@@ -17,6 +17,7 @@ import androidx.compose.material.icons.outlined.Radio
 import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material.icons.outlined.SmartDisplay
 import androidx.compose.material.icons.outlined.ThumbDown
+import androidx.compose.material.icons.rounded.Shuffle
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -143,20 +144,6 @@ fun MusicQuickActionsSheet(
                     title = stringResource(R.string.recommendations_header),
                     rows = feedbackRows(track, viewModel, quickActions, close),
                 )
-                QuickActionsGroup(
-                    title = stringResource(R.string.more_header),
-                    rows =
-                        listOf(
-                            QuickActionRow("details") { shape ->
-                                FlowNavRow(
-                                    title = stringResource(R.string.details_metadata),
-                                    leadingIcon = Icons.Outlined.Info,
-                                    onClick = { page = SongMenuPage.Details },
-                                    shape = shape,
-                                )
-                            },
-                        ),
-                )
             }
         }
     }
@@ -175,10 +162,6 @@ private fun SongPrimaryActions(
     onSave: () -> Unit,
     onDismiss: () -> Unit,
 ) {
-    val downloadedIds by remember(viewModel) {
-        viewModel.uiState.map { it.downloadedTrackIds }.distinctUntilChanged()
-    }.collectAsStateWithLifecycle(emptySet())
-    val isDownloaded = track.videoId in downloadedIds
     val shareSong = rememberSongShareAction()
     QuickActionsPrimaryGroup(
         listOf(
@@ -186,18 +169,6 @@ private fun SongPrimaryActions(
                 icon = Icons.AutoMirrored.Outlined.PlaylistAdd,
                 label = stringResource(R.string.add_to_playlist),
                 onClick = onSave,
-            ),
-            QuickPrimaryAction(
-                icon = Icons.Outlined.Download,
-                checkedIcon = Icons.Filled.DownloadDone,
-                label = stringResource(if (isDownloaded) R.string.downloaded else R.string.download),
-                checked = isDownloaded,
-                onClick = {
-                    if (!isDownloaded) {
-                        viewModel.downloadTrack(track)
-                        onDismiss()
-                    }
-                },
             ),
             QuickPrimaryAction(
                 icon = Icons.Outlined.Share,
@@ -222,14 +193,17 @@ private fun playbackRows(
 ): List<QuickActionRow> {
     val navigator = LocalMediaNavigator.current
     return buildList {
-        if (viewModel.canStartRadio(track)) {
-            add(
-                actionRow("radio", Icons.Outlined.Radio, stringResource(R.string.start_radio), stringResource(R.string.start_radio_desc)) {
-                    viewModel.startRadio(track)
-                    onDismiss()
-                },
-            )
-        }
+        add(
+            actionRow(
+                "shuffle",
+                Icons.Rounded.Shuffle,
+                stringResource(R.string.shuffle_play),
+                stringResource(R.string.shuffle),
+            ) {
+                viewModel.toggleShuffle()
+                onDismiss()
+            },
+        )
         add(
             actionRow(
                 "play_next",

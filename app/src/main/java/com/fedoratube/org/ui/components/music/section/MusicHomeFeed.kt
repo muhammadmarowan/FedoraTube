@@ -130,35 +130,12 @@ fun LazyListScope.musicHomeFeed(
         }
     }
 
-    if (shown(MusicHomeShelf.SPEED_DIAL) && speedDialTracks.isNotEmpty()) {
-        item(key = "speed_dial") {
-            SpeedDialSection(
-                speedDialTracks = speedDialTracks,
-                downloadedTrackIds = downloaded,
-                onSongClick = onSongClick,
-                onTrackMenu = onTrackMenu,
-            )
-        }
-    }
-
     if (shown(MusicHomeShelf.REDISCOVER) && uiState.rediscoverTracks.isNotEmpty()) {
         item(key = "rediscover") {
             BrainShelf(
                 title = stringResource(R.string.section_rediscover),
                 tracks = uiState.rediscoverTracks,
                 playFrom = "rediscover",
-                onSongClick = onSongClick,
-                onTrackMenu = onTrackMenu,
-            )
-        }
-    }
-
-    if (shown(MusicHomeShelf.DEEP_CUTS) && uiState.deepCutTracks.isNotEmpty()) {
-        item(key = "deep_cuts") {
-            BrainShelf(
-                title = stringResource(R.string.section_deep_cuts),
-                tracks = uiState.deepCutTracks,
-                playFrom = "deep_cuts",
                 onSongClick = onSongClick,
                 onTrackMenu = onTrackMenu,
             )
@@ -293,31 +270,6 @@ fun LazyListScope.musicHomeFeed(
                 )
             }
 
-            HomeSectionType.NEW_RELEASES -> {
-                newReleases(uiState.newReleases, downloaded, onSongClick, onAlbumClick, onTrackMenu, ::trackCollectionMenu)
-            }
-
-            HomeSectionType.CHARTS -> {
-                charts(uiState.trendingSongs, downloaded, onSongClick, onTrackMenu)
-                chartPlaylists(uiState.chartCountryCode, uiState.chartPlaylists, onAlbumClick, ::collectionMenu)
-                chartArtists(uiState.chartCountryCode, uiState.chartArtists, onArtistClick)
-            }
-
-            HomeSectionType.POPULAR_ARTISTS -> {
-                if (popularArtists.isNotEmpty()) {
-                    item(key = "popular_artists") {
-                        MusicArtistShelf(
-                            title = stringResource(R.string.section_popular_artists),
-                            artists = popularArtists,
-                            key = { "popular_artists:${it.videoId}" },
-                            name = { it.artist },
-                            thumbnailUrl = { it.thumbnailUrl },
-                            onArtistClick = { onArtistClick(it.channelId) },
-                        )
-                    }
-                }
-            }
-
             HomeSectionType.MIXED_FOR_YOU -> {
                 collectionShelf(
                     id = "mixed_for_you",
@@ -339,6 +291,12 @@ fun LazyListScope.musicHomeFeed(
                         )
                     }
                 }
+            }
+
+            HomeSectionType.NEW_RELEASES,
+            HomeSectionType.CHARTS,
+            HomeSectionType.POPULAR_ARTISTS -> {
+                // Excluded per user request
             }
         }
     }

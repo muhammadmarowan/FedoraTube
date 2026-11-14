@@ -341,7 +341,7 @@ internal fun LazyListScope.dynamicHome(
     onCollectionMenu: (MusicTrack) -> Unit,
 ) {
     uiState.dynamicSections
-        .filterNot { it.title.isDuplicateOfADedicatedShelf() }
+        .filterNot { it.title.isExcludedMusicCategory() }
         .forEachIndexed { index, section ->
             item(key = "dynamic:$index:${section.title}") {
                 MusicTrackCardShelf(
@@ -403,3 +403,28 @@ internal fun String.isDuplicateOfADedicatedShelf(): Boolean =
         "Recommended",
         "Listen again",
     ).any { contains(it, ignoreCase = true) }
+
+private val EXCLUDED_MUSIC_CATEGORIES =
+    listOf(
+        "speed dial",
+        "deep cut",
+        "deep cuts",
+        "chart",
+        "charts",
+        "global chart",
+        "global charts",
+        "new release",
+        "new releases",
+        "popular artist",
+        "popular artists",
+        "pop mix",
+        "rock mix",
+        "work out",
+        "workout",
+        "vibes",
+    )
+
+internal fun String.isExcludedMusicCategory(): Boolean {
+    val lower = lowercase()
+    return isDuplicateOfADedicatedShelf() || EXCLUDED_MUSIC_CATEGORIES.any { lower.contains(it) }
+}
