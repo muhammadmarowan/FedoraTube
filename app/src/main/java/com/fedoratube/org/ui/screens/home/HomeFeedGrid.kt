@@ -61,7 +61,7 @@ internal fun HomeFeedGrid(
                 .testTag("home_feed"),
         state = gridState,
         contentPadding = PaddingValues(top = FeedTopPadding, bottom = flowBottomContentPadding()),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
+        verticalArrangement = Arrangement.spacedBy(0.dp),
     ) {
         itemsIndexed(
             items = rows,

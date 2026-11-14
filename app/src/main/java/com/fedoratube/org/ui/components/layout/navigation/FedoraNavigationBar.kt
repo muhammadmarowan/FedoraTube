@@ -2,7 +2,6 @@ package com.fedoratube.org.ui.components.layout.navigation
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
@@ -45,9 +44,6 @@ private const val MAX_BAR_TABS = 5
 /** Modern YouTube icon size: 24 dp with clear label underneath. */
 private val NavIconSize = 24.dp
 
-/** Unselected tabs sit back subtly so the selected one reads with high clarity. */
-private const val UNSELECTED_ICON_ALPHA = 0.70f
-
 /**
  * Modern YouTube-style bottom navigation bar with subtle top divider, icon + label layout,
  * smooth spring transitions, and refined elevation.
@@ -63,7 +59,7 @@ internal fun FedoraNavigationBar(
     val iconPosition = if (horizontalItems) NavigationItemIconPosition.Start else NavigationItemIconPosition.Top
     val barTabs = if (tabs.size <= MAX_BAR_TABS) tabs else tabs.take(MAX_BAR_TABS - 1)
     val overflowTabs = tabs.drop(barTabs.size)
-    val topBorderColor = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.20f)
+    val topBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f)
 
     ShortNavigationBar(
         modifier =
@@ -72,10 +68,10 @@ internal fun FedoraNavigationBar(
                     color = topBorderColor,
                     start = Offset(0f, 0f),
                     end = Offset(size.width, 0f),
-                    strokeWidth = 1.dp.toPx(),
+                    strokeWidth = 0.5.dp.toPx(),
                 )
             },
-        containerColor = MaterialTheme.colorScheme.surface,
+        containerColor = MaterialTheme.colorScheme.background,
         arrangement =
             if (horizontalItems) ShortNavigationBarArrangement.Centered else ShortNavigationBarArrangement.EqualWeight,
     ) {
@@ -90,8 +86,8 @@ internal fun FedoraNavigationBar(
                         text = stringResource(tab.labelRes),
                         style =
                             MaterialTheme.typography.labelSmall.copy(
-                                fontSize = 10.5.sp,
-                                fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Medium,
+                                fontSize = 10.sp,
+                                fontWeight = if (selected) FontWeight.Medium else FontWeight.Normal,
                             ),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
@@ -101,10 +97,10 @@ internal fun FedoraNavigationBar(
                 colors =
                     ShortNavigationBarItemDefaults.colors(
                         selectedIconColor = MaterialTheme.colorScheme.onSurface,
-                        unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                        unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.75f),
                         selectedTextColorTopIconPosition = MaterialTheme.colorScheme.onSurface,
                         selectedTextColorStartIconPosition = MaterialTheme.colorScheme.onSurface,
-                        unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f),
+                        unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.75f),
                         selectedIndicatorColor = androidx.compose.ui.graphics.Color.Transparent,
                     ),
             )
@@ -133,22 +129,10 @@ private fun AnimatedNavIcon(
     tab: FlowTab,
     selected: Boolean,
 ) {
-    val progress by
-        animateFloatAsState(
-            targetValue = if (selected) 1f else 0f,
-            animationSpec =
-                spring(
-                    dampingRatio = Spring.DampingRatioNoBouncy,
-                    stiffness = Spring.StiffnessMediumLow,
-                ),
-            label = "navIconMorph",
-        )
-    // The icon that just won lands oversized and springs back to rest, so selecting a tab
-    // reads as a pop rather than a quiet swap of two glyphs.
     val pop = remember { Animatable(1f) }
     LaunchedEffect(selected) {
         if (selected) {
-            pop.snapTo(0.84f)
+            pop.snapTo(0.88f)
             pop.animateTo(
                 1f,
                 spring(
@@ -157,39 +141,20 @@ private fun AnimatedNavIcon(
                 ),
             )
         } else {
-            pop.animateTo(1f, spring(stiffness = Spring.StiffnessMediumLow))
+            pop.snapTo(1f)
         }
     }
-    Box(
-        modifier = Modifier.size(NavIconSize),
-        contentAlignment = Alignment.Center,
-    ) {
-        Icon(
-            imageVector = tab.icon(selected = false),
-            contentDescription = stringResource(tab.labelRes),
-            modifier =
-                Modifier
-                    .graphicsLayer {
-                        alpha = (UNSELECTED_ICON_ALPHA * (1f - progress)).coerceIn(0f, 1f)
-                        scaleX = 1f - 0.10f * progress
-                        scaleY = 1f - 0.10f * progress
-                    }
-                    .size(NavIconSize),
-        )
-        Icon(
-            imageVector = tab.icon(selected = true),
-            contentDescription = null,
-            modifier =
-                Modifier
-                    .graphicsLayer {
-                        alpha = progress.coerceIn(0f, 1f)
-                        val scale = (0.84f + 0.16f * progress) * pop.value
-                        scaleX = scale
-                        scaleY = scale
-                    }
-                    .size(NavIconSize),
-        )
-    }
+    Icon(
+        imageVector = tab.icon(selected = selected),
+        contentDescription = stringResource(tab.labelRes),
+        modifier =
+            Modifier
+                .graphicsLayer {
+                    scaleX = pop.value
+                    scaleY = pop.value
+                }
+                .size(NavIconSize),
+    )
 }
 
 @Composable

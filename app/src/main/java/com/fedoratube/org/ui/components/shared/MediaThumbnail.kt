@@ -28,7 +28,7 @@ object MediaThumbnailDefaults {
     val ArtworkSize: Dp = 56.dp
     val CollectionWidth: Dp = 88.dp
     val VideoAspectRatio: Float = 16f / 9f
-    val BadgePadding: Dp = 6.dp
+    val BadgePadding: Dp = 8.dp
     val PlaceholderSize: Dp = 24.dp
     const val PLACEHOLDER_ALPHA = 0.4f
 }

@@ -8,6 +8,7 @@ import androidx.compose.material.icons.outlined.BookmarkBorder
 import androidx.compose.material.icons.outlined.Download
 import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material.icons.outlined.ThumbDown
+import androidx.compose.material.icons.outlined.ThumbUp
 import androidx.compose.material.icons.outlined.WatchLater
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -96,6 +97,17 @@ fun VideoQuickActionsMenu(
             },
             onClick = {
                 share(video.id, title, video.isShort)
+                onDismissRequest()
+            },
+        )
+        DropdownMenuItem(
+            text = { Text(stringResource(R.string.interested)) },
+            leadingIcon = {
+                Icon(Icons.Outlined.ThumbUp, contentDescription = null)
+            },
+            onClick = {
+                haptics.performHapticFeedback(HapticFeedbackType.Confirm)
+                viewModel.markAsInteresting(video)
                 onDismissRequest()
             },
         )

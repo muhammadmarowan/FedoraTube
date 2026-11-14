@@ -110,17 +110,24 @@ fun EnhancedMusicScreen(
         }
     val musicListState = rememberLazyListState()
     val quickPicksGridState = rememberLazyGridState()
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+
     // Ensure the feed always starts at index 0 offset 0, and doesn't get pushed down as
     // asynchronous shelves (playlists, subscriptions, trending, speed dial) arrive progressively.
+    // Use DragInteraction.Start so programmatic scrolls or layout adjustments do NOT set userHasScrolled = true.
     var userHasScrolled by remember { androidx.compose.runtime.mutableStateOf(false) }
-    LaunchedEffect(musicListState.isScrollInProgress) {
-        if (musicListState.isScrollInProgress) {
-            userHasScrolled = true
+    LaunchedEffect(musicListState) {
+        musicListState.interactionSource.interactions.collect { interaction ->
+            if (interaction is androidx.compose.foundation.interaction.DragInteraction.Start) {
+                userHasScrolled = true
+            }
         }
     }
     LaunchedEffect(Unit) {
         userHasScrolled = false
         musicListState.scrollToItem(0, 0)
+        scrollBehavior.state.heightOffset = 0f
+        scrollBehavior.state.contentOffset = 0f
     }
     LaunchedEffect(
         uiState.trendingSongs.size,
@@ -130,8 +137,10 @@ fun EnhancedMusicScreen(
         ownPlaylists.size,
         musicSubscriptions.size,
     ) {
-        if (!userHasScrolled && (musicListState.firstVisibleItemIndex != 0 || musicListState.firstVisibleItemScrollOffset != 0)) {
+        if (!userHasScrolled) {
             musicListState.scrollToItem(0, 0)
+            scrollBehavior.state.heightOffset = 0f
+            scrollBehavior.state.contentOffset = 0f
         }
     }
 
@@ -179,6 +188,9 @@ fun EnhancedMusicScreen(
         TabScrollEventBus.scrollToTopEvents
             .filter { it == "music" }
             .collectLatest {
+                userHasScrolled = false
+                scrollBehavior.state.heightOffset = 0f
+                scrollBehavior.state.contentOffset = 0f
                 musicListState.animateScrollToItem(0)
                 viewModel.refresh()
             }
@@ -189,8 +201,6 @@ fun EnhancedMusicScreen(
     val context = androidx.compose.ui.platform.LocalContext.current
     val preferences = remember(context) { com.fedoratube.org.data.local.PlayerPreferences(context) }
     val isFocusModeEnabled by preferences.focusModeEnabled.collectAsStateWithLifecycle(initialValue = false)
-
-    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),

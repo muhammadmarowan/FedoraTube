@@ -214,7 +214,7 @@ class QuickActionsViewModel
             viewModelScope.launch {
                 runAction {
                     feedback.markInterested(video)
-                    emit(R.string.i_like_this_toast)
+                    emit(R.string.interested_toast)
                 }
             }
         }

@@ -52,23 +52,22 @@ internal fun VideoCardStacked(
             modifier = Modifier.fillMaxWidth(),
         )
 
-        // The avatar's 48 dp target overhangs its 40 dp image by 4 dp, so the row gives those 4 dp back
-        // and the avatar still lines up where it always has.
+        // Modern YouTube card details layout: 36 dp avatar, 12 dp margin, sleek 14.5 sp typography,
+        // and airy spacing.
         CardDetailsRow(
-            spacing = if (showChannel) 8.dp else 12.dp,
+            spacing = 12.dp,
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .padding(start = if (showChannel) 4.dp else 8.dp, top = 10.dp, bottom = 14.dp),
+                    .padding(start = 12.dp, end = 4.dp, top = 10.dp, bottom = 16.dp),
             avatar = {
                 if (showChannel) {
                     ChannelAvatarStack(
                         urls = state.avatarUrls,
                         contentDescription = state.channelName,
-                        avatarSize = VideoCardDefaults.AvatarSize,
+                        avatarSize = 36.dp,
                         modifier =
                             Modifier
-                                .minimumInteractiveComponentSize()
                                 .clip(CircleShape)
                                 .videoCardChannelClickable(state),
                     )
@@ -79,7 +78,7 @@ internal fun VideoCardStacked(
                     state = state,
                     showWatched = false,
                     onWatched = actions.onWatched,
-                    alignTo = 12.dp,
+                    alignTo = 0.dp,
                 )
             },
         ) {
@@ -87,9 +86,10 @@ internal fun VideoCardStacked(
                 Text(
                     text = state.title,
                     style =
-                        MaterialTheme.typography.titleMedium.copy(
-                            fontWeight = FontWeight.SemiBold,
-                            lineHeight = 21.sp,
+                        MaterialTheme.typography.bodyLarge.copy(
+                            fontSize = 14.5.sp,
+                            fontWeight = FontWeight.Normal,
+                            lineHeight = 20.sp,
                         ),
                     color = MaterialTheme.colorScheme.onSurface,
                     maxLines = 2,
@@ -104,12 +104,16 @@ internal fun VideoCardStacked(
                             channelName = state.channelName,
                             includeChannel = showChannel,
                         ),
-                    style = MaterialTheme.typography.bodySmall,
+                    style =
+                        MaterialTheme.typography.bodySmall.copy(
+                            fontSize = 12.sp,
+                            lineHeight = 16.sp,
+                        ),
                     color =
                         if (video.isUpcoming) {
                             MaterialTheme.colorScheme.primary
                         } else {
-                            MaterialTheme.colorScheme.onSurfaceVariant
+                            MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.85f)
                         },
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,

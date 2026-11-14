@@ -70,7 +70,7 @@ fun rememberCategorySwipe(
     onCategorySelected: (FlowTab) -> Unit,
 ): Modifier {
     val density = LocalDensity.current
-    val thresholdPx = with(density) { 72.dp.toPx() }
+    val thresholdPx = with(density) { 48.dp.toPx() }
     return categorySwipe(tabs, selectedTab, onCategorySelected, thresholdPx)
 }
 

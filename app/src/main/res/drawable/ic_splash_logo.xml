@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<shape xmlns:android="http://schemas.android.com/apk/res/android"
-    android:shape="rectangle">
-    <solid android:color="@android:color/transparent" />
-    <size android:width="1dp" android:height="1dp" />
-</shape>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Fedora Blue rounded emblem, perfectly proportioned to match YouTube -->
+    <path
+        android:fillColor="#0072EF"
+        android:pathData="M 36,36 L 72,36 A 10,10 0 0,1 82,46 L 82,62 A 10,10 0 0,1 72,72 L 36,72 A 10,10 0 0,1 26,62 L 26,46 A 10,10 0 0,1 36,36 Z" />
+    <!-- Centered White Play Triangle -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M 50,47 L 62,54 L 50,61 Z" />
+</vector>

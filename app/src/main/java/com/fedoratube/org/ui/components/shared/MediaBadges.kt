@@ -25,18 +25,19 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.fedoratube.org.R
 import com.fedoratube.org.ui.theme.ArtworkLiveBadge
 import com.fedoratube.org.ui.theme.ArtworkScrimContent
 import com.fedoratube.org.ui.theme.artworkScrim
 import com.fedoratube.org.utils.formatDuration
 
-private val BadgeSpacing = 4.dp
-private val BadgeHorizontalPadding = 6.dp
-private val BadgeVerticalPadding = 2.5.dp
-private const val BADGE_SCRIM_ALPHA = 0.82f
-private val BadgeIconSize = 13.dp
-private val BadgeIconPadding = 4.dp
+private val BadgeSpacing = 3.dp
+private val BadgeHorizontalPadding = 4.dp
+private val BadgeVerticalPadding = 2.dp
+private const val BADGE_SCRIM_ALPHA = 0.85f
+private val BadgeIconSize = 12.dp
+private val BadgeIconPadding = 3.dp
 
 @Composable
 fun DurationBadge(
@@ -82,13 +83,13 @@ fun VideoStatusBadge(
 fun MediaTextBadge(
     text: String,
     modifier: Modifier = Modifier,
-    containerColor: Color = artworkScrim(BADGE_SCRIM_ALPHA),
-    contentColor: Color = ArtworkScrimContent,
+    containerColor: Color = Color(0xCC000000),
+    contentColor: Color = Color.White,
     leadingIcon: ImageVector? = null,
 ) {
     Surface(
         modifier = modifier,
-        shape = androidx.compose.foundation.shape.RoundedCornerShape(6.dp),
+        shape = androidx.compose.foundation.shape.RoundedCornerShape(4.dp),
         color = containerColor,
         contentColor = contentColor,
     ) {
@@ -110,8 +111,10 @@ fun MediaTextBadge(
             }
             Text(
                 text = text,
-                style = MaterialTheme.typography.labelSmall,
-                fontWeight = FontWeight.SemiBold,
+                style = MaterialTheme.typography.labelSmall.copy(
+                    fontSize = 11.5.sp,
+                    fontWeight = FontWeight.Medium,
+                ),
             )
         }
     }

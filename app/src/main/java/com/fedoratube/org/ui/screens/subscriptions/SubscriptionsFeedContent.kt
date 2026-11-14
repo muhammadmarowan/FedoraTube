@@ -92,7 +92,7 @@ internal fun SubscriptionsFeedContent(
                 state = gridState,
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(top = FeedTopPadding, bottom = flowBottomContentPadding()),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
+                verticalArrangement = Arrangement.spacedBy(0.dp),
             ) {
                 item(span = { GridItemSpan(maxLineSpan) }) {
                     Column {

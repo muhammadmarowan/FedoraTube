@@ -137,18 +137,22 @@ internal fun VideoCardSideActions(
     state: VideoCardState,
     showWatched: Boolean,
     onWatched: (Video) -> Unit,
-    alignTo: Dp,
+    alignTo: Dp = 0.dp,
     modifier: Modifier = Modifier,
 ) {
-    Column(modifier = modifier.offset(y = -alignTo)) {
+    Column(modifier = modifier) {
         // YouTube-style: the ⋮ opens an anchored popup right under the button, not a bottom sheet.
         var menuOpen by remember { mutableStateOf(false) }
         Box {
-            IconButton(onClick = { menuOpen = true }) {
+            IconButton(
+                onClick = { menuOpen = true },
+                modifier = Modifier.size(36.dp),
+            ) {
                 Icon(
                     imageVector = Icons.Default.MoreVert,
                     contentDescription = stringResource(R.string.more_options),
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    tint = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier.size(20.dp),
                 )
             }
             VideoQuickActionsMenu(
@@ -163,11 +167,13 @@ internal fun VideoCardSideActions(
             IconToggleButton(
                 checked = isWatched,
                 onCheckedChange = { if (!isWatched) onWatched(state.video) },
+                modifier = Modifier.size(36.dp),
             ) {
                 Icon(
                     imageVector = if (isWatched) Icons.Filled.Visibility else Icons.Outlined.Visibility,
                     contentDescription = stringResource(R.string.mark_as_watched),
                     tint = if (isWatched) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.size(20.dp),
                 )
             }
         }

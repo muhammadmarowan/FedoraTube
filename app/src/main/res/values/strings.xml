@@ -262,6 +262,8 @@
     <string name="create">Create</string>
     <!-- Video Quick Actions -->
     <string name="save_to_playlist">Save to playlist</string>
+    <string name="interested">Interested</string>
+    <string name="interested_toast">Saved to your interests! You\'ll see more content like this.</string>
     <string name="not_interested">Not interested</string>
     <string name="not_interested_toast">Got it! You\'ll see less content like this.</string>
     <string name="quick_actions_error_template">Error: %1$s</string>
