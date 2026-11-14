@@ -153,6 +153,7 @@ fun EnhancedMusicScreen(
                     HomeSectionType.CHARTS,
                     HomeSectionType.NEW_RELEASES,
                     HomeSectionType.POPULAR_ARTISTS,
+                    HomeSectionType.GENRES,
                 )
             val defaultOrder = HomeSectionType.entries.filterNot { it in excludedSections }
             val anchored =
@@ -223,7 +224,7 @@ fun EnhancedMusicScreen(
                             Image(
                                 painter = painterResource(R.drawable.ic_fedora_tube_wordmark),
                                 contentDescription = stringResource(R.string.app_name),
-                                modifier = Modifier.height(28.dp),
+                                modifier = Modifier.height(26.dp),
                                 contentScale = ContentScale.FillHeight,
                             )
                         }

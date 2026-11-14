@@ -5,7 +5,10 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.basicMarquee
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -194,7 +197,21 @@ internal fun PlayerActionRow(
         )
         FilledTonalIconButton(
             onClick = onMoreClick,
-            modifier = Modifier.size(42.dp),
+            modifier =
+                Modifier
+                    .size(42.dp)
+                    .border(
+                        width = 0.8.dp,
+                        brush =
+                            Brush.verticalGradient(
+                                colors =
+                                    listOf(
+                                        Color.White.copy(alpha = 0.16f),
+                                        Color.White.copy(alpha = 0.04f),
+                                    ),
+                            ),
+                        shape = CircleShape,
+                    ),
             shape = CircleShape,
             colors =
                 IconButtonDefaults.filledTonalIconButtonColors(

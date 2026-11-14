@@ -112,13 +112,6 @@ fun MusicQuickActionsSheet(
             }
 
             else -> {
-                QuickActionsHeader(title = track.title, subtitle = track.artist) {
-                    ArtworkThumbnail(
-                        thumbnailUrl = track.listThumbnailUrl,
-                        size = QuickActionsDefaults.SquareArtworkSize,
-                        placeholder = Icons.Default.MusicNote,
-                    )
-                }
                 val isDeviceFile = LocalMediaIds.isLocal(track.videoId)
                 if (!isDeviceFile) {
                     SongPrimaryActions(track, viewModel, onSave = { sheet.hideThen { page = SongMenuPage.Save } }, onDismiss = close)

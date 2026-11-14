@@ -16,6 +16,7 @@ import com.google.common.util.concurrent.MoreExecutors
 import com.fedoratube.org.data.local.AudioSettingsPersistence
 import com.fedoratube.org.data.local.QueuePersistence
 import com.fedoratube.org.data.localmedia.LocalMediaIds
+import com.fedoratube.org.data.music.YouTubeMusicService
 import com.fedoratube.org.data.music.model.MusicTrack
 import com.fedoratube.org.player.musicvideo.MusicVideoItems
 import com.fedoratube.org.player.musicvideo.MusicVideoPlanner
@@ -32,6 +33,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeoutOrNull
 import org.schabi.newpipe.extractor.stream.AudioStream
 import java.util.concurrent.ConcurrentHashMap
@@ -196,6 +198,25 @@ object EnhancedMusicPlayerManager {
                     }
                 }
             }
+        } else if (_automixItems.value.isEmpty()) {
+            val current = _currentTrack.value
+            if (current != null && !LocalMediaIds.isLocal(current.videoId)) {
+                scope.launch(Dispatchers.IO) {
+                    try {
+                        val related =
+                            YouTubeMusicService
+                                .getRelatedMusic(current.videoId, 10, audioOnly = true)
+                                .filterNot { it.videoId == current.videoId }
+                        if (related.isNotEmpty()) {
+                            withContext(Dispatchers.Main) {
+                                appendAutomixItems(related)
+                            }
+                        }
+                    } catch (e: Exception) {
+                        Log.w("EnhancedMusicPlayer", "Failed to pre-fetch automix: ${e.message}")
+                    }
+                }
+            }
         }
     }
 
@@ -304,6 +325,33 @@ object EnhancedMusicPlayerManager {
                 override fun onPlaybackStateChanged(playbackState: Int) {
                     updatePlayerState()
                     if (playbackState == Player.STATE_ENDED) {
+                        val currentQueue = _queue.value
+                        val currentIndex = currentPlaybackQueueIndex()
+                        if (currentIndex != -1 && currentIndex < currentQueue.size - 1) {
+                            playNext()
+                        } else if (_automixItems.value.isNotEmpty()) {
+                            playNext()
+                        } else {
+                            val lastTrack = _currentTrack.value
+                            if (lastTrack != null && !LocalMediaIds.isLocal(lastTrack.videoId)) {
+                                scope.launch(Dispatchers.IO) {
+                                    try {
+                                        val related =
+                                            YouTubeMusicService
+                                                .getRelatedMusic(lastTrack.videoId, 10, audioOnly = true)
+                                                .filterNot { it.videoId == lastTrack.videoId }
+                                        if (related.isNotEmpty()) {
+                                            withContext(Dispatchers.Main) {
+                                                appendAutomixItems(related)
+                                                playNext()
+                                            }
+                                        }
+                                    } catch (e: Exception) {
+                                        Log.w("EnhancedMusicPlayer", "Failed to auto-fetch next track: ${e.message}")
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
 
@@ -891,6 +939,12 @@ object EnhancedMusicPlayerManager {
 
         if (idx != -1 && idx < queue.size - 1) {
             val nextTrack = queue[idx + 1]
+            setPendingTrack(nextTrack)
+            scope.launch { _playerEvents.emit(PlayerEvent.RequestPlayTrack(nextTrack)) }
+        } else if (_automixItems.value.isNotEmpty()) {
+            val nextTrack = _automixItems.value.first()
+            removeAutomixItem(nextTrack.videoId)
+            addToQueue(nextTrack)
             setPendingTrack(nextTrack)
             scope.launch { _playerEvents.emit(PlayerEvent.RequestPlayTrack(nextTrack)) }
         }

@@ -4,14 +4,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.CenterFocusStrong
 import androidx.compose.material.icons.outlined.CleaningServices
 import androidx.compose.material.icons.outlined.Email
-import androidx.compose.material.icons.outlined.PlayCircleOutline
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import com.fedoratube.org.BuildConfig
 import com.fedoratube.org.R
-import com.fedoratube.org.data.local.FeedPlaybackMode
 import com.fedoratube.org.data.recommendation.FlowPersona
 import com.fedoratube.org.ui.components.settings.SettingsDestination
 import com.fedoratube.org.ui.components.settings.SettingsGroupScope
@@ -37,7 +35,6 @@ internal data class SettingsHomeState(
     val updateCheckingLabel: String?,
     val isFocusModeEnabled: Boolean = false,
     val autoClearCacheHours: Int = 12,
-    val feedPlaybackMode: FeedPlaybackMode = FeedPlaybackMode.ALWAYS,
 )
 
 internal class SettingsHomeActions(
@@ -50,7 +47,6 @@ internal class SettingsHomeActions(
     val onCheckForUpdates: () -> Unit,
     val onFocusModeChange: (Boolean) -> Unit = {},
     val onAutoClearCacheClick: () -> Unit = {},
-    val onFeedPlaybackClick: () -> Unit = {},
 )
 
 /** The settings list when no search is running. */
@@ -83,15 +79,6 @@ internal fun SettingsListScope.homeContent(
     }
     group(key = "home.watching", header = R.string.settings_group_watching) {
         page(SettingsDestination.QUALITY)
-        row("home.watching.feed_playback") { shape ->
-            FlowNavRow(
-                title = stringResource(R.string.feed_playback_title),
-                supportingText = stringResource(state.feedPlaybackMode.titleRes),
-                onClick = actions.onFeedPlaybackClick,
-                leadingIcon = Icons.Outlined.PlayCircleOutline,
-                shape = shape,
-            )
-        }
     }
     group(key = "home.data", header = R.string.settings_group_data) {
         page(SettingsDestination.BACKUP)

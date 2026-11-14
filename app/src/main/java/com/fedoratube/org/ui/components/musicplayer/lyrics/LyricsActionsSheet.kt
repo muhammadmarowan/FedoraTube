@@ -111,9 +111,7 @@ internal fun LyricsActionsSheet(
                         )
                     }
                     if (hasLyrics) {
-                        add(lyricsRow("edit", Icons.Outlined.Edit, stringResource(R.string.lyrics_edit), onClick = run(onEdit)))
                         add(lyricsRow("copy", Icons.Outlined.ContentCopy, stringResource(R.string.lyrics_copy), onClick = run(onCopy)))
-                        add(lyricsRow("save", Icons.Outlined.SaveAlt, stringResource(R.string.lyrics_save_file), onClick = run(onSaveFile)))
                     }
                 },
         )

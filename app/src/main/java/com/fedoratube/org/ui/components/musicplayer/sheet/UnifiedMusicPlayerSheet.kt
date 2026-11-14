@@ -7,6 +7,7 @@ import androidx.compose.animation.core.keyframes
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
@@ -33,6 +34,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.util.VelocityTracker
@@ -361,8 +364,38 @@ internal fun UnifiedMusicPlayerSheet(
                             elevation = cardShadowElevation,
                             shape = cardShape,
                             clip = false,
-                        ).background(cardColor, cardShape)
-                        .clip(cardShape)
+                        ).then(
+                            if (state.expansionFraction.value < 0.2f) {
+                                Modifier
+                                    .background(
+                                        brush =
+                                            Brush.verticalGradient(
+                                                colors =
+                                                    listOf(
+                                                        playerScheme.surfaceContainerHighest.copy(alpha = 0.85f),
+                                                        playerScheme.surfaceContainerHigh.copy(alpha = 0.75f),
+                                                        playerScheme.surfaceContainer.copy(alpha = 0.80f),
+                                                    ),
+                                            ),
+                                        shape = cardShape,
+                                    )
+                                    .border(
+                                        width = 1.dp,
+                                        brush =
+                                            Brush.verticalGradient(
+                                                colors =
+                                                    listOf(
+                                                        Color.White.copy(alpha = 0.32f),
+                                                        Color.White.copy(alpha = 0.08f),
+                                                        Color.Black.copy(alpha = 0.25f),
+                                                    ),
+                                            ),
+                                        shape = cardShape,
+                                    )
+                            } else {
+                                Modifier.background(cardColor, cardShape)
+                            },
+                        ).clip(cardShape)
                         .layout { measurable, constraints ->
                             val fullHeightPx = containerHeightPx.roundToInt()
                             val fraction = state.expansionFraction.value

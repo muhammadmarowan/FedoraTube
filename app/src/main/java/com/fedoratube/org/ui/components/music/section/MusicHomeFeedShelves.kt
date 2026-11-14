@@ -236,18 +236,21 @@ internal fun LazyListScope.genres(
     onSongClick: (MusicTrack, List<MusicTrack>, String?) -> Unit,
     onTrackMenu: (MusicTrack) -> Unit,
 ) {
-    genreTracks.entries.take(3).forEachIndexed { index, (genre, tracks) ->
-        item(key = "genre:$index:$genre") {
-            MusicTrackCardShelf(
-                title = stringResource(R.string.genre_mix_template, genre),
-                tracks = tracks,
-                keyNamespace = "genre_$genre",
-                downloadedTrackIds = downloaded,
-                onTrackClick = { onSongClick(it, tracks, MUSIC_GENRE_SOURCE_PREFIX + genre) },
-                onTrackMenu = onTrackMenu,
-            )
+    genreTracks.entries
+        .filterNot { (genre, _) -> "$genre mix".isExcludedMusicCategory() || genre.isExcludedMusicCategory() }
+        .take(3)
+        .forEachIndexed { index, (genre, tracks) ->
+            item(key = "genre:$index:$genre") {
+                MusicTrackCardShelf(
+                    title = stringResource(R.string.genre_mix_template, genre),
+                    tracks = tracks,
+                    keyNamespace = "genre_$genre",
+                    downloadedTrackIds = downloaded,
+                    onTrackClick = { onSongClick(it, tracks, MUSIC_GENRE_SOURCE_PREFIX + genre) },
+                    onTrackMenu = onTrackMenu,
+                )
+            }
         }
-    }
 }
 
 internal fun LazyListScope.similarTo(
@@ -259,7 +262,7 @@ internal fun LazyListScope.similarTo(
     onTrackMenu: (MusicTrack) -> Unit,
     onCollectionMenu: (MusicTrack) -> Unit,
 ) {
-    val dailyMixes = uiState.dailyMixSections
+    val dailyMixes = uiState.dailyMixSections.filterNot { it.title.isExcludedMusicCategory() }
     val moreFromArtist = uiState.moreFromArtistSections
 
     fun moreFromShelf(section: MusicSection) {
@@ -278,7 +281,7 @@ internal fun LazyListScope.similarTo(
         }
     }
 
-    (dailyMixes + uiState.similarToSections).forEachIndexed { index, section ->
+    (dailyMixes + uiState.similarToSections.filterNot { it.title.isExcludedMusicCategory() }).forEachIndexed { index, section ->
         item(key = "similar_to:$index:${section.title}") {
             MusicTrackCardShelf(
                 title = section.title,
@@ -417,11 +420,13 @@ private val EXCLUDED_MUSIC_CATEGORIES =
         "new releases",
         "popular artist",
         "popular artists",
+        "popular artists mix",
         "pop mix",
         "rock mix",
         "work out",
         "workout",
         "vibes",
+        "work out vibes",
     )
 
 internal fun String.isExcludedMusicCategory(): Boolean {

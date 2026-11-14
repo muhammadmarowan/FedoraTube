@@ -240,10 +240,6 @@ fun LazyListScope.musicHomeFeed(
                 )
             }
 
-            HomeSectionType.GENRES -> {
-                genres(uiState.genreTracks, downloaded, onSongClick, onTrackMenu)
-            }
-
             HomeSectionType.DYNAMIC_HOME -> {
                 dynamicHome(uiState, downloaded, onSongClick, onAlbumClick, onTrackMenu, ::trackCollectionMenu)
             }
@@ -295,7 +291,8 @@ fun LazyListScope.musicHomeFeed(
 
             HomeSectionType.NEW_RELEASES,
             HomeSectionType.CHARTS,
-            HomeSectionType.POPULAR_ARTISTS -> {
+            HomeSectionType.POPULAR_ARTISTS,
+            HomeSectionType.GENRES -> {
                 // Excluded per user request
             }
         }

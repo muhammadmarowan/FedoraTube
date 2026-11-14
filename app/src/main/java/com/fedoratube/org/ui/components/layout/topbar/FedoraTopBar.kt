@@ -3,6 +3,8 @@ package com.fedoratube.org.ui.components.layout.topbar
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.height
+import androidx.compose.ui.unit.dp
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -101,9 +103,11 @@ fun FedoraTopBar(
         }
     }
 
+    val barModifier = modifier.height(48.dp)
+
     if (centeredTitle) {
         CenterAlignedTopAppBar(
-            modifier = modifier,
+            modifier = barModifier,
             title = title,
             navigationIcon = navigationIcon,
             actions = {
@@ -118,7 +122,7 @@ fun FedoraTopBar(
         )
     } else {
         TopAppBar(
-            modifier = modifier,
+            modifier = barModifier,
             title = title,
             navigationIcon = navigationIcon,
             actions = {
