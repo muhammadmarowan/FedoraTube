@@ -210,42 +210,32 @@ fun SubscriptionsScreen(
                     },
                 )
             } else {
-                androidx.compose.foundation.layout.Column {
-                    FlowTopBar(
-                        title = {
-                            Image(
-                                painter = painterResource(R.drawable.ic_fedora_tube_wordmark),
-                                contentDescription = stringResource(R.string.app_name),
-                                modifier = Modifier.height(28.dp),
-                                contentScale = ContentScale.FillHeight,
-                            )
-                        },
-                        actions = {
-                            IconButton(onClick = onNotificationClick) {
-                                Icon(
-                                    imageVector = Icons.Outlined.Notifications,
-                                    contentDescription = stringResource(R.string.notifications),
-                                )
-                            }
-                            IconButton(onClick = onSearchClick) {
-                                Icon(
-                                    imageVector = Icons.Outlined.Search,
-                                    contentDescription = stringResource(R.string.search_subscriptions),
-                                )
-                            }
-                        },
-                        globalActions = com.fedoratube.org.ui.components.layout.topbar.FlowGlobalActionsMode.None,
-                        scrollBehavior = scrollBehavior,
-                    )
-                    if (topCategoryTabs.isNotEmpty()) {
-                        com.fedoratube.org.ui.components.layout.navigation.FlowTopCategoryBar(
-                            tabs = topCategoryTabs,
-                            selectedTab = com.fedoratube.org.ui.components.layout.navigation.FlowTab.Subscriptions,
-                            onCategorySelected = onCategorySelected,
-                            scrollBehavior = scrollBehavior,
+                FlowTopBar(
+                    title = {
+                        Image(
+                            painter = painterResource(R.drawable.ic_fedora_tube_wordmark),
+                            contentDescription = stringResource(R.string.app_name),
+                            modifier = Modifier.height(26.dp),
+                            contentScale = ContentScale.FillHeight,
                         )
-                    }
-                }
+                    },
+                    actions = {
+                        IconButton(onClick = onNotificationClick) {
+                            Icon(
+                                imageVector = Icons.Outlined.Notifications,
+                                contentDescription = stringResource(R.string.notifications),
+                            )
+                        }
+                        IconButton(onClick = onSearchClick) {
+                            Icon(
+                                imageVector = Icons.Outlined.Search,
+                                contentDescription = stringResource(R.string.search_subscriptions),
+                            )
+                        }
+                    },
+                    globalActions = com.fedoratube.org.ui.components.layout.topbar.FlowGlobalActionsMode.None,
+                    scrollBehavior = scrollBehavior,
+                )
             }
         },
         snackbarHost = {

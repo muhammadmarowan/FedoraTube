@@ -121,7 +121,7 @@ internal fun ChannelAvatarItem(
                     MaterialTheme.typography.labelSmall
                 },
             maxLines = 1,
-            overflow = TextOverflow.Clip,
+            overflow = TextOverflow.Ellipsis,
             color =
                 if (selected) {
                     MaterialTheme.colorScheme.primary
@@ -129,7 +129,6 @@ internal fun ChannelAvatarItem(
                     MaterialTheme.colorScheme.onSurface
                 },
             textAlign = TextAlign.Center,
-            modifier = Modifier.titleMarquee(),
         )
     }
 }

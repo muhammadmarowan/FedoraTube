@@ -367,19 +367,32 @@ class YouTubeRepository
                             .take(3)
 
                     if (merged.size > 1 || collaborators.size > 1) {
-                        video.copy(
-                            channelId = video.channelId.ifBlank { collaborators.firstOrNull()?.channelId.orEmpty() },
-                            channelName =
-                                collaborators
-                                    .map { it.name }
-                                    .filter { it.isNotBlank() }
-                                    .takeIf { it.size > 1 }
-                                    ?.joinToString(" and ")
-                                    ?: video.channelName,
-                            channelThumbnailUrl = merged.firstOrNull() ?: video.channelThumbnailUrl,
-                            channelThumbnailUrls = merged.ifEmpty { video.channelThumbnailUrls },
-                            collaborators = collaborators.ifEmpty { video.collaborators },
-                        )
+                        val isValidCollab =
+                            collaborators.size <= 1 ||
+                                video.channelName.isBlank() ||
+                                collaborators.any {
+                                    (video.channelId.isNotBlank() && it.channelId == video.channelId) ||
+                                        it.name.equals(video.channelName, ignoreCase = true) ||
+                                        video.channelName.contains(it.name, ignoreCase = true) ||
+                                        it.name.contains(video.channelName, ignoreCase = true)
+                                }
+                        if (isValidCollab) {
+                            video.copy(
+                                channelId = video.channelId.ifBlank { collaborators.firstOrNull()?.channelId.orEmpty() },
+                                channelName =
+                                    collaborators
+                                        .map { it.name }
+                                        .filter { it.isNotBlank() }
+                                        .takeIf { it.size > 1 }
+                                        ?.joinToString(" and ")
+                                        ?: video.channelName,
+                                channelThumbnailUrl = merged.firstOrNull() ?: video.channelThumbnailUrl,
+                                channelThumbnailUrls = merged.ifEmpty { video.channelThumbnailUrls },
+                                collaborators = collaborators.ifEmpty { video.collaborators },
+                            )
+                        } else {
+                            video
+                        }
                     } else {
                         video
                     }

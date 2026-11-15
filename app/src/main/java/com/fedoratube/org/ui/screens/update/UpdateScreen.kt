@@ -129,23 +129,6 @@ fun UpdateScreen(
                 title = stringResource(R.string.check_for_updates),
                 onBack = onClose,
                 actions = {
-                    IconButton(
-                        onClick = viewModel::retryFetch,
-                        enabled = !state.isChecking,
-                    ) {
-                        if (state.isChecking) {
-                            CircularProgressIndicator(
-                                modifier = Modifier.size(20.dp),
-                                strokeWidth = 2.dp,
-                                color = MaterialTheme.colorScheme.onSurface,
-                            )
-                        } else {
-                            Icon(
-                                imageVector = Icons.Outlined.Refresh,
-                                contentDescription = stringResource(R.string.action_refresh),
-                            )
-                        }
-                    }
                     if (release != null) {
                         UpdateMenu(
                             onSkip = {

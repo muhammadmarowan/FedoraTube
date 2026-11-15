@@ -51,11 +51,24 @@ internal fun rememberPlayerVideoMetadata(
         key2 = video.collaborators,
         key3 = needsCollaboratorResolution,
     ) {
-        value =
+        val fetched =
             if (needsCollaboratorResolution) {
                 VideoCollaboratorResolver.resolve(video.id)
             } else {
                 video.collaborators
+            }
+        value =
+            if (fetched.size > 1 && video.channelName.isNotBlank() &&
+                fetched.none {
+                    (video.channelId.isNotBlank() && it.channelId == video.channelId) ||
+                        it.name.equals(video.channelName, ignoreCase = true) ||
+                        video.channelName.contains(it.name, ignoreCase = true) ||
+                        it.name.contains(video.channelName, ignoreCase = true)
+                }
+            ) {
+                emptyList()
+            } else {
+                fetched
             }
     }
     val resolvedChannelName =

@@ -51,7 +51,7 @@ class UpdateViewModel
     ) : ViewModel() {
         private val canInstall = MutableStateFlow(installer.canInstall())
         private val installing = MutableStateFlow(false)
-        private val loading = MutableStateFlow(updates.latest.value == null)
+        private val isChecking = MutableStateFlow(false)
         private val fetchFailed = MutableStateFlow(false)
 
         val state: StateFlow<UpdateUiState> =
@@ -73,40 +73,56 @@ class UpdateViewModel
                 },
                 updates.latest,
                 updates.allReleases,
-                loading,
+                isChecking,
                 fetchFailed,
-            ) { (notes, stage), release, allReleases, isLoading, isFailed ->
+            ) { (notes, stage), release, allReleases, checking, isFailed ->
                 UpdateUiState(
                     release = release,
                     notes = notes,
                     stage = stage,
-                    loading = isLoading && release == null && allReleases.isEmpty(),
-                    isChecking = isLoading,
+                    loading = checking && release == null && allReleases.isEmpty(),
+                    isChecking = checking,
                     fetchFailed = isFailed && release == null && allReleases.isEmpty(),
                     allReleases = allReleases,
                     currentVersion = BuildConfig.VERSION_NAME,
                 )
-            }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(STOP_TIMEOUT_MS), UpdateUiState(loading = loading.value, isChecking = loading.value))
+            }.stateIn(
+                viewModelScope,
+                SharingStarted.WhileSubscribed(STOP_TIMEOUT_MS),
+                UpdateUiState(
+                    allReleases = updates.allReleases.value,
+                    release = updates.latest.value,
+                    loading = updates.allReleases.value.isEmpty() && updates.latest.value == null,
+                    isChecking = false,
+                ),
+            )
 
         private val _toastEvent = MutableSharedFlow<Int>()
         val toastEvent = _toastEvent.asSharedFlow()
 
         init {
-            if (loading.value) {
-                retryFetch()
+            if (updates.allReleases.value.isEmpty()) {
+                retryFetch(isManual = false)
             }
         }
 
-        fun retryFetch() {
-            if (loading.value) return
-            loading.value = true
+        fun retryFetch(isManual: Boolean = true) {
+            if (isChecking.value) return
+            isChecking.value = true
             fetchFailed.value = false
             viewModelScope.launch {
-                val result = runCatching { updates.fetch() }
-                fetchFailed.value = result.isFailure
-                loading.value = false
-                if (result.isSuccess && updates.latest.value == null) {
-                    _toastEvent.emit(R.string.flow_is_up_to_date)
+                try {
+                    val result = runCatching { updates.fetch() }
+                    fetchFailed.value = result.isFailure
+                    if (result.isSuccess) {
+                        if (isManual && updates.latest.value == null) {
+                            _toastEvent.emit(R.string.flow_is_up_to_date)
+                        }
+                    } else if (isManual) {
+                        _toastEvent.emit(R.string.update_check_failed)
+                    }
+                } finally {
+                    isChecking.value = false
                 }
             }
         }

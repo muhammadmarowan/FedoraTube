@@ -218,6 +218,8 @@ fun NavGraphBuilder.flowAppGraph(
                 musicPlayerViewModel.loadAndPlayTrack(selectedTrack, musicTracks, downloadsSourceName)
                 onMusicStarted()
             },
+            topCategoryTabs = topCategoryTabs,
+            onCategorySelected = onCategorySelected,
         )
     }
 

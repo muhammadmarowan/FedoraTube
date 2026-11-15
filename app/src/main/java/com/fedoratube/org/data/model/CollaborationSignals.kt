@@ -10,14 +10,7 @@ internal fun Video.needsCollaboratorResolution(): Boolean =
 internal fun String.hasLikelyCollaborationByline(): Boolean {
     val normalized = " ${trim().lowercase(Locale.US)} "
     return normalized.contains(" & ") ||
-        normalized.contains(" and ") ||
-        normalized.contains(" with ") ||
         normalized.contains(" x ") ||
         normalized.contains(" feat. ") ||
-        normalized.contains(" feat ") ||
-        normalized.contains(" ft. ") ||
-        normalized.contains(" ft ") ||
-        normalized.contains(" vs ") ||
-        normalized.contains(" vs. ") ||
-        normalized.contains(",")
+        normalized.contains(" ft. ")
 }

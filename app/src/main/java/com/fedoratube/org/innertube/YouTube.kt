@@ -405,8 +405,14 @@ object YouTube {
                 if (ownerStack.size > 1) {
                     ownerStack
                 } else {
-                    values
-                        .firstNotNullOfOrNull { child ->
+                    entries
+                        .filterNot { (key, _) ->
+                            key == "secondaryResults" ||
+                                key == "secondaryContents" ||
+                                key == "compactVideoRenderer" ||
+                                key == "watchNextEndScreenRenderer"
+                        }
+                        .firstNotNullOfOrNull { (_, child) ->
                             child.findVideoOwnerAvatarStackUrls().takeIf { it.size > 1 }
                         }.orEmpty()
                 }
@@ -434,8 +440,14 @@ object YouTube {
                 if (collaborators != null && collaborators.size > 1) {
                     collaborators
                 } else {
-                    values
-                        .firstNotNullOfOrNull { child ->
+                    entries
+                        .filterNot { (key, _) ->
+                            key == "secondaryResults" ||
+                                key == "secondaryContents" ||
+                                key == "compactVideoRenderer" ||
+                                key == "watchNextEndScreenRenderer"
+                        }
+                        .firstNotNullOfOrNull { (_, child) ->
                             child.findVideoOwnerCollaborators().takeIf { it.size > 1 }
                         }.orEmpty()
                 }

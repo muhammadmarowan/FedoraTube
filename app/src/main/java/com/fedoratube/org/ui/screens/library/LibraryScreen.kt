@@ -77,6 +77,8 @@ fun LibraryScreen(
     onMusicPlaylistClick: (String) -> Unit = {},
     onDownloadedVideoClick: (List<DownloadedVideo>, Int) -> Unit = { _, _ -> },
     onDownloadedMusicClick: (List<DownloadedTrack>, Int) -> Unit = { _, _ -> },
+    topCategoryTabs: List<FlowTab> = emptyList(),
+    onCategorySelected: (FlowTab) -> Unit = {},
     modifier: Modifier = Modifier,
     viewModel: LibraryViewModel = hiltViewModel(),
 ) {
@@ -119,7 +121,14 @@ fun LibraryScreen(
                 modifier
                     .fillMaxSize()
                     .padding(padding)
-                    .background(MaterialTheme.colorScheme.background),
+                    .background(MaterialTheme.colorScheme.background)
+                    .then(
+                        com.fedoratube.org.ui.components.layout.navigation.rememberCategorySwipe(
+                            tabs = topCategoryTabs,
+                            selectedTab = FlowTab.Library,
+                            onCategorySelected = onCategorySelected,
+                        ),
+                    ),
             contentPadding = PaddingValues(top = ListVerticalPadding, bottom = flowBottomContentPadding(ListVerticalPadding)),
             verticalArrangement = Arrangement.spacedBy(ShelfSpacing),
         ) {

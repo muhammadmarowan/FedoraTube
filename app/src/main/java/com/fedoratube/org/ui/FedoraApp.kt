@@ -535,7 +535,7 @@ fun FedoraApp(
                                             playerVisibleState = playerVisibleState,
                                             defaultStartRoute = defaultStartRoute,
                                             onMusicStarted = onMusicStarted,
-                                            topCategoryTabs = topCategoryTabs,
+                                            topCategoryTabs = navigationTabs,
                                             onCategorySelected = onTopCategorySelected,
                                         )
                                     }
