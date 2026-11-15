@@ -80,6 +80,7 @@ fun visibleFlowTabs(
         buildSet {
             if (visibility.home) add(FlowTab.Home)
             if (visibility.music) add(FlowTab.Music)
+            add(FlowTab.Subscriptions)
             add(FlowTab.Library)
             if (visibility.search) add(FlowTab.Search)
             if (visibility.categories) add(FlowTab.Explore)
@@ -91,14 +92,9 @@ fun visibleFlowTabs(
 }
 
 /**
- * The top chips under the app wordmark, YouTube-style: Home and Subscriptions.
- * Music now lives in the bottom navigation bar.
+ * The top chips under the app wordmark. Kept empty for a clean, unified slim header across Home and Music.
  */
-fun topCategoryTabs(visibility: NavigationVisibility): List<FlowTab> =
-    buildList {
-        if (visibility.home) add(FlowTab.Home)
-        add(FlowTab.Subscriptions)
-    }
+fun topCategoryTabs(visibility: NavigationVisibility): List<FlowTab> = emptyList()
 
 fun resolveDefaultFlowTab(
     preferredId: Int,

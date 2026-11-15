@@ -1,10 +1,20 @@
 # Fedora Tube v1.7.9 (Prerelease)
 
-**Release date:** 2026-11-14
+**Release date:** 2026-11-15
 **Status:** Prerelease
 
 ## Highlights
 
+- **Slim Home Top Bar**: Replaced bulky top category tabs on Home with a unified, slim 48 dp brand bar matching the compact Music section top bar (clean 26 dp FedoraTube wordmark).
+- **Smooth Scroll Collapsing & Clean Backgrounds**: The top bar now dynamically collapses smoothly to 0 dp when scrolling on Home and Music feeds, completely fixing the black strip/border bug.
+- **YouTube-Style Collaborators Bottom Sheet**: Clicking on collaborative videos or their channel bylines opens the official Collaborators bottom sheet showing avatars, creator names, handles, subscriber counts, and chevron navigation to browse each collaborator's channel.
+- **Fixed Player Title & Byline Vertical Wrap Glitch**: Resolved the layout bug under the video player where long channel names forced the upload date to wrap vertically letter-by-letter into a tall empty column; title defaults to 2 lines with scaled typography.
+- **Clean Playlist FAB Menu**: Removed the redundant "Import from file" option from the playlist creation menu for a clean, streamlined playlist workflow.
+- **Robust InnerTube Playlist & Album Parsing**: Fixed crashes and errors when opening music playlists or albums by eliminating rigid prefix handling and replacing unsafe assertions with resilient fallback parsing.
+- **Responsive Music Feed Pull-to-Refresh**: Pull-to-refresh in the Music section now coordinates background network fetches, invalidates stale chart caches, keeps the refresh spinner active until data arrives, and cleanly retracts.
+- **Clean Link Sharing Only**: Video and music share actions now share clean URLs directly (without appending or prepending titles or intro messages), matching YouTube.
+- **Interactive Check for Updates Screen**: Corrected app name branding to "FedoraTube is up to date" and added real-time loading feedback with animated progress spinners and confirmation toasts when checking for updates.
+- **Silky Smooth 60/120fps Scrolling**: Optimized viewport snapshot emission on Home and removed list resets on Music to eliminate micro-stutter and deliver YouTube-like fluid scroll performance.
 - **Complete FedoraTube Rebrand & Architecture Rewrite**: Replaced all legacy upstream headers, crash/diagnostic identifiers, user-agents, localized contributor references, and core engine/UI symbols (`FedoraEngine`, `FedoraApp`, `FedoraTheme`, `FedoraCrashHandler`, `FedoraDiagnostics`).
 - **Upgraded FedoraEngine (Region + Interest + Search + Watch History Feed Intelligence)**: Home feed recommendations and discovery queries now combine your selected/system **Region**, learned **Interests** & topic clusters, recent **Search History** queries, and **Watch History** completion signals so feed suggestions immediately reflect what you search, watch, and care about in your region.
 - **Strict Ad-Free Video & Music Playback**: Hardened InnerTube feed, search, and lockup parsers to strip all ad slots, promoted sparkles/video renderers, statement banners, and sponsored items across video and music streams.

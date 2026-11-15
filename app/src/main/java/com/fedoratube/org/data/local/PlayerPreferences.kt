@@ -2672,7 +2672,7 @@ class PlayerPreferences(
     val shareWithoutText: Flow<Boolean> =
         context.playerPreferencesDataStore.data
             .map { preferences ->
-                preferences[Keys.SHARE_WITHOUT_TEXT] ?: false
+                preferences[Keys.SHARE_WITHOUT_TEXT] ?: true
             }
 
     suspend fun setShareWithoutText(enabled: Boolean) {
@@ -2978,7 +2978,7 @@ class PlayerPreferences(
     val videoTitleMaxLines: Flow<Int> =
         context.playerPreferencesDataStore.data
             .map { preferences ->
-                preferences[Keys.VIDEO_TITLE_MAX_LINES] ?: 1
+                preferences[Keys.VIDEO_TITLE_MAX_LINES] ?: 2
             }
 
     suspend fun setVideoTitleMaxLines(lines: Int) {

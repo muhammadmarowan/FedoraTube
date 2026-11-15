@@ -130,7 +130,7 @@ internal fun FedoraBrandWordmark(
             contentDescription = stringResource(R.string.app_name),
             modifier =
                 Modifier
-                    .height(28.dp)
+                    .height(26.dp)
                     .graphicsLayer {
                         scaleX = scale
                         scaleY = scale

@@ -13,7 +13,7 @@ import com.fedoratube.org.utils.shareVideo
 fun rememberShareLinksWithoutText(): State<Boolean> {
     val context = LocalContext.current
     val preferences = remember(context) { PlayerPreferences(context) }
-    return preferences.shareWithoutText.collectAsStateWithLifecycle(initialValue = false)
+    return preferences.shareWithoutText.collectAsStateWithLifecycle(initialValue = true)
 }
 
 /**

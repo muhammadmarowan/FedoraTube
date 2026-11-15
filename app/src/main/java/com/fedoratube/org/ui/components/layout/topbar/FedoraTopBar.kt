@@ -16,6 +16,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarColors
 import androidx.compose.material3.TopAppBarScrollBehavior
+import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -103,7 +106,26 @@ fun FedoraTopBar(
         }
     }
 
-    val barModifier = modifier.height(48.dp)
+    val density = LocalDensity.current
+    val baseBarHeight = 48.dp
+    val baseBarHeightPx = with(density) { baseBarHeight.toPx() }
+
+    LaunchedEffect(scrollBehavior, baseBarHeightPx) {
+        if (scrollBehavior != null) {
+            scrollBehavior.state.heightOffsetLimit = -baseBarHeightPx
+        }
+    }
+
+    val currentBarHeight =
+        if (scrollBehavior == null) {
+            baseBarHeight
+        } else {
+            with(density) {
+                (baseBarHeightPx + scrollBehavior.state.heightOffset).coerceIn(0f, baseBarHeightPx).toDp()
+            }
+        }
+
+    val barModifier = modifier.height(currentBarHeight).clipToBounds()
 
     if (centeredTitle) {
         CenterAlignedTopAppBar(

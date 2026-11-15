@@ -240,7 +240,6 @@ fun PlaylistsScreen(
                 PlaylistCreationFabMenu(
                     onCreateVideo = { creationTarget = PlaylistCreationTarget.Video },
                     onCreateMusic = { creationTarget = PlaylistCreationTarget.Music },
-                    onImport = { importLauncher.launch(PlaylistFileTypes) },
                     modifier =
                         Modifier
                             .align(Alignment.BottomEnd)

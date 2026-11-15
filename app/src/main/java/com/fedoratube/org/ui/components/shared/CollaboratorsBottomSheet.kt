@@ -1,5 +1,8 @@
 package com.fedoratube.org.ui.components.shared
 
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowRight
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -80,14 +83,10 @@ internal fun collaboratorRows(
                 trailingContent =
                     if (canOpen) {
                         {
-                            val toggle = {
-                                viewModel.toggleSubscription(collaborator.channelId, collaborator.name, collaborator.thumbnailUrl)
-                            }
-                            FlowSubscribeButton(
-                                isSubscribed = collaborator.channelId in subscribedChannelIds,
-                                onSubscribeClick = toggle,
-                                onUnsubscribeClick = toggle,
-                                size = FlowSubscribeButtonSize.Compact,
+                            androidx.compose.material3.Icon(
+                                imageVector = androidx.compose.material.icons.Icons.AutoMirrored.Rounded.KeyboardArrowRight,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
                         }
                     } else {

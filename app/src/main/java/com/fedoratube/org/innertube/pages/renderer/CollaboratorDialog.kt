@@ -62,18 +62,17 @@ private fun JsonObject.toCollaborator(): VideoCollaborator? {
             .objectOrNull()
             ?.get("image")
             .largestImageUrl()
+    val subtitle =
+        this["subtitle"]
+            .youtubeText()
+            ?.withoutBidiMarks()
+            ?.trim()
+            .orEmpty()
     return VideoCollaborator(
         name = name,
         channelId = channelId,
         thumbnailUrl = ThumbnailUrlResolver.resolveChannelAvatar(avatarUrl),
-        // "@handle • 21.3M subscribers": the count follows the bullet in every locale.
-        subscriberCountText =
-            this["subtitle"]
-                .youtubeText()
-                ?.withoutBidiMarks()
-                ?.substringAfter('•', missingDelimiterValue = "")
-                ?.trim()
-                .orEmpty(),
+        subscriberCountText = subtitle,
     )
 }
 

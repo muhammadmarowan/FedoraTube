@@ -32,7 +32,7 @@ fun shareVideoIntent(
     context: Context,
     videoId: String,
     title: String,
-    linkOnly: Boolean,
+    linkOnly: Boolean = true,
     isShort: Boolean = false,
 ): Intent {
     val shareText =
@@ -51,7 +51,7 @@ fun shareSongIntent(
     videoId: String,
     title: String,
     artist: String,
-    linkOnly: Boolean,
+    linkOnly: Boolean = true,
 ): Intent {
     val shareText =
         if (linkOnly) {
@@ -67,7 +67,7 @@ fun sharePlaylist(
     context: Context,
     playlistId: String,
     title: String,
-    linkOnly: Boolean,
+    linkOnly: Boolean = true,
 ) = shareLink(context, "https://www.youtube.com/playlist?list=$playlistId", title, linkOnly)
 
 /**
@@ -78,7 +78,7 @@ fun shareLink(
     context: Context,
     url: String,
     title: String,
-    linkOnly: Boolean = false,
+    linkOnly: Boolean = true,
 ) {
     context.startActivity(textShareChooser(url, title.takeUnless { linkOnly }, context.getString(R.string.share)))
 }
@@ -127,7 +127,7 @@ fun shareVideo(
     context: Context,
     videoId: String,
     title: String,
-    linkOnly: Boolean,
+    linkOnly: Boolean = true,
     isShort: Boolean = false,
 ) {
     context.startActivity(shareVideoIntent(context, videoId, title, linkOnly, isShort))

@@ -108,7 +108,7 @@ internal fun VideoInfoSection(
         // ============ TITLE SECTION ============
         val context = LocalContext.current
         val prefs = remember { PlayerPreferences(context) }
-        val titleMaxLinesPref by prefs.videoTitleMaxLines.collectAsState(initial = 1)
+        val titleMaxLinesPref by prefs.videoTitleMaxLines.collectAsState(initial = 2)
         val titleMaxLines = if (titleMaxLinesPref <= 0) Int.MAX_VALUE else titleMaxLinesPref
         val dateSettings = rememberDateDisplaySettings()
         // Title, counts and "…more" are one target: tapping any of them opens the description,
@@ -125,8 +125,8 @@ internal fun VideoInfoSection(
                 style =
                     MaterialTheme.typography.titleLarge.copy(
                         fontWeight = FontWeight.Bold,
-                        fontSize = 20.sp,
-                        lineHeight = 28.sp,
+                        fontSize = 18.sp,
+                        lineHeight = 24.sp,
                     ),
                 color = MaterialTheme.colorScheme.onBackground,
                 maxLines = titleMaxLines,
@@ -155,7 +155,12 @@ internal fun VideoInfoSection(
                     text = if (displayChannelName.startsWith("@")) displayChannelName else "@$displayChannelName",
                     style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.SemiBold),
                     color = MaterialTheme.colorScheme.onSurface,
-                    modifier = Modifier.clickable(enabled = !isDeviceFile) { openChannelOrCollaborators() },
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier =
+                        Modifier
+                            .weight(1f, fill = false)
+                            .clickable(enabled = !isDeviceFile) { openChannelOrCollaborators() },
                 )
 
                 Spacer(modifier = Modifier.width(6.dp))
@@ -177,6 +182,8 @@ internal fun VideoInfoSection(
                         },
                     style = MaterialTheme.typography.bodySmall,
                     color = if (isUpcoming) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
                 )
 
                 if (!isUpcoming && !uploadDate.isNullOrBlank()) {
@@ -188,6 +195,8 @@ internal fun VideoInfoSection(
                             ),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
                     )
                 }
 
@@ -197,6 +206,7 @@ internal fun VideoInfoSection(
                     text = stringResource(R.string.desc_more),
                     style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold),
                     color = MaterialTheme.colorScheme.onSurface,
+                    maxLines = 1,
                 )
             }
         }

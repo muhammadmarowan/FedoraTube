@@ -137,7 +137,7 @@ fun EnhancedMusicScreen(
         ownPlaylists.size,
         musicSubscriptions.size,
     ) {
-        if (!userHasScrolled) {
+        if (!userHasScrolled && musicListState.firstVisibleItemIndex == 0 && musicListState.firstVisibleItemScrollOffset == 0) {
             musicListState.scrollToItem(0, 0)
             scrollBehavior.state.heightOffset = 0f
             scrollBehavior.state.contentOffset = 0f
@@ -210,49 +210,39 @@ fun EnhancedMusicScreen(
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            androidx.compose.foundation.layout.Column {
-                FlowTopBar(
-                    title = {
-                        if (isFocusModeEnabled) {
-                            Text(
-                                text = stringResource(R.string.nav_music),
-                                style = FlowTopBarDefaults.titleStyle,
-                                maxLines = 1,
-                                overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
-                            )
-                        } else {
-                            Image(
-                                painter = painterResource(R.drawable.ic_fedora_tube_wordmark),
-                                contentDescription = stringResource(R.string.app_name),
-                                modifier = Modifier.height(26.dp),
-                                contentScale = ContentScale.FillHeight,
-                            )
+            FlowTopBar(
+                title = {
+                    if (isFocusModeEnabled) {
+                        Text(
+                            text = stringResource(R.string.nav_music),
+                            style = FlowTopBarDefaults.titleStyle,
+                            maxLines = 1,
+                            overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
+                        )
+                    } else {
+                        Image(
+                            painter = painterResource(R.drawable.ic_fedora_tube_wordmark),
+                            contentDescription = stringResource(R.string.app_name),
+                            modifier = Modifier.height(26.dp),
+                            contentScale = ContentScale.FillHeight,
+                        )
+                    }
+                },
+                centeredTitle = isFocusModeEnabled,
+                onBack = if (isFocusModeEnabled) onBack else null,
+                actions = {
+                    if (!isFocusModeEnabled) {
+                        IconButton(onClick = onNotificationClick) {
+                            Icon(Icons.Outlined.Notifications, stringResource(R.string.notifications))
                         }
-                    },
-                    centeredTitle = isFocusModeEnabled,
-                    onBack = if (isFocusModeEnabled) onBack else null,
-                    actions = {
-                        if (!isFocusModeEnabled) {
-                            IconButton(onClick = onNotificationClick) {
-                                Icon(Icons.Outlined.Notifications, stringResource(R.string.notifications))
-                            }
-                        }
-                        IconButton(onClick = onSearchClick) {
-                            Icon(Icons.Outlined.Search, stringResource(R.string.search))
-                        }
-                    },
-                    globalActions = com.fedoratube.org.ui.components.layout.topbar.FlowGlobalActionsMode.None,
-                    scrollBehavior = scrollBehavior,
-                )
-                if (!isFocusModeEnabled && topCategoryTabs.isNotEmpty()) {
-                    com.fedoratube.org.ui.components.layout.navigation.FlowTopCategoryBar(
-                        tabs = topCategoryTabs,
-                        selectedTab = com.fedoratube.org.ui.components.layout.navigation.FlowTab.Music,
-                        onCategorySelected = onCategorySelected,
-                        scrollBehavior = scrollBehavior,
-                    )
-                }
-            }
+                    }
+                    IconButton(onClick = onSearchClick) {
+                        Icon(Icons.Outlined.Search, stringResource(R.string.search))
+                    }
+                },
+                globalActions = com.fedoratube.org.ui.components.layout.topbar.FlowGlobalActionsMode.None,
+                scrollBehavior = scrollBehavior,
+            )
         },
         containerColor = MaterialTheme.colorScheme.background,
         contentWindowInsets = WindowInsets(0.dp),
@@ -309,7 +299,7 @@ fun EnhancedMusicScreen(
                     val pullState = rememberPullToRefreshState()
 
                     FlowPullToRefreshBox(
-                        isRefreshing = uiState.isLoading,
+                        isRefreshing = uiState.isRefreshing,
                         onRefresh = { viewModel.refresh() },
                         state = pullState,
                         modifier = Modifier.fillMaxSize(),

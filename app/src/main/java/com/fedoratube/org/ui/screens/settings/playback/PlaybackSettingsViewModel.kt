@@ -84,7 +84,7 @@ class PlaybackSettingsViewModel
 
         val relatedVideos = preferences.showRelatedVideos.asState(true)
         val relatedCardStyle = preferences.playerRelatedCardStyle.asState(PlayerRelatedCardStyle.FULL_WIDTH)
-        val titleLines = preferences.videoTitleMaxLines.asState(1)
+        val titleLines = preferences.videoTitleMaxLines.asState(2)
         val comments = preferences.commentsEnabled.asState(true)
         val liveChat = preferences.liveChatEnabled.asState(true)
         val commentsPreview = preferences.commentsPreviewEnabled.asState(true)

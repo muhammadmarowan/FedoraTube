@@ -122,33 +122,36 @@ object YouTubeMusicService {
         withContext(Dispatchers.IO) {
             try {
                 if (playlistId.startsWith("MPREb_") || playlistId.startsWith("FEmusic_library_privately_owned_release_")) {
-                    return@withContext InnertubeMusicService.fetchAlbum(playlistId)
+                    InnertubeMusicService.fetchAlbum(playlistId)?.let { return@withContext it }
                 }
                 InnertubeMusicService.fetchPlaylistDetails(playlistId)?.let { return@withContext it }
-                if (!playlistId.startsWith("FMDM") && !playlistId.startsWith("OLAK")) return@withContext null
+                InnertubeMusicService.fetchAlbum(playlistId)?.let { return@withContext it }
 
-                val albumPage = YouTube.album(playlistId).getOrNull() ?: return@withContext null
-                val tracks = albumPage.songs.map { convertSongItemToMusicTrack(it) }
-                PlaylistDetails(
-                    id = playlistId,
-                    title = albumPage.album.title,
-                    thumbnailUrl = albumPage.album.thumbnail,
-                    author =
-                        albumPage.album.artists
-                            ?.firstOrNull()
-                            ?.name ?: "Unknown Artist",
-                    authorId =
-                        albumPage.album.artists
-                            ?.firstOrNull()
-                            ?.id,
-                    authorAvatarUrl = null,
-                    trackCount = tracks.size,
-                    description = null,
-                    views = null,
-                    durationText = formatTotalDuration(tracks.sumOf { it.duration }),
-                    dateText = albumPage.album.year?.toString(),
-                    tracks = tracks,
-                )
+                val albumPage = YouTube.album(playlistId).getOrNull()
+                if (albumPage != null) {
+                    val tracks = albumPage.songs.map { convertSongItemToMusicTrack(it) }
+                    return@withContext PlaylistDetails(
+                        id = playlistId,
+                        title = albumPage.album.title.ifBlank { "Playlist" },
+                        thumbnailUrl = albumPage.album.thumbnail.orEmpty(),
+                        author =
+                            albumPage.album.artists
+                                ?.firstOrNull()
+                                ?.name ?: "Unknown Artist",
+                        authorId =
+                            albumPage.album.artists
+                                ?.firstOrNull()
+                                ?.id,
+                        authorAvatarUrl = null,
+                        trackCount = tracks.size,
+                        description = null,
+                        views = null,
+                        durationText = formatTotalDuration(tracks.sumOf { it.duration }),
+                        dateText = albumPage.album.year?.toString(),
+                        tracks = tracks,
+                    )
+                }
+                null
             } catch (e: Exception) {
                 Log.e(TAG, "Error fetching playlist details: $playlistId", e)
                 null

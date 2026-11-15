@@ -20,9 +20,9 @@ internal fun Video.collaboratorItems(resolvedCollaborators: List<VideoCollaborat
         .orEmpty()
 
 private fun VideoCollaborator.hasChannelCollaboratorSignal(): Boolean =
-    channelId.startsWith("UC") ||
+    channelId.isNotBlank() ||
         thumbnailUrl.isNotBlank() ||
-        subscriberCountText.contains("subscriber", ignoreCase = true)
+        subscriberCountText.isNotBlank()
 
 internal fun List<VideoCollaborator>.displayCollaboratorChannelName(
     fallback: String,

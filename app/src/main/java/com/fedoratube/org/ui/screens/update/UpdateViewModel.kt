@@ -13,10 +13,13 @@ import com.fedoratube.org.data.update.UpdateFailure
 import com.fedoratube.org.data.update.UpdateRepository
 import com.fedoratube.org.data.update.parseReleaseNotes
 import com.fedoratube.org.updater.AppUpdateInstaller
+import com.fedoratube.org.R
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
@@ -32,6 +35,7 @@ data class UpdateUiState(
     val notes: ReleaseNotes? = null,
     val stage: UpdateStage = UpdateStage.Available,
     val loading: Boolean = false,
+    val isChecking: Boolean = false,
     val fetchFailed: Boolean = false,
     val allReleases: List<GitHubRelease> = emptyList(),
     val currentVersion: String = BuildConfig.VERSION_NAME,
@@ -77,11 +81,15 @@ class UpdateViewModel
                     notes = notes,
                     stage = stage,
                     loading = isLoading && release == null && allReleases.isEmpty(),
+                    isChecking = isLoading,
                     fetchFailed = isFailed && release == null && allReleases.isEmpty(),
                     allReleases = allReleases,
                     currentVersion = BuildConfig.VERSION_NAME,
                 )
-            }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(STOP_TIMEOUT_MS), UpdateUiState(loading = loading.value))
+            }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(STOP_TIMEOUT_MS), UpdateUiState(loading = loading.value, isChecking = loading.value))
+
+        private val _toastEvent = MutableSharedFlow<Int>()
+        val toastEvent = _toastEvent.asSharedFlow()
 
         init {
             if (loading.value) {
@@ -90,12 +98,16 @@ class UpdateViewModel
         }
 
         fun retryFetch() {
+            if (loading.value) return
             loading.value = true
             fetchFailed.value = false
             viewModelScope.launch {
                 val result = runCatching { updates.fetch() }
                 fetchFailed.value = result.isFailure
                 loading.value = false
+                if (result.isSuccess && updates.latest.value == null) {
+                    _toastEvent.emit(R.string.flow_is_up_to_date)
+                }
             }
         }
 

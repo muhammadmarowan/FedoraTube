@@ -171,14 +171,17 @@ fun HomeScreen(
     LaunchedEffect(gridState, videoIndexById) {
         snapshotFlow {
             var lastVisibleVideoIndex = -1
-            gridState.layoutInfo.visibleItemsInfo.forEach { item ->
-                val index = videoIndexById[item.key as? String] ?: return@forEach
+            val items = gridState.layoutInfo.visibleItemsInfo
+            for (i in items.indices) {
+                val index = videoIndexById[items[i].key as? String] ?: continue
                 if (index > lastVisibleVideoIndex) lastVisibleVideoIndex = index
             }
-            lastVisibleVideoIndex to gridState.isScrollInProgress
+            lastVisibleVideoIndex
         }.distinctUntilChanged()
-            .collect { (lastVisibleVideoIndex, _) ->
-                viewModel.onHomeViewportChanged(lastVisibleVideoIndex)
+            .collect { lastVisibleVideoIndex ->
+                if (lastVisibleVideoIndex >= 0) {
+                    viewModel.onHomeViewportChanged(lastVisibleVideoIndex)
+                }
             }
     }
 
@@ -217,17 +220,16 @@ fun HomeScreen(
             SnackbarHost(snackbarHostState, Modifier.floatAboveBottomChrome(LocalFlowBottomInsets.current))
         },
         topBar = {
-            Column {
-                FlowTopBar(
-                    title = {
-                        if (!isFocusModeEnabled) {
-                            FedoraBrandWordmark(
-                                isDeepFlowActive = deepFlowActive,
-                                onLongPress = toggleDeepFlow,
-                                longPressLabel = deepFlowLabel,
-                            )
-                        }
-                    },
+            FlowTopBar(
+                title = {
+                    if (!isFocusModeEnabled) {
+                        FedoraBrandWordmark(
+                            isDeepFlowActive = deepFlowActive,
+                            onLongPress = toggleDeepFlow,
+                            longPressLabel = deepFlowLabel,
+                        )
+                    }
+                },
                 leading = null,
                 actions = {
                     if (!isFocusModeEnabled) {
@@ -246,17 +248,8 @@ fun HomeScreen(
                     }
                 },
                 globalActions = FlowGlobalActionsMode.None,
-                    scrollBehavior = scrollBehavior,
-                )
-                if (!isFocusModeEnabled && topCategoryTabs.isNotEmpty()) {
-                    com.fedoratube.org.ui.components.layout.navigation.FlowTopCategoryBar(
-                        tabs = topCategoryTabs,
-                        selectedTab = com.fedoratube.org.ui.components.layout.navigation.FlowTab.Home,
-                        onCategorySelected = onCategorySelected,
-                        scrollBehavior = scrollBehavior,
-                    )
-                }
-            }
+                scrollBehavior = scrollBehavior,
+            )
         },
     ) { padding ->
         if (isFocusModeEnabled) {

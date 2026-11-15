@@ -427,8 +427,11 @@ object YouTube {
         when (this) {
             is JsonObject -> {
                 val owner = this["videoOwnerRenderer"] as? JsonObject
-                val collaborators = owner?.get("navigationEndpoint").collaboratorDialog()
-                if (collaborators.size > 1) {
+                val collaborators =
+                    owner.collaboratorDialog().takeIf { it.size > 1 }
+                        ?: owner?.get("navigationEndpoint").collaboratorDialog().takeIf { it.size > 1 }
+                        ?: this.collaboratorDialog().takeIf { it.size > 1 }
+                if (collaborators != null && collaborators.size > 1) {
                     collaborators
                 } else {
                     values
@@ -944,33 +947,33 @@ object YouTube {
                         ?.buttonRenderer
                         ?.navigationEndpoint
                         ?.watchPlaylistEndpoint
-                        ?.playlistId!!
+                        ?.playlistId ?: browseId
                 val albumItem =
                     AlbumItem(
                         browseId = browseId,
                         playlistId = playlistId,
                         title =
-                            response.header.musicDetailHeaderRenderer.title.runs
+                            response.header?.musicDetailHeaderRenderer?.title?.runs
                                 ?.firstOrNull()
-                                ?.text!!,
+                                ?.text.orEmpty(),
                         artists =
-                            response.header.musicDetailHeaderRenderer.subtitle.runs?.filter { it.navigationEndpoint != null }?.map {
+                            response.header?.musicDetailHeaderRenderer?.subtitle?.runs?.filter { it.navigationEndpoint != null }?.map {
                                 Artist(
                                     name = it.text,
                                     id = it.navigationEndpoint?.browseEndpoint?.browseId,
                                 )
                             },
                         year =
-                            response.header.musicDetailHeaderRenderer.subtitle.runs
+                            response.header?.musicDetailHeaderRenderer?.subtitle?.runs
                                 ?.lastOrNull()
                                 ?.text
                                 ?.toIntOrNull(),
                         thumbnail =
-                            response.header.musicDetailHeaderRenderer.thumbnail.croppedSquareThumbnailRenderer
+                            response.header?.musicDetailHeaderRenderer?.thumbnail?.croppedSquareThumbnailRenderer
                                 ?.thumbnail
                                 ?.thumbnails
-                                ?.lastOrNull()!!
-                                .url,
+                                ?.lastOrNull()
+                                ?.url.orEmpty(),
                         explicit = false,
                     )
                 return@runCatching AlbumPage(
@@ -990,8 +993,8 @@ object YouTube {
                             ?.getItems()
                             ?.mapNotNull {
                                 AlbumPage.getSong(it, albumItem)
-                            }!!
-                            .toMutableList(),
+                            }
+                            ?.toMutableList() ?: mutableListOf(),
                     otherVersions = emptyList(),
                 )
             } else {
@@ -1010,35 +1013,20 @@ object YouTube {
                     response.microformat
                         ?.microformatDataRenderer
                         ?.urlCanonical
-                        ?.substringAfterLast('=')!!
+                        ?.substringAfterLast('=') ?: browseId
                 val albumItem =
                     AlbumItem(
                         browseId = browseId,
                         playlistId = playlistId,
                         title =
-                            response.contents
-                                ?.twoColumnBrowseResultsRenderer
-                                ?.tabs
-                                ?.firstOrNull()
-                                ?.tabRenderer
-                                ?.content
-                                ?.sectionListRenderer
-                                ?.contents
-                                ?.firstOrNull()
-                                ?.musicResponsiveHeaderRenderer
+                            header
                                 ?.title
                                 ?.runs
                                 ?.firstOrNull()
-                                ?.text!!,
+                                ?.text
+                                ?: "",
                         artists =
-                            response.contents.twoColumnBrowseResultsRenderer.tabs
-                                .firstOrNull()
-                                ?.tabRenderer
-                                ?.content
-                                ?.sectionListRenderer
-                                ?.contents
-                                ?.firstOrNull()
-                                ?.musicResponsiveHeaderRenderer
+                            header
                                 ?.straplineTextOne
                                 ?.runs
                                 ?.oddElements()
@@ -1047,36 +1035,22 @@ object YouTube {
                                         name = it.text,
                                         id = it.navigationEndpoint?.browseEndpoint?.browseId,
                                     )
-                                }!!,
+                                } ?: emptyList(),
                         year =
-                            response.contents.twoColumnBrowseResultsRenderer.tabs
-                                .firstOrNull()
-                                ?.tabRenderer
-                                ?.content
-                                ?.sectionListRenderer
-                                ?.contents
-                                ?.firstOrNull()
-                                ?.musicResponsiveHeaderRenderer
+                            header
                                 ?.subtitle
                                 ?.runs
                                 ?.lastOrNull()
                                 ?.text
                                 ?.toIntOrNull(),
                         thumbnail =
-                            response.contents.twoColumnBrowseResultsRenderer.tabs
-                                .firstOrNull()
-                                ?.tabRenderer
-                                ?.content
-                                ?.sectionListRenderer
-                                ?.contents
-                                ?.firstOrNull()
-                                ?.musicResponsiveHeaderRenderer
+                            header
                                 ?.thumbnail
                                 ?.musicThumbnailRenderer
                                 ?.thumbnail
                                 ?.thumbnails
                                 ?.lastOrNull()
-                                ?.url!!,
+                                ?.url.orEmpty(),
                         explicit = AlbumPage.isExplicit(header),
                     )
                 return@runCatching AlbumPage(
@@ -1321,11 +1295,12 @@ object YouTube {
 
     suspend fun playlist(playlistId: String): Result<PlaylistPage> =
         runCatching {
+            val cleanId = if (playlistId.startsWith("VL")) playlistId.removePrefix("VL") else playlistId
             val response =
                 innerTube
                     .browse(
                         client = WEB_REMIX,
-                        browseId = "VL$playlistId",
+                        browseId = "VL$cleanId",
                         setLogin = true,
                     ).body<BrowseResponse>()
             val base =
@@ -1344,6 +1319,20 @@ object YouTube {
 
             val editable = base?.musicEditablePlaylistDetailHeaderRenderer != null
 
+            val shuffleEndpoint =
+                header?.buttons
+                    ?.lastOrNull()
+                    ?.menuRenderer
+                    ?.items
+                    ?.firstOrNull()
+                    ?.menuNavigationItemRenderer
+                    ?.navigationEndpoint
+                    ?.watchPlaylistEndpoint
+                    ?: header?.buttons
+                        ?.mapNotNull { it.menuRenderer?.items }
+                        ?.flatten()
+                        ?.firstNotNullOfOrNull { it.menuNavigationItemRenderer?.navigationEndpoint?.watchPlaylistEndpoint }
+
             PlaylistPage(
                 playlist =
                     PlaylistItem(
@@ -1353,39 +1342,32 @@ object YouTube {
                                 ?.title
                                 ?.runs
                                 ?.firstOrNull()
-                                ?.text!!,
+                                ?.text
+                                ?: "",
                         author =
-                            header.straplineTextOne?.runs?.firstOrNull()?.let {
+                            header?.straplineTextOne?.runs?.firstOrNull()?.let {
                                 Artist(
                                     name = it.text,
                                     id = it.navigationEndpoint?.browseEndpoint?.browseId,
                                 )
                             },
                         songCountText =
-                            header.secondSubtitle
+                            header?.secondSubtitle
                                 ?.runs
                                 ?.firstOrNull()
                                 ?.text,
                         thumbnail =
-                            header.thumbnail
+                            header?.thumbnail
                                 ?.musicThumbnailRenderer
                                 ?.thumbnail
                                 ?.thumbnails
                                 ?.lastOrNull()
-                                ?.url!!,
+                                ?.url.orEmpty(),
                         playEndpoint = null,
-                        shuffleEndpoint =
-                            header.buttons
-                                .lastOrNull()
-                                ?.menuRenderer
-                                ?.items
-                                ?.firstOrNull()
-                                ?.menuNavigationItemRenderer
-                                ?.navigationEndpoint
-                                ?.watchPlaylistEndpoint!!,
+                        shuffleEndpoint = shuffleEndpoint,
                         radioEndpoint =
-                            header.buttons
-                                .getOrNull(2)
+                            header?.buttons
+                                ?.getOrNull(2)
                                 ?.menuRenderer
                                 ?.items
                                 ?.find {
@@ -1425,7 +1407,7 @@ object YouTube {
                         ?.sectionListRenderer
                         ?.continuations
                         ?.getContinuation(),
-                trackCount = PlaylistPage.trackCountFrom(header.secondSubtitle),
+                trackCount = PlaylistPage.trackCountFrom(header?.secondSubtitle),
             )
         }
 

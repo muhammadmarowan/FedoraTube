@@ -3,6 +3,7 @@
 package com.fedoratube.org.ui.screens.update
 
 import android.text.format.Formatter
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -40,6 +41,7 @@ import androidx.compose.material.icons.outlined.SyncAlt
 import androidx.compose.material.icons.outlined.SystemUpdate
 import androidx.compose.material.icons.outlined.Verified
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -54,6 +56,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -87,6 +90,7 @@ import com.fedoratube.org.ui.components.shared.FlowErrorState
 import com.fedoratube.org.ui.components.shared.FlowLoadingIndicator
 import com.fedoratube.org.ui.components.shared.FlowMaxContentWidth
 import com.fedoratube.org.ui.components.shared.FlowSectionHeader
+import kotlinx.coroutines.flow.collectLatest
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
@@ -111,6 +115,12 @@ fun UpdateScreen(
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME) { viewModel.onResume() }
     val release = state.release
 
+    LaunchedEffect(viewModel) {
+        viewModel.toastEvent.collectLatest { resId ->
+            Toast.makeText(context, context.getString(resId), Toast.LENGTH_SHORT).show()
+        }
+    }
+
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
         contentWindowInsets = WindowInsets(0.dp),
@@ -119,11 +129,22 @@ fun UpdateScreen(
                 title = stringResource(R.string.check_for_updates),
                 onBack = onClose,
                 actions = {
-                    IconButton(onClick = viewModel::retryFetch) {
-                        Icon(
-                            imageVector = Icons.Outlined.Refresh,
-                            contentDescription = stringResource(R.string.action_refresh),
-                        )
+                    IconButton(
+                        onClick = viewModel::retryFetch,
+                        enabled = !state.isChecking,
+                    ) {
+                        if (state.isChecking) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(20.dp),
+                                strokeWidth = 2.dp,
+                                color = MaterialTheme.colorScheme.onSurface,
+                            )
+                        } else {
+                            Icon(
+                                imageVector = Icons.Outlined.Refresh,
+                                contentDescription = stringResource(R.string.action_refresh),
+                            )
+                        }
                     }
                     if (release != null) {
                         UpdateMenu(
@@ -198,6 +219,7 @@ fun UpdateScreen(
                                 UpToDateHeroCard(
                                     currentVersion = state.currentVersion,
                                     onCheckAgain = viewModel::retryFetch,
+                                    isChecking = state.isChecking,
                                 )
                             }
                         }
@@ -227,6 +249,7 @@ fun UpdateScreen(
 private fun UpToDateHeroCard(
     currentVersion: String,
     onCheckAgain: () -> Unit,
+    isChecking: Boolean = false,
 ) {
     Surface(
         shape = RoundedCornerShape(24.dp),
@@ -258,7 +281,7 @@ private fun UpToDateHeroCard(
             Spacer(modifier = Modifier.height(16.dp))
 
             Text(
-                text = "fTube is up to date",
+                text = stringResource(R.string.flow_is_up_to_date),
                 style =
                     MaterialTheme.typography.titleLarge.copy(
                         fontWeight = FontWeight.Bold,
@@ -308,15 +331,26 @@ private fun UpToDateHeroCard(
 
             FilledTonalButton(
                 onClick = onCheckAgain,
+                enabled = !isChecking,
                 shape = RoundedCornerShape(16.dp),
             ) {
-                Icon(
-                    imageVector = Icons.Outlined.Refresh,
-                    contentDescription = null,
-                    modifier = Modifier.size(18.dp),
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text("Check again")
+                if (isChecking) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(18.dp),
+                        strokeWidth = 2.dp,
+                        color = MaterialTheme.colorScheme.onSurface,
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(stringResource(R.string.checking_for_updates))
+                } else {
+                    Icon(
+                        imageVector = Icons.Outlined.Refresh,
+                        contentDescription = null,
+                        modifier = Modifier.size(18.dp),
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text("Check again")
+                }
             }
         }
     }
