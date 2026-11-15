@@ -133,7 +133,7 @@ class HomeChipFeeds
             val chip = chipFor(key) ?: HomeChip.All
             savedState[SELECTED_KEY] = chip.key
             loadJob?.cancel()
-            if (chip == HomeChip.All) {
+            if (chip == HomeChip.All || chip == HomeChip.Subscriptions) {
                 chipsState.update { it.copy(selected = chip.key, feed = null, isRefreshing = false) }
                 publishChips()
                 return
@@ -148,7 +148,8 @@ class HomeChipFeeds
         /** Pull to refresh on a chip refreshes that chip alone. */
         fun refreshSelected() {
             val chip = chipFor(chipsState.value.selected) ?: return
-            if (chip == HomeChip.All) return
+            if (chip == HomeChip.All || chip == HomeChip.Subscriptions) return
+            cache.evict(chip)
             chipsState.update { it.copy(isRefreshing = true) }
             load(chip, force = true)
         }
@@ -216,7 +217,7 @@ class HomeChipFeeds
 
         private suspend fun fetch(chip: HomeChip): ChipFeed =
             when (chip) {
-                HomeChip.All -> ChipFeed.Empty
+                HomeChip.All, HomeChip.Subscriptions -> ChipFeed.Empty
                 is HomeChip.Interest -> videos(interestVideos(chip.interest))
                 HomeChip.NewToYou -> videos(newToYou())
                 HomeChip.RecentlyUploaded -> videos(recentlyUploaded())
@@ -365,11 +366,18 @@ class HomeChipFeeds
             val stored = storedUploads().filter { !it.isShort }
             val storedClusters = FlowNeuroEngine.clusterKeys(stored)
             val pool =
-                search(interestQueries(interest)) +
+                (search(interestQueries(interest)) +
                     related(seeds) +
-                    stored.filter { storedClusters[it.id] in clusters }
+                    stored.filter { storedClusters[it.id] in clusters })
+                    .distinctBy { it.id }
             val outside = interest.category?.let { FlowNeuroEngine.outsideCategory(pool, it) }.orEmpty()
-            return ranked(pool.filterNot { it.id in outside }).take(HomeChipParams.MAX_VIDEOS)
+            val rankedVideos = ranked(pool.filterNot { it.id in outside })
+            return if (rankedVideos.size > HomeChipParams.MAX_VIDEOS) {
+                val poolSample = rankedVideos.take(HomeChipParams.MAX_VIDEOS * 2)
+                poolSample.shuffled().take(HomeChipParams.MAX_VIDEOS)
+            } else {
+                rankedVideos
+            }
         }
 
         private suspend fun newToYou(): List<Video> {

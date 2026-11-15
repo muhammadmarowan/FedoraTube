@@ -247,18 +247,11 @@ fun EnhancedMusicScreen(
         containerColor = MaterialTheme.colorScheme.background,
         contentWindowInsets = WindowInsets(0.dp),
     ) { paddingValues ->
-        val categorySwipeModifier =
-            com.fedoratube.org.ui.components.layout.navigation.rememberCategorySwipe(
-                tabs = topCategoryTabs,
-                selectedTab = com.fedoratube.org.ui.components.layout.navigation.FlowTab.Music,
-                onCategorySelected = onCategorySelected,
-            )
         Box(
             modifier =
                 Modifier
                     .fillMaxSize()
-                    .padding(paddingValues)
-                    .then(if (!isFocusModeEnabled) categorySwipeModifier else Modifier),
+                    .padding(paddingValues),
         ) {
             val isInitialLoading = uiState.isLoading && uiState.trendingSongs.isEmpty() && uiState.dynamicSections.isEmpty()
 

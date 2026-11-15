@@ -48,12 +48,12 @@ internal fun visibleChips(
                 it.representative.lowercase() !in existingRep && (it.category == null || it.category.lowercase() !in existingCat)
             }
     val all =
-        listOf(HomeChip.All) +
+        listOf(HomeChip.All, HomeChip.Subscriptions) +
             combinedInterests.map(HomeChip::Interest) +
             listOf(HomeChip.NewToYou, HomeChip.RecentlyUploaded, HomeChip.Mixes, HomeChip.Live, HomeChip.Watched)
     return all.filter { chip ->
         when {
-            chip.key == selected || chip == HomeChip.All -> true
+            chip.key == selected || chip == HomeChip.All || chip == HomeChip.Subscriptions -> true
             chip.key in emptyKeys -> false
             chip == HomeChip.Mixes -> hasMixSeeds
             chip == HomeChip.Watched -> hasWatched
@@ -61,6 +61,16 @@ internal fun visibleChips(
         }
     }
 }
+
+private val CategorySearchVariants =
+    mapOf(
+        "music" to listOf("trending music", "popular songs", "new music videos", "top songs this week", "hit songs", "music playlist"),
+        "gaming" to listOf("trending gaming", "top gameplay", "new game walkthrough", "best games gameplay", "popular games", "gaming stream highlights"),
+        "news" to listOf("breaking news", "latest news updates", "top headlines", "world news live", "national news", "today news"),
+        "science" to listOf("tech news", "latest technology", "new gadgets", "tech reviews", "future technology", "gadget unboxing"),
+        "sports" to listOf("sports highlights", "match highlights", "best sports plays", "sports news", "game recap"),
+        "comedy" to listOf("best comedy clips", "stand up comedy", "funny sketches", "top comedy", "hilarious clips"),
+    )
 
 /**
  * Searches for an interest chip: its own phrases first, a lone word qualified by one of them. A theme
@@ -70,6 +80,11 @@ internal fun interestQueries(
     interest: InterestChip,
     max: Int = HomeChipParams.QUERIES_PER_INTEREST,
 ): List<String> {
+    val cat = interest.category?.lowercase() ?: interest.representative.lowercase()
+    val variants = CategorySearchVariants[cat]
+    if (!variants.isNullOrEmpty()) {
+        return (listOf(interest.representative) + variants.shuffled()).distinct().take(max)
+    }
     if (interest.parts.isNotEmpty()) {
         val perPart = interest.parts.map { interestQueries(it, max) }
         return (0 until max)
@@ -215,6 +230,12 @@ internal class ChipResultCache {
         feed: ChipFeed,
     ) {
         entries[chip.key]?.let { entries[chip.key] = feed to it.second }
+    }
+
+    /** Evicts a chip result so the next fetch goes straight to network. */
+    @Synchronized
+    fun evict(chip: HomeChip) {
+        entries.remove(chip.key)
     }
 
     /** A locale switch orphans everything: the results were fetched for the old language/region. */

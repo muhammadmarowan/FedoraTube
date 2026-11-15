@@ -248,20 +248,7 @@ fun SubscriptionsScreen(
             modifier =
                 modifier
                     .fillMaxSize()
-                    .padding(padding)
-                    // No category swipe while managing subs (All channels / Music subs):
-                    // a horizontal swipe there must not jump to the Music category page.
-                    .then(
-                        if (isManagingSubs) {
-                            Modifier
-                        } else {
-                            com.fedoratube.org.ui.components.layout.navigation.rememberCategorySwipe(
-                                tabs = topCategoryTabs,
-                                selectedTab = com.fedoratube.org.ui.components.layout.navigation.FlowTab.Subscriptions,
-                                onCategorySelected = onCategorySelected,
-                            )
-                        },
-                    ),
+                    .padding(padding),
         ) {
             AnimatedContent(targetState = isManagingSubs, label = "subscriptionsMode") { manageMode ->
                 if (manageMode) {

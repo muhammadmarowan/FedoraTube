@@ -106,6 +106,13 @@ fun NavGraphBuilder.flowAppGraph(
             onPlayMix = { videos, title -> playerViewModel.playPlaylist(videos, 0, title, false) },
             topCategoryTabs = topCategoryTabs,
             onCategorySelected = onCategorySelected,
+            onChannelClick = { channel ->
+                if (channel.isMusic && channel.id.isNotBlank()) {
+                    mediaNavigator.openArtist(channel.id)
+                } else {
+                    mediaNavigator.openChannel(channel.url.ifBlank { channel.id })
+                }
+            },
             viewModel = homeViewModel,
         )
     }

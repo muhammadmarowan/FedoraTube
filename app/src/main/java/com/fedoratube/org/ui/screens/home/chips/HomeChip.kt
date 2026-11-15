@@ -15,6 +15,11 @@ internal sealed interface HomeChip {
         override val ttlMs = 0L
     }
 
+    data object Subscriptions : HomeChip {
+        override val key = "subs"
+        override val ttlMs = 0L
+    }
+
     data class Interest(
         val interest: InterestChip,
     ) : HomeChip {

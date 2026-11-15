@@ -121,14 +121,7 @@ fun LibraryScreen(
                 modifier
                     .fillMaxSize()
                     .padding(padding)
-                    .background(MaterialTheme.colorScheme.background)
-                    .then(
-                        com.fedoratube.org.ui.components.layout.navigation.rememberCategorySwipe(
-                            tabs = topCategoryTabs,
-                            selectedTab = FlowTab.Library,
-                            onCategorySelected = onCategorySelected,
-                        ),
-                    ),
+                    .background(MaterialTheme.colorScheme.background),
             contentPadding = PaddingValues(top = ListVerticalPadding, bottom = flowBottomContentPadding(ListVerticalPadding)),
             verticalArrangement = Arrangement.spacedBy(ShelfSpacing),
         ) {

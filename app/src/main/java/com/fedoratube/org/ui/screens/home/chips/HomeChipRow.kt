@@ -8,8 +8,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -32,7 +34,17 @@ internal fun HomeChipRow(
     onSelect: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val listState = rememberLazyListState()
+
+    LaunchedEffect(state.selected, state.chips) {
+        val index = state.chips.indexOfFirst { it.key == state.selected }
+        if (index >= 0) {
+            listState.animateScrollToItem(index)
+        }
+    }
+
     LazyRow(
+        state = listState,
         modifier =
             modifier
                 .fillMaxWidth()
@@ -79,6 +91,7 @@ private fun themeLabel(category: String): Int? =
 private fun HomeChip.label(): String =
     when (this) {
         HomeChip.All -> stringResource(R.string.home_chip_all)
+        HomeChip.Subscriptions -> "Subs"
         is HomeChip.Interest -> interest.category?.let(::themeLabel)?.let { stringResource(it) } ?: interest.label
         HomeChip.NewToYou -> stringResource(R.string.home_chip_new_to_you)
         HomeChip.RecentlyUploaded -> stringResource(R.string.home_chip_recently_uploaded)
