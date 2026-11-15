@@ -1,5 +1,9 @@
 package com.fedoratube.org.ui.screens.subscriptions
 
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -14,6 +18,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.MusicNote
@@ -22,11 +27,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -65,29 +72,49 @@ internal fun ChannelAvatarItem(
     modifier: Modifier = Modifier,
 ) {
     val shape = CircleShape
+    val animatedBorderWidth by animateDpAsState(
+        targetValue = if (selected) 2.5.dp else 0.dp,
+        animationSpec = spring(stiffness = Spring.StiffnessMediumLow),
+        label = "avatarBorderWidth",
+    )
+    val animatedPadding by animateDpAsState(
+        targetValue = if (selected) 3.dp else 0.dp,
+        animationSpec = spring(stiffness = Spring.StiffnessMediumLow),
+        label = "avatarPadding",
+    )
+    val animatedScale by animateFloatAsState(
+        targetValue = if (selected) 0.93f else 1f,
+        animationSpec = spring(dampingRatio = 0.75f, stiffness = Spring.StiffnessMediumLow),
+        label = "avatarScale",
+    )
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier =
             modifier
                 .width(AvatarItemWidth)
+                .clip(RoundedCornerShape(14.dp))
                 .clickable(
                     onClick = onClick,
                 ),
     ) {
         Box(
             modifier =
-                if (selected) {
-                    Modifier
-                        .size(AvatarSize)
-                        .border(
-                            width = 2.5.dp,
-                            color = MaterialTheme.colorScheme.primary,
-                            shape = shape,
-                        )
-                        .padding(3.dp)
-                } else {
-                    Modifier.size(AvatarSize)
-                },
+                Modifier
+                    .size(AvatarSize)
+                    .then(
+                        if (animatedBorderWidth > 0.dp) {
+                            Modifier
+                                .border(
+                                    width = animatedBorderWidth,
+                                    color = MaterialTheme.colorScheme.primary,
+                                    shape = shape,
+                                )
+                                .padding(animatedPadding)
+                        } else {
+                            Modifier
+                        },
+                    ),
             contentAlignment = Alignment.Center,
         ) {
             ChannelAvatarImage(
@@ -95,7 +122,11 @@ internal fun ChannelAvatarItem(
                 contentDescription = channel.name,
                 modifier =
                     Modifier
-                        .size(if (selected) AvatarSize - 6.dp else AvatarSize)
+                        .size(AvatarSize)
+                        .graphicsLayer {
+                            scaleX = animatedScale
+                            scaleY = animatedScale
+                        }
                         .clip(shape)
                         .background(MaterialTheme.colorScheme.surfaceVariant),
             )

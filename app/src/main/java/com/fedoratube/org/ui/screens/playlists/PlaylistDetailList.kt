@@ -98,7 +98,7 @@ internal fun PlaylistDetailList(
             }
             itemsIndexed(items = videos, key = { _, video -> video.id }, contentType = { _, _ -> "playlist-video" }) { index, video ->
                 PlaylistVideoRow(
-                    modifier = if (mode.canReorder) Modifier else animateMediaListItem(),
+                    modifier = if (mode.canReorder || mode.selectionMode) Modifier else animateMediaListItem(),
                     video = video,
                     isSelected = video.id in mode.selectedIds,
                     inSelectionMode = mode.selectionMode,

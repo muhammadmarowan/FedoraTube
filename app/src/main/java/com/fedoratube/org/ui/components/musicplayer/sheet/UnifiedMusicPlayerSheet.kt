@@ -282,7 +282,7 @@ internal fun UnifiedMusicPlayerSheet(
             if (isDragging || state.expansionFraction.isRunning || state.expansionFraction.value > 0.18f) {
                 0.dp
             } else {
-                6.dp
+                8.dp
             }
         }
     }
@@ -372,9 +372,9 @@ internal fun UnifiedMusicPlayerSheet(
                                             Brush.verticalGradient(
                                                 colors =
                                                     listOf(
-                                                        playerScheme.surfaceContainerHighest.copy(alpha = 0.85f),
-                                                        playerScheme.surfaceContainerHigh.copy(alpha = 0.75f),
-                                                        playerScheme.surfaceContainer.copy(alpha = 0.80f),
+                                                        playerScheme.surfaceContainerHighest.copy(alpha = 0.76f),
+                                                        playerScheme.surfaceContainer.copy(alpha = 0.62f),
+                                                        playerScheme.surfaceContainerLowest.copy(alpha = 0.70f),
                                                     ),
                                             ),
                                         shape = cardShape,
@@ -383,12 +383,10 @@ internal fun UnifiedMusicPlayerSheet(
                                         width = 1.dp,
                                         brush =
                                             Brush.verticalGradient(
-                                                colors =
-                                                    listOf(
-                                                        Color.White.copy(alpha = 0.32f),
-                                                        Color.White.copy(alpha = 0.08f),
-                                                        Color.Black.copy(alpha = 0.25f),
-                                                    ),
+                                                0.0f to Color.White.copy(alpha = 0.45f),
+                                                0.30f to Color.White.copy(alpha = 0.18f),
+                                                0.70f to Color.White.copy(alpha = 0.04f),
+                                                1.0f to Color.White.copy(alpha = 0.12f),
                                             ),
                                         shape = cardShape,
                                     )

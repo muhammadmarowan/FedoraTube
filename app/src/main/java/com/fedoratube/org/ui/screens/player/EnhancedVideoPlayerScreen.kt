@@ -16,6 +16,8 @@ import androidx.compose.material3.adaptive.navigation.rememberSupportingPaneScaf
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalContext
@@ -27,6 +29,7 @@ import com.fedoratube.org.data.model.Video
 import com.fedoratube.org.player.EnhancedPlayerManager
 import com.fedoratube.org.player.GlobalPlayerState
 import com.fedoratube.org.ui.components.rememberFeedGridLayout
+import com.fedoratube.org.ui.components.shared.rememberMediaPalette
 import com.fedoratube.org.ui.components.videoplayer.sheet.PlaylistQueueDock
 import com.fedoratube.org.ui.components.videoplayer.sheet.PlaylistQueueDockDefaults
 import com.fedoratube.org.ui.components.videoplayer.sheet.PlaylistQueuePaneCard
@@ -93,6 +96,9 @@ internal fun EnhancedVideoPlayerScreen(
     val relatedCardStyle = prefs.relatedCardStyle
     val isInPipMode by GlobalPlayerState.isInPipMode.collectAsStateWithLifecycle()
     val playerState by EnhancedPlayerManager.getInstance().playerState.collectAsStateWithLifecycle()
+    val ambientActive = prefs.ambientModeEnabled && !isFullscreenShown && !isInPipMode
+    val ambientPalette = rememberMediaPalette(video.thumbnailUrl, animated = true)
+
     Box(
         modifier =
             Modifier
@@ -100,6 +106,22 @@ internal fun EnhancedVideoPlayerScreen(
                 .graphicsLayer { this.alpha = alpha() }
                 .background(MaterialTheme.colorScheme.background),
     ) {
+        if (ambientActive) {
+            Box(
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .height(360.dp)
+                        .background(
+                            Brush.verticalGradient(
+                                0.0f to ambientPalette.accent.copy(alpha = 0.42f),
+                                0.25f to ambientPalette.base.copy(alpha = 0.26f),
+                                0.65f to ambientPalette.base.copy(alpha = 0.08f),
+                                1.0f to Color.Transparent,
+                            ),
+                        ),
+            )
+        }
         val layoutMode =
             playerLayoutModeFor(
                 windowSizeClass = windowSizeClass,

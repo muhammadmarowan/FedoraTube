@@ -59,7 +59,7 @@ internal fun PlaylistVideoRow(
         leading =
             when {
                 inSelectionMode -> {
-                    { Checkbox(checked = isSelected, onCheckedChange = { onClick() }) }
+                    { Checkbox(checked = isSelected, onCheckedChange = null) }
                 }
 
                 showDragHandle -> {

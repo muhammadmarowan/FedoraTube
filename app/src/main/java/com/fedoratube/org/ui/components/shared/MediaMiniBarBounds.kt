@@ -6,13 +6,13 @@ import androidx.compose.ui.unit.dp
 
 /** The size and placement of the bottom mini bars: the music player's and the background video's. */
 object MediaMiniBarDefaults {
-    val Height: Dp = 64.dp
-    val BottomSpacer: Dp = 8.dp
-    val CornerRadius: Dp = 32.dp
+    val Height: Dp = 54.dp
+    val BottomSpacer: Dp = 6.dp
+    val CornerRadius: Dp = 27.dp
 
     /** A phone's mini bar spans the window; anything wider gets one a little wider than a phone's. */
     val MaxWidth: Dp = 480.dp
-    val CompactMargin: Dp = 12.dp
+    val CompactMargin: Dp = 10.dp
     val LargeMargin: Dp = 16.dp
 }
 

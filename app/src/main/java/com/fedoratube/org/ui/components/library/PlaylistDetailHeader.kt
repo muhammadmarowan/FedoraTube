@@ -83,6 +83,7 @@ internal data class PlaylistHeaderState(
     val canSave: Boolean = false,
     val canAddAll: Boolean = false,
     val canEdit: Boolean = false,
+    val canShare: Boolean = true,
     val downloadProgress: Float? = null,
     /** Saved as a downloaded collection; downloading again picks up only what is new. */
     val isDownloaded: Boolean = false,
@@ -237,8 +238,10 @@ private fun PlaylistSecondaryActions(
                 Icon(Icons.AutoMirrored.Outlined.PlaylistAdd, contentDescription = stringResource(R.string.add_all_to_playlist))
             }
         }
-        IconButton(onClick = actions.onShare) {
-            Icon(Icons.Outlined.Share, contentDescription = stringResource(R.string.share))
+        if (state.canShare) {
+            IconButton(onClick = actions.onShare) {
+                Icon(Icons.Outlined.Share, contentDescription = stringResource(R.string.share))
+            }
         }
         if (state.canEdit) PlaylistOverflowMenu(state, actions)
     }

@@ -22,9 +22,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.fedoratube.org.R
 
-private val PlayButtonSize = 48.dp
-private val PlayButtonPressedWidth = 60.dp
-private val PlayButtonPlayingCorner = 14.dp
+private val PlayButtonSize = 36.dp
+private val PlayButtonPressedWidth = 44.dp
+private val PlayButtonPlayingCorner = 10.dp
 
 /**
  * A mini bar's play or pause with the full music player's motion: the corners ease between a
@@ -59,13 +59,14 @@ fun MediaPlayPauseButton(
     ) {
         if (isBuffering) {
             LoadingIndicator(
-                modifier = Modifier.size(28.dp),
+                modifier = Modifier.size(20.dp),
                 color = MaterialTheme.colorScheme.onPrimary,
             )
         } else {
             Icon(
                 imageVector = if (isPlaying) Icons.Rounded.Pause else Icons.Rounded.PlayArrow,
                 contentDescription = stringResource(if (isPlaying) R.string.pause else R.string.play),
+                modifier = Modifier.size(20.dp),
             )
         }
     }

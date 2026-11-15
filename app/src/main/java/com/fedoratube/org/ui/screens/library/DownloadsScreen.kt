@@ -56,7 +56,7 @@ import com.fedoratube.org.data.music.DownloadedTrack
 import com.fedoratube.org.data.video.DownloadedVideo
 import com.fedoratube.org.data.video.storage.StorageAccess
 import com.fedoratube.org.ui.components.layout.topbar.FlowGlobalActionsMode
-import com.fedoratube.org.ui.components.layout.topbar.FlowGlobalActionsRow
+import com.fedoratube.org.ui.components.layout.topbar.FlowSearchTopBar
 import com.fedoratube.org.ui.components.layout.topbar.FlowTopBar
 import com.fedoratube.org.ui.components.library.ActiveDownloadActions
 import com.fedoratube.org.ui.components.library.DownloadCollectionsShelf
@@ -116,6 +116,7 @@ fun DownloadsScreen(
     var removingCollection by remember { mutableStateOf<DownloadCollectionSummary?>(null) }
     var selectionMode by rememberSaveable { mutableStateOf(false) }
     var selectedIds by rememberSaveable(stateSaver = SelectionSaver) { mutableStateOf(emptySet<String>()) }
+    var isSearching by rememberSaveable { mutableStateOf(false) }
     val haptic = LocalHapticFeedback.current
     val focusManager = LocalFocusManager.current
     val exitSelection = {
@@ -132,6 +133,10 @@ fun DownloadsScreen(
         }
 
     BackHandler(enabled = selectionMode) { exitSelection() }
+    BackHandler(enabled = isSearching && !selectionMode) {
+        isSearching = false
+        viewModel.setQuery("")
+    }
 
     val selection =
         LibrarySelection(selectionMode, selectedIds) { id ->
@@ -152,53 +157,63 @@ fun DownloadsScreen(
         modifier = modifier.fillMaxSize(),
         contentWindowInsets = WindowInsets(0.dp),
         topBar = {
-            FlowTopBar(
-                title =
-                    if (selectionMode) {
-                        pluralStringResource(R.plurals.selected_count_template, selectedIds.size, selectedIds.size)
-                    } else {
-                        stringResource(R.string.downloads_title)
+            if (isSearching && !selectionMode) {
+                FlowSearchTopBar(
+                    query = uiState.query,
+                    onQueryChange = viewModel::setQuery,
+                    onClose = {
+                        isSearching = false
+                        viewModel.setQuery("")
                     },
-                // Focus mode gets a back arrow instead of a tab root (and no notification or
-                // search icon); selection mode always uses back to exit selection.
-                onBack =
-                    if (selectionMode) {
-                        exitSelection
-                    } else if (isFocusModeEnabled) {
-                        onBackClick
-                    } else if (isTabRoot) {
-                        null
-                    } else {
-                        onBackClick
+                    placeholder = stringResource(R.string.downloads_search_hint),
+                    releaseFocusWithKeyboard = true,
+                )
+            } else {
+                FlowTopBar(
+                    title =
+                        if (selectionMode) {
+                            pluralStringResource(R.plurals.selected_count_template, selectedIds.size, selectedIds.size)
+                        } else {
+                            stringResource(R.string.downloads_title)
+                        },
+                    // Focus mode gets a back arrow instead of a tab root (and no notification or
+                    // search icon); selection mode always uses back to exit selection.
+                    onBack =
+                        if (selectionMode) {
+                            exitSelection
+                        } else if (isFocusModeEnabled) {
+                            onBackClick
+                        } else if (isTabRoot) {
+                            null
+                        } else {
+                            onBackClick
+                        },
+                    globalActions = FlowGlobalActionsMode.None,
+                    actions = {
+                        if (selectionMode) {
+                            if (selectedIds.isNotEmpty()) {
+                                IconButton(onClick = { pendingDeletion = PendingDeletion(selectedIds, title = null) }) {
+                                    Icon(Icons.Outlined.Delete, contentDescription = stringResource(R.string.action_delete))
+                                }
+                            }
+                            IconButton(onClick = { selectedIds = if (selectedIds.size == shownIds.size) emptySet() else shownIds.toSet() }) {
+                                Icon(Icons.Default.SelectAll, contentDescription = stringResource(R.string.select_all))
+                            }
+                        } else {
+                            if (!isFocusModeEnabled) {
+                                IconButton(onClick = { isSearching = true }) {
+                                    Icon(Icons.Outlined.Search, contentDescription = stringResource(R.string.downloads_search_hint))
+                                }
+                            }
+                            if (shownIds.isNotEmpty()) {
+                                IconButton(onClick = { selectionMode = true }) {
+                                    Icon(Icons.Default.Checklist, contentDescription = stringResource(R.string.select_videos))
+                                }
+                            }
+                        }
                     },
-                // Hand-rendered so the search icon can sit AFTER the notifications action:
-                // notifications, then search.
-                globalActions = FlowGlobalActionsMode.None,
-                actions = {
-                    if (selectionMode) {
-                        if (selectedIds.isNotEmpty()) {
-                            IconButton(onClick = { pendingDeletion = PendingDeletion(selectedIds, title = null) }) {
-                                Icon(Icons.Outlined.Delete, contentDescription = stringResource(R.string.action_delete))
-                            }
-                        }
-                        IconButton(onClick = { selectedIds = if (selectedIds.size == shownIds.size) emptySet() else shownIds.toSet() }) {
-                            Icon(Icons.Default.SelectAll, contentDescription = stringResource(R.string.select_all))
-                        }
-                    } else {
-                        if (!isFocusModeEnabled) {
-                            FlowGlobalActionsRow()
-                            IconButton(onClick = onSearchClick) {
-                                Icon(Icons.Outlined.Search, contentDescription = stringResource(R.string.search))
-                            }
-                        }
-                        if (shownIds.isNotEmpty()) {
-                            IconButton(onClick = { selectionMode = true }) {
-                                Icon(Icons.Default.Checklist, contentDescription = stringResource(R.string.select_videos))
-                            }
-                        }
-                    }
-                },
-            )
+                )
+            }
         },
         containerColor = MaterialTheme.colorScheme.background,
         snackbarHost = { SnackbarHost(snackbarHostState) },

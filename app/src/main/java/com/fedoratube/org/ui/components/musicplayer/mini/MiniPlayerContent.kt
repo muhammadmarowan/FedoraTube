@@ -48,8 +48,10 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import com.fedoratube.org.R
@@ -60,9 +62,9 @@ import com.fedoratube.org.ui.components.shared.MediaPlayPauseButton
 import com.fedoratube.org.ui.theme.ArtworkScrimContent
 import com.fedoratube.org.ui.theme.ArtworkScrimNowPlaying
 
-private val ArtworkRingSize = 52.dp
-private val ArtworkSize = 43.dp
-private val ProgressRingStroke = 2.5.dp
+private val ArtworkRingSize = 42.dp
+private val ArtworkSize = 35.dp
+private val ProgressRingStroke = 2.dp
 
 /**
  * The collapsed player: cover in a progress ring, title and artist, then the transport. Wider
@@ -96,9 +98,9 @@ internal fun MiniPlayerContent(
         modifier =
             modifier
                 .fillMaxSize()
-                .padding(start = 8.dp, end = 8.dp),
+                .padding(start = 7.dp, end = 6.dp),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        horizontalArrangement = Arrangement.spacedBy(10.dp),
     ) {
         val ringTrackColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.10f)
         val ringFillColor = MaterialTheme.colorScheme.primary
@@ -156,8 +158,8 @@ internal fun MiniPlayerContent(
                         PlayingWaveform(
                             color = ArtworkScrimContent,
                             barCount = 3,
-                            barWidth = 2.5.dp,
-                            barSpacing = 1.5.dp,
+                            barWidth = 2.dp,
+                            barSpacing = 1.2.dp,
                             staggerMillis = 120,
                         )
                     }
@@ -171,7 +173,11 @@ internal fun MiniPlayerContent(
         ) {
             Text(
                 text = track.title,
-                style = MaterialTheme.typography.titleSmall,
+                style =
+                    MaterialTheme.typography.titleSmall.copy(
+                        fontSize = 13.5.sp,
+                        fontWeight = FontWeight.SemiBold,
+                    ),
                 maxLines = 1,
                 color = MaterialTheme.colorScheme.onSurface,
                 overflow = TextOverflow.Ellipsis,
@@ -185,10 +191,13 @@ internal fun MiniPlayerContent(
                         Modifier
                     },
             )
-            Spacer(modifier = Modifier.height(2.dp))
+            Spacer(modifier = Modifier.height(1.dp))
             Text(
                 text = track.artist,
-                style = MaterialTheme.typography.bodySmall,
+                style =
+                    MaterialTheme.typography.bodySmall.copy(
+                        fontSize = 11.5.sp,
+                    ),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
@@ -196,15 +205,19 @@ internal fun MiniPlayerContent(
         }
 
         Row(
-            horizontalArrangement = Arrangement.spacedBy(2.dp),
+            horizontalArrangement = Arrangement.spacedBy(1.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             if (showPrevious) {
-                IconButton(onClick = { EnhancedMusicPlayerManager.playPrevious() }) {
+                IconButton(
+                    onClick = { EnhancedMusicPlayerManager.playPrevious() },
+                    modifier = Modifier.size(34.dp),
+                ) {
                     Icon(
                         imageVector = Icons.Rounded.SkipPrevious,
                         contentDescription = stringResource(R.string.previous),
                         tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.size(20.dp),
                     )
                 }
             }
@@ -216,11 +229,15 @@ internal fun MiniPlayerContent(
                     EnhancedMusicPlayerManager.togglePlayPause()
                 },
             )
-            IconButton(onClick = { EnhancedMusicPlayerManager.playNext() }) {
+            IconButton(
+                onClick = { EnhancedMusicPlayerManager.playNext() },
+                modifier = Modifier.size(34.dp),
+            ) {
                 Icon(
                     imageVector = Icons.Rounded.SkipNext,
                     contentDescription = stringResource(R.string.next),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.size(20.dp),
                 )
             }
         }
