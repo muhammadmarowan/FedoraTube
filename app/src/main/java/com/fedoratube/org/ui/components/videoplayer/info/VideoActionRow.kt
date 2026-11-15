@@ -312,12 +312,26 @@ private fun ActionButton(
             haptics.performHapticFeedback(haptic)
             onClick()
         },
-        shapes = ButtonDefaults.shapes(),
+        shape = CircleShape,
+        colors =
+            ButtonDefaults.filledTonalButtonColors(
+                containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                contentColor = MaterialTheme.colorScheme.onSurface,
+            ),
         contentPadding = ActionContentPadding,
     ) {
-        Icon(imageVector = icon, contentDescription = null, modifier = Modifier.size(ActionIconSize))
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            modifier = Modifier.size(ActionIconSize),
+            tint = MaterialTheme.colorScheme.onSurface,
+        )
         Spacer(modifier = Modifier.width(ActionIconSpacing))
-        Text(text = label, style = MaterialTheme.typography.labelLarge)
+        Text(
+            text = label,
+            style = MaterialTheme.typography.labelLarge,
+            color = MaterialTheme.colorScheme.onSurface,
+        )
     }
 }
 

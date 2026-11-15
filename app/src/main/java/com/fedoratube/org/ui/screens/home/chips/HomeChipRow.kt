@@ -80,10 +80,8 @@ internal fun HomeChipRow(
     val animatedCenterX = remember { Animatable(0f) }
     var isInitialized by remember { mutableStateOf(false) }
 
-    val isPagerScrolling = pagerState?.isScrollInProgress == true
-
-    LaunchedEffect(targetCenterX, isPagerScrolling) {
-        if (!isPagerScrolling && targetCenterX != null) {
+    LaunchedEffect(targetCenterX) {
+        if (pagerState == null && targetCenterX != null) {
             if (!isInitialized) {
                 animatedCenterX.snapTo(targetCenterX)
                 isInitialized = true
@@ -101,13 +99,17 @@ internal fun HomeChipRow(
     }
 
     val currentCenterPx =
-        if (pagerState != null && pagerState.isScrollInProgress && state.chips.size >= 2) {
+        if (pagerState != null && state.chips.size >= 2) {
             val key0 = state.chips.getOrNull(0)?.key ?: ""
             val key1 = state.chips.getOrNull(1)?.key ?: ""
             val c0 = tabCenters[key0] ?: 0f
             val c1 = tabCenters[key1] ?: 0f
-            val pageProgress = (pagerState.currentPage + pagerState.currentPageOffsetFraction).coerceIn(0f, 1f)
-            c0 + (c1 - c0) * pageProgress
+            if (c0 > 0f && c1 > 0f) {
+                val pageProgress = (pagerState.currentPage + pagerState.currentPageOffsetFraction).coerceIn(0f, 1f)
+                c0 + (c1 - c0) * pageProgress
+            } else {
+                tabCenters[selectedKey] ?: 0f
+            }
         } else {
             animatedCenterX.value
         }
@@ -187,7 +189,8 @@ internal fun HomeChipRow(
         }
 
         // Sliding indicator line
-        if (isInitialized && currentCenterPx > 0f) {
+        val showIndicator = if (pagerState != null) currentCenterPx > 0f else (isInitialized && currentCenterPx > 0f)
+        if (showIndicator) {
             val leftOffsetPx = (currentCenterPx - indicatorWidthPx / 2f).coerceAtLeast(0f)
             Box(
                 modifier =

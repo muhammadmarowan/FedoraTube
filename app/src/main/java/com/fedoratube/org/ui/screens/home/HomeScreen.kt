@@ -1,5 +1,6 @@
 package com.fedoratube.org.ui.screens.home
 
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.ReportDrawnWhen
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.FastOutSlowInEasing
@@ -31,6 +32,8 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Sort
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.outlined.CenterFocusStrong
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.FileDownload
@@ -43,6 +46,8 @@ import androidx.compose.material.icons.outlined.Settings
 import com.fedoratube.org.ui.components.dialogs.ShareAppQrDialog
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
@@ -89,6 +94,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.fedoratube.org.R
+import com.fedoratube.org.ui.screens.subscriptions.SubscriptionSortMode
 import com.fedoratube.org.data.local.HomeFeedColumns
 import com.fedoratube.org.data.local.PlayerPreferences
 import com.fedoratube.org.data.local.VideoHistoryEntry
@@ -98,6 +104,7 @@ import com.fedoratube.org.ui.TabScrollEventBus
 import com.fedoratube.org.ui.components.layout.LocalFlowBottomInsets
 import com.fedoratube.org.ui.components.layout.floatAboveBottomChrome
 import com.fedoratube.org.ui.components.layout.topbar.FlowGlobalActionsMode
+import com.fedoratube.org.ui.components.layout.topbar.FlowSearchTopBar
 import com.fedoratube.org.ui.components.layout.topbar.FlowTopBar
 import com.fedoratube.org.ui.components.rememberFeedGridLayout
 import com.fedoratube.org.ui.components.shared.FeedGridSkeleton
@@ -108,7 +115,9 @@ import com.fedoratube.org.ui.screens.home.chips.HomeChipContent
 import com.fedoratube.org.ui.screens.home.chips.HomeChipRow
 import com.fedoratube.org.ui.screens.subscriptions.SubscriptionsEmptyState
 import com.fedoratube.org.ui.screens.subscriptions.SubscriptionsFeedContent
+import com.fedoratube.org.ui.screens.subscriptions.SubscriptionsManageContent
 import com.fedoratube.org.ui.screens.subscriptions.SubscriptionsViewModel
+import com.fedoratube.org.ui.screens.subscriptions.labelRes
 import com.fedoratube.org.ui.screens.subscriptions.quickAccessOrder
 import com.fedoratube.org.ui.screens.subscriptions.sharedSubscriptionsViewModel
 import com.fedoratube.org.ui.screens.subscriptions.sortSubscriptions
@@ -197,6 +206,16 @@ fun HomeScreen(
 
     val pagerState = rememberPagerState(initialPage = 0, pageCount = { 2 })
 
+    var isManagingSubs by rememberSaveable { mutableStateOf(false) }
+    var subsSearchQuery by rememberSaveable { mutableStateOf("") }
+    var showSortMenu by remember { mutableStateOf(false) }
+    var manageShowsMusic by rememberSaveable { mutableStateOf(false) }
+
+    BackHandler(isManagingSubs) {
+        isManagingSubs = false
+        subsSearchQuery = ""
+    }
+
     LaunchedEffect(pagerState.currentPage) {
         val targetKey = if (pagerState.currentPage == 0) HomeChip.All.key else HomeChip.Subscriptions.key
         if (chipsState.selected != targetKey) {
@@ -204,6 +223,9 @@ fun HomeScreen(
         }
         if (pagerState.currentPage == 1) {
             subsViewModel.refreshIfStaleOrMissedUploads()
+        } else {
+            isManagingSubs = false
+            subsSearchQuery = ""
         }
     }
 
@@ -312,92 +334,147 @@ fun HomeScreen(
             SnackbarHost(snackbarHostState, Modifier.floatAboveBottomChrome(LocalFlowBottomInsets.current))
         },
         topBar = {
-            val density = LocalDensity.current
-            val showChips = !isFocusModeEnabled && chipsState.chips.isNotEmpty()
-            val baseBarHeight = 48.dp
-            val chipRowHeight = 38.dp
-            val totalHeight = baseBarHeight + (if (showChips) chipRowHeight else 0.dp)
-            val totalHeightPx = with(density) { totalHeight.toPx() }
-
-            SideEffect {
-                if (scrollBehavior.state.heightOffsetLimit != -totalHeightPx) {
-                    scrollBehavior.state.heightOffsetLimit = -totalHeightPx
+            val managingSubsActive = isManagingSubs && pagerState.currentPage == 1
+            if (managingSubsActive) {
+                SideEffect {
+                    if (scrollBehavior.state.heightOffsetLimit != 0f) {
+                        scrollBehavior.state.heightOffsetLimit = 0f
+                        scrollBehavior.state.heightOffset = 0f
+                    }
                 }
-            }
-
-            val currentOffsetPx = scrollBehavior.state.heightOffset.roundToInt()
-
-            Box(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight()
-                        .clipToBounds()
-                        .layout { measurable, constraints ->
-                            val placeable = measurable.measure(constraints)
-                            val layoutHeight = (placeable.height + currentOffsetPx).coerceAtLeast(0)
-                            layout(placeable.width, layoutHeight) {
-                                placeable.place(0, currentOffsetPx)
+                FlowSearchTopBar(
+                    query = subsSearchQuery,
+                    onQueryChange = { subsSearchQuery = it },
+                    onClose = {
+                        isManagingSubs = false
+                        subsSearchQuery = ""
+                    },
+                    placeholder = stringResource(R.string.subscriptions_search_placeholder),
+                    autoFocus = false,
+                    actions = {
+                        Box {
+                            IconButton(onClick = { showSortMenu = true }) {
+                                Icon(
+                                    imageVector = Icons.AutoMirrored.Filled.Sort,
+                                    contentDescription = stringResource(R.string.subscriptions_sort_label),
+                                )
                             }
-                        },
-            ) {
-                Column(
+                            DropdownMenu(
+                                expanded = showSortMenu,
+                                onDismissRequest = { showSortMenu = false },
+                            ) {
+                                Text(
+                                    text = stringResource(R.string.subscriptions_sort_label),
+                                    style = MaterialTheme.typography.labelMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                                )
+                                for (mode in SubscriptionSortMode.entries) {
+                                    DropdownMenuItem(
+                                        text = { Text(stringResource(mode.labelRes())) },
+                                        onClick = {
+                                            subsViewModel.setSortMode(mode)
+                                            showSortMenu = false
+                                        },
+                                        trailingIcon = {
+                                            if (subUiState.sortMode == mode) {
+                                                Icon(Icons.Default.Check, contentDescription = null)
+                                            }
+                                        },
+                                    )
+                                }
+                            }
+                        }
+                    },
+                )
+            } else {
+                val density = LocalDensity.current
+                val showChips = !isFocusModeEnabled && chipsState.chips.isNotEmpty()
+                val baseBarHeight = 48.dp
+                val chipRowHeight = 38.dp
+                val totalHeight = baseBarHeight + (if (showChips) chipRowHeight else 0.dp)
+                val totalHeightPx = with(density) { totalHeight.toPx() }
+
+                SideEffect {
+                    if (scrollBehavior.state.heightOffsetLimit != -totalHeightPx) {
+                        scrollBehavior.state.heightOffsetLimit = -totalHeightPx
+                    }
+                }
+
+                val currentOffsetPx = scrollBehavior.state.heightOffset.roundToInt()
+
+                Box(
                     modifier =
                         Modifier
                             .fillMaxWidth()
-                            .background(MaterialTheme.colorScheme.surface),
-                ) {
-                    FlowTopBar(
-                        title = {
-                            if (!isFocusModeEnabled) {
-                                FedoraBrandWordmark(
-                                    isDeepFlowActive = deepFlowActive,
-                                    onLongPress = toggleDeepFlow,
-                                    longPressLabel = deepFlowLabel,
-                                )
-                            }
-                        },
-                        leading = null,
-                        actions = {
-                            if (!isFocusModeEnabled) {
-                                IconButton(onClick = onNotificationClick) {
-                                    Icon(
-                                        Icons.Outlined.Notifications,
-                                        contentDescription = stringResource(R.string.notifications),
-                                    )
-                                }
-                                IconButton(onClick = onSearchClick) {
-                                    Icon(
-                                        Icons.Outlined.Search,
-                                        contentDescription = stringResource(R.string.search),
-                                    )
-                                }
-                            }
-                        },
-                        globalActions = FlowGlobalActionsMode.None,
-                        scrollBehavior = null,
-                    )
-                    if (showChips) {
-                        HomeChipRow(
-                            state = chipsState,
-                            pagerState = pagerState,
-                            onSelect = { key ->
-                                viewModel.selectChip(key)
-                                coroutineScope.launch {
-                                    val targetPage = if (key == HomeChip.Subscriptions.key) 1 else 0
-                                    pagerState.animateScrollToPage(targetPage)
+                            .wrapContentHeight()
+                            .clipToBounds()
+                            .layout { measurable, constraints ->
+                                val placeable = measurable.measure(constraints)
+                                val layoutHeight = (placeable.height + currentOffsetPx).coerceAtLeast(0)
+                                layout(placeable.width, layoutHeight) {
+                                    placeable.place(0, currentOffsetPx)
                                 }
                             },
-                            onReselect = { key ->
-                                coroutineScope.launch {
-                                    if (key == HomeChip.All.key) {
-                                        gridState.animateScrollToItem(0)
-                                    } else {
-                                        subGridState.animateScrollToItem(0)
+                ) {
+                    Column(
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .background(MaterialTheme.colorScheme.surface),
+                    ) {
+                        FlowTopBar(
+                            title = {
+                                if (!isFocusModeEnabled) {
+                                    FedoraBrandWordmark(
+                                        isDeepFlowActive = deepFlowActive,
+                                        onLongPress = toggleDeepFlow,
+                                        longPressLabel = deepFlowLabel,
+                                    )
+                                }
+                            },
+                            leading = null,
+                            actions = {
+                                if (!isFocusModeEnabled) {
+                                    IconButton(onClick = onNotificationClick) {
+                                        Icon(
+                                            Icons.Outlined.Notifications,
+                                            contentDescription = stringResource(R.string.notifications),
+                                        )
+                                    }
+                                    IconButton(onClick = onSearchClick) {
+                                        Icon(
+                                            Icons.Outlined.Search,
+                                            contentDescription = stringResource(R.string.search),
+                                        )
                                     }
                                 }
                             },
+                            globalActions = FlowGlobalActionsMode.None,
+                            scrollBehavior = null,
                         )
+                        if (showChips) {
+                            HomeChipRow(
+                                state = chipsState,
+                                pagerState = pagerState,
+                                onSelect = { key ->
+                                    viewModel.selectChip(key)
+                                    coroutineScope.launch {
+                                        val targetPage = if (key == HomeChip.Subscriptions.key) 1 else 0
+                                        pagerState.animateScrollToPage(targetPage)
+                                    }
+                                },
+                                onReselect = { key ->
+                                    coroutineScope.launch {
+                                        if (key == HomeChip.All.key) {
+                                            gridState.animateScrollToItem(0)
+                                        } else {
+                                            subGridState.animateScrollToItem(0)
+                                        }
+                                    }
+                                },
+                            )
+                        }
                     }
                 }
             }
@@ -422,7 +499,7 @@ fun HomeScreen(
                 HorizontalPager(
                     state = pagerState,
                     modifier = Modifier.fillMaxSize(),
-                    userScrollEnabled = !isFocusModeEnabled,
+                    userScrollEnabled = !isFocusModeEnabled && !isManagingSubs,
                 ) { page ->
                     when (page) {
                         0 -> {
@@ -482,7 +559,32 @@ fun HomeScreen(
                         }
 
                         1 -> {
-                            if (subUiState.subscribedChannels.isEmpty() && !subUiState.isLoading) {
+                            if (isManagingSubs) {
+                                SubscriptionsManageContent(
+                                    channels = sortedChannels,
+                                    searchQuery = subsSearchQuery,
+                                    notificationStates = subUiState.notificationStates,
+                                    excludedShortsChannelIds = subUiState.excludedShortsChannelIds,
+                                    onChannelClick = onChannelClick,
+                                    onNotificationChange = subsViewModel::updateNotificationState,
+                                    onShortsExcludeChange = subsViewModel::setShortsChannelExcluded,
+                                    showsMusic = manageShowsMusic,
+                                    onShowsMusicChange = { manageShowsMusic = it },
+                                    onUnsubscribe = { channel ->
+                                        coroutineScope.launch {
+                                            unsubscribeWithUndo(
+                                                viewModel = subsViewModel,
+                                                channel = channel,
+                                                snackbarHostState = snackbarHostState,
+                                                unsubscribedMessage =
+                                                    context.getString(R.string.unsubscribed_from_template, channel.name),
+                                                undoLabel = context.getString(R.string.undo),
+                                            )
+                                        }
+                                    },
+                                    modifier = Modifier.fillMaxSize(),
+                                )
+                            } else if (subUiState.subscribedChannels.isEmpty() && !subUiState.isLoading) {
                                 SubscriptionsEmptyState(modifier = Modifier.fillMaxSize())
                             } else if (subUiState.subscribedChannels.isEmpty() && subUiState.isLoading) {
                                 BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
@@ -509,7 +611,7 @@ fun HomeScreen(
                                         coroutineScope.launch { subGridState.animateScrollToItem(0) }
                                     },
                                     onChannelLongClick = onChannelClick,
-                                    onViewAllClick = {},
+                                    onViewAllClick = { isManagingSubs = true },
                                     onMusicSubscriptionsClick = onNavigateToMusic,
                                     onRetryFailedChannels = subsViewModel::retryFailedChannels,
                                     onDismissFailedChannels = subsViewModel::dismissFailedChannels,
@@ -692,5 +794,25 @@ private fun ResettableHomePullToRefreshBox(
             modifier = modifier,
             content = content,
         )
+    }
+}
+
+private suspend fun unsubscribeWithUndo(
+    viewModel: SubscriptionsViewModel,
+    channel: Channel,
+    snackbarHostState: SnackbarHostState,
+    unsubscribedMessage: String,
+    undoLabel: String,
+) {
+    val subscription = viewModel.getSubscriptionOnce(channel.id)
+    viewModel.unsubscribe(channel.id)
+    val result =
+        snackbarHostState.showSnackbar(
+            message = unsubscribedMessage,
+            actionLabel = undoLabel,
+            duration = SnackbarDuration.Short,
+        )
+    if (result == SnackbarResult.ActionPerformed) {
+        subscription?.let { viewModel.subscribeChannel(it) }
     }
 }

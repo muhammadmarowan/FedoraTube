@@ -112,6 +112,8 @@ fun EnhancedMusicScreen(
     val quickPicksGridState = rememberLazyGridState()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
+    val isInitialLoading = uiState.isLoading && uiState.trendingSongs.isEmpty() && uiState.dynamicSections.isEmpty()
+
     // Ensure the feed always starts at index 0 offset 0, and doesn't get pushed down as
     // asynchronous shelves (playlists, subscriptions, trending, speed dial) arrive progressively.
     // Use DragInteraction.Start so programmatic scrolls or layout adjustments do NOT set userHasScrolled = true.
@@ -136,8 +138,9 @@ fun EnhancedMusicScreen(
         uiState.listenAgain.size,
         ownPlaylists.size,
         musicSubscriptions.size,
+        isInitialLoading,
     ) {
-        if (!userHasScrolled && musicListState.firstVisibleItemIndex == 0 && musicListState.firstVisibleItemScrollOffset == 0) {
+        if (!userHasScrolled) {
             musicListState.scrollToItem(0, 0)
             scrollBehavior.state.heightOffset = 0f
             scrollBehavior.state.contentOffset = 0f
@@ -253,8 +256,6 @@ fun EnhancedMusicScreen(
                     .fillMaxSize()
                     .padding(paddingValues),
         ) {
-            val isInitialLoading = uiState.isLoading && uiState.trendingSongs.isEmpty() && uiState.dynamicSections.isEmpty()
-
             when {
                 isInitialLoading -> {
                     MusicScreenShimmerLoading()
