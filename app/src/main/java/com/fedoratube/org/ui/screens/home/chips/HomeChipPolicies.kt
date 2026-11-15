@@ -39,28 +39,7 @@ internal fun visibleChips(
     hasMixSeeds: Boolean,
     hasWatched: Boolean,
     selected: String,
-): List<HomeChip> {
-    val existingRep = interests.map { it.representative.lowercase() }.toSet()
-    val existingCat = interests.mapNotNull { it.category?.lowercase() }.toSet()
-    val combinedInterests =
-        interests +
-            DefaultCategories.filter {
-                it.representative.lowercase() !in existingRep && (it.category == null || it.category.lowercase() !in existingCat)
-            }
-    val all =
-        listOf(HomeChip.All, HomeChip.Subscriptions) +
-            combinedInterests.map(HomeChip::Interest) +
-            listOf(HomeChip.NewToYou, HomeChip.RecentlyUploaded, HomeChip.Mixes, HomeChip.Live, HomeChip.Watched)
-    return all.filter { chip ->
-        when {
-            chip.key == selected || chip == HomeChip.All || chip == HomeChip.Subscriptions -> true
-            chip.key in emptyKeys -> false
-            chip == HomeChip.Mixes -> hasMixSeeds
-            chip == HomeChip.Watched -> hasWatched
-            else -> true
-        }
-    }
-}
+): List<HomeChip> = listOf(HomeChip.All, HomeChip.Subscriptions)
 
 private val CategorySearchVariants =
     mapOf(

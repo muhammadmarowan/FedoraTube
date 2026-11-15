@@ -114,20 +114,27 @@ import com.fedoratube.org.ui.screens.subscriptions.sharedSubscriptionsViewModel
 import com.fedoratube.org.ui.screens.subscriptions.sortSubscriptions
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalDensity
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.repeatOnLifecycle
 import com.fedoratube.org.data.model.Channel
 import kotlin.math.roundToInt
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 
+private const val STALE_REFRESH_INTERVAL_MS = 3 * 60 * 1000L
 private const val IMPRESSION_DEBOUNCE_MS = 500L
 private const val SKELETON_CARD_COUNT = 12
 private const val MILLIS_PER_SECOND = 1000L
@@ -174,33 +181,38 @@ fun HomeScreen(
             quickAccessOrder(sortedChannels)
         }
 
-    val chipKeys = remember(chipsState.chips) { chipsState.chips.map { it.key } }
-    val currentChipIndex = remember(chipKeys, chipsState.selected) {
-        chipKeys.indexOf(chipsState.selected).coerceAtLeast(0)
+    val lifecycleOwner = LocalLifecycleOwner.current
+    LaunchedEffect(subsViewModel) {
+        subsViewModel.ensureStarted()
+    }
+    LaunchedEffect(subsViewModel, lifecycleOwner) {
+        lifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+            subsViewModel.refreshIfStaleOrMissedUploads()
+            while (true) {
+                delay(STALE_REFRESH_INTERVAL_MS)
+                subsViewModel.refreshIfStaleOrMissedUploads()
+            }
+        }
     }
 
-    val categorySwipeModifier =
-        Modifier.pointerInput(chipKeys, chipsState.selected) {
-            var totalDragX = 0f
-            detectHorizontalDragGestures(
-                onDragStart = { totalDragX = 0f },
-                onHorizontalDrag = { _, dragAmount -> totalDragX += dragAmount },
-                onDragEnd = {
-                    val thresholdPx = 48.dp.toPx()
-                    if (totalDragX < -thresholdPx) {
-                        if (currentChipIndex + 1 < chipKeys.size) {
-                            viewModel.selectChip(chipKeys[currentChipIndex + 1])
-                        }
-                    } else if (totalDragX > thresholdPx) {
-                        if (currentChipIndex - 1 >= 0) {
-                            viewModel.selectChip(chipKeys[currentChipIndex - 1])
-                        }
-                    }
-                    totalDragX = 0f
-                },
-                onDragCancel = { totalDragX = 0f },
-            )
+    val pagerState = rememberPagerState(initialPage = 0, pageCount = { 2 })
+
+    LaunchedEffect(pagerState.currentPage) {
+        val targetKey = if (pagerState.currentPage == 0) HomeChip.All.key else HomeChip.Subscriptions.key
+        if (chipsState.selected != targetKey) {
+            viewModel.selectChip(targetKey)
         }
+        if (pagerState.currentPage == 1) {
+            subsViewModel.refreshIfStaleOrMissedUploads()
+        }
+    }
+
+    LaunchedEffect(chipsState.selected) {
+        val targetPage = if (chipsState.selected == HomeChip.Subscriptions.key) 1 else 0
+        if (pagerState.currentPage != targetPage && !pagerState.isScrollInProgress) {
+            pagerState.animateScrollToPage(targetPage)
+        }
+    }
 
     val gridState = rememberLazyGridState()
     var homeFirstScrollFixed by rememberSaveable { mutableStateOf(false) }
@@ -266,11 +278,20 @@ fun HomeScreen(
         TabScrollEventBus.scrollToTopEvents
             .filter { it == "home" }
             .collectLatest {
-                val atTop = gridState.firstVisibleItemIndex == 0 && gridState.firstVisibleItemScrollOffset == 0
-                if (!atTop) {
-                    gridState.animateScrollToItem(0)
-                } else if (refreshHomeOnReselect) {
-                    viewModel.refreshFeed()
+                if (pagerState.currentPage == 0) {
+                    val atTop = gridState.firstVisibleItemIndex == 0 && gridState.firstVisibleItemScrollOffset == 0
+                    if (!atTop) {
+                        gridState.animateScrollToItem(0)
+                    } else if (refreshHomeOnReselect) {
+                        viewModel.refreshFeed()
+                    }
+                } else {
+                    val atTop = subGridState.firstVisibleItemIndex == 0 && subGridState.firstVisibleItemScrollOffset == 0
+                    if (!atTop) {
+                        subGridState.animateScrollToItem(0)
+                    } else {
+                        subsViewModel.refreshFeed()
+                    }
                 }
             }
     }
@@ -294,7 +315,7 @@ fun HomeScreen(
             val density = LocalDensity.current
             val showChips = !isFocusModeEnabled && chipsState.chips.isNotEmpty()
             val baseBarHeight = 48.dp
-            val chipRowHeight = 48.dp
+            val chipRowHeight = 38.dp
             val totalHeight = baseBarHeight + (if (showChips) chipRowHeight else 0.dp)
             val totalHeightPx = with(density) { totalHeight.toPx() }
 
@@ -359,7 +380,23 @@ fun HomeScreen(
                     if (showChips) {
                         HomeChipRow(
                             state = chipsState,
-                            onSelect = viewModel::selectChip,
+                            pagerState = pagerState,
+                            onSelect = { key ->
+                                viewModel.selectChip(key)
+                                coroutineScope.launch {
+                                    val targetPage = if (key == HomeChip.Subscriptions.key) 1 else 0
+                                    pagerState.animateScrollToPage(targetPage)
+                                }
+                            },
+                            onReselect = { key ->
+                                coroutineScope.launch {
+                                    if (key == HomeChip.All.key) {
+                                        gridState.animateScrollToItem(0)
+                                    } else {
+                                        subGridState.animateScrollToItem(0)
+                                    }
+                                }
+                            },
                         )
                     }
                 }
@@ -380,27 +417,15 @@ fun HomeScreen(
                     Modifier
                         .fillMaxSize()
                         .padding(padding)
-                        .then(categorySwipeModifier)
                         .background(MaterialTheme.colorScheme.background),
             ) {
-                AnimatedContent(
-                    targetState = chipsState.selected,
-                    transitionSpec = {
-                        val targetIdx = chipKeys.indexOf(targetState)
-                        val initialIdx = chipKeys.indexOf(initialState)
-                        if (targetIdx >= initialIdx) {
-                            (slideInHorizontally(animationSpec = tween(220, easing = FastOutSlowInEasing)) { width -> width / 3 } + fadeIn(tween(200)))
-                                .togetherWith(slideOutHorizontally(animationSpec = tween(220, easing = FastOutSlowInEasing)) { width -> -width / 3 } + fadeOut(tween(180)))
-                        } else {
-                            (slideInHorizontally(animationSpec = tween(220, easing = FastOutSlowInEasing)) { width -> -width / 3 } + fadeIn(tween(200)))
-                                .togetherWith(slideOutHorizontally(animationSpec = tween(220, easing = FastOutSlowInEasing)) { width -> width / 3 } + fadeOut(tween(180)))
-                        }
-                    },
-                    label = "chipFeedContent",
+                HorizontalPager(
+                    state = pagerState,
                     modifier = Modifier.fillMaxSize(),
-                ) { currentSelectedKey ->
-                    when (currentSelectedKey) {
-                        HomeChip.All.key -> {
+                    userScrollEnabled = !isFocusModeEnabled,
+                ) { page ->
+                    when (page) {
+                        0 -> {
                             ResettableHomePullToRefreshBox(
                                 resetKey = uiState.isLoading && uiState.videos.isEmpty(),
                                 isRefreshing = uiState.isRefreshing,
@@ -456,9 +481,20 @@ fun HomeScreen(
                             }
                         }
 
-                        HomeChip.Subscriptions.key -> {
-                            if (subUiState.subscribedChannels.isEmpty()) {
+                        1 -> {
+                            if (subUiState.subscribedChannels.isEmpty() && !subUiState.isLoading) {
                                 SubscriptionsEmptyState(modifier = Modifier.fillMaxSize())
+                            } else if (subUiState.subscribedChannels.isEmpty() && subUiState.isLoading) {
+                                BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+                                    val feedLayout = rememberFeedGridLayout(maxWidth, HomeFeedColumns.ONE)
+                                    FeedGridSkeleton(
+                                        layout = feedLayout,
+                                        listMode = false,
+                                        stackedInset = false,
+                                        placeholderCount = SKELETON_CARD_COUNT,
+                                        compactRowSpacing = 16.dp,
+                                    )
+                                }
                             } else {
                                 SubscriptionsFeedContent(
                                     state = subUiState,
@@ -479,31 +515,6 @@ fun HomeScreen(
                                     onDismissFailedChannels = subsViewModel::dismissFailedChannels,
                                     modifier = Modifier.fillMaxSize(),
                                 )
-                            }
-                        }
-
-                        else -> {
-                            ResettableHomePullToRefreshBox(
-                                resetKey = chipsState.isRefreshing,
-                                isRefreshing = chipsState.isRefreshing,
-                                onRefresh = { viewModel.refreshSelectedChip() },
-                                modifier = Modifier.fillMaxSize(),
-                            ) {
-                                BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-                                    val feedLayout = rememberFeedGridLayout(maxWidth, HomeFeedColumns.ONE)
-
-                                    HomeChipContent(
-                                        state = chipsState,
-                                        feedLayout = feedLayout,
-                                        isListView = false,
-                                        gridState = chipGridState,
-                                        onVideoClick = onVideoClick,
-                                        onPlayMix = { mix -> onPlayMix(mix.videos, mix.seed.title) },
-                                        onRefresh = { viewModel.refreshSelectedChip() },
-                                        onEnrichVideo = viewModel::enrichChipVideo,
-                                        modifier = Modifier.fillMaxSize(),
-                                    )
-                                }
                             }
                         }
                     }
