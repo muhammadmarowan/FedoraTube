@@ -22,6 +22,16 @@ internal object HomeChipParams {
     const val SESSION_TOPICS = 5
 }
 
+internal val DefaultCategories =
+    listOf(
+        InterestChip("music", "Music", listOf("music", "songs"), category = "music"),
+        InterestChip("gaming", "Gaming", listOf("gaming", "video games"), category = "gaming"),
+        InterestChip("news", "News", listOf("news", "live news"), category = "news"),
+        InterestChip("tech", "Tech", listOf("technology", "tech news", "gadgets")),
+        InterestChip("sports", "Sports", listOf("sports", "highlights"), category = "sports"),
+        InterestChip("comedy", "Comedy", listOf("comedy", "funny"), category = "comedy"),
+    )
+
 /** The order chips appear in, which never changes between loads. Empty chips are left out. */
 internal fun visibleChips(
     interests: List<InterestChip>,
@@ -30,9 +40,16 @@ internal fun visibleChips(
     hasWatched: Boolean,
     selected: String,
 ): List<HomeChip> {
+    val existingRep = interests.map { it.representative.lowercase() }.toSet()
+    val existingCat = interests.mapNotNull { it.category?.lowercase() }.toSet()
+    val combinedInterests =
+        interests +
+            DefaultCategories.filter {
+                it.representative.lowercase() !in existingRep && (it.category == null || it.category.lowercase() !in existingCat)
+            }
     val all =
         listOf(HomeChip.All) +
-            interests.map(HomeChip::Interest) +
+            combinedInterests.map(HomeChip::Interest) +
             listOf(HomeChip.NewToYou, HomeChip.RecentlyUploaded, HomeChip.Mixes, HomeChip.Live, HomeChip.Watched)
     return all.filter { chip ->
         when {

@@ -95,6 +95,8 @@ import com.fedoratube.org.ui.components.rememberFeedGridLayout
 import com.fedoratube.org.ui.components.shared.FeedGridSkeleton
 import com.fedoratube.org.ui.components.shared.FlowErrorState
 import com.fedoratube.org.ui.components.shared.FlowPullToRefreshBox
+import com.fedoratube.org.ui.screens.home.chips.HomeChipContent
+import com.fedoratube.org.ui.screens.home.chips.HomeChipRow
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
@@ -124,6 +126,7 @@ fun HomeScreen(
 ) {
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val chipsState by viewModel.chips.collectAsStateWithLifecycle()
     val preferences = remember(context) { PlayerPreferences(context) }
     val isFocusModeEnabled by preferences.focusModeEnabled.collectAsStateWithLifecycle(initialValue = false)
     val homeFeedEnabled by preferences.homeFeedEnabled.collectAsStateWithLifecycle(initialValue = true)
@@ -220,36 +223,44 @@ fun HomeScreen(
             SnackbarHost(snackbarHostState, Modifier.floatAboveBottomChrome(LocalFlowBottomInsets.current))
         },
         topBar = {
-            FlowTopBar(
-                title = {
-                    if (!isFocusModeEnabled) {
-                        FedoraBrandWordmark(
-                            isDeepFlowActive = deepFlowActive,
-                            onLongPress = toggleDeepFlow,
-                            longPressLabel = deepFlowLabel,
-                        )
-                    }
-                },
-                leading = null,
-                actions = {
-                    if (!isFocusModeEnabled) {
-                        IconButton(onClick = onNotificationClick) {
-                            Icon(
-                                Icons.Outlined.Notifications,
-                                contentDescription = stringResource(R.string.notifications),
+            Column(modifier = Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.surface)) {
+                FlowTopBar(
+                    title = {
+                        if (!isFocusModeEnabled) {
+                            FedoraBrandWordmark(
+                                isDeepFlowActive = deepFlowActive,
+                                onLongPress = toggleDeepFlow,
+                                longPressLabel = deepFlowLabel,
                             )
                         }
-                        IconButton(onClick = onSearchClick) {
-                            Icon(
-                                Icons.Outlined.Search,
-                                contentDescription = stringResource(R.string.search),
-                            )
+                    },
+                    leading = null,
+                    actions = {
+                        if (!isFocusModeEnabled) {
+                            IconButton(onClick = onNotificationClick) {
+                                Icon(
+                                    Icons.Outlined.Notifications,
+                                    contentDescription = stringResource(R.string.notifications),
+                                )
+                            }
+                            IconButton(onClick = onSearchClick) {
+                                Icon(
+                                    Icons.Outlined.Search,
+                                    contentDescription = stringResource(R.string.search),
+                                )
+                            }
                         }
-                    }
-                },
-                globalActions = FlowGlobalActionsMode.None,
-                scrollBehavior = scrollBehavior,
-            )
+                    },
+                    globalActions = FlowGlobalActionsMode.None,
+                    scrollBehavior = scrollBehavior,
+                )
+                if (!isFocusModeEnabled && chipsState.chips.isNotEmpty()) {
+                    HomeChipRow(
+                        state = chipsState,
+                        onSelect = viewModel::selectChip,
+                    )
+                }
+            }
         },
     ) { padding ->
         if (isFocusModeEnabled) {
@@ -276,9 +287,15 @@ fun HomeScreen(
                         .background(MaterialTheme.colorScheme.background),
             ) {
                 ResettableHomePullToRefreshBox(
-                    resetKey = uiState.isLoading && uiState.videos.isEmpty(),
-                    isRefreshing = uiState.isRefreshing,
-                    onRefresh = { viewModel.refreshFeed() },
+                    resetKey = if (chipsState.isAll) (uiState.isLoading && uiState.videos.isEmpty()) else chipsState.isRefreshing,
+                    isRefreshing = if (chipsState.isAll) uiState.isRefreshing else chipsState.isRefreshing,
+                    onRefresh = {
+                        if (chipsState.isAll) {
+                            viewModel.refreshFeed()
+                        } else {
+                            viewModel.refreshSelectedChip()
+                        }
+                    },
                     modifier = Modifier.fillMaxSize(),
                 ) {
                     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
@@ -289,40 +306,58 @@ fun HomeScreen(
                                 HomeFeedDisabledState(modifier = Modifier.fillMaxSize())
                             }
 
-                            uiState.isLoading && uiState.videos.isEmpty() -> {
-                                FeedGridSkeleton(
-                                    layout = feedLayout,
-                                    listMode = false,
-                                    stackedInset = false,
-                                    placeholderCount = SKELETON_CARD_COUNT,
-                                    compactRowSpacing = 16.dp,
-                                )
-                            }
+                            chipsState.isAll -> {
+                                when {
+                                    uiState.isLoading && uiState.videos.isEmpty() -> {
+                                        FeedGridSkeleton(
+                                            layout = feedLayout,
+                                            listMode = false,
+                                            stackedInset = false,
+                                            placeholderCount = SKELETON_CARD_COUNT,
+                                            compactRowSpacing = 16.dp,
+                                        )
+                                    }
 
-                            uiState.error != null && uiState.videos.isEmpty() -> {
-                                FlowErrorState(
-                                    error = uiState.error ?: stringResource(R.string.error_occurred),
-                                    onRetry = { viewModel.retry() },
-                                )
+                                    uiState.error != null && uiState.videos.isEmpty() -> {
+                                        FlowErrorState(
+                                            error = uiState.error ?: stringResource(R.string.error_occurred),
+                                            onRetry = { viewModel.retry() },
+                                        )
+                                    }
+
+                                    else -> {
+                                        ReportDrawnWhen {
+                                            uiState.videos.isNotEmpty()
+                                        }
+
+                                        HomeFeedGrid(
+                                            uiState = uiState,
+                                            feedLayout = feedLayout,
+                                            isListView = false,
+                                            gridState = gridState,
+                                            onVideoClick = onVideoClick,
+                                            onEnrichChannelMetadata = viewModel::enrichChannelMetadataIfMissing,
+                                            onContinueWatchingClick = { entry -> onVideoClick(entry.toResumeVideo()) },
+                                            onContinueWatchingRemove = viewModel::removeContinueWatchingEntry,
+                                            onRefresh = { viewModel.refreshFeed() },
+                                            onRetryLoadMore = viewModel::retryLoadMore,
+                                            footerMinVideos = 0,
+                                        )
+                                    }
+                                }
                             }
 
                             else -> {
-                                ReportDrawnWhen {
-                                    uiState.videos.isNotEmpty()
-                                }
-
-                                HomeFeedGrid(
-                                    uiState = uiState,
+                                HomeChipContent(
+                                    state = chipsState,
                                     feedLayout = feedLayout,
                                     isListView = false,
                                     gridState = gridState,
                                     onVideoClick = onVideoClick,
-                                    onEnrichChannelMetadata = viewModel::enrichChannelMetadataIfMissing,
-                                    onContinueWatchingClick = { entry -> onVideoClick(entry.toResumeVideo()) },
-                                    onContinueWatchingRemove = viewModel::removeContinueWatchingEntry,
-                                    onRefresh = { viewModel.refreshFeed() },
-                                    onRetryLoadMore = viewModel::retryLoadMore,
-                                    footerMinVideos = 0,
+                                    onPlayMix = { mix -> onPlayMix(mix.videos, mix.seed.title) },
+                                    onRefresh = { viewModel.refreshSelectedChip() },
+                                    onEnrichVideo = viewModel::enrichChipVideo,
+                                    modifier = Modifier.fillMaxSize(),
                                 )
                             }
                         }

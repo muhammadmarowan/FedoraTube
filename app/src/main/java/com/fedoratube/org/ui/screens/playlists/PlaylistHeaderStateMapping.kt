@@ -49,7 +49,7 @@ internal fun rememberPlaylistHeaderState(
         canSave = !isUserCreated,
         canAddAll = !isUserCreated,
         canEdit = isUserCreated && !uiState.isWatchLater && !uiState.isLikes,
-        canShare = !uiState.isWatchLater,
+        canShare = false,
         downloadProgress =
             downloadBatch?.takeUnless { it.isFinished }?.let {
                 if (it.total ==

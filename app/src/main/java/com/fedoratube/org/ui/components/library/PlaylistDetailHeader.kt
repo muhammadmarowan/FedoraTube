@@ -27,7 +27,6 @@ import androidx.compose.material.icons.outlined.Download
 import androidx.compose.material.icons.outlined.DownloadDone
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.MoreVert
-import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ButtonGroupDefaults
@@ -236,11 +235,6 @@ private fun PlaylistSecondaryActions(
         if (state.canAddAll) {
             IconButton(onClick = actions.onAddAll) {
                 Icon(Icons.AutoMirrored.Outlined.PlaylistAdd, contentDescription = stringResource(R.string.add_all_to_playlist))
-            }
-        }
-        if (state.canShare) {
-            IconButton(onClick = actions.onShare) {
-                Icon(Icons.Outlined.Share, contentDescription = stringResource(R.string.share))
             }
         }
         if (state.canEdit) PlaylistOverflowMenu(state, actions)

@@ -21,7 +21,6 @@ import androidx.compose.material.icons.rounded.Download
 import androidx.compose.material.icons.rounded.DownloadDone
 import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material.icons.rounded.PlayArrow
-import androidx.compose.material.icons.rounded.Share
 import androidx.compose.material.icons.rounded.Shuffle
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -288,11 +287,6 @@ private fun CollectionSecondaryActions(
                     imageVector = if (state.isDownloaded) Icons.Rounded.DownloadDone else Icons.Rounded.Download,
                     contentDescription = stringResource(if (state.isDownloaded) R.string.downloaded else R.string.download_all),
                 )
-            }
-        }
-        if (state.canShare) {
-            IconButton(onClick = actions.onShare) {
-                Icon(Icons.Rounded.Share, contentDescription = stringResource(R.string.share))
             }
         }
         if (actions.menu.isNotEmpty()) CollectionOverflowMenu(actions.menu)
