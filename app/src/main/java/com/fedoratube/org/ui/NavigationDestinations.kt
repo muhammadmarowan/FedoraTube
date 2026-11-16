@@ -29,8 +29,8 @@ internal fun NavController.navigateToTab(
     }
 }
 
-/** Search and Downloads are not displayed with the bottom navigation bar. */
-internal fun FlowTab?.showsNavigationBar(): Boolean = this != null && this != FlowTab.Search && this != FlowTab.Downloads
+/** Downloads is not displayed with the bottom navigation bar. */
+internal fun FlowTab?.showsNavigationBar(): Boolean = this != null && this != FlowTab.Downloads
 
 internal fun youtubeChannelUrl(channelIdOrHandle: String): String? {
     val value = channelIdOrHandle.trim()

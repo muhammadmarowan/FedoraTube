@@ -71,6 +71,8 @@ internal fun VideoInfoSection(
     isDownloaded: Boolean = false,
     onNoteClick: (() -> Unit)? = null,
     hasNote: Boolean = false,
+    isWatchLater: Boolean = false,
+    onWatchLaterClick: () -> Unit = {},
     isDeviceFile: Boolean = false,
     isFocusMode: Boolean = false,
     modifier: Modifier = Modifier,
@@ -103,7 +105,7 @@ internal fun VideoInfoSection(
         modifier =
             modifier
                 .fillMaxWidth()
-                .padding(12.dp),
+                .padding(start = 12.dp, end = 12.dp, top = 12.dp, bottom = 4.dp),
     ) {
         // ============ TITLE SECTION ============
         val context = LocalContext.current
@@ -186,6 +188,23 @@ internal fun VideoInfoSection(
                     overflow = TextOverflow.Ellipsis,
                 )
 
+                if (likeCount != null && likeCount > 0L) {
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text(
+                        text = "•",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text(
+                        text = stringResource(R.string.likes_count_short_template, formatViewCount(likeCount)),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                }
+
                 if (!isUpcoming && !uploadDate.isNullOrBlank()) {
                     Text(
                         text =
@@ -211,7 +230,7 @@ internal fun VideoInfoSection(
             }
         }
 
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
         // ============ YOUTUBE-STYLE ACTION & SUBSCRIPTION BAR ============
         VideoActionRow(
@@ -223,6 +242,8 @@ internal fun VideoInfoSection(
             onShareClick = onShareClick,
             onDownloadClick = onDownloadClick,
             onSaveClick = onSaveClick,
+            onWatchLaterClick = onWatchLaterClick,
+            isWatchLater = isWatchLater,
             onCopyLinkClick = onCopyLinkClick,
             onCopyLinkAtTimeClick = onCopyLinkAtTimeClick,
             isSaved = isSaved,

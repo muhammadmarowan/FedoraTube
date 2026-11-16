@@ -16,6 +16,7 @@ import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.StickyNote2
 import androidx.compose.material.icons.filled.ThumbDown
 import androidx.compose.material.icons.filled.ThumbUp
+import androidx.compose.material.icons.filled.WatchLater
 import androidx.compose.material.icons.outlined.BookmarkBorder
 import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.outlined.Download
@@ -26,6 +27,7 @@ import androidx.compose.material.icons.outlined.StickyNote2
 import androidx.compose.material.icons.outlined.ThumbDown
 import androidx.compose.material.icons.outlined.ThumbUp
 import androidx.compose.material.icons.outlined.Timer
+import androidx.compose.material.icons.outlined.WatchLater
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -52,9 +54,8 @@ import com.fedoratube.org.ui.components.shared.FlowSubscribeButtonSize
 import com.fedoratube.org.utils.formatViewCount
 
 private val ActionSpacing = 8.dp
-private val ActionIconSize = 18.dp
-private val ActionIconSpacing = 6.dp
-private val ActionContentPadding = PaddingValues(horizontal = 14.dp, vertical = 8.dp)
+private val ActionIconSize = 20.dp
+private val ActionContentPadding = PaddingValues(horizontal = 14.dp, vertical = 9.dp)
 
 /**
  * The action buttons under a video.
@@ -74,6 +75,8 @@ internal fun VideoActionRow(
     onShareClick: () -> Unit,
     onDownloadClick: () -> Unit,
     onSaveClick: () -> Unit,
+    onWatchLaterClick: () -> Unit = {},
+    isWatchLater: Boolean = false,
     onCopyLinkClick: () -> Unit = {},
     onCopyLinkAtTimeClick: () -> Unit = {},
     isSaved: Boolean = false,
@@ -182,6 +185,15 @@ internal fun VideoActionRow(
             )
         }
 
+        item(key = "action_watch_later") {
+            ActionToggle(
+                icon = if (isWatchLater) Icons.Filled.WatchLater else Icons.Outlined.WatchLater,
+                label = stringResource(R.string.watch_later),
+                checked = isWatchLater,
+                onCheckedChange = onWatchLaterClick,
+            )
+        }
+
         if (onNoteClick != null && !isFocusMode) {
             item(key = "action_note") {
                 ActionToggle(
@@ -220,12 +232,6 @@ internal fun SegmentedLikeDislikeButton(
     val haptics = LocalHapticFeedback.current
     val isLiked = likeState == LIKED
     val isDisliked = likeState == DISLIKED
-    val likeText =
-        when {
-            likeCount != null && likeCount > 0 -> formatViewCount(likeCount)
-            isLiked -> stringResource(R.string.liked)
-            else -> stringResource(R.string.like)
-        }
 
     androidx.compose.foundation.layout.Row(
         horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween),
@@ -245,8 +251,6 @@ internal fun SegmentedLikeDislikeButton(
                 contentDescription = stringResource(R.string.like),
                 modifier = Modifier.size(ActionIconSize),
             )
-            Spacer(modifier = Modifier.width(ActionIconSpacing))
-            Text(text = likeText, style = MaterialTheme.typography.labelLarge)
         }
 
         ToggleButton(
@@ -264,10 +268,6 @@ internal fun SegmentedLikeDislikeButton(
                 contentDescription = stringResource(R.string.player_action_dislike),
                 modifier = Modifier.size(ActionIconSize),
             )
-            if (dislikeCount != null && dislikeCount > 0) {
-                Spacer(modifier = Modifier.width(ActionIconSpacing))
-                Text(text = formatViewCount(dislikeCount), style = MaterialTheme.typography.labelLarge)
-            }
         }
     }
 }
@@ -292,9 +292,7 @@ private fun ActionToggle(
         colors = actionToggleColors(),
         contentPadding = ActionContentPadding,
     ) {
-        Icon(imageVector = icon, contentDescription = null, modifier = Modifier.size(ActionIconSize))
-        Spacer(modifier = Modifier.width(ActionIconSpacing))
-        Text(text = label, style = MaterialTheme.typography.labelLarge)
+        Icon(imageVector = icon, contentDescription = label, modifier = Modifier.size(ActionIconSize))
     }
 }
 
@@ -322,15 +320,9 @@ private fun ActionButton(
     ) {
         Icon(
             imageVector = icon,
-            contentDescription = null,
+            contentDescription = label,
             modifier = Modifier.size(ActionIconSize),
             tint = MaterialTheme.colorScheme.onSurface,
-        )
-        Spacer(modifier = Modifier.width(ActionIconSpacing))
-        Text(
-            text = label,
-            style = MaterialTheme.typography.labelLarge,
-            color = MaterialTheme.colorScheme.onSurface,
         )
     }
 }

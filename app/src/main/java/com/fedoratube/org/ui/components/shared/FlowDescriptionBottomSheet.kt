@@ -242,15 +242,6 @@ fun FlowDescriptionBottomSheet(
                 )
             }
 
-            descriptionPage?.channel?.let { channel ->
-                ChannelCard(
-                    channel = channel,
-                    tint = tint,
-                    onChannelClick = onChannelClick,
-                    onOpenLink = openLink,
-                )
-            }
-
             Spacer(modifier = Modifier.height(SheetBottomSpacing))
         }
     }

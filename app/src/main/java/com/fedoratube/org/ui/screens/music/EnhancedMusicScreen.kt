@@ -239,9 +239,6 @@ fun EnhancedMusicScreen(
                             Icon(Icons.Outlined.Notifications, stringResource(R.string.notifications))
                         }
                     }
-                    IconButton(onClick = onSearchClick) {
-                        Icon(Icons.Outlined.Search, stringResource(R.string.search))
-                    }
                 },
                 globalActions = com.fedoratube.org.ui.components.layout.topbar.FlowGlobalActionsMode.None,
                 scrollBehavior = scrollBehavior,

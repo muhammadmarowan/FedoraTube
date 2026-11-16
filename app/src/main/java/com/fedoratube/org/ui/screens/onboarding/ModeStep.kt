@@ -66,7 +66,7 @@ internal fun ModeStep(
                 ModeSelectionCard(
                     title = stringResource(R.string.onboarding_mode_normal_title),
                     subtitle = stringResource(R.string.onboarding_mode_normal_subtitle),
-                    bullets = listOf("Full Home feed & Subscriptions", "Integrated Music Streaming", "Shorts & Trending Explorer"),
+                    bullets = listOf("Full Home feed & Subscriptions", "Integrated Music Streaming", "Trending & Media Explorer"),
                     icon = Icons.Outlined.SmartDisplay,
                     selected = !isFocusMode,
                     onClick = { onModeChange(false) },

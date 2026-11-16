@@ -639,6 +639,7 @@
     <string name="no_playlists_found">No playlists found</string>
     <string name="subscribers_count_template">%1$s subscribers</string>
     <string name="views_count_short_template">%1$s views</string>
+    <string name="likes_count_short_template">%1$s likes</string>
     <!-- Channel Search -->
     <!-- History Screen -->
     <string name="music_history">Music History</string>

@@ -43,6 +43,7 @@ import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.QrCode2
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material.icons.outlined.WatchLater
 import com.fedoratube.org.ui.components.dialogs.ShareAppQrDialog
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -156,6 +157,7 @@ fun HomeScreen(
     onNavigateToSettings: () -> Unit = {},
     onNavigateToMusic: () -> Unit = {},
     onNavigateToDownloads: () -> Unit = {},
+    onNavigateToWatchLater: () -> Unit = {},
     onNotificationClick: () -> Unit = {},
     onNavigateToHistory: () -> Unit = {},
     onPlayMix: (videos: List<Video>, title: String) -> Unit = { _, _ -> },
@@ -442,12 +444,6 @@ fun HomeScreen(
                                             contentDescription = stringResource(R.string.notifications),
                                         )
                                     }
-                                    IconButton(onClick = onSearchClick) {
-                                        Icon(
-                                            Icons.Outlined.Search,
-                                            contentDescription = stringResource(R.string.search),
-                                        )
-                                    }
                                 }
                             },
                             globalActions = FlowGlobalActionsMode.None,
@@ -486,6 +482,7 @@ fun HomeScreen(
                 onMusicClick = onNavigateToMusic,
                 onNavigateToSettings = onNavigateToSettings,
                 onNavigateToDownloads = onNavigateToDownloads,
+                onNavigateToWatchLater = onNavigateToWatchLater,
                 modifier = Modifier.fillMaxSize().padding(padding),
             )
         } else {
@@ -632,6 +629,7 @@ private fun FocusModeContent(
     onMusicClick: () -> Unit,
     onNavigateToSettings: () -> Unit,
     onNavigateToDownloads: () -> Unit,
+    onNavigateToWatchLater: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var showQrDialog by rememberSaveable { mutableStateOf(false) }
@@ -703,7 +701,7 @@ private fun FocusModeContent(
 
             Spacer(modifier = Modifier.height(28.dp))
 
-            // Centered actions row: Settings on the left, Downloads, Movie (right of Downloads), QR code on the right
+            // Centered actions row: Settings on the left, Watch Later to its right, Downloads, QR code
             Row(
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
                 verticalAlignment = Alignment.CenterVertically,
@@ -720,6 +718,22 @@ private fun FocusModeContent(
                     Icon(
                         imageVector = Icons.Outlined.Settings,
                         contentDescription = stringResource(R.string.settings),
+                        modifier = Modifier.size(24.dp),
+                    )
+                }
+
+                FilledTonalIconButton(
+                    onClick = onNavigateToWatchLater,
+                    modifier = Modifier.size(52.dp),
+                    colors =
+                        IconButtonDefaults.filledTonalIconButtonColors(
+                            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                            contentColor = MaterialTheme.colorScheme.onSurface,
+                        ),
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.WatchLater,
+                        contentDescription = stringResource(R.string.watch_later),
                         modifier = Modifier.size(24.dp),
                     )
                 }

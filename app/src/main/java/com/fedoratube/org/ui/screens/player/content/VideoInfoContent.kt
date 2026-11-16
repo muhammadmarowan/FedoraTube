@@ -77,10 +77,12 @@ internal fun VideoInfoContent(
     }
 
     val downloadedVideoIds by viewModel.downloadedVideoIds.collectAsStateWithLifecycle()
+    val watchLaterIds by viewModel.watchLaterIds.collectAsStateWithLifecycle()
     val videoNote by viewModel.videoNote.collectAsStateWithLifecycle()
     val videoNotesEnabled by viewModel.videoNotesEnabled.collectAsStateWithLifecycle()
     var showNoteEditor by rememberSaveable(video.id) { mutableStateOf(false) }
     val isVideoDownloaded = remember(downloadedVideoIds, video.id) { downloadedVideoIds.contains(video.id) }
+    val isWatchLater = remember(watchLaterIds, video.id) { watchLaterIds.contains(video.id) }
     val isVideoSaved by remember(video.id) { viewModel.isVideoSavedToAnyPlaylist(video.id) }
         .collectAsStateWithLifecycle(initialValue = false)
 
@@ -187,6 +189,16 @@ internal fun VideoInfoContent(
         onDownloadClick = { screenState.open(PlayerSheet.Download) },
         isSaved = isVideoSaved,
         isDownloaded = isVideoDownloaded,
+        isWatchLater = isWatchLater,
+        onWatchLaterClick = {
+            viewModel.toggleWatchLater(dialogVideo) { added ->
+                Toast.makeText(
+                    context,
+                    if (added) context.getString(R.string.toast_added_to_watch_later) else context.getString(R.string.toast_removed_from_watch_later),
+                    Toast.LENGTH_SHORT,
+                ).show()
+            }
+        },
         onNoteClick = { showNoteEditor = true }.takeIf { videoNotesEnabled },
         hasNote = !videoNote.isNullOrBlank(),
         onCopyLinkClick = {

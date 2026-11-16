@@ -34,6 +34,7 @@ import com.fedoratube.org.player.stream.UpcomingPremiereProbe
 import com.fedoratube.org.ui.screens.player.state.*
 import com.fedoratube.org.utils.NetworkState
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.flow.debounce
@@ -41,6 +42,7 @@ import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.schabi.newpipe.extractor.stream.*
 import javax.inject.Inject
 
@@ -225,6 +227,25 @@ class VideoPlayerViewModel
             videoDownloadManager.downloadedVideos
                 .map { list -> list.map { it.video.id }.toSet() }
                 .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptySet())
+
+        val watchLaterIds: StateFlow<Set<String>> =
+            playlistRepository
+                .getWatchLaterIdsFlow()
+                .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptySet())
+
+        fun toggleWatchLater(video: Video, onResult: ((Boolean) -> Unit)? = null) {
+            viewModelScope.launch(ioDispatcher) {
+                val wasIn = playlistRepository.isInWatchLater(video.id)
+                if (wasIn) {
+                    playlistRepository.removeFromWatchLater(video.id)
+                } else {
+                    playlistRepository.addToWatchLater(video)
+                }
+                withContext(Dispatchers.Main) {
+                    onResult?.invoke(!wasIn)
+                }
+            }
+        }
 
         fun isVideoSavedToAnyPlaylist(videoId: String): Flow<Boolean> = playlistRepository.isVideoSavedToAnyPlaylistFlow(videoId)
 

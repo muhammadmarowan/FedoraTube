@@ -35,6 +35,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.fedoratube.org.R
 import com.fedoratube.org.data.local.SearchType
 import com.fedoratube.org.data.music.model.MusicTrack
+import com.fedoratube.org.innertube.YouTube
 import com.fedoratube.org.innertube.models.AlbumItem
 import com.fedoratube.org.innertube.models.ArtistItem
 import com.fedoratube.org.innertube.models.PlaylistItem
@@ -229,108 +230,170 @@ fun MusicSearchScreen(
                     }
                 }
             } else {
-                SearchFilterChips(
-                    activeFilter = uiState.activeFilter,
-                    onFilterClick = viewModel::applyFilter,
+                MusicSearchResultsView(
+                    uiState = uiState,
+                    query = query,
+                    onTrackClick = onTrackClick,
+                    onAlbumClick = onAlbumClick,
+                    onArtistClick = onArtistClick,
+                    onPlaylistClick = onPlaylistClick,
+                    onApplyFilter = viewModel::applyFilter,
+                    onRetry = {
+                        val filter = uiState.activeFilter
+                        if (filter == null) viewModel.performSearch(query) else viewModel.applyFilter(filter)
+                    },
+                    onLoadMore = viewModel::loadMore,
+                    onGetArtistTracks = viewModel::getArtistTracks,
                 )
+            }
+        }
+    }
+}
 
-                val searchSource = stringResource(R.string.search_source_template).format(query)
-                val artistSourceTemplate = stringResource(R.string.artist_source_template)
+@Composable
+fun MusicSearchResultsView(
+    uiState: MusicSearchUiState,
+    query: String,
+    onTrackClick: (MusicTrack, List<MusicTrack>, String?) -> Unit,
+    onAlbumClick: (String) -> Unit,
+    onArtistClick: (String) -> Unit,
+    onPlaylistClick: (String) -> Unit,
+    onApplyFilter: (YouTube.SearchFilter?) -> Unit,
+    onRetry: () -> Unit,
+    onLoadMore: () -> Unit,
+    onGetArtistTracks: (String, (List<YTItem>) -> Unit) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val musicMenus = LocalMusicMenus.current
+    val searchSource = stringResource(R.string.search_source_template).format(query)
+    val artistSourceTemplate = stringResource(R.string.artist_source_template)
 
-                val summaries = uiState.searchSummary?.summaries
-                val hasResults =
-                    if (uiState.activeFilter == null) {
-                        summaries?.any { it.items.isNotEmpty() } == true
-                    } else {
-                        uiState.filteredResults.isNotEmpty()
-                    }
+    fun menuActionFor(item: YTItem): (() -> Unit)? =
+        when (item) {
+            is SongItem -> ({ musicMenus.openSong(convertSongToMusicTrack(item)) })
+            is AlbumItem, is PlaylistItem -> ({ item.toCollectionActionItem()?.let(musicMenus::openCollection) })
+            else -> null
+        }
 
-                val error = uiState.error
-                if (uiState.isLoading) {
-                    FlowLoadingIndicator()
-                } else if (!hasResults && error != null) {
-                    FlowErrorState(
-                        error = error,
-                        onRetry = {
-                            val filter = uiState.activeFilter
-                            if (filter == null) viewModel.performSearch(query) else viewModel.applyFilter(filter)
-                        },
-                    )
-                } else if (!hasResults) {
-                    FlowEmptyState(
-                        title = stringResource(R.string.music_search_no_results, query),
-                        icon = Icons.Rounded.SearchOff,
-                    )
-                } else {
-                    LazyColumn(
-                        modifier = Modifier.fillMaxSize(),
-                        contentPadding = PaddingValues(bottom = flowBottomContentPadding()),
-                    ) {
-                        if (uiState.activeFilter == null && summaries != null) {
-                            summaries.forEachIndexed { index, summary ->
-                                item(key = "summary_header_$index") {
-                                    MusicSectionHeader(title = searchSummaryTitle(summary))
-                                }
+    fun isDownloaded(item: YTItem): Boolean = (item as? SongItem)?.let { uiState.downloadedTrackIds.contains(it.id) } ?: false
 
-                                val isTopResult = summary.kind == SearchSummaryKind.TOP_RESULT
-                                if (isTopResult) {
-                                    val topItem = summary.items.first()
-                                    item(key = "top_result") {
-                                        TopResultCard(
-                                            item = topItem,
-                                            onClick = { openItem(topItem, searchSource) },
-                                            onShuffleClick = {
-                                                if (topItem is ArtistItem) {
-                                                    playArtistTracks(topItem, shuffle = true, artistSourceTemplate.format(topItem.title))
-                                                }
-                                            },
-                                            onRadioClick = {
-                                                if (topItem is ArtistItem) {
-                                                    playArtistTracks(topItem, shuffle = false, artistSourceTemplate.format(topItem.title))
-                                                }
-                                            },
-                                            onLongClick = menuActionFor(topItem),
-                                            onMenuClick = menuActionFor(topItem),
-                                        )
-                                    }
-                                }
+    fun openItem(item: YTItem, source: String) {
+        when (item) {
+            is SongItem -> {
+                val track = convertSongToMusicTrack(item)
+                onTrackClick(track, listOf(track), source)
+            }
+            is ArtistItem -> onArtistClick(item.id)
+            is AlbumItem -> onAlbumClick(item.id)
+            is PlaylistItem -> onPlaylistClick(item.id)
+        }
+    }
 
-                                items(
-                                    items = if (isTopResult) summary.items.drop(1) else summary.items,
-                                    key = { it.stableLazyKey("summary_${summary.kind}_${summary.title}") },
-                                ) { item ->
-                                    MusicCollectionRow(
-                                        showPlayCount = true,
-                                        item = item,
-                                        onClick = { openItem(item, searchSource) },
-                                        onMenuClick = menuActionFor(item),
-                                        onLongClick = menuActionFor(item),
-                                        isDownloaded = isDownloaded(item),
-                                    )
-                                }
-                            }
-                        } else {
-                            items(uiState.filteredResults, key = { it.stableLazyKey("filtered") }) { item ->
-                                MusicCollectionRow(
-                                    showPlayCount = true,
-                                    item = item,
-                                    onClick = { openItem(item, searchSource) },
-                                    onMenuClick = menuActionFor(item),
-                                    onLongClick = menuActionFor(item),
-                                    isDownloaded = isDownloaded(item),
+    fun playArtistTracks(artist: ArtistItem, shuffle: Boolean, source: String) {
+        onGetArtistTracks(artist.id) { tracks ->
+            val musicTracks = tracks.filterIsInstance<SongItem>().map(::convertSongToMusicTrack)
+            if (musicTracks.isNotEmpty()) {
+                val queue = if (shuffle) musicTracks.shuffled() else musicTracks
+                onTrackClick(queue.first(), queue, source)
+            }
+        }
+    }
+
+    Column(modifier = modifier.fillMaxSize()) {
+        SearchFilterChips(
+            activeFilter = uiState.activeFilter,
+            onFilterClick = onApplyFilter,
+        )
+
+        val summaries = uiState.searchSummary?.summaries
+        val hasResults =
+            if (uiState.activeFilter == null) {
+                summaries?.any { it.items.isNotEmpty() } == true
+            } else {
+                uiState.filteredResults.isNotEmpty()
+            }
+
+        val error = uiState.error
+        if (uiState.isLoading) {
+            FlowLoadingIndicator()
+        } else if (!hasResults && error != null) {
+            FlowErrorState(
+                error = error,
+                onRetry = onRetry,
+            )
+        } else if (!hasResults) {
+            FlowEmptyState(
+                title = stringResource(R.string.music_search_no_results, query),
+                icon = Icons.Rounded.SearchOff,
+            )
+        } else {
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(bottom = flowBottomContentPadding()),
+            ) {
+                if (uiState.activeFilter == null && summaries != null) {
+                    summaries.forEachIndexed { index, summary ->
+                        item(key = "summary_header_$index") {
+                            MusicSectionHeader(title = searchSummaryTitle(summary))
+                        }
+
+                        val isTopResult = summary.kind == SearchSummaryKind.TOP_RESULT
+                        if (isTopResult) {
+                            val topItem = summary.items.first()
+                            item(key = "top_result") {
+                                TopResultCard(
+                                    item = topItem,
+                                    onClick = { openItem(topItem, searchSource) },
+                                    onShuffleClick = {
+                                        if (topItem is ArtistItem) {
+                                            playArtistTracks(topItem, shuffle = true, artistSourceTemplate.format(topItem.title))
+                                        }
+                                    },
+                                    onRadioClick = {
+                                        if (topItem is ArtistItem) {
+                                            playArtistTracks(topItem, shuffle = false, artistSourceTemplate.format(topItem.title))
+                                        }
+                                    },
+                                    onLongClick = menuActionFor(topItem),
+                                    onMenuClick = menuActionFor(topItem),
                                 )
                             }
                         }
 
-                        if (uiState.continuation != null) {
-                            item(key = "continuation") {
-                                LaunchedEffect(Unit) {
-                                    viewModel.loadMore()
-                                }
-                                if (uiState.isMoreLoading) {
-                                    FlowFeedProgress()
-                                }
-                            }
+                        items(
+                            items = if (isTopResult) summary.items.drop(1) else summary.items,
+                            key = { it.stableLazyKey("summary_${summary.kind}_${summary.title}") },
+                        ) { item ->
+                            MusicCollectionRow(
+                                showPlayCount = true,
+                                item = item,
+                                onClick = { openItem(item, searchSource) },
+                                onMenuClick = menuActionFor(item),
+                                onLongClick = menuActionFor(item),
+                                isDownloaded = isDownloaded(item),
+                            )
+                        }
+                    }
+                } else {
+                    items(uiState.filteredResults, key = { it.stableLazyKey("filtered") }) { item ->
+                        MusicCollectionRow(
+                            showPlayCount = true,
+                            item = item,
+                            onClick = { openItem(item, searchSource) },
+                            onMenuClick = menuActionFor(item),
+                            onLongClick = menuActionFor(item),
+                            isDownloaded = isDownloaded(item),
+                        )
+                    }
+                }
+
+                if (uiState.continuation != null) {
+                    item(key = "continuation") {
+                        LaunchedEffect(Unit) {
+                            onLoadMore()
+                        }
+                        if (uiState.isMoreLoading) {
+                            FlowFeedProgress()
                         }
                     }
                 }

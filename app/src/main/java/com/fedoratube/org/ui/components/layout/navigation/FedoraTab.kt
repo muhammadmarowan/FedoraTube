@@ -63,7 +63,7 @@ fun FlowTab.icon(selected: Boolean): ImageVector =
 data class NavigationVisibility(
     val home: Boolean = true,
     val music: Boolean = true,
-    val search: Boolean = false,
+    val search: Boolean = true,
     val categories: Boolean = false,
 )
 
@@ -79,12 +79,24 @@ fun visibleFlowTabs(
     val enabled =
         buildSet {
             if (visibility.home) add(FlowTab.Home)
-            if (visibility.music) add(FlowTab.Music)
-            add(FlowTab.Library)
             if (visibility.search) add(FlowTab.Search)
+            if (visibility.music) add(FlowTab.Music)
+            add(FlowTab.Subscriptions)
+            add(FlowTab.Library)
             if (visibility.categories) add(FlowTab.Explore)
         }
-    return (order + DEFAULT_NAV_TAB_ORDER)
+    val effectiveOrder =
+        if (!order.contains(FlowTab.Search.id)) {
+            val homeIndex = order.indexOf(FlowTab.Home.id)
+            if (homeIndex != -1) {
+                order.toMutableList().apply { add(homeIndex + 1, FlowTab.Search.id) }
+            } else {
+                listOf(FlowTab.Home.id, FlowTab.Search.id) + order
+            }
+        } else {
+            order
+        }
+    return (effectiveOrder + DEFAULT_NAV_TAB_ORDER)
         .distinct()
         .mapNotNull(FlowTab::fromId)
         .filter { enabled.contains(it) }

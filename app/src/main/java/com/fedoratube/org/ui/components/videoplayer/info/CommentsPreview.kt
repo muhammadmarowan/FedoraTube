@@ -42,7 +42,7 @@ internal fun CommentsPreview(
         modifier =
             Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 12.dp, vertical = 8.dp)
+                .padding(start = 12.dp, end = 12.dp, top = 2.dp, bottom = 8.dp)
                 .pressScale(interactionSource, pressedScale = 0.98f)
                 .animateContentSize(),
     ) {

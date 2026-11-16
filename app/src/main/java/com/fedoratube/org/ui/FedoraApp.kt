@@ -111,7 +111,7 @@ fun FedoraApp(
     val preferences = remember { PlayerPreferences(context) }
     val isHomeNavigationEnabled by preferences.homeNavigationEnabled.collectAsState(initial = true)
     val isMusicNavigationEnabled by preferences.musicNavigationEnabled.collectAsState(initial = true)
-    val isSearchNavigationEnabled by preferences.searchNavigationEnabled.collectAsState(initial = false)
+    val isSearchNavigationEnabled by preferences.searchNavigationEnabled.collectAsState(initial = true)
     val isCategoriesNavigationEnabled by preferences.categoriesNavigationEnabled.collectAsState(initial = false)
     val musicPlayerBackgroundStyle by preferences.musicPlayerBackgroundStyle.collectAsState(
         initial = com.fedoratube.org.data.local.MusicPlayerBackgroundStyle.BLUR_GRADIENT,

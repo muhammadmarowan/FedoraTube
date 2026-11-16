@@ -97,6 +97,9 @@ fun NavGraphBuilder.flowAppGraph(
             onNavigateToDownloads = {
                 navController.navigate("downloads")
             },
+            onNavigateToWatchLater = {
+                navController.navigate("playlist/${com.fedoratube.org.data.local.PlaylistRepository.WATCH_LATER_ID}")
+            },
             onNotificationClick = {
                 navController.navigate("notifications")
             },
@@ -232,7 +235,7 @@ fun NavGraphBuilder.flowAppGraph(
 
     composable("search") {
         currentRoute.value = "search"
-        // Search owns the whole screen, the way YouTube's does.
+        val musicPlayerViewModel = sharedMusicPlayerViewModel()
         SearchScreen(
             onVideoClick = { video ->
                 playerViewModel.playVideo(video)
@@ -243,9 +246,20 @@ fun NavGraphBuilder.flowAppGraph(
             onPlaylistClick = { playlist ->
                 navController.navigate("playlist/${playlist.id}")
             },
-            onBack = {
-                if (!navController.popBackStack()) navController.navigate("home")
+            onTrackClick = { track, queue, source ->
+                musicPlayerViewModel.loadAndPlayTrack(track, queue, source)
+                onMusicStarted()
             },
+            onAlbumClick = { albumId ->
+                mediaNavigator.openAlbum(albumId)
+            },
+            onArtistClick = { channelId ->
+                mediaNavigator.openArtist(channelId)
+            },
+            onMusicPlaylistClick = { playlistId ->
+                mediaNavigator.openMusicPlaylist(playlistId)
+            },
+            onBack = null,
         )
     }
 

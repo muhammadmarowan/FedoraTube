@@ -24,41 +24,26 @@ fun SaveVideoSheet(
     viewModel: SaveVideoViewModel = hiltViewModel(),
 ) {
     val playlists by viewModel.playlists.collectAsStateWithLifecycle()
-    val watchLaterVideos by viewModel.watchLaterVideos.collectAsStateWithLifecycle()
     val savedIds by viewModel.savedIds.collectAsStateWithLifecycle()
     var showCreateDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(video.id) { viewModel.loadMembership(video.id) }
 
-    val watchLaterEntry =
-        CollectionSheetEntry(
-            id = PlaylistRepository.WATCH_LATER_ID,
-            name = stringResource(R.string.watch_later),
-            supporting =
-                pluralStringResource(
-                    R.plurals.videos_count_template,
-                    watchLaterVideos.size,
-                    watchLaterVideos.size,
-                ),
-            thumbnailUrl = watchLaterVideos.firstOrNull()?.thumbnailUrl.orEmpty(),
-            isSaved = PlaylistRepository.WATCH_LATER_ID in savedIds,
-        )
     val entries =
-        listOf(watchLaterEntry) +
-            playlists.map { playlist ->
-                CollectionSheetEntry(
-                    id = playlist.id,
-                    name = playlist.name,
-                    supporting =
-                        pluralStringResource(
-                            R.plurals.videos_count_template,
-                            playlist.videoCount,
-                            playlist.videoCount,
-                        ),
-                    thumbnailUrl = playlist.thumbnailUrl,
-                    isSaved = playlist.id in savedIds,
-                )
-            }
+        playlists.map { playlist ->
+            CollectionSheetEntry(
+                id = playlist.id,
+                name = playlist.name,
+                supporting =
+                    pluralStringResource(
+                        R.plurals.videos_count_template,
+                        playlist.videoCount,
+                        playlist.videoCount,
+                    ),
+                thumbnailUrl = playlist.thumbnailUrl,
+                isSaved = playlist.id in savedIds,
+            )
+        }
 
     SaveToCollectionSheet(
         title = stringResource(R.string.save_to),

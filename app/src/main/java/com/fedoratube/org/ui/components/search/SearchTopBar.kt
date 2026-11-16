@@ -41,8 +41,9 @@ import com.fedoratube.org.ui.components.shared.FlowSearchField
 fun SearchTopBar(
     textFieldState: TextFieldState,
     onSearch: (String) -> Unit,
-    onBack: () -> Unit,
+    onBack: (() -> Unit)? = null,
     modifier: Modifier = Modifier,
+    placeholder: String = stringResource(R.string.search_videos_channels_placeholder),
     onVoiceSearch: () -> Unit = {},
     focusRequester: FocusRequester? = null,
     onFieldFocused: () -> Unit = {},
@@ -53,16 +54,18 @@ fun SearchTopBar(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(ItemSpacing),
     ) {
-        IconButton(onClick = onBack) {
-            Icon(
-                imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
-                contentDescription = stringResource(R.string.btn_back),
-            )
+        if (onBack != null) {
+            IconButton(onClick = onBack) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
+                    contentDescription = stringResource(R.string.btn_back),
+                )
+            }
         }
 
         FlowSearchField(
             state = textFieldState,
-            placeholder = stringResource(R.string.search_videos_channels_placeholder),
+            placeholder = placeholder,
             modifier = Modifier.weight(1f),
             onSearch = onSearch,
             showClearButton = false,
