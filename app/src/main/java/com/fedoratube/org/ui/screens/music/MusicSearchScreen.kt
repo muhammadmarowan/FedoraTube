@@ -263,6 +263,7 @@ fun MusicSearchResultsView(
     onLoadMore: () -> Unit,
     onGetArtistTracks: (String, (List<YTItem>) -> Unit) -> Unit,
     modifier: Modifier = Modifier,
+    showFilterChips: Boolean = true,
 ) {
     val musicMenus = LocalMusicMenus.current
     val searchSource = stringResource(R.string.search_source_template).format(query)
@@ -300,10 +301,12 @@ fun MusicSearchResultsView(
     }
 
     Column(modifier = modifier.fillMaxSize()) {
-        SearchFilterChips(
-            activeFilter = uiState.activeFilter,
-            onFilterClick = onApplyFilter,
-        )
+        if (showFilterChips) {
+            SearchFilterChips(
+                activeFilter = uiState.activeFilter,
+                onFilterClick = onApplyFilter,
+            )
+        }
 
         val summaries = uiState.searchSummary?.summaries
         val hasResults =

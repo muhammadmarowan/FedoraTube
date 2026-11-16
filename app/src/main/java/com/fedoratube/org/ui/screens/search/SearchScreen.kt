@@ -142,6 +142,7 @@ fun SearchScreen(
     onAlbumClick: (String) -> Unit = {},
     onArtistClick: (String) -> Unit = {},
     onMusicPlaylistClick: (String) -> Unit = {},
+    isFocusMode: Boolean? = null,
     modifier: Modifier = Modifier,
     viewModel: SearchViewModel = hiltViewModel(),
     musicSearchViewModel: MusicSearchViewModel = hiltViewModel(),
@@ -157,7 +158,7 @@ fun SearchScreen(
     val musicMatchingHistory by musicSearchViewModel.matchingHistory.collectAsState()
     val state = rememberSearchState(viewModel)
     val focusPreferences = remember(context) { com.fedoratube.org.data.local.PlayerPreferences(context) }
-    val isFocusModeEnabled by focusPreferences.focusModeEnabled.collectAsState(initial = false)
+    val isFocusModeEnabled = isFocusMode ?: focusPreferences.focusModeEnabled.collectAsState(initial = false).value
 
     val combinedHistory =
         remember(state.matchingHistory, musicMatchingHistory) {
@@ -257,7 +258,6 @@ fun SearchScreen(
     LaunchedEffect(isFocusModeEnabled) {
         if (isFocusModeEnabled && !showResults) {
             state.startTyping()
-            kotlinx.coroutines.delay(200)
             focusRequester.requestFocus()
             keyboard?.show()
         }
@@ -290,11 +290,11 @@ fun SearchScreen(
             .forEach { quickActions.loadSubscriptionState(it.channel.id) }
     }
 
-    BackHandler(enabled = showResults || state.isTyping) {
-        if (state.isTyping) {
-            state.stopTyping()
-        } else if (showResults) {
+    BackHandler(enabled = showResults || (!isFocusModeEnabled && state.isTyping)) {
+        if (showResults) {
             resetSearch()
+        } else if (!isFocusModeEnabled && state.isTyping) {
+            state.stopTyping()
         }
     }
 
@@ -357,7 +357,7 @@ fun SearchScreen(
                         SearchTopBar(
                             textFieldState = state.textFieldState,
                             onSearch = submit,
-                            onBack = if (showResults) resetSearch else onBack,
+                            onBack = if (showResults) resetSearch else if (isFocusModeEnabled) onBack else null,
                             placeholder =
                                 if (showResults && pagerState.currentPage == 1) {
                                     stringResource(R.string.search_music_placeholder)
@@ -493,6 +493,7 @@ fun SearchScreen(
                                         onArtistClick = onArtistClick,
                                         onPlaylistClick = onMusicPlaylistClick,
                                         onApplyFilter = musicSearchViewModel::applyFilter,
+                                        showFilterChips = false,
                                         onRetry = {
                                             val q = state.textFieldState.text.toString().ifBlank { musicQuery }
                                             val filter = musicUiState.activeFilter
@@ -509,38 +510,40 @@ fun SearchScreen(
             }
 
             // Floating Keyboard FAB above Bottom Navigation Bar (Normal Mode only)
-            AnimatedVisibility(
-                visible = !isFocusModeEnabled && !showResults,
-                enter = fadeIn() + scaleIn(),
-                exit = fadeOut() + scaleOut(),
-                modifier =
-                    Modifier
-                        .align(Alignment.BottomEnd)
-                        .floatAboveBottomChrome(LocalFlowBottomInsets.current)
-                        .padding(end = 20.dp, bottom = 20.dp),
-            ) {
-                Surface(
-                    onClick = {
-                        state.startTyping()
-                        focusRequester.requestFocus()
-                        keyboard?.show()
-                    },
-                    shape = CircleShape,
-                    color = MaterialTheme.colorScheme.primary,
-                    contentColor = MaterialTheme.colorScheme.onPrimary,
-                    shadowElevation = 8.dp,
-                    modifier = Modifier.size(56.dp),
+            if (!isFocusModeEnabled) {
+                AnimatedVisibility(
+                    visible = !showResults,
+                    enter = fadeIn() + scaleIn(),
+                    exit = fadeOut() + scaleOut(),
+                    modifier =
+                        Modifier
+                            .align(Alignment.BottomEnd)
+                            .floatAboveBottomChrome(LocalFlowBottomInsets.current)
+                            .padding(end = 20.dp, bottom = 20.dp),
                 ) {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center,
+                    Surface(
+                        onClick = {
+                            state.startTyping()
+                            focusRequester.requestFocus()
+                            keyboard?.show()
+                        },
+                        shape = CircleShape,
+                        color = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary,
+                        shadowElevation = 8.dp,
+                        modifier = Modifier.size(56.dp),
                     ) {
-                        Icon(
-                            imageVector = Icons.Rounded.Keyboard,
-                            contentDescription = stringResource(R.string.search),
-                            modifier = Modifier.size(26.dp),
-                            tint = MaterialTheme.colorScheme.onPrimary,
-                        )
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            Icon(
+                                imageVector = Icons.Rounded.Keyboard,
+                                contentDescription = stringResource(R.string.search),
+                                modifier = Modifier.size(26.dp),
+                                tint = MaterialTheme.colorScheme.onPrimary,
+                            )
+                        }
                     }
                 }
             }

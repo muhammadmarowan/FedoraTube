@@ -64,64 +64,49 @@ fun PlayerCommentsPanel(
 ) {
     val listState = rememberLazyListState()
     val tint = rememberMediaArtworkTint(artworkUrl)
-    val chipsVisible = rememberCommentSortChipsVisible(listState)
     LaunchedEffect(selectedFilter) {
         listState.scrollToItem(0)
     }
 
     Column(modifier.fillMaxSize()) {
-        AnimatedVisibility(
-            visible = chipsVisible,
-            enter =
-                expandVertically(
-                    expandFrom = Alignment.Top,
-                    animationSpec = spring(dampingRatio = Spring.DampingRatioNoBouncy, stiffness = Spring.StiffnessMediumLow),
-                ) + fadeIn(animationSpec = tween(180)),
-            exit =
-                shrinkVertically(
-                    shrinkTowards = Alignment.Top,
-                    animationSpec = spring(dampingRatio = Spring.DampingRatioNoBouncy, stiffness = Spring.StiffnessMediumLow),
-                ) + fadeOut(animationSpec = tween(150)),
-        ) {
-            Column(modifier = Modifier.fillMaxWidth()) {
-                Row(
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .padding(start = 16.dp, end = 4.dp, top = 10.dp, bottom = 6.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
+        Column(modifier = Modifier.fillMaxWidth()) {
+            Row(
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(start = 16.dp, end = 4.dp, top = 8.dp, bottom = 4.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = stringResource(R.string.comments),
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onSurface,
+                )
+                if (!totalText.isNullOrBlank()) {
+                    Spacer(Modifier.width(8.dp))
                     Text(
-                        text = stringResource(R.string.comments),
-                        style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.onSurface,
+                        text = totalText,
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
-                    if (!totalText.isNullOrBlank()) {
-                        Spacer(Modifier.width(8.dp))
-                        Text(
-                            text = totalText,
-                            style = MaterialTheme.typography.labelMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                }
+                Spacer(Modifier.weight(1f))
+                if (showCloseButton) {
+                    IconButton(onClick = onClose) {
+                        Icon(
+                            Icons.Rounded.Close,
+                            contentDescription = stringResource(R.string.close),
                         )
                     }
-                    Spacer(Modifier.weight(1f))
-                    if (showCloseButton) {
-                        IconButton(onClick = onClose) {
-                            Icon(
-                                Icons.Rounded.Close,
-                                contentDescription = stringResource(R.string.close),
-                            )
-                        }
-                    }
                 }
-                CommentSortChips(
-                    selected = selectedFilter,
-                    onSelect = onFilterChanged,
-                    timedOnly = timedOnly,
-                    onTimedChange = onTimedChange,
-                    modifier = Modifier.padding(start = 16.dp, bottom = 6.dp),
-                )
             }
+            CommentSortChips(
+                selected = selectedFilter,
+                onSelect = onFilterChanged,
+                timedOnly = timedOnly,
+                onTimedChange = onTimedChange,
+                modifier = Modifier.padding(start = 16.dp, bottom = 6.dp),
+            )
         }
         HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.2f))
         FlowCommentsList(

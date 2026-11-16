@@ -3,7 +3,6 @@ package com.fedoratube.org.ui.screens.settings.about
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.os.Build
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -24,8 +23,6 @@ import androidx.compose.material.icons.outlined.Description
 import androidx.compose.material.icons.outlined.Extension
 import androidx.compose.material.icons.outlined.Gavel
 import androidx.compose.material.icons.outlined.Person
-import androidx.compose.material.icons.outlined.Public
-import androidx.compose.material.icons.outlined.Smartphone
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItemDefaults
@@ -58,9 +55,8 @@ import com.fedoratube.org.ui.components.settings.SettingsPage
 import com.fedoratube.org.ui.components.settings.nav
 import com.fedoratube.org.ui.screens.settings.index.AboutIndex
 
-private enum class AboutDialog { DEVICE, NOTICES }
+private enum class AboutDialog { NOTICES }
 
-private const val WEBSITE_URL = "https://github.com/muhammadmarowan/FedoraTube"
 private const val CREATOR_URL = "https://github.com/muhammadmarowan"
 private const val NEWPIPE_URL = "https://github.com/TeamNewPipe/NewPipeExtractor"
 private const val LICENSE_URL = "https://github.com/muhammadmarowan/FedoraTube/blob/main/License"
@@ -94,29 +90,14 @@ internal fun AboutScreen(
             }
         }
 
-        group(key = "about.contact", header = R.string.section_contact) {
-            nav(AboutIndex.website, icon = Icons.Outlined.Public, showChevron = false, onClick = { open(WEBSITE_URL) })
-        }
-
         group(key = "about.legal", header = R.string.section_legal) {
             nav(AboutIndex.license, icon = Icons.Outlined.Description, showChevron = false, onClick = { open(LICENSE_URL) })
             nav(AboutIndex.newPipe, icon = Icons.Outlined.Extension, showChevron = false, onClick = { open(NEWPIPE_URL) })
             nav(AboutIndex.notices, icon = Icons.Outlined.Gavel, showChevron = false, onClick = { dialog = AboutDialog.NOTICES })
         }
-
-        group(key = "about.device", header = R.string.section_device) {
-            nav(
-                AboutIndex.deviceInfo,
-                value = "${Build.MANUFACTURER} ${Build.MODEL}",
-                icon = Icons.Outlined.Smartphone,
-                showChevron = false,
-                onClick = { dialog = AboutDialog.DEVICE },
-            )
-        }
     }
 
     when (dialog) {
-        AboutDialog.DEVICE -> DeviceInfoDialog(onDismiss = { dialog = null })
         AboutDialog.NOTICES -> NoticesDialog(onDismiss = { dialog = null })
         null -> Unit
     }

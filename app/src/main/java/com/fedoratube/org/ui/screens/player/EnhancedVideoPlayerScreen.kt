@@ -111,12 +111,14 @@ internal fun EnhancedVideoPlayerScreen(
                 modifier =
                     Modifier
                         .fillMaxWidth()
-                        .height(360.dp)
+                        .height(750.dp)
                         .background(
                             Brush.verticalGradient(
-                                0.0f to ambientPalette.accent.copy(alpha = 0.42f),
-                                0.25f to ambientPalette.base.copy(alpha = 0.26f),
-                                0.65f to ambientPalette.base.copy(alpha = 0.08f),
+                                0.0f to ambientPalette.accent.copy(alpha = 0.45f),
+                                0.20f to ambientPalette.accent.copy(alpha = 0.32f),
+                                0.40f to ambientPalette.base.copy(alpha = 0.22f),
+                                0.65f to ambientPalette.base.copy(alpha = 0.12f),
+                                0.85f to ambientPalette.base.copy(alpha = 0.05f),
                                 1.0f to Color.Transparent,
                             ),
                         ),

@@ -445,6 +445,11 @@ class VideoPlayerViewModel
             if (videos.isEmpty()) return
             val startVideo = videos.getOrNull(startIndex) ?: videos.first()
 
+            GlobalPlayerState.setCurrentVideo(startVideo)
+            GlobalPlayerState.setExplicitBackgroundPlaybackActive(false)
+            presence.showVideoPlayer()
+            _expandPlayerRequest.tryEmit(Unit)
+
             EnhancedMusicPlayerManager.stop()
             EnhancedMusicPlayerManager.clearCurrentTrack()
 

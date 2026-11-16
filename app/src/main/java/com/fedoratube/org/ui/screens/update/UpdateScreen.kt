@@ -206,21 +206,6 @@ fun UpdateScreen(
                                 )
                             }
                         }
-
-                        if (state.allReleases.isNotEmpty()) {
-                            item(key = "all_releases_header") {
-                                FlowSectionHeader(
-                                    text = "All Releases",
-                                    modifier = Modifier.padding(top = 8.dp, bottom = 4.dp),
-                                )
-                            }
-                            items(
-                                items = state.allReleases,
-                                key = { "rel-${it.tagName}" },
-                            ) { rel ->
-                                ReleaseHistoryCard(rel, state.currentVersion, uriHandler)
-                            }
-                        }
                     }
                 }
             }

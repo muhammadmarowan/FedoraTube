@@ -42,6 +42,7 @@ internal fun PlaylistDetailTopBar(
     onClearSelection: () -> Unit,
     onSelectAll: () -> Unit,
     onDelete: () -> Unit = {},
+    isWatchLater: Boolean = false,
 ) {
     if (search.query != null && !inSelectionMode) {
         FlowSearchTopBar(
@@ -79,7 +80,7 @@ internal fun PlaylistDetailTopBar(
             IconButton(onClick = search.onOpen) {
                 Icon(imageVector = Icons.Outlined.Search, contentDescription = stringResource(R.string.search_in_playlist))
             }
-            if (canSelect) {
+            if (canSelect && !isWatchLater) {
                 IconButton(onClick = onEnterSelection) {
                     Icon(imageVector = Icons.Default.Checklist, contentDescription = stringResource(R.string.select_videos))
                 }

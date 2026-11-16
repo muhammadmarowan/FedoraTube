@@ -235,6 +235,9 @@ fun NavGraphBuilder.flowAppGraph(
 
     composable("search") {
         currentRoute.value = "search"
+        val context = androidx.compose.ui.platform.LocalContext.current
+        val preferences = remember(context) { com.fedoratube.org.data.local.PlayerPreferences(context) }
+        val isFocusModeEnabled by preferences.focusModeEnabled.collectAsStateWithLifecycle(initialValue = false)
         val musicPlayerViewModel = sharedMusicPlayerViewModel()
         SearchScreen(
             onVideoClick = { video ->
@@ -259,7 +262,8 @@ fun NavGraphBuilder.flowAppGraph(
             onMusicPlaylistClick = { playlistId ->
                 mediaNavigator.openMusicPlaylist(playlistId)
             },
-            onBack = null,
+            onBack = { navController.popBackStack() },
+            isFocusMode = isFocusModeEnabled,
         )
     }
 
@@ -458,6 +462,8 @@ fun NavGraphBuilder.flowAppGraph(
                     musicPlayerViewModel.loadAndPlayTrack(start.toMusicTrack(), tracks, title)
                     onMusicStarted()
                 } else {
+                    GlobalPlayerState.setCurrentVideo(start)
+                    GlobalPlayerState.setExplicitBackgroundPlaybackActive(false)
                     playerViewModel.playPlaylist(videos, index, title, shuffle)
                 }
             },

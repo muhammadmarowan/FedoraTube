@@ -176,6 +176,7 @@ fun PlaylistDetailScreen(
                 selectedCount = selectedIds.size,
                 allSelected = shownVideos.isNotEmpty() && shownVideos.all { it.id in selectedIds },
                 canSelect = canModify && displayVideos.isNotEmpty(),
+                isWatchLater = uiState.isWatchLater,
                 search =
                     PlaylistSearchBar(
                         query = searchQuery,
