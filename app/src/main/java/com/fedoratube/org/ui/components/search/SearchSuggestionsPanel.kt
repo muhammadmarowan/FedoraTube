@@ -79,18 +79,20 @@ fun SearchSuggestionsPanel(
             onClearHistory = onClearHistory,
         )
 
-        items(suggestions, key = { "suggestion:${it.text}" }) { suggestion ->
-            FlowSuggestionRow(
-                text = suggestion.text,
-                leadingIcon = Icons.Rounded.Search,
-                onClick = { onSubmit(suggestion.text) },
-                query = query,
-                leadingImageUrl = suggestion.entity?.thumbnailUrl,
-                supportingText = suggestion.entity?.description,
-                trailingIcon = Icons.Rounded.NorthWest,
-                trailingContentDescription = stringResource(R.string.resize_fill),
-                onTrailingClick = { onFill(suggestion.text) },
-            )
+        if (query.isNotBlank()) {
+            items(suggestions, key = { "suggestion:${it.text}" }) { suggestion ->
+                FlowSuggestionRow(
+                    text = suggestion.text,
+                    leadingIcon = Icons.Rounded.Search,
+                    onClick = { onSubmit(suggestion.text) },
+                    query = query,
+                    leadingImageUrl = suggestion.entity?.thumbnailUrl,
+                    supportingText = suggestion.entity?.description,
+                    trailingIcon = Icons.Rounded.NorthWest,
+                    trailingContentDescription = stringResource(R.string.resize_fill),
+                    onTrailingClick = { onFill(suggestion.text) },
+                )
+            }
         }
     }
 }

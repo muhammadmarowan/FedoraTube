@@ -93,6 +93,7 @@ internal fun SettingsHomeScreen(
                         coroutineScope.launch { preferences.setFocusModeEnabled(enabled) }
                     },
                     onAutoClearCacheClick = { showAutoClearDialog = true },
+                    onToggleBetaProgram = viewModel::onToggleBetaProgram,
                 ),
         )
     }

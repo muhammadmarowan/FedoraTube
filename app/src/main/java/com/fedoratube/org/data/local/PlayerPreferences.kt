@@ -964,7 +964,7 @@ class PlayerPreferences(
     val betaProgramEnabled: Flow<Boolean> =
         context.playerPreferencesDataStore.data
             .map { preferences ->
-                preferences[Keys.BETA_PROGRAM_ENABLED] ?: false
+                preferences[Keys.BETA_PROGRAM_ENABLED] ?: true
             }
 
     val feedPlaybackMode: Flow<FeedPlaybackMode> =

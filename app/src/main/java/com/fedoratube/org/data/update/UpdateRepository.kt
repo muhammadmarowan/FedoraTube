@@ -67,7 +67,8 @@ class UpdateRepository
         val allReleases: StateFlow<List<GitHubRelease>> = _allReleases.asStateFlow()
 
         /** Asks GitHub now. Throws when the request fails, so a check the user started can say so. */
-        suspend fun fetch(forceBeta: Boolean? = null): AppRelease? = mutex.withLock { fetchLocked(forceBeta) }
+        suspend fun fetch(forceBeta: Boolean? = null, forceChannelSwitch: Boolean = false): AppRelease? =
+            mutex.withLock { fetchLocked(forceBeta, forceChannelSwitch) }
 
         /**
          * For the automatic checks: fetches only once the cooldown has passed, and returns a release
@@ -97,8 +98,8 @@ class UpdateRepository
 
         suspend fun skip(version: String) = dataManager.setSkippedUpdateVersion(version)
 
-        private suspend fun fetchLocked(forceBeta: Boolean? = null): AppRelease? {
-            val isBeta = forceBeta ?: runCatching { playerPreferences.betaProgramEnabled.first() }.getOrDefault(false)
+        private suspend fun fetchLocked(forceBeta: Boolean? = null, forceChannelSwitch: Boolean = false): AppRelease? {
+            val isBeta = forceBeta ?: runCatching { playerPreferences.betaProgramEnabled.first() }.getOrDefault(true)
             val parsed =
                 withContext(Dispatchers.IO) {
                     val allReleasesRequest =
@@ -154,6 +155,7 @@ class UpdateRepository
                 BuildConfig.VERSION_NAME,
                 Build.SUPPORTED_ABIS.toList(),
                 includeBeta = isBeta,
+                forceChannelSwitch = forceChannelSwitch,
             )
             dataManager.setLastUpdateCheck(System.currentTimeMillis())
             _latest.value = release

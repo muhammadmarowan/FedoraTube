@@ -43,6 +43,7 @@ import com.fedoratube.org.player.SleepTimerManager
 import com.fedoratube.org.ui.components.equalizer.LocalEqualizerState
 import com.fedoratube.org.ui.components.layout.FlowBottomInsets
 import com.fedoratube.org.ui.components.layout.LocalFlowBottomInsets
+import com.fedoratube.org.ui.components.layout.LocalHideBottomBar
 import com.fedoratube.org.ui.components.layout.navigation.FlowNavigationChrome
 import com.fedoratube.org.ui.components.layout.navigation.FlowNavigationDefaults
 import com.fedoratube.org.ui.components.layout.navigation.FlowTab
@@ -195,6 +196,7 @@ fun FedoraApp(
     val usesNavigationRail = flowUsesNavigationRail()
     var navigationRailWidth by remember { mutableStateOf(0.dp) }
     var navigationBarHeight by remember { mutableStateOf(FlowNavigationDefaults.BarHeight) }
+    val hideBottomBarOverride = remember { mutableStateOf(false) }
 
     FlowStartTabEffects(
         navController = navController,
@@ -384,7 +386,8 @@ fun FedoraApp(
             !isInPipMode &&
                 currentTab.showsNavigationBar() &&
                 !isPlayerCoveringContent &&
-                !isFocusModeEnabled
+                !isFocusModeEnabled &&
+                !hideBottomBarOverride.value
         val isBottomNavShown = !usesNavigationRail && showBottomNav && navScrollState.isBarVisible
         // The rail is hidden only where content goes truly full screen; the expanded players cover
         // it instead, so opening them never re-lays out the page beneath.
@@ -511,6 +514,7 @@ fun FedoraApp(
                                     LocalMusicMenus provides musicMenus,
                                     LocalEqualizerState provides equalizerViewModel.state,
                                     LocalFlowBottomInsets provides bottomInsets,
+                                    LocalHideBottomBar provides hideBottomBarOverride,
                                     LocalStatusBarHero provides statusBarHero,
                                 ) {
                                     NavHost(

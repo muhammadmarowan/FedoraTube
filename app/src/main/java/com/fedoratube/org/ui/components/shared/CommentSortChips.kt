@@ -46,10 +46,15 @@ fun rememberCommentSortChipsVisible(listState: LazyListState): Boolean {
             val previousOffset = lastOffset
             lastIndex = index
             lastOffset = offset
+            if (index == 0 && offset < 30) {
+                visible = true
+                return@collect
+            }
             if (!scrolling) return@collect
-            val scrolledDown =
-                if (index == previousIndex) offset > previousOffset else index > previousIndex
-            visible = !scrolledDown
+            val delta = if (index == previousIndex) offset - previousOffset else (index - previousIndex) * 100
+            if (kotlin.math.abs(delta) > 8) {
+                visible = delta < 0
+            }
         }
     }
     return visible

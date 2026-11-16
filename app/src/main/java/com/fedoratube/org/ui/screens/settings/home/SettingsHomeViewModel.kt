@@ -96,17 +96,24 @@ class SettingsHomeViewModel
             viewModelScope.launch { playerPreferences.setDeepFlowOnSearch(enabled) }
         }
 
-        fun checkForUpdates() {
+        fun checkForUpdates(forceBeta: Boolean? = null, forceChannelSwitch: Boolean = false) {
             if (!BuildConfig.UPDATER_ENABLED || _updateCheck.value == UpdateCheckState.Checking) return
             _updateCheck.value = UpdateCheckState.Checking
             viewModelScope.launch {
                 val result =
-                    runCatching { updates.fetch() }
+                    runCatching { updates.fetch(forceBeta = forceBeta, forceChannelSwitch = forceChannelSwitch) }
                         .fold(
                             onSuccess = { info -> info?.let { UpdateCheckState.Available(it) } ?: UpdateCheckState.UpToDate },
                             onFailure = { UpdateCheckState.Failed },
                         )
                 _updateCheck.value = result
+            }
+        }
+
+        fun onToggleBetaProgram(enabled: Boolean) {
+            viewModelScope.launch {
+                playerPreferences.setBetaProgramEnabled(enabled)
+                checkForUpdates(forceBeta = enabled, forceChannelSwitch = true)
             }
         }
 

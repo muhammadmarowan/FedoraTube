@@ -1,6 +1,9 @@
 package com.fedoratube.org.ui.components.videoplayer.sheet
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -67,48 +70,58 @@ fun PlayerCommentsPanel(
     }
 
     Column(modifier.fillMaxSize()) {
-        Row(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(start = 16.dp, end = 4.dp, top = 10.dp, bottom = 6.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Text(
-                text = stringResource(R.string.comments),
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurface,
-            )
-            if (!totalText.isNullOrBlank()) {
-                Spacer(Modifier.width(8.dp))
-                Text(
-                    text = totalText,
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
-            Spacer(Modifier.weight(1f))
-            if (showCloseButton) {
-                IconButton(onClick = onClose) {
-                    Icon(
-                        Icons.Rounded.Close,
-                        contentDescription = stringResource(R.string.close),
-                    )
-                }
-            }
-        }
         AnimatedVisibility(
             visible = chipsVisible,
-            enter = expandVertically(expandFrom = Alignment.Top) + fadeIn(),
-            exit = shrinkVertically(shrinkTowards = Alignment.Top) + fadeOut(),
+            enter =
+                expandVertically(
+                    expandFrom = Alignment.Top,
+                    animationSpec = spring(dampingRatio = Spring.DampingRatioNoBouncy, stiffness = Spring.StiffnessMediumLow),
+                ) + fadeIn(animationSpec = tween(180)),
+            exit =
+                shrinkVertically(
+                    shrinkTowards = Alignment.Top,
+                    animationSpec = spring(dampingRatio = Spring.DampingRatioNoBouncy, stiffness = Spring.StiffnessMediumLow),
+                ) + fadeOut(animationSpec = tween(150)),
         ) {
-            CommentSortChips(
-                selected = selectedFilter,
-                onSelect = onFilterChanged,
-                timedOnly = timedOnly,
-                onTimedChange = onTimedChange,
-                modifier = Modifier.padding(start = 16.dp, bottom = 6.dp),
-            )
+            Column(modifier = Modifier.fillMaxWidth()) {
+                Row(
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(start = 16.dp, end = 4.dp, top = 10.dp, bottom = 6.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        text = stringResource(R.string.comments),
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onSurface,
+                    )
+                    if (!totalText.isNullOrBlank()) {
+                        Spacer(Modifier.width(8.dp))
+                        Text(
+                            text = totalText,
+                            style = MaterialTheme.typography.labelMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                    Spacer(Modifier.weight(1f))
+                    if (showCloseButton) {
+                        IconButton(onClick = onClose) {
+                            Icon(
+                                Icons.Rounded.Close,
+                                contentDescription = stringResource(R.string.close),
+                            )
+                        }
+                    }
+                }
+                CommentSortChips(
+                    selected = selectedFilter,
+                    onSelect = onFilterChanged,
+                    timedOnly = timedOnly,
+                    onTimedChange = onTimedChange,
+                    modifier = Modifier.padding(start = 16.dp, bottom = 6.dp),
+                )
+            }
         }
         HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.2f))
         FlowCommentsList(

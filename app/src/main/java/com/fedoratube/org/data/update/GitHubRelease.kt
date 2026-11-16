@@ -42,22 +42,25 @@ internal fun parseGitHubReleases(json: String): List<GitHubRelease> =
         )
     }.getOrDefault(emptyList())
 
-/** [release] as an [AppRelease] when it is newer than [currentVersion], otherwise null. */
+/** [release] as an [AppRelease] when it is newer than [currentVersion] (or [forceChannelSwitch] is true), otherwise null. */
 internal fun GitHubRelease.toAppReleaseIfNewer(
     currentVersion: String,
     supportedAbis: List<String>,
     includeBeta: Boolean = false,
+    forceChannelSwitch: Boolean = false,
 ): AppRelease? {
     if (draft) return null
     if (!includeBeta && prerelease) return null
-    if (tagName.isBlank() || !AppVersions.isNewer(tagName, currentVersion)) return null
+    if (tagName.isBlank()) return null
+    if (!forceChannelSwitch && !AppVersions.isNewer(tagName, currentVersion)) return null
+    val apk = selectApk(assets, supportedAbis)?.toReleaseApk() ?: return null
     return AppRelease(
         version = AppVersions.normalize(tagName),
         tag = tagName,
         notes = body.orEmpty(),
         publishedAt = publishedAt?.let { runCatching { Instant.parse(it) }.getOrNull() },
         pageUrl = htmlUrl,
-        apk = selectApk(assets, supportedAbis)?.toReleaseApk(),
+        apk = apk,
     )
 }
 

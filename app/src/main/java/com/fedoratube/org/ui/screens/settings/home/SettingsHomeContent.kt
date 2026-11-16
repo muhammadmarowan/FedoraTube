@@ -84,6 +84,7 @@ internal class SettingsHomeActions(
     val onCheckForUpdates: () -> Unit,
     val onFocusModeChange: (Boolean) -> Unit = {},
     val onAutoClearCacheClick: () -> Unit = {},
+    val onToggleBetaProgram: (Boolean) -> Unit = {},
 )
 
 /** The settings list when no search is running. */
@@ -138,6 +139,24 @@ internal fun SettingsListScope.homeContent(
         page(SettingsDestination.LANGUAGE_REGION)
     }
     group(key = "home.about", header = R.string.settings_header_about) {
+        page(SettingsDestination.ABOUT)
+        row("home.about.beta_program") { shape ->
+            val context = LocalContext.current
+            val preferences = remember(context) { PlayerPreferences(context) }
+            val isBetaEnabled by preferences.betaProgramEnabled.collectAsState(initial = true)
+            BetaProgramSettingsRow(
+                isBeta = isBetaEnabled,
+                onToggle = { enabled ->
+                    if (enabled) {
+                        Toast.makeText(context, "Joined Beta Program! Checking for pre-releases...", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(context, "Switched to Stable channel! Checking for stable releases...", Toast.LENGTH_SHORT).show()
+                    }
+                    actions.onToggleBetaProgram(enabled)
+                },
+                shape = shape,
+            )
+        }
         if (BuildConfig.UPDATER_ENABLED) {
             nav(
                 HomeIndex.checkForUpdates,
@@ -148,33 +167,6 @@ internal fun SettingsListScope.homeContent(
                 icon = HomeRowIcons.Updates,
             )
         }
-        row("home.about.beta_program") { shape ->
-            val context = LocalContext.current
-            val scope = rememberCoroutineScope()
-            val preferences = remember(context) { PlayerPreferences(context) }
-            val isBetaEnabled by preferences.betaProgramEnabled.collectAsState(initial = false)
-            BetaProgramSettingsRow(
-                isBeta = isBetaEnabled,
-                onToggle = { enabled ->
-                    scope.launch {
-                        preferences.setBetaProgramEnabled(enabled)
-                        if (enabled) {
-                            Toast.makeText(context, "Joined Beta Program! Checking for pre-releases...", Toast.LENGTH_SHORT).show()
-                        } else {
-                            Toast.makeText(context, "Switched to Stable channel", Toast.LENGTH_SHORT).show()
-                        }
-                        launch(Dispatchers.IO) {
-                            runCatching {
-                                EntryPointAccessors.fromApplication(context.applicationContext, UpdateEntryPoint::class.java)
-                                    .updateRepository().fetch(forceBeta = enabled)
-                            }
-                        }
-                    }
-                },
-                shape = shape,
-            )
-        }
-        page(SettingsDestination.ABOUT)
         row(AboutIndex.report.key) { shape ->
             val context = LocalContext.current
             FlowNavRow(

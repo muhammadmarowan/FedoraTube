@@ -2,8 +2,10 @@ package com.fedoratube.org.ui.components.layout
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.State
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
@@ -96,6 +98,9 @@ class FlowBottomInsets(
 
 /** Provided once by the app shell; the instance never changes, only the states behind it. */
 val LocalFlowBottomInsets = staticCompositionLocalOf { FlowBottomInsets.None }
+
+/** Allows child screens (such as search results) to request hiding the bottom navigation bar. */
+val LocalHideBottomBar = compositionLocalOf<MutableState<Boolean>> { mutableStateOf(false) }
 
 /** The end padding a scrolling page needs: the settled chrome plus [extra] breathing room. */
 @Composable
