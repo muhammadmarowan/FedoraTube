@@ -84,8 +84,9 @@ internal fun selectApk(
         }
     val matchesAbi = { asset: GitHubAsset, abi: String ->
         asset.name.equals("flow-$abi.apk", ignoreCase = true) ||
-            asset.name.contains("-$abi.apk", ignoreCase = true) ||
-            asset.name.contains("_$abi.apk", ignoreCase = true)
+            asset.name.contains("-$abi", ignoreCase = true) ||
+            asset.name.contains("_$abi", ignoreCase = true) ||
+            asset.name.contains(abi, ignoreCase = true)
     }
     val splits = github.filter { asset -> supportedAbis.any { abi -> matchesAbi(asset, abi) } }
     if (splits.isNotEmpty()) {

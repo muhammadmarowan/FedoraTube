@@ -14,6 +14,7 @@ import androidx.compose.material.icons.outlined.HighQuality
 import androidx.compose.material.icons.outlined.History
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Language
+import androidx.compose.material.icons.outlined.MusicNote
 import androidx.compose.material.icons.outlined.NotificationsNone
 import androidx.compose.material.icons.outlined.Palette
 import androidx.compose.material.icons.outlined.PlayCircle
@@ -38,6 +39,7 @@ internal fun destinationIcon(destination: SettingsDestination): ImageVector =
         SettingsDestination.APPEARANCE -> Icons.Outlined.Palette
         SettingsDestination.LANGUAGE_REGION -> Icons.Outlined.Language
         SettingsDestination.PLAYBACK -> Icons.Outlined.PlayCircle
+        SettingsDestination.MUSIC_PLAYER -> Icons.Outlined.MusicNote
         SettingsDestination.QUALITY -> Icons.Outlined.HighQuality
         SettingsDestination.CONTENT -> Icons.Outlined.ViewAgenda
         SettingsDestination.TOPICS -> Icons.Outlined.FilterAlt

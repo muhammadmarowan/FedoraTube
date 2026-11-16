@@ -25,6 +25,7 @@ import com.fedoratube.org.ui.screens.settings.localmedia.LocalMediaSettingsScree
 import com.fedoratube.org.ui.screens.settings.network.NetworkSettingsScreen
 import com.fedoratube.org.ui.screens.settings.notifications.NotificationSettingsScreen
 import com.fedoratube.org.ui.screens.settings.playback.BufferSettingsScreen
+import com.fedoratube.org.ui.screens.settings.playback.MusicPlayerSettingsScreen
 import com.fedoratube.org.ui.screens.settings.playback.PlaybackSettingsScreen
 import com.fedoratube.org.ui.screens.settings.quality.QualitySettingsScreen
 import com.fedoratube.org.ui.screens.settings.region.LanguageRegionScreen
@@ -123,6 +124,10 @@ internal fun SettingsDetail(
 
         SettingsDestination.PLAYBACK -> {
             PlaybackSettingsScreen(onBack = onBack, highlight = target.highlight, onNavigate = onNavigate)
+        }
+
+        SettingsDestination.MUSIC_PLAYER -> {
+            MusicPlayerSettingsScreen(onBack = onBack, highlight = target.highlight, onNavigate = onNavigate)
         }
 
         SettingsDestination.BUFFER -> {

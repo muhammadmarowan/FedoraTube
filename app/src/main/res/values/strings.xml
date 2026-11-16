@@ -3631,6 +3631,8 @@
     <string name="settings_appearance_summary">Theme, app icon, layout and navigation bar</string>
     <string name="settings_language_region_summary">App language, content language and country</string>
     <string name="settings_playback_summary">Autoplay, gestures, captions and player buttons</string>
+    <string name="settings_music_player_title">Music Player</string>
+    <string name="settings_music_player_summary">Audio streaming, equalizer, lyrics and gapless playback</string>
     <string name="settings_quality_summary">Video and music quality</string>
     <string name="settings_content_summary">Home, subscriptions, Shorts and notes</string>
     <string name="settings_topics_summary">Topics you follow and topics you hide</string>

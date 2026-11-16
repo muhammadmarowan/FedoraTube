@@ -54,7 +54,6 @@ import com.fedoratube.org.data.model.Video
 import com.fedoratube.org.innertube.pages.channel.ChannelTabKind
 import com.fedoratube.org.innertube.pages.renderer.FeedShelf
 import com.fedoratube.org.ui.components.channel.ChannelAboutSection
-import com.fedoratube.org.ui.components.channel.ChannelFilterChipBar
 import com.fedoratube.org.ui.components.channel.ChannelHeaderSection
 import com.fedoratube.org.ui.components.channel.ChannelReadingPane
 import com.fedoratube.org.ui.components.channel.ChannelRow
@@ -382,17 +381,6 @@ internal fun ChannelContent(
                         coroutineScope.launch { pagerState.animateScrollToPage(idx) }
                     },
                 )
-
-                if (activeFilters.isNotEmpty()) {
-                    ChannelFilterChipBar(
-                        groups = activeFilters,
-                        selection = activeSelection,
-                        onFilterSelected = { groupIndex, optionIndex ->
-                            onFilterSelected(settledTab.kind, groupIndex, optionIndex)
-                        },
-                        onOpenSortSheet = { showSortBottomSheet = true },
-                    )
-                }
             }
         }
 

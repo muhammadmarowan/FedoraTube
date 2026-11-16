@@ -71,6 +71,7 @@ internal object DestinationIndex {
             SettingsDestination.PLAYER_APPEARANCE -> R.string.settings_player_appearance_summary
             SettingsDestination.LANGUAGE_REGION -> R.string.settings_language_region_summary
             SettingsDestination.PLAYBACK -> R.string.settings_playback_summary
+            SettingsDestination.MUSIC_PLAYER -> R.string.settings_music_player_summary
             SettingsDestination.BUFFER -> R.string.settings_item_buffer_subtitle
             SettingsDestination.EQUALIZER -> R.string.eq_settings_summary
             SettingsDestination.QUALITY -> R.string.settings_quality_summary

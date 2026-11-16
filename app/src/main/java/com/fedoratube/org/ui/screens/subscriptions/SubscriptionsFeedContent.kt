@@ -47,7 +47,6 @@ sealed interface SubscriptionsFeedRow {
 
 private val HeaderTopPadding = 2.dp
 private val HeaderBottomPadding = 12.dp
-private val ErrorCardPadding = 4.dp
 private val FeedTopPadding = 4.dp
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -111,19 +110,6 @@ internal fun SubscriptionsFeedContent(
 
                         HorizontalDivider(
                             color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f),
-                        )
-
-                        SubscriptionFeedErrorCard(
-                            failedChannelNames = state.failedChannelNames,
-                            failedChannelIds = state.failedChannelIds,
-                            failedChannelReasons = state.failedChannelReasons,
-                            onRetry = onRetryFailedChannels,
-                            onDismiss = onDismissFailedChannels,
-                            modifier =
-                                Modifier.padding(
-                                    horizontal = 12.dp,
-                                    vertical = ErrorCardPadding,
-                                ),
                         )
                     }
                 }

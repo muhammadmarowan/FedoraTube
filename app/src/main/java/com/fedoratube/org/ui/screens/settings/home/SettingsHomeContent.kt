@@ -79,6 +79,7 @@ internal fun SettingsListScope.homeContent(
     }
     group(key = "home.watching", header = R.string.settings_group_watching) {
         page(SettingsDestination.PLAYBACK)
+        page(SettingsDestination.MUSIC_PLAYER)
         page(SettingsDestination.QUALITY)
     }
     group(key = "home.data", header = R.string.settings_group_data) {
