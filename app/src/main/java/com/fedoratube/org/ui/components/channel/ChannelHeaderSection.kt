@@ -1,6 +1,7 @@
 package com.fedoratube.org.ui.components.channel
 
 import android.widget.Toast
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -17,6 +18,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Sort
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.KeyboardArrowDown
 import androidx.compose.material3.DropdownMenu
@@ -79,6 +81,7 @@ internal fun ChannelHeaderSection(
     filterGroups: List<ChannelFilterGroup> = emptyList(),
     filterSelection: List<Int> = emptyList(),
     onFilterSelected: ((groupIndex: Int, optionIndex: Int) -> Unit)? = null,
+    onOpenSortSheet: (() -> Unit)? = null,
 ) {
     val bannerUrl = remember(header.bannerUrl) { ThumbnailUrlResolver.resolveChannelBanner(header.bannerUrl, targetWidth = 2048) }
     var showFullSizeAvatar by remember(header.id) { mutableStateOf(false) }
@@ -102,14 +105,15 @@ internal fun ChannelHeaderSection(
             ) {
                 ChannelBanner(imageUrl = bannerUrl)
 
-                ChannelSortArrow(
+                ChannelSortButton(
                     groups = filterGroups,
                     selection = filterSelection,
                     onFilterSelected = onFilterSelected,
+                    onOpenSortSheet = onOpenSortSheet,
                     modifier =
                         Modifier
                             .align(Alignment.TopEnd)
-                            .padding(top = 8.dp, end = 8.dp),
+                            .padding(top = 10.dp, end = 12.dp),
                 )
 
                 Row(
@@ -185,10 +189,11 @@ internal fun ChannelHeaderSection(
                         onAddNote = onEditNote,
                     )
                 }
-                ChannelSortArrow(
+                ChannelSortButton(
                     groups = filterGroups,
                     selection = filterSelection,
                     onFilterSelected = onFilterSelected,
+                    onOpenSortSheet = onOpenSortSheet,
                 )
             }
         }
@@ -231,114 +236,86 @@ internal fun ChannelHeaderSection(
 }
 
 /**
- * The tab's filter menu (Latest / Popular / Oldest… and the visibility chips, Members only & the
- * like) as one arrow in the banner's top-right corner. [groups] is the tab's full filter list:
- * every group is listed here — a chip row under the tabs would only duplicate it — with a divider
- * where one control ends and the next begins. "Latest" is the server's default and stays selected
- * until the viewer picks something else.
+ * The tab's filter/sort trigger button in the channel header/banner.
+ * Redesigned into a modern glassmorphism pill badge showing the active sort mode,
+ * opening the sleek [ChannelSortBottomSheet] on tap.
  */
 @Composable
-private fun ChannelSortArrow(
+private fun ChannelSortButton(
     groups: List<ChannelFilterGroup>,
     selection: List<Int>,
     onFilterSelected: ((groupIndex: Int, optionIndex: Int) -> Unit)?,
+    onOpenSortSheet: (() -> Unit)? = null,
     modifier: Modifier = Modifier,
 ) {
-    val dropdowns = groups.withIndex().filter { it.value.isDropdown }
+    val dropdowns = groups.withIndex().filter { it.value.isDropdown || it.value.options.isNotEmpty() }
     if (dropdowns.isEmpty() || onFilterSelected == null) return
 
-    var open by remember { mutableStateOf(false) }
+    var openSheet by remember { mutableStateOf(false) }
 
-    Box(modifier = modifier) {
-        Surface(
-            onClick = { open = true },
-            shape = CircleShape,
-            color = Color.Black.copy(alpha = 0.50f),
-            modifier = Modifier.size(36.dp),
+    val (primaryGroupIndex, primaryGroup) = dropdowns.first()
+    val selectedIndex = selection.getOrElse(primaryGroupIndex) { -1 }
+    val activeIndex =
+        when {
+            selectedIndex >= 0 -> selectedIndex
+            primaryGroup.marksFirstByDefault -> 0
+            else -> -1
+        }
+    val activeLabel = primaryGroup.options.getOrNull(activeIndex)?.label
+
+    Surface(
+        onClick = {
+            if (onOpenSortSheet != null) {
+                onOpenSortSheet()
+            } else {
+                openSheet = true
+            }
+        },
+        shape = RoundedCornerShape(20.dp),
+        color = Color.Black.copy(alpha = 0.55f),
+        border = BorderStroke(1.dp, Color.White.copy(alpha = 0.20f)),
+        modifier = modifier,
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
         ) {
-            Box(contentAlignment = Alignment.Center) {
-                Icon(
-                    imageVector = Icons.Rounded.KeyboardArrowDown,
-                    contentDescription = stringResource(R.string.channel_sort_open),
-                    tint = Color.White,
-                    modifier = Modifier.size(20.dp),
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.Sort,
+                contentDescription = null,
+                tint = Color.White,
+                modifier = Modifier.size(16.dp),
+            )
+            if (!activeLabel.isNullOrBlank()) {
+                Text(
+                    text = activeLabel,
+                    style =
+                        MaterialTheme.typography.labelMedium.copy(
+                            fontWeight = FontWeight.Medium,
+                            color = Color.White,
+                        ),
                 )
             }
+            Icon(
+                imageVector = Icons.Rounded.KeyboardArrowDown,
+                contentDescription = stringResource(R.string.channel_sort_open),
+                tint = Color.White.copy(alpha = 0.85f),
+                modifier = Modifier.size(16.dp),
+            )
         }
-        DropdownMenu(
-            expanded = open,
-            onDismissRequest = { open = false },
-            containerColor = Color(0xFF212121),
-            shape = RoundedCornerShape(12.dp),
-            border = androidx.compose.foundation.BorderStroke(0.5.dp, Color.White.copy(alpha = 0.12f)),
-            modifier = Modifier.background(Color(0xFF212121)),
-        ) {
-            dropdowns.forEachIndexed { position, (groupIndex, group) ->
-                if (position > 0) {
-                    HorizontalDivider(
-                        color = Color.White.copy(alpha = 0.08f),
-                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
-                    )
-                }
-                val headerTitle = group.title
-                if (headerTitle != null) {
-                    Text(
-                        text = headerTitle,
-                        style =
-                            MaterialTheme.typography.titleSmall.copy(
-                                fontSize = 13.5.sp,
-                                fontWeight = FontWeight.SemiBold,
-                                color = Color(0xFF3EA6FF), // Authentic YouTube blue sort header
-                            ),
-                        modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 10.dp, bottom = 6.dp),
-                    )
-                }
-                val selectedIndex = selection.getOrElse(groupIndex) { -1 }
-                val activeIndex =
-                    when {
-                        selectedIndex >= 0 -> selectedIndex
-                        group.marksFirstByDefault -> 0
-                        else -> -1
-                    }
-                group.options.forEachIndexed { index, option ->
-                    val isActive = index == activeIndex
-                    DropdownMenuItem(
-                        text = {
-                            Text(
-                                text = option.label,
-                                style =
-                                    MaterialTheme.typography.bodyMedium.copy(
-                                        fontSize = 14.5.sp,
-                                        fontWeight = FontWeight.Normal,
-                                        color = if (isActive) Color.White else Color(0xFFE0E0E0),
-                                    ),
-                            )
-                        },
-                        onClick = {
-                            open = false
-                            onFilterSelected(groupIndex, index)
-                        },
-                        leadingIcon = {
-                            if (isActive) {
-                                Icon(
-                                    imageVector = Icons.Rounded.Check,
-                                    contentDescription = null,
-                                    tint = Color.White,
-                                    modifier = Modifier.size(18.dp),
-                                )
-                            } else {
-                                Spacer(modifier = Modifier.size(18.dp))
-                            }
-                        },
-                        colors =
-                            androidx.compose.material3.MenuDefaults.itemColors(
-                                textColor = Color.White,
-                                leadingIconColor = Color.White,
-                            ),
-                    )
-                }
-            }
-        }
+    }
+
+    if (openSheet) {
+        ChannelSortBottomSheet(
+            groups = groups,
+            selection = selection,
+            onFilterSelected = { g, o ->
+                openSheet = false
+                onFilterSelected(g, o)
+            },
+            onDismissRequest = { openSheet = false },
+        )
     }
 }
 

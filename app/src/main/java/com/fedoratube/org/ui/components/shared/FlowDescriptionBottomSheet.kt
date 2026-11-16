@@ -224,30 +224,6 @@ fun FlowDescriptionBottomSheet(
                 layoutResult = descLayoutResult,
             )
 
-            if (hashtags.isNotEmpty()) {
-                FlowRow(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(DescriptionChipSpacing),
-                    verticalArrangement = Arrangement.spacedBy(DescriptionChipSpacing),
-                ) {
-                    hashtags.forEach { tag ->
-                        Text(
-                            text = tag,
-                            color = tint.accent,
-                            style = MaterialTheme.typography.labelLarge,
-                            modifier =
-                                if (onHashtagClick == null) {
-                                    Modifier
-                                } else {
-                                    Modifier
-                                        .clip(CircleShape)
-                                        .clickable { onHashtagClick(tag.removePrefix("#")) }
-                                },
-                        )
-                    }
-                }
-            }
-
             if (chapterCount > 0 && onChaptersClick != null) {
                 DescriptionSectionRow(
                     title = stringResource(R.string.chapters),
@@ -266,27 +242,6 @@ fun FlowDescriptionBottomSheet(
                 )
             }
 
-            if (onEditNote != null) {
-                if (note.isNullOrBlank()) {
-                    DescriptionSectionRow(
-                        title = stringResource(R.string.note_title),
-                        subtitle = stringResource(R.string.note_add),
-                        tint = tint,
-                        onClick = onEditNote,
-                    )
-                } else {
-                    FlowNoteCard(
-                        text = note,
-                        onEdit = onEditNote,
-                        containerColor = tint.container,
-                        contentColor = tint.onContainer,
-                        linkColor = tint.accent,
-                        durationMs = video.duration * 1000L,
-                        onTimestampClick = onSeekMs.takeUnless { video.isLive },
-                    )
-                }
-            }
-
             descriptionPage?.channel?.let { channel ->
                 ChannelCard(
                     channel = channel,
@@ -294,42 +249,6 @@ fun FlowDescriptionBottomSheet(
                     onChannelClick = onChannelClick,
                     onOpenLink = openLink,
                 )
-            }
-
-            if (tags.isNotEmpty()) {
-                val sortedTags =
-                    remember(tags) {
-                        tags.sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER) { it })
-                    }
-                Column(verticalArrangement = Arrangement.spacedBy(DescriptionChipSpacing)) {
-                    Text(
-                        text = stringResource(R.string.tags),
-                        style = MaterialTheme.typography.labelMedium,
-                        fontWeight = FontWeight.SemiBold,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                    FlowRow(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(DescriptionChipSpacing),
-                        verticalArrangement = Arrangement.spacedBy(DescriptionChipSpacing),
-                    ) {
-                        sortedTags.forEach { tag ->
-                            Surface(
-                                shape = CircleShape,
-                                color = tint.container,
-                                contentColor = tint.onContainer,
-                                modifier =
-                                    if (onTagClick == null) Modifier else Modifier.clickable { onTagClick(tag) },
-                            ) {
-                                Text(
-                                    text = tag,
-                                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
-                                    style = MaterialTheme.typography.labelMedium,
-                                )
-                            }
-                        }
-                    }
-                }
             }
 
             Spacer(modifier = Modifier.height(SheetBottomSpacing))

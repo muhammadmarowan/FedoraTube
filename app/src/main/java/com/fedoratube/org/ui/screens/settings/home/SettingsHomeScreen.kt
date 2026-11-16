@@ -1,13 +1,8 @@
 package com.fedoratube.org.ui.screens.settings.home
 
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.CleaningServices
-import androidx.compose.material.icons.outlined.PlayCircleOutline
-import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.Timer
-import androidx.compose.material3.Icon
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -26,19 +21,12 @@ import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.fedoratube.org.R
 import com.fedoratube.org.data.local.PlayerPreferences
-import com.fedoratube.org.ui.components.settings.SettingEntry
 import com.fedoratube.org.ui.components.settings.SettingsDestination
 import com.fedoratube.org.ui.components.settings.SettingsPage
 import com.fedoratube.org.ui.components.settings.SettingsTarget
 import com.fedoratube.org.ui.components.shared.FlowChoice
 import com.fedoratube.org.ui.components.shared.FlowChoiceDialog
-import com.fedoratube.org.ui.components.shared.FlowSearchField
-import com.fedoratube.org.ui.screens.settings.index.DestinationIndex
-import com.fedoratube.org.ui.screens.settings.index.HomeIndex
-import com.fedoratube.org.ui.screens.settings.index.SettingsSearch
 import kotlinx.coroutines.launch
-
-private val SearchFieldBottomPadding = 8.dp
 
 @Composable
 internal fun SettingsHomeScreen(
@@ -59,18 +47,14 @@ internal fun SettingsHomeScreen(
     val updateCheck by viewModel.updateCheck.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
 
-    var query by rememberSaveable { mutableStateOf("") }
-    var highlight by remember { mutableStateOf<String?>(null) }
     var showDurationDialog by rememberSaveable { mutableStateOf(false) }
     var showAutoClearDialog by rememberSaveable { mutableStateOf(false) }
 
     val checkingLabel = stringResource(R.string.checking_for_updates)
-    val searchable = rememberSearchableSettings()
     LifecycleResumeEffect(selected) {
         viewModel.refreshPersona()
         onPauseOrDispose {}
     }
-    val results = remember(query, searchable) { SettingsSearch.search(query, searchable) }
 
     UpdateCheckFeedback(
         state = updateCheck,
@@ -78,71 +62,39 @@ internal fun SettingsHomeScreen(
         onConsumed = viewModel::consumeUpdateCheck,
     )
 
-    val onResultClick: (SettingEntry) -> Unit = { entry ->
-        query = ""
-        val page = DestinationIndex.destinationOf(entry)
-        when {
-            entry.key == HomeIndex.checkForUpdates.key -> {
-                viewModel.checkForUpdates()
-                onOpenUpdate()
-            }
-            page != null -> onOpen(SettingsTarget(page))
-            entry.destination == SettingsDestination.HOME -> highlight = entry.key
-            else -> onOpen(entry.target)
-        }
-    }
-
     SettingsPage(
         title = stringResource(R.string.settings_title),
         onBack = onBack,
-        highlight = highlight,
         snackbarHostState = snackbarHostState,
-        header = {
-            FlowSearchField(
-                query = query,
-                onQueryChange = { query = it },
-                placeholder = stringResource(R.string.ui_search_settings),
-                onClear = { query = "" },
-                leadingIcon = { Icon(Icons.Outlined.Search, contentDescription = null) },
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = SearchFieldBottomPadding),
-            )
-        },
     ) {
-        if (query.isNotBlank()) {
-            searchResults(query = query, results = results, onResultClick = onResultClick)
-        } else {
-            homeContent(
-                state =
-                    SettingsHomeState(
-                        selected = selected,
-                        persona = persona,
-                        deepFlow = deepFlow,
-                        updateCheckingLabel = checkingLabel.takeIf { updateCheck == UpdateCheckState.Checking },
-                        isFocusModeEnabled = isFocusModeEnabled,
-                        autoClearCacheHours = autoClearCacheHours,
-                    ),
-                actions =
-                    SettingsHomeActions(
-                        onOpen = onOpen,
-                        onDeepFlowChange = viewModel::setDeepFlowEnabled,
-                        onDurationClick = { showDurationDialog = true },
-                        onSaveHistoryChange = viewModel::setDeepFlowSaveToHistory,
-                        onScrobbleChange = viewModel::setDeepFlowScrobble,
-                        onShowOnSearchChange = viewModel::setDeepFlowOnSearch,
-                        onCheckForUpdates = {
-                            viewModel.checkForUpdates()
-                            onOpenUpdate()
-                        },
-                        onFocusModeChange = { enabled ->
-                            coroutineScope.launch { preferences.setFocusModeEnabled(enabled) }
-                        },
-                        onAutoClearCacheClick = { showAutoClearDialog = true },
-                    ),
-            )
-        }
+        homeContent(
+            state =
+                SettingsHomeState(
+                    selected = selected,
+                    persona = persona,
+                    deepFlow = deepFlow,
+                    updateCheckingLabel = checkingLabel.takeIf { updateCheck == UpdateCheckState.Checking },
+                    isFocusModeEnabled = isFocusModeEnabled,
+                    autoClearCacheHours = autoClearCacheHours,
+                ),
+            actions =
+                SettingsHomeActions(
+                    onOpen = onOpen,
+                    onDeepFlowChange = viewModel::setDeepFlowEnabled,
+                    onDurationClick = { showDurationDialog = true },
+                    onSaveHistoryChange = viewModel::setDeepFlowSaveToHistory,
+                    onScrobbleChange = viewModel::setDeepFlowScrobble,
+                    onShowOnSearchChange = viewModel::setDeepFlowOnSearch,
+                    onCheckForUpdates = {
+                        viewModel.checkForUpdates()
+                        onOpenUpdate()
+                    },
+                    onFocusModeChange = { enabled ->
+                        coroutineScope.launch { preferences.setFocusModeEnabled(enabled) }
+                    },
+                    onAutoClearCacheClick = { showAutoClearDialog = true },
+                ),
+        )
     }
 
     if (showAutoClearDialog) {

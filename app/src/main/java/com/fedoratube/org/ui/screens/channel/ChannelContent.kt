@@ -54,9 +54,11 @@ import com.fedoratube.org.data.model.Video
 import com.fedoratube.org.innertube.pages.channel.ChannelTabKind
 import com.fedoratube.org.innertube.pages.renderer.FeedShelf
 import com.fedoratube.org.ui.components.channel.ChannelAboutSection
+import com.fedoratube.org.ui.components.channel.ChannelFilterChipBar
 import com.fedoratube.org.ui.components.channel.ChannelHeaderSection
 import com.fedoratube.org.ui.components.channel.ChannelReadingPane
 import com.fedoratube.org.ui.components.channel.ChannelRow
+import com.fedoratube.org.ui.components.channel.ChannelSortBottomSheet
 import com.fedoratube.org.ui.components.channel.ChannelTabItems
 import com.fedoratube.org.ui.components.channel.ChannelTabRow
 import com.fedoratube.org.ui.components.layout.flowBottomContentPadding
@@ -132,6 +134,7 @@ internal fun ChannelContent(
     val activeState = tabStates[settledTab.kind]
     val activeFilters = activeState?.filters.orEmpty()
     val activeSelection = activeState?.selected.orEmpty()
+    var showSortBottomSheet by remember { mutableStateOf(false) }
 
     var collapsingHeaderHeightPx by remember { mutableFloatStateOf(0f) }
     var stickySectionHeightPx by remember { mutableFloatStateOf(0f) }
@@ -361,6 +364,7 @@ internal fun ChannelContent(
                     filterGroups = activeFilters,
                     filterSelection = activeSelection,
                     onFilterSelected = { groupIndex, optionIndex -> onFilterSelected(settledTab.kind, groupIndex, optionIndex) },
+                    onOpenSortSheet = { showSortBottomSheet = true },
                 )
             }
 
@@ -378,7 +382,29 @@ internal fun ChannelContent(
                         coroutineScope.launch { pagerState.animateScrollToPage(idx) }
                     },
                 )
+
+                if (activeFilters.isNotEmpty()) {
+                    ChannelFilterChipBar(
+                        groups = activeFilters,
+                        selection = activeSelection,
+                        onFilterSelected = { groupIndex, optionIndex ->
+                            onFilterSelected(settledTab.kind, groupIndex, optionIndex)
+                        },
+                        onOpenSortSheet = { showSortBottomSheet = true },
+                    )
+                }
             }
+        }
+
+        if (showSortBottomSheet && activeFilters.isNotEmpty()) {
+            ChannelSortBottomSheet(
+                groups = activeFilters,
+                selection = activeSelection,
+                onFilterSelected = { groupIndex, optionIndex ->
+                    onFilterSelected(settledTab.kind, groupIndex, optionIndex)
+                },
+                onDismissRequest = { showSortBottomSheet = false },
+            )
         }
     }
 }

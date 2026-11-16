@@ -78,6 +78,7 @@ internal fun SettingsListScope.homeContent(
         page(SettingsDestination.TASTE)
     }
     group(key = "home.watching", header = R.string.settings_group_watching) {
+        page(SettingsDestination.PLAYBACK)
         page(SettingsDestination.QUALITY)
     }
     group(key = "home.data", header = R.string.settings_group_data) {
