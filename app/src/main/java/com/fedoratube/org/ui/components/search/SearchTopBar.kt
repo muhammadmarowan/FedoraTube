@@ -4,20 +4,15 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.clearText
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
-import androidx.compose.material.icons.rounded.Close
-import androidx.compose.material.icons.rounded.GridView
-import androidx.compose.material.icons.rounded.Mic
-import androidx.compose.material.icons.rounded.Tune
-import androidx.compose.material.icons.rounded.ViewList
-import androidx.compose.material3.Badge
-import androidx.compose.material3.BadgedBox
+import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.Text
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,14 +23,8 @@ import com.fedoratube.org.R
 import com.fedoratube.org.ui.components.shared.FlowSearchField
 
 /**
- * The Search tab's bar, laid out the way YouTube lays its own out: the back affordance and the mic
- * sit outside the field, and the field itself is a slim pill carrying only the query and its clear
- * button.
- *
- * Back always leaves the screen. There is no collapse state to fall into first — the suggestions
- * list is part of this screen, not a surface stacked on top of it.
- *
- * The shell's scaffold already insets its content for the status bar, so this row adds none.
+ * Modern Search bar: Clean pill field carrying the query and its integrated clear button.
+ * Back button appears when in results mode or when onBack is explicitly passed.
  */
 @Composable
 fun SearchTopBar(
@@ -50,15 +39,21 @@ fun SearchTopBar(
     actions: (@Composable () -> Unit)? = null,
 ) {
     Row(
-        modifier = modifier.fillMaxWidth().padding(horizontal = BarHorizontalPadding, vertical = BarVerticalPadding),
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 12.dp, vertical = 6.dp),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(ItemSpacing),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         if (onBack != null) {
-            IconButton(onClick = onBack) {
+            IconButton(
+                onClick = onBack,
+                modifier = Modifier.size(40.dp),
+            ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
                     contentDescription = stringResource(R.string.btn_back),
+                    tint = MaterialTheme.colorScheme.onSurface,
                 )
             }
         }
@@ -68,17 +63,19 @@ fun SearchTopBar(
             placeholder = placeholder,
             modifier = Modifier.weight(1f),
             onSearch = onSearch,
-            showClearButton = false,
+            onClear = { textFieldState.clearText() },
+            showClearButton = true,
             focusRequester = focusRequester,
             onFieldFocused = onFieldFocused,
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.Rounded.Search,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                    modifier = Modifier.size(20.dp),
+                )
+            },
         )
-
-        IconButton(onClick = { textFieldState.clearText() }) {
-            Icon(
-                imageVector = Icons.Rounded.Close,
-                contentDescription = stringResource(R.string.clear),
-            )
-        }
 
         actions?.invoke()
     }
@@ -94,7 +91,3 @@ fun SearchTopBarActions(
 ) {
     // Filter option removed per user request
 }
-
-private val BarHorizontalPadding = 4.dp
-private val BarVerticalPadding = 4.dp
-private val ItemSpacing = 2.dp

@@ -191,13 +191,7 @@ internal fun VideoInfoContent(
         isDownloaded = isVideoDownloaded,
         isWatchLater = isWatchLater,
         onWatchLaterClick = {
-            viewModel.toggleWatchLater(dialogVideo) { added ->
-                Toast.makeText(
-                    context,
-                    if (added) context.getString(R.string.toast_added_to_watch_later) else context.getString(R.string.toast_removed_from_watch_later),
-                    Toast.LENGTH_SHORT,
-                ).show()
-            }
+            viewModel.toggleWatchLater(dialogVideo)
         },
         onNoteClick = { showNoteEditor = true }.takeIf { videoNotesEnabled },
         hasNote = !videoNote.isNullOrBlank(),

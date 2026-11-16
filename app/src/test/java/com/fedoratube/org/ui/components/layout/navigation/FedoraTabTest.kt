@@ -78,7 +78,7 @@ class FedoraTabTest {
 
     @Test
     fun persistedIdsNeverChange() {
-        assertEquals(DEFAULT_NAV_TAB_ORDER, FlowTab.entries.map(FlowTab::id))
+        assertEquals(listOf(0, 2, 3, 4, 5, 6, 7), FlowTab.entries.map(FlowTab::id))
         FlowTab.entries.forEach { tab -> assertEquals(tab, FlowTab.fromId(tab.id)) }
     }
 

@@ -81,7 +81,6 @@ fun visibleFlowTabs(
             if (visibility.home) add(FlowTab.Home)
             if (visibility.search) add(FlowTab.Search)
             if (visibility.music) add(FlowTab.Music)
-            add(FlowTab.Subscriptions)
             add(FlowTab.Library)
             if (visibility.categories) add(FlowTab.Explore)
         }

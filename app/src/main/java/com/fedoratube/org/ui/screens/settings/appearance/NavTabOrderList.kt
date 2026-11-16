@@ -57,7 +57,7 @@ internal fun NavTabOrderList(
     modifier: Modifier = Modifier,
 ) {
     val haptic = LocalHapticFeedback.current
-    val persistedTabs = remember(order) { (order + DEFAULT_NAV_TAB_ORDER).distinct().mapNotNull(FlowTab::fromId) }
+    val persistedTabs = remember(order) { (order + DEFAULT_NAV_TAB_ORDER).distinct().mapNotNull(FlowTab::fromId).filter { it != FlowTab.Subscriptions } }
     // Held locally so a drop shows its result at once instead of snapping back until DataStore emits.
     var tabs by remember(persistedTabs) { mutableStateOf(persistedTabs) }
 

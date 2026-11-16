@@ -220,7 +220,7 @@ interface PlaylistDao {
         """
         SELECT COUNT(*) FROM playlist_video_cross_ref r
         INNER JOIN playlists p ON p.id = r.playlistId
-        WHERE r.videoId = :videoId AND p.isMusic = 0
+        WHERE r.videoId = :videoId AND p.isMusic = 0 AND p.id NOT IN ('watch_later', 'saved_shorts')
     """,
     )
     fun getVideoPlaylistMembershipCount(videoId: String): Flow<Int>
