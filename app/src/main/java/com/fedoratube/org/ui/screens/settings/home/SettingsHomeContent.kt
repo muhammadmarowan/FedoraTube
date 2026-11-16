@@ -1,16 +1,50 @@
 package com.fedoratube.org.ui.screens.settings.home
 
+import android.widget.Toast
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.CenterFocusStrong
 import androidx.compose.material.icons.outlined.CleaningServices
 import androidx.compose.material.icons.outlined.Email
+import androidx.compose.material.icons.outlined.Verified
+import androidx.compose.material.icons.rounded.Science
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Switch
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.fedoratube.org.BuildConfig
 import com.fedoratube.org.R
+import com.fedoratube.org.data.local.PlayerPreferences
 import com.fedoratube.org.data.recommendation.FlowPersona
+import com.fedoratube.org.data.update.UpdateEntryPoint
 import com.fedoratube.org.ui.components.settings.SettingsDestination
 import com.fedoratube.org.ui.components.settings.SettingsGroupScope
 import com.fedoratube.org.ui.components.settings.SettingsListScope
@@ -25,6 +59,9 @@ import com.fedoratube.org.ui.screens.settings.about.openReport
 import com.fedoratube.org.ui.screens.settings.index.AboutIndex
 import com.fedoratube.org.ui.screens.settings.index.DestinationIndex
 import com.fedoratube.org.ui.screens.settings.index.HomeIndex
+import dagger.hilt.android.EntryPointAccessors
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @Immutable
 internal data class SettingsHomeState(
@@ -111,6 +148,33 @@ internal fun SettingsListScope.homeContent(
                 icon = HomeRowIcons.Updates,
             )
         }
+        row("home.about.beta_program") { shape ->
+            val context = LocalContext.current
+            val scope = rememberCoroutineScope()
+            val preferences = remember(context) { PlayerPreferences(context) }
+            val isBetaEnabled by preferences.betaProgramEnabled.collectAsState(initial = false)
+            BetaProgramSettingsRow(
+                isBeta = isBetaEnabled,
+                onToggle = { enabled ->
+                    scope.launch {
+                        preferences.setBetaProgramEnabled(enabled)
+                        if (enabled) {
+                            Toast.makeText(context, "Joined Beta Program! Checking for pre-releases...", Toast.LENGTH_SHORT).show()
+                        } else {
+                            Toast.makeText(context, "Switched to Stable channel", Toast.LENGTH_SHORT).show()
+                        }
+                        launch(Dispatchers.IO) {
+                            runCatching {
+                                EntryPointAccessors.fromApplication(context.applicationContext, UpdateEntryPoint::class.java)
+                                    .updateRepository().fetch(forceBeta = enabled)
+                            }
+                        }
+                    }
+                },
+                shape = shape,
+            )
+        }
+        page(SettingsDestination.ABOUT)
         row(AboutIndex.report.key) { shape ->
             val context = LocalContext.current
             FlowNavRow(
@@ -120,6 +184,112 @@ internal fun SettingsListScope.homeContent(
                 leadingIcon = Icons.Outlined.Email,
                 showChevron = false,
                 shape = shape,
+            )
+        }
+    }
+}
+
+@Composable
+private fun BetaProgramSettingsRow(
+    isBeta: Boolean,
+    onToggle: (Boolean) -> Unit,
+    shape: Shape,
+) {
+    Surface(
+        shape = shape,
+        color = MaterialTheme.colorScheme.surfaceContainerHigh,
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        Row(
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(14.dp),
+                modifier = Modifier.weight(1f),
+            ) {
+                Box(
+                    modifier =
+                        Modifier
+                            .size(40.dp)
+                            .clip(CircleShape)
+                            .background(
+                                if (isBeta) {
+                                    MaterialTheme.colorScheme.primaryContainer
+                                } else {
+                                    MaterialTheme.colorScheme.surfaceContainerHighest
+                                },
+                            ),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Icon(
+                        imageVector = if (isBeta) Icons.Rounded.Science else Icons.Outlined.Verified,
+                        contentDescription = null,
+                        tint = if (isBeta) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.size(22.dp),
+                    )
+                }
+
+                Column(modifier = Modifier.weight(1f)) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    ) {
+                        Text(
+                            text = "Beta Program",
+                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
+                            color = MaterialTheme.colorScheme.onSurface,
+                        )
+                        Surface(
+                            shape = RoundedCornerShape(6.dp),
+                            color =
+                                if (isBeta) {
+                                    MaterialTheme.colorScheme.primaryContainer
+                                } else {
+                                    MaterialTheme.colorScheme.secondaryContainer
+                                },
+                        ) {
+                            Text(
+                                text = if (isBeta) "BETA" else "STABLE",
+                                style =
+                                    MaterialTheme.typography.labelSmall.copy(
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 10.sp,
+                                    ),
+                                color =
+                                    if (isBeta) {
+                                        MaterialTheme.colorScheme.onPrimaryContainer
+                                    } else {
+                                        MaterialTheme.colorScheme.onSecondaryContainer
+                                    },
+                                modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+                            )
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(2.dp))
+                    Text(
+                        text =
+                            if (isBeta) {
+                                "Receiving GitHub pre-release updates with newest features."
+                            } else {
+                                "Receiving official stable releases only."
+                            },
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.width(8.dp))
+
+            Switch(
+                checked = isBeta,
+                onCheckedChange = onToggle,
             )
         }
     }

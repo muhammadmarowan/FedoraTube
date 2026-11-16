@@ -237,6 +237,21 @@ fun SearchScreen(
 
     val focusRequester = remember { FocusRequester() }
 
+    LaunchedEffect(isFocusModeEnabled) {
+        if (isFocusModeEnabled && !showResults) {
+            state.startTyping()
+            kotlinx.coroutines.delay(200)
+            focusRequester.requestFocus()
+            keyboard?.show()
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        if (!isFocusModeEnabled && !showResults) {
+            state.stopTyping()
+        }
+    }
+
     LaunchedEffect(showResults) {
         if (showResults) {
             focusManager.clearFocus(force = true)
@@ -466,7 +481,7 @@ fun SearchScreen(
 
             // Floating Keyboard FAB above Bottom Navigation Bar (Normal Mode only)
             AnimatedVisibility(
-                visible = !isFocusModeEnabled && !showResults && !state.isTyping,
+                visible = !isFocusModeEnabled && !showResults,
                 enter = fadeIn() + scaleIn(),
                 exit = fadeOut() + scaleOut(),
                 modifier =
@@ -481,12 +496,11 @@ fun SearchScreen(
                         focusRequester.requestFocus()
                         keyboard?.show()
                     },
-                    shape = RoundedCornerShape(16.dp),
-                    color = MaterialTheme.colorScheme.primaryContainer,
-                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.35f)),
+                    shape = CircleShape,
+                    color = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary,
                     shadowElevation = 8.dp,
-                    modifier = Modifier.size(54.dp),
+                    modifier = Modifier.size(56.dp),
                 ) {
                     Box(
                         modifier = Modifier.fillMaxSize(),
@@ -496,6 +510,7 @@ fun SearchScreen(
                             imageVector = Icons.Rounded.Keyboard,
                             contentDescription = stringResource(R.string.search),
                             modifier = Modifier.size(26.dp),
+                            tint = MaterialTheme.colorScheme.onPrimary,
                         )
                     }
                 }
