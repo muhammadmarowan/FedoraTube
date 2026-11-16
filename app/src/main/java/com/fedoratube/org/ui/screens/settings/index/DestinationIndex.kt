@@ -40,6 +40,7 @@ internal object DestinationIndex {
         SettingsDestination.NETWORK,
         SettingsDestination.ABOUT,
         SettingsDestination.DIAGNOSTICS,
+        SettingsDestination.BUFFER,
         SettingsDestination.INTEGRATIONS,
         SettingsDestination.SCROBBLING,
         SettingsDestination.SYNC,

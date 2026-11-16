@@ -38,6 +38,8 @@ class PlaybackSettingsViewModel
         val autoplayCountdown = preferences.autoplayCountdownSeconds.asState(0)
         val loopAll = preferences.videoLoopEnabled.asState(false)
         val skipSilence = preferences.skipSilenceEnabled.asState(false)
+        val stableVolume = preferences.stableVolumeEnabled.asState(false)
+        val ambientMode = preferences.videoAmbientModeEnabled.asState(false)
         val playDuringCalls = preferences.playDuringCalls.asState(false)
         val rememberSpeed = preferences.rememberPlaybackSpeed.asState(false)
         val musicNormalSpeed = preferences.musicAtNormalSpeed.asState(false)
@@ -119,6 +121,10 @@ class PlaybackSettingsViewModel
         fun setLoopAll(value: Boolean) = write { preferences.setVideoLoopEnabled(value) }
 
         fun setSkipSilence(value: Boolean) = write { preferences.setSkipSilenceEnabled(value) }
+
+        fun setStableVolume(value: Boolean) = write { preferences.setStableVolumeEnabled(value) }
+
+        fun setAmbientMode(value: Boolean) = write { preferences.setVideoAmbientModeEnabled(value) }
 
         fun setPlayDuringCalls(value: Boolean) = write { preferences.setPlayDuringCalls(value) }
 

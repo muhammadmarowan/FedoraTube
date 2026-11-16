@@ -28,7 +28,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.PlayArrow
-import androidx.compose.material.icons.rounded.Radio
 import androidx.compose.material.icons.rounded.Shuffle
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -180,14 +179,6 @@ fun ArtistHero(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 val busy = startingQueue != null
-                if (onRadioClick != null) {
-                    ArtistQueueButton(
-                        icon = Icons.Rounded.Radio,
-                        label = stringResource(R.string.start_radio),
-                        starting = startingQueue == ArtistQueue.RADIO,
-                        onClick = { if (!busy) onRadioClick() },
-                    )
-                }
                 ArtistQueueButton(
                     icon = Icons.Rounded.Shuffle,
                     label = stringResource(R.string.shuffle),

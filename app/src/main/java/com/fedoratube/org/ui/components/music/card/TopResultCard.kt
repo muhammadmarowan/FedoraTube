@@ -21,7 +21,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowRight
 import androidx.compose.material.icons.rounded.MoreVert
-import androidx.compose.material.icons.rounded.Radio
 import androidx.compose.material.icons.rounded.Shuffle
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -65,7 +64,7 @@ fun TopResultCard(
     item: YTItem,
     onClick: () -> Unit,
     onShuffleClick: () -> Unit,
-    onRadioClick: () -> Unit,
+    onRadioClick: (() -> Unit)? = null,
     modifier: Modifier = Modifier,
     onLongClick: (() -> Unit)? = null,
     onMenuClick: (() -> Unit)? = null,
@@ -171,36 +170,6 @@ fun TopResultCard(
                             Spacer(modifier = Modifier.width(ButtonDefaults.iconSpacingFor(buttonHeight)))
                             Text(
                                 text = stringResource(R.string.shuffle),
-                                style = ButtonDefaults.textStyleFor(buttonHeight),
-                            )
-                        }
-                    }) {}
-                    customItem({
-                        val interaction = remember { MutableInteractionSource() }
-                        Button(
-                            onClick = onRadioClick,
-                            shapes = ButtonDefaults.shapesFor(buttonHeight),
-                            colors =
-                                ButtonDefaults.buttonColors(
-                                    containerColor = colors.tonalContainer,
-                                    contentColor = colors.onContainer,
-                                ),
-                            interactionSource = interaction,
-                            contentPadding = ButtonDefaults.contentPaddingFor(buttonHeight, hasStartIcon = true),
-                            modifier =
-                                Modifier
-                                    .weight(1f)
-                                    .heightIn(min = buttonHeight)
-                                    .animateWidth(interaction),
-                        ) {
-                            Icon(
-                                imageVector = Icons.Rounded.Radio,
-                                contentDescription = null,
-                                modifier = Modifier.size(ButtonDefaults.iconSizeFor(buttonHeight)),
-                            )
-                            Spacer(modifier = Modifier.width(ButtonDefaults.iconSpacingFor(buttonHeight)))
-                            Text(
-                                text = stringResource(R.string.radio),
                                 style = ButtonDefaults.textStyleFor(buttonHeight),
                             )
                         }

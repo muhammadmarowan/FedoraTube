@@ -1,24 +1,47 @@
+/*
+ * Copyright (C) 2026 FedoraTube Contributors
+ *
+ * This file is part of Fedora Tube (https://github.com/muhammadmarowan/FedoraTube).
+ */
+
 package com.fedoratube.org.ui.components.musicplayer.controls
 
-import androidx.compose.animation.core.*
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.waitForUpOrCancellation
-import androidx.compose.foundation.interaction.*
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Pause
 import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material.icons.rounded.SkipNext
 import androidx.compose.material.icons.rounded.SkipPrevious
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
@@ -30,9 +53,15 @@ import com.fedoratube.org.R
 import com.fedoratube.org.ui.components.musicplayer.common.SkipDirection
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeoutOrNull
 
 private enum class PlaybackButtonType { PREVIOUS, PLAY_PAUSE, NEXT }
 
+/**
+ * Modern iOS Apple Music style playback controls:
+ * Clean circular layout with prominent centered play/pause button,
+ * balanced previous/next controls, frosted glass containers, and signature tactile spring animations.
+ */
 @Composable
 fun PlayerPlaybackControls(
     isPlaying: Boolean,
@@ -64,7 +93,6 @@ fun PlayerPlaybackControls(
         }
     }
 
-    // Latch the icon while a skip is in flight so play/pause does not flicker on track changes.
     LaunchedEffect(isPlaying) {
         if (isPlaying) {
             pendingPlayPauseState = true
@@ -87,83 +115,65 @@ fun PlayerPlaybackControls(
         }
     }
 
-    val elasticSpec = spring<Float>(dampingRatio = 0.62f, stiffness = 720f)
-
-    val playPauseWeight by animateFloatAsState(
-        targetValue =
-            if (isPressed) {
-                1.9f
-            } else if (isPreviousPressed || isNextPressed) {
-                1.1f
-            } else {
-                1.3f
-            },
-        animationSpec = elasticSpec,
-        label = "playPauseWeight",
+    val playPauseScale by animateFloatAsState(
+        targetValue = if (isPressed) 0.88f else 1f,
+        animationSpec = spring(dampingRatio = 0.65f, stiffness = 600f),
+        label = "playPauseScale",
     )
-    val previousWeight by animateFloatAsState(
-        targetValue =
-            if (isPreviousPressed) {
-                0.65f
-            } else if (isPressed) {
-                0.35f
-            } else {
-                0.45f
-            },
-        animationSpec = elasticSpec,
-        label = "previousWeight",
+    val previousScale by animateFloatAsState(
+        targetValue = if (isPreviousPressed) 0.88f else 1f,
+        animationSpec = spring(dampingRatio = 0.65f, stiffness = 600f),
+        label = "previousScale",
     )
-    val nextWeight by animateFloatAsState(
-        targetValue =
-            if (isNextPressed) {
-                0.65f
-            } else if (isPressed) {
-                0.35f
-            } else {
-                0.45f
-            },
-        animationSpec = elasticSpec,
-        label = "nextWeight",
-    )
-    val playPauseCorner by animateDpAsState(
-        targetValue = if (playPauseVisualState) 18.dp else 34.dp,
-        animationSpec = spring(dampingRatio = 0.8f, stiffness = 380f),
-        label = "playPauseCorner",
+    val nextScale by animateFloatAsState(
+        targetValue = if (isNextPressed) 0.88f else 1f,
+        animationSpec = spring(dampingRatio = 0.65f, stiffness = 600f),
+        label = "nextScale",
     )
 
     Row(
         modifier =
             modifier
                 .fillMaxWidth()
-                .height(68.dp),
-        horizontalArrangement = Arrangement.spacedBy(10.dp),
+                .height(80.dp),
+        horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        ElasticControlButton(
-            weight = previousWeight,
+        // iOS Previous Button
+        IosControlButton(
             icon = Icons.Rounded.SkipPrevious,
             contentDescription = stringResource(R.string.previous),
+            buttonSize = 54.dp,
+            iconSize = 34.dp,
+            scale = previousScale,
+            containerColor = Color.White.copy(alpha = 0.08f),
+            contentColor = Color.White.copy(alpha = 0.90f),
             onClick = {
                 lastClicked = PlaybackButtonType.PREVIOUS
                 clickTrigger++
                 scope.launch {
-                    delay(180L)
+                    delay(120L)
                     onPreviousClick()
                 }
             },
             onPressedChange = { isPreviousPressed = it },
-            containerColor = MaterialTheme.colorScheme.secondaryContainer,
-            contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
-            iconSize = 30.dp,
             onLongPressStart = { onPreviewDirectionChange(SkipDirection.PREVIOUS) },
             onLongPressEnd = { onPreviewDirectionChange(null) },
         )
 
-        ElasticControlButton(
-            weight = playPauseWeight,
+        // iOS Play/Pause Button (Prominent centered frosted glass circle)
+        IosControlButton(
             icon = if (playPauseVisualState) Icons.Rounded.Pause else Icons.Rounded.PlayArrow,
             contentDescription =
                 if (playPauseVisualState) stringResource(R.string.pause) else stringResource(R.string.play),
+            buttonSize = 72.dp,
+            iconSize = 42.dp,
+            scale = playPauseScale,
+            containerColor = Color.White.copy(alpha = 0.18f),
+            contentColor = Color.White,
+            borderColor = Color.White.copy(alpha = 0.35f),
+            hasShadow = true,
+            isBuffering = isBuffering,
             onClick = {
                 lastClicked = PlaybackButtonType.PLAY_PAUSE
                 clickTrigger++
@@ -171,29 +181,26 @@ fun PlayerPlaybackControls(
                 onPlayPauseToggle()
             },
             onPressedChange = { isPressed = it },
-            containerColor = MaterialTheme.colorScheme.primary,
-            contentColor = MaterialTheme.colorScheme.onPrimary,
-            iconSize = 36.dp,
-            cornerRadius = playPauseCorner,
-            isBuffering = isBuffering,
         )
 
-        ElasticControlButton(
-            weight = nextWeight,
+        // iOS Next Button
+        IosControlButton(
             icon = Icons.Rounded.SkipNext,
             contentDescription = stringResource(R.string.next),
+            buttonSize = 54.dp,
+            iconSize = 34.dp,
+            scale = nextScale,
+            containerColor = Color.White.copy(alpha = 0.08f),
+            contentColor = Color.White.copy(alpha = 0.90f),
             onClick = {
                 lastClicked = PlaybackButtonType.NEXT
                 clickTrigger++
                 scope.launch {
-                    delay(180L)
+                    delay(120L)
                     onNextClick()
                 }
             },
             onPressedChange = { isNextPressed = it },
-            containerColor = MaterialTheme.colorScheme.secondaryContainer,
-            contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
-            iconSize = 30.dp,
             onLongPressStart = { onPreviewDirectionChange(SkipDirection.NEXT) },
             onLongPressEnd = { onPreviewDirectionChange(null) },
         )
@@ -201,17 +208,19 @@ fun PlayerPlaybackControls(
 }
 
 @Composable
-private fun RowScope.ElasticControlButton(
-    weight: Float,
+private fun IosControlButton(
     icon: ImageVector,
     contentDescription: String?,
-    onClick: () -> Unit,
-    onPressedChange: (Boolean) -> Unit,
+    buttonSize: Dp,
+    iconSize: Dp,
+    scale: Float,
     containerColor: Color,
     contentColor: Color,
-    iconSize: Dp,
-    cornerRadius: Dp = 34.dp,
+    borderColor: Color = Color.White.copy(alpha = 0.12f),
+    hasShadow: Boolean = false,
     isBuffering: Boolean = false,
+    onClick: () -> Unit,
+    onPressedChange: (Boolean) -> Unit,
     onLongPressStart: (() -> Unit)? = null,
     onLongPressEnd: (() -> Unit)? = null,
 ) {
@@ -219,13 +228,25 @@ private fun RowScope.ElasticControlButton(
     val currentOnPressedChange by rememberUpdatedState(onPressedChange)
     val currentLongPressStart by rememberUpdatedState(onLongPressStart)
     val currentLongPressEnd by rememberUpdatedState(onLongPressEnd)
+
     Box(
         modifier =
             Modifier
-                .weight(weight)
-                .fillMaxHeight()
-                .clip(RoundedCornerShape(cornerRadius))
+                .size(buttonSize)
+                .graphicsLayer {
+                    scaleX = scale
+                    scaleY = scale
+                }
+                .then(
+                    if (hasShadow) {
+                        Modifier.shadow(elevation = 12.dp, shape = CircleShape, clip = false)
+                    } else {
+                        Modifier
+                    },
+                )
+                .clip(CircleShape)
                 .background(containerColor)
+                .border(0.75.dp, borderColor, CircleShape)
                 .pointerInput(Unit) {
                     awaitEachGesture {
                         awaitFirstDown(requireUnconsumed = false)
@@ -272,7 +293,7 @@ private fun RowScope.ElasticControlButton(
             CircularProgressIndicator(
                 modifier = Modifier.size(28.dp),
                 color = contentColor,
-                strokeWidth = 3.dp,
+                strokeWidth = 2.5.dp,
             )
         } else {
             Icon(

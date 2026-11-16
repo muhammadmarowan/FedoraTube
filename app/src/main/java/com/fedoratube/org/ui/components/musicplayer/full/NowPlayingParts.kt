@@ -1,6 +1,9 @@
 package com.fedoratube.org.ui.components.musicplayer.full
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
@@ -9,6 +12,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,6 +33,7 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -59,7 +64,10 @@ internal class NowPlayingSlots(
     val actions: @Composable (Modifier) -> Unit,
 )
 
-/** The cover with its elevation; under the immersive background the full-bleed art is the cover. */
+/** The cover with its elevation; under the immersive background the full-bleed art is the cover.
+ * Styled in classic iOS Apple Music style: smooth 20.dp rounded corners, subtle highlight border,
+ * and dynamic spring scaling & soft shadow when playing/paused.
+ */
 @Composable
 internal fun PlayerArtworkFrame(
     immersive: Boolean,
@@ -67,19 +75,37 @@ internal fun PlayerArtworkFrame(
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit,
 ) {
+    val scale by animateFloatAsState(
+        targetValue = if (isPlaying) 1f else 0.88f,
+        animationSpec = spring(dampingRatio = 0.75f, stiffness = 400f),
+        label = "artworkScale",
+    )
+    val elevation by animateDpAsState(
+        targetValue = if (isPlaying) 28.dp else 10.dp,
+        animationSpec = spring(dampingRatio = 0.75f, stiffness = 400f),
+        label = "artworkElevation",
+    )
+    val shape = RoundedCornerShape(20.dp)
     Box(
         modifier =
             modifier
+                .graphicsLayer {
+                    scaleX = scale
+                    scaleY = scale
+                }
                 .then(
                     if (immersive) {
                         Modifier
                     } else {
                         Modifier.shadow(
-                            elevation = if (isPlaying) 24.dp else 8.dp,
-                            shape = RoundedCornerShape(8.dp),
+                            elevation = elevation,
+                            shape = shape,
+                            clip = false,
                         )
                     },
-                ).clip(RoundedCornerShape(8.dp)),
+                )
+                .clip(shape)
+                .border(0.75.dp, Color.White.copy(alpha = 0.15f), shape),
     ) {
         content()
     }

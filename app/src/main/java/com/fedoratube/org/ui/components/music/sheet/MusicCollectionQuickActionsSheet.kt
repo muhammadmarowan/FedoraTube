@@ -7,7 +7,6 @@ import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.outlined.Album
 import androidx.compose.material.icons.outlined.BookmarkBorder
-import androidx.compose.material.icons.outlined.Radio
 import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material.icons.outlined.Shuffle
 import androidx.compose.runtime.Composable
@@ -80,11 +79,6 @@ fun MusicCollectionQuickActionsSheet(
                     icon = Icons.Outlined.Shuffle,
                     label = stringResource(R.string.shuffle),
                     onClick = { play(CollectionPlayMode.Shuffle) },
-                ),
-                QuickPrimaryAction(
-                    icon = Icons.Outlined.Radio,
-                    label = stringResource(R.string.start_radio),
-                    onClick = { play(CollectionPlayMode.Radio) },
                 ),
             ),
         )

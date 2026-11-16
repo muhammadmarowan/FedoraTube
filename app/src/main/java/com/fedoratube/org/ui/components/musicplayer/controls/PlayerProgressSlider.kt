@@ -52,7 +52,7 @@ fun PlayerProgressSlider(
     }
 
     val animatedTrackHeight by animateDpAsState(
-        targetValue = if (isInteracting) 22.dp else 16.dp,
+        targetValue = if (isInteracting) 9.dp else 6.dp,
         animationSpec = spring(stiffness = Spring.StiffnessLow),
         label = "trackHeight",
     )
@@ -141,11 +141,12 @@ fun PlayerProgressSlider(
                 color = if (isInteracting) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
                 fontWeight = if (isInteracting) FontWeight.Bold else FontWeight.Medium,
             )
+            val remainingMs = (duration - displayedPositionMs).coerceAtLeast(0L)
             Text(
-                formatTime(duration),
+                if (remainingMs > 0L) "-${formatTime(remainingMs)}" else formatTime(duration),
                 style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
-                fontWeight = FontWeight.Medium,
+                color = if (isInteracting) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
+                fontWeight = if (isInteracting) FontWeight.Bold else FontWeight.Medium,
             )
         }
     }

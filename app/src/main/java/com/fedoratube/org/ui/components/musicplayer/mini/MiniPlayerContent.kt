@@ -1,15 +1,18 @@
+/*
+ * Copyright (C) 2026 FedoraTube Contributors
+ *
+ * This file is part of Fedora Tube (https://github.com/muhammadmarowan/FedoraTube).
+ */
+
 package com.fedoratube.org.ui.components.musicplayer.mini
 
 import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.snap
-import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsPressedAsState
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,31 +22,27 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Pause
 import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material.icons.rounded.SkipNext
 import androidx.compose.material.icons.rounded.SkipPrevious
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.FilledIconButton
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -58,25 +57,21 @@ import com.fedoratube.org.R
 import com.fedoratube.org.data.music.model.MusicTrack
 import com.fedoratube.org.player.EnhancedMusicPlayerManager
 import com.fedoratube.org.ui.components.PlayingWaveform
-import com.fedoratube.org.ui.components.shared.MediaPlayPauseButton
 import com.fedoratube.org.ui.theme.ArtworkScrimContent
 import com.fedoratube.org.ui.theme.ArtworkScrimNowPlaying
 
-private val ArtworkRingSize = 42.dp
-private val ArtworkSize = 35.dp
-private val ProgressRingStroke = 2.dp
+private val ArtworkSize = 40.dp
+private val ArtworkCorner = 10.dp
 
 /**
- * The collapsed player: cover in a progress ring, title and artist, then the transport. Wider
- * windows give the card room for Previous as well.
+ * Modern iOS Apple Music / Dynamic Island style mini player pill:
+ * Features squircle album art, SF Pro-styled typography, crisp iOS transport buttons,
+ * and a sleek continuous progress line along the bottom of the pill.
  */
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 internal fun MiniPlayerContent(
     track: MusicTrack,
     modifier: Modifier = Modifier,
-    // False while the expanded player covers the (alpha-0) mini bar: the waveform, marquee
-    // and smooth progress ring stop forcing frames nobody can see. Values still update.
     animationsEnabled: Boolean = true,
     showPrevious: Boolean = false,
 ) {
@@ -94,52 +89,56 @@ internal fun MiniPlayerContent(
         label = "miniProgress",
     )
 
-    Row(
+    val progressTrackColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f)
+    val progressFillColor = MaterialTheme.colorScheme.primary
+
+    Box(
         modifier =
             modifier
                 .fillMaxSize()
-                .padding(start = 7.dp, end = 6.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(10.dp),
+                .drawBehind {
+                    val y = size.height - 1.5.dp.toPx()
+                    val startX = 20.dp.toPx()
+                    val endX = size.width - 20.dp.toPx()
+                    val strokeW = 2.dp.toPx()
+
+                    drawLine(
+                        color = progressTrackColor,
+                        start = Offset(startX, y),
+                        end = Offset(endX, y),
+                        strokeWidth = strokeW,
+                        cap = StrokeCap.Round,
+                    )
+                    if (animatedProgress > 0f) {
+                        drawLine(
+                            color = progressFillColor,
+                            start = Offset(startX, y),
+                            end = Offset(startX + (endX - startX) * animatedProgress, y),
+                            strokeWidth = strokeW,
+                            cap = StrokeCap.Round,
+                        )
+                    }
+                },
     ) {
-        val ringTrackColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.10f)
-        val ringFillColor = MaterialTheme.colorScheme.primary
-        Box(
+        Row(
             modifier =
                 Modifier
-                    .size(ArtworkRingSize)
-                    .drawBehind {
-                        val stroke = ProgressRingStroke.toPx()
-                        val inset = stroke / 2f
-                        val arcSize = Size(size.width - stroke, size.height - stroke)
-                        drawArc(
-                            color = ringTrackColor,
-                            startAngle = -90f,
-                            sweepAngle = 360f,
-                            useCenter = false,
-                            topLeft = Offset(inset, inset),
-                            size = arcSize,
-                            style = Stroke(width = stroke, cap = StrokeCap.Round),
-                        )
-                        if (animatedProgress > 0f) {
-                            drawArc(
-                                color = ringFillColor,
-                                startAngle = -90f,
-                                sweepAngle = 360f * animatedProgress,
-                                useCenter = false,
-                                topLeft = Offset(inset, inset),
-                                size = arcSize,
-                                style = Stroke(width = stroke, cap = StrokeCap.Round),
-                            )
-                        }
-                    },
-            contentAlignment = Alignment.Center,
+                    .fillMaxSize()
+                    .padding(start = 8.dp, end = 6.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
         ) {
+            // iOS-style Squircle Album Art with soft shadow
+            val artworkShape = RoundedCornerShape(ArtworkCorner)
             Box(
                 modifier =
                     Modifier
                         .size(ArtworkSize)
-                        .clip(CircleShape),
+                        .shadow(elevation = 3.dp, shape = artworkShape, clip = false)
+                        .clip(artworkShape)
+                        .border(0.5.dp, Color.White.copy(alpha = 0.15f), artworkShape)
+                        .background(MaterialTheme.colorScheme.surfaceVariant),
+                contentAlignment = Alignment.Center,
             ) {
                 AsyncImage(
                     model = track.listThumbnailUrl,
@@ -165,80 +164,107 @@ internal fun MiniPlayerContent(
                     }
                 }
             }
-        }
 
-        Column(
-            modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.Center,
-        ) {
-            Text(
-                text = track.title,
-                style =
-                    MaterialTheme.typography.titleSmall.copy(
-                        fontSize = 13.5.sp,
-                        fontWeight = FontWeight.SemiBold,
-                    ),
-                maxLines = 1,
-                color = MaterialTheme.colorScheme.onSurface,
-                overflow = TextOverflow.Ellipsis,
-                modifier =
-                    if (animationsEnabled) {
-                        Modifier.basicMarquee(
-                            iterations = Int.MAX_VALUE,
-                            repeatDelayMillis = 2500,
+            // Track info: Title and Artist
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.Center,
+            ) {
+                Text(
+                    text = track.title,
+                    style =
+                        MaterialTheme.typography.titleSmall.copy(
+                            fontSize = 13.5.sp,
+                            fontWeight = FontWeight.SemiBold,
+                        ),
+                    maxLines = 1,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier =
+                        if (animationsEnabled) {
+                            Modifier.basicMarquee(
+                                iterations = Int.MAX_VALUE,
+                                repeatDelayMillis = 2500,
+                            )
+                        } else {
+                            Modifier
+                        },
+                )
+                Spacer(modifier = Modifier.height(1.dp))
+                Text(
+                    text = track.artist,
+                    style =
+                        MaterialTheme.typography.bodySmall.copy(
+                            fontSize = 11.5.sp,
+                            fontWeight = FontWeight.Normal,
+                        ),
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.65f),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            }
+
+            // iOS-style transport controls
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(2.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                if (showPrevious) {
+                    IconButton(
+                        onClick = {
+                            haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                            EnhancedMusicPlayerManager.playPrevious()
+                        },
+                        modifier = Modifier.size(36.dp),
+                    ) {
+                        Icon(
+                            imageVector = Icons.Rounded.SkipPrevious,
+                            contentDescription = stringResource(R.string.previous),
+                            tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.85f),
+                            modifier = Modifier.size(22.dp),
+                        )
+                    }
+                }
+
+                // iOS Play/Pause Button
+                IconButton(
+                    onClick = {
+                        haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                        EnhancedMusicPlayerManager.togglePlayPause()
+                    },
+                    modifier = Modifier.size(38.dp),
+                ) {
+                    if (playerState.isBuffering && animationsEnabled) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(20.dp),
+                            color = MaterialTheme.colorScheme.primary,
+                            strokeWidth = 2.dp,
                         )
                     } else {
-                        Modifier
-                    },
-            )
-            Spacer(modifier = Modifier.height(1.dp))
-            Text(
-                text = track.artist,
-                style =
-                    MaterialTheme.typography.bodySmall.copy(
-                        fontSize = 11.5.sp,
-                    ),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-        }
+                        Icon(
+                            imageVector = if (playerState.isPlaying) Icons.Rounded.Pause else Icons.Rounded.PlayArrow,
+                            contentDescription =
+                                if (playerState.isPlaying) stringResource(R.string.pause) else stringResource(R.string.play),
+                            tint = MaterialTheme.colorScheme.onSurface,
+                            modifier = Modifier.size(26.dp),
+                        )
+                    }
+                }
 
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(1.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            if (showPrevious) {
                 IconButton(
-                    onClick = { EnhancedMusicPlayerManager.playPrevious() },
-                    modifier = Modifier.size(34.dp),
+                    onClick = {
+                        haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                        EnhancedMusicPlayerManager.playNext()
+                    },
+                    modifier = Modifier.size(36.dp),
                 ) {
                     Icon(
-                        imageVector = Icons.Rounded.SkipPrevious,
-                        contentDescription = stringResource(R.string.previous),
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.size(20.dp),
+                        imageVector = Icons.Rounded.SkipNext,
+                        contentDescription = stringResource(R.string.next),
+                        tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.85f),
+                        modifier = Modifier.size(22.dp),
                     )
                 }
-            }
-            MediaPlayPauseButton(
-                isPlaying = playerState.isPlaying,
-                isBuffering = playerState.isBuffering && animationsEnabled,
-                onClick = {
-                    haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                    EnhancedMusicPlayerManager.togglePlayPause()
-                },
-            )
-            IconButton(
-                onClick = { EnhancedMusicPlayerManager.playNext() },
-                modifier = Modifier.size(34.dp),
-            ) {
-                Icon(
-                    imageVector = Icons.Rounded.SkipNext,
-                    contentDescription = stringResource(R.string.next),
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.size(20.dp),
-                )
             }
         }
     }

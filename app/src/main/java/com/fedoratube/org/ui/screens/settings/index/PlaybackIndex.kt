@@ -66,6 +66,22 @@ internal object PlaybackIndex {
             section = R.string.playback_header,
             destination = page,
         )
+    val stableVoice =
+        SettingEntry(
+            key = "playback.stable_voice",
+            title = R.string.player_settings_stable_voice,
+            summary = R.string.player_settings_stable_voice_subtitle,
+            section = R.string.eq_settings_section,
+            destination = page,
+        )
+    val ambientMode =
+        SettingEntry(
+            key = "playback.ambient_mode",
+            title = R.string.player_settings_ambient_mode,
+            summary = R.string.player_settings_ambient_mode_subtitle,
+            section = R.string.settings_section_watch_page,
+            destination = page,
+        )
     val playDuringCalls =
         SettingEntry(
             key = "playback.play_during_calls",

@@ -372,21 +372,21 @@ internal fun UnifiedMusicPlayerSheet(
                                             Brush.verticalGradient(
                                                 colors =
                                                     listOf(
-                                                        playerScheme.surfaceContainerHighest.copy(alpha = 0.76f),
-                                                        playerScheme.surfaceContainer.copy(alpha = 0.62f),
-                                                        playerScheme.surfaceContainerLowest.copy(alpha = 0.70f),
+                                                        playerScheme.surfaceContainerHighest.copy(alpha = 0.86f),
+                                                        playerScheme.surfaceContainer.copy(alpha = 0.76f),
+                                                        playerScheme.surfaceContainerLowest.copy(alpha = 0.82f),
                                                     ),
                                             ),
                                         shape = cardShape,
                                     )
                                     .border(
-                                        width = 1.dp,
+                                        width = 0.75.dp,
                                         brush =
                                             Brush.verticalGradient(
-                                                0.0f to Color.White.copy(alpha = 0.45f),
-                                                0.30f to Color.White.copy(alpha = 0.18f),
-                                                0.70f to Color.White.copy(alpha = 0.04f),
-                                                1.0f to Color.White.copy(alpha = 0.12f),
+                                                0.0f to Color.White.copy(alpha = 0.40f),
+                                                0.35f to Color.White.copy(alpha = 0.18f),
+                                                0.70f to Color.White.copy(alpha = 0.06f),
+                                                1.0f to Color.White.copy(alpha = 0.14f),
                                             ),
                                         shape = cardShape,
                                     )

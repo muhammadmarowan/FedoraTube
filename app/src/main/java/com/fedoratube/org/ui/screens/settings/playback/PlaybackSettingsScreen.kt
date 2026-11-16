@@ -9,7 +9,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.fedoratube.org.R
-import com.fedoratube.org.data.local.SpeedSwipeSide
 import com.fedoratube.org.ui.components.settings.SettingsPage
 import com.fedoratube.org.ui.components.settings.SettingsTarget
 
@@ -39,12 +38,6 @@ internal fun PlaybackSettingsScreen(
     viewModel: PlaybackSettingsViewModel = hiltViewModel(),
 ) {
     val loopAll by viewModel.loopAll.collectAsStateWithLifecycle()
-    val customSpeeds by viewModel.customSpeeds.collectAsStateWithLifecycle()
-    val doubleTapSeek by viewModel.doubleTapSeek.collectAsStateWithLifecycle()
-    val speedSwipeSide by viewModel.speedSwipeSide.collectAsStateWithLifecycle()
-    val comments by viewModel.comments.collectAsStateWithLifecycle()
-    val shortsContent by viewModel.shortsContent.collectAsStateWithLifecycle()
-    val disableShortsPlayer by viewModel.disableShortsPlayer.collectAsStateWithLifecycle()
     var dialog by rememberSaveable { mutableStateOf<PlaybackDialog?>(null) }
 
     SettingsPage(
@@ -54,16 +47,7 @@ internal fun PlaybackSettingsScreen(
     ) {
         playbackSections(
             viewModel = viewModel,
-            state =
-                PlaybackStructure(
-                    loopAll,
-                    customSpeeds,
-                    doubleTapSeek > 0,
-                    speedSwipeSide,
-                    comments,
-                    shortsContent,
-                    disableShortsPlayer,
-                ),
+            state = PlaybackStructure(loopAll = loopAll),
             openDialog = { dialog = it },
             onNavigate = onNavigate,
         )
@@ -77,10 +61,4 @@ internal fun PlaybackSettingsScreen(
 /** The values that decide which rows exist or are enabled; every other row reads its own state. */
 internal data class PlaybackStructure(
     val loopAll: Boolean,
-    val customSpeeds: Boolean,
-    val doubleTapSeek: Boolean,
-    val speedSwipeSide: SpeedSwipeSide,
-    val comments: Boolean,
-    val shortsContent: Boolean,
-    val disableShortsPlayer: Boolean,
 )
