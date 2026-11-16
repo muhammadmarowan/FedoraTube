@@ -24,6 +24,7 @@ internal enum class PlaybackDialog {
     SUBTITLE_LANGUAGE,
     SHORTS_MODE,
     LYRICS,
+    LYRICS_ALIGNMENT,
 }
 
 /**

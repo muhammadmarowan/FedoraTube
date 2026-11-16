@@ -1,5 +1,7 @@
 package com.fedoratube.org.ui.components.shared
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Row
@@ -12,6 +14,7 @@ import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.TextFieldLineLimits
@@ -33,6 +36,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -108,16 +113,26 @@ fun FedoraSearchField(
             }
 
             if (showClearButton && state.text.isNotEmpty()) {
-                IconButton(
-                    onClick = {
-                        state.clearText()
-                        onClear?.invoke()
-                    },
-                    modifier = Modifier.size(ClearButtonSize),
+                Box(
+                    modifier =
+                        Modifier
+                            .size(28.dp)
+                            .clip(CircleShape)
+                            .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
+                            .clickable(
+                                role = Role.Button,
+                                onClick = {
+                                    state.clearText()
+                                    onClear?.invoke()
+                                },
+                            ),
+                    contentAlignment = Alignment.Center,
                 ) {
                     Icon(
                         imageVector = Icons.Rounded.Close,
                         contentDescription = stringResource(R.string.clear),
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.size(16.dp),
                     )
                 }
             }
@@ -261,10 +276,10 @@ private fun ReleaseFocusWhenKeyboardCloses() {
     LaunchedEffect(imeVisible) { if (!imeVisible) focusManager.clearFocus() }
 }
 
-private val PillHeight = 40.dp
+private val PillHeight = 44.dp
 private val PillStartPadding = 16.dp
-private val PillLeadingPadding = 12.dp
-private val PillEndPadding = 4.dp
+private val PillLeadingPadding = 14.dp
+private val PillEndPadding = 8.dp
 private val PillItemSpacing = 8.dp
 private val ClearButtonSize = 32.dp
 

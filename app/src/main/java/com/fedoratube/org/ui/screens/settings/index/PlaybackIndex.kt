@@ -493,6 +493,45 @@ internal object PlaybackIndex {
             section = R.string.settings_section_music,
             destination = page,
         )
+    val lyricsTranslation =
+        SettingEntry(
+            key = "playback.lyrics_translation",
+            title = R.string.lyrics_show_translation,
+            summary = R.string.lyrics_show_translation_summary,
+            section = R.string.lyrics,
+            destination = page,
+        )
+    val lyricsRomanization =
+        SettingEntry(
+            key = "playback.lyrics_romanization",
+            title = R.string.lyrics_show_romanization,
+            summary = R.string.lyrics_show_romanization_summary,
+            section = R.string.lyrics,
+            destination = page,
+        )
+    val lyricsAutoRomanize =
+        SettingEntry(
+            key = "playback.lyrics_auto_romanize",
+            title = R.string.lyrics_auto_romanize,
+            summary = R.string.lyrics_auto_romanize_summary,
+            section = R.string.lyrics,
+            destination = page,
+        )
+    val lyricsKeepScreenOn =
+        SettingEntry(
+            key = "playback.lyrics_keep_screen_on",
+            title = R.string.lyrics_keep_screen_on,
+            summary = R.string.lyrics_keep_screen_on_summary,
+            section = R.string.lyrics,
+            destination = page,
+        )
+    val lyricsAlignment =
+        SettingEntry(
+            key = "playback.lyrics_alignment",
+            title = R.string.lyrics_alignment,
+            section = R.string.lyrics,
+            destination = page,
+        )
 
     val all =
         listOf(
@@ -554,5 +593,10 @@ internal object PlaybackIndex {
             pauseMusicWhenMuted,
             musicVideoSwitch,
             lyricsProviders,
+            lyricsTranslation,
+            lyricsRomanization,
+            lyricsAutoRomanize,
+            lyricsKeepScreenOn,
+            lyricsAlignment,
         )
 }

@@ -1,8 +1,13 @@
 package com.fedoratube.org.ui.screens.search
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -17,17 +22,23 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Keyboard
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.FloatingActionButtonDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -106,8 +117,8 @@ enum class SearchTabCategory {
 
 /**
  * Modern Search destination supporting both Video and Music categories with a centered,
- * animated category switcher, smooth horizontal swiping, hide-on-scroll top chrome,
- * and seamless results integration.
+ * animated category switcher, smooth horizontal swiping, jitter-free hide-on-scroll top chrome,
+ * and a floating keyboard trigger above the navigation bar.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -125,6 +136,7 @@ fun SearchScreen(
     musicSearchViewModel: MusicSearchViewModel = hiltViewModel(),
 ) {
     val context = LocalContext.current
+    val density = LocalDensity.current
     val pagerState = rememberPagerState(initialPage = 0) { 2 }
     val coroutineScope = rememberCoroutineScope()
 
@@ -221,14 +233,15 @@ fun SearchScreen(
         }
     }
 
+    // Top Bar 56.dp + Category Tabs 42.dp = 98.dp
+    val totalTopBarHeight = 98.dp
+    val totalTopBarHeightPx = with(density) { totalTopBarHeight.toPx() }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    var topBarHeightPx by remember { mutableFloatStateOf(0f) }
 
     SideEffect {
         if (showResults) {
-            val limit = -topBarHeightPx
-            if (scrollBehavior.state.heightOffsetLimit != limit && topBarHeightPx > 0f) {
-                scrollBehavior.state.heightOffsetLimit = limit
+            if (scrollBehavior.state.heightOffsetLimit != -totalTopBarHeightPx) {
+                scrollBehavior.state.heightOffsetLimit = -totalTopBarHeightPx
             }
         } else {
             if (scrollBehavior.state.heightOffsetLimit != 0f) {
@@ -253,184 +266,210 @@ fun SearchScreen(
                 .nestedScroll(scrollBehavior.nestedScrollConnection),
         color = MaterialTheme.colorScheme.background,
     ) {
-        Column(modifier = Modifier.fillMaxSize()) {
-            // Collapsible Top Bar + Category Tabs
-            Box(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight()
-                        .clipToBounds()
-                        .onGloballyPositioned { coordinates ->
-                            val h = coordinates.size.height.toFloat()
-                            if (h > 0f && topBarHeightPx != h) {
-                                topBarHeightPx = h
-                            }
-                        }.layout { measurable, constraints ->
-                            val placeable = measurable.measure(constraints)
-                            val layoutHeight = (placeable.height + currentOffsetPx).coerceAtLeast(0)
-                            layout(placeable.width, layoutHeight) {
-                                placeable.place(0, currentOffsetPx)
-                            }
-                        },
-            ) {
-                Column(
+        Box(modifier = Modifier.fillMaxSize()) {
+            Column(modifier = Modifier.fillMaxSize()) {
+                // Collapsible Top Bar + Category Tabs
+                Box(
                     modifier =
                         Modifier
                             .fillMaxWidth()
-                            .background(MaterialTheme.colorScheme.background),
-                ) {
-                    SearchTopBar(
-                        textFieldState = state.textFieldState,
-                        onSearch = submit,
-                        onBack = if (showResults) resetSearch else onBack,
-                        placeholder =
-                            if (pagerState.currentPage == 0) {
-                                stringResource(R.string.search_videos_channels_placeholder)
-                            } else {
-                                stringResource(R.string.search_music_placeholder)
+                            .wrapContentHeight()
+                            .clipToBounds()
+                            .layout { measurable, constraints ->
+                                val placeable = measurable.measure(constraints)
+                                val layoutHeight = (placeable.height + currentOffsetPx).coerceAtLeast(0)
+                                layout(placeable.width, layoutHeight) {
+                                    placeable.place(0, currentOffsetPx)
+                                }
                             },
-                        focusRequester = focusRequester,
-                        onFieldFocused = state::startTyping,
-                        actions = null,
-                    )
+                ) {
+                    Column(
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .background(MaterialTheme.colorScheme.background),
+                    ) {
+                        SearchTopBar(
+                            textFieldState = state.textFieldState,
+                            onSearch = submit,
+                            onBack = if (showResults) resetSearch else onBack,
+                            placeholder =
+                                if (pagerState.currentPage == 0) {
+                                    stringResource(R.string.search_videos_channels_placeholder)
+                                } else {
+                                    stringResource(R.string.search_music_placeholder)
+                                },
+                            focusRequester = focusRequester,
+                            onFieldFocused = state::startTyping,
+                            actions = null,
+                        )
 
-                    SearchCategoryTabs(
-                        pagerState = pagerState,
-                        onSelectPage = { page ->
-                            coroutineScope.launch {
-                                pagerState.animateScrollToPage(page)
+                        SearchCategoryTabs(
+                            pagerState = pagerState,
+                            onSelectPage = { page ->
+                                coroutineScope.launch {
+                                    pagerState.animateScrollToPage(page)
+                                }
+                            },
+                        )
+                    }
+                }
+
+                // Swipeable Pages: Page 0 = Videos, Page 1 = Music
+                HorizontalPager(
+                    state = pagerState,
+                    modifier =
+                        Modifier
+                            .weight(1f)
+                            .fillMaxWidth(),
+                ) { page ->
+                    if (page == 0) {
+                        // VIDEOS TAB
+                        if (!showResults) {
+                            SearchSuggestionsPanel(
+                                query = state.query,
+                                history = state.matchingHistory,
+                                suggestions = state.suggestions,
+                                onSubmit = { text ->
+                                    state.textFieldState.setTextAndPlaceCursorAtEnd(text)
+                                    submit(text)
+                                },
+                                onHistorySelect = { item ->
+                                    state.textFieldState.setTextAndPlaceCursorAtEnd(item.query)
+                                    submitWith(item.query, item.filters?.availableWith(state.shortsContentEnabled) ?: uiState.filters)
+                                },
+                                onFill = state.textFieldState::setTextAndPlaceCursorAtEnd,
+                                onDeleteHistoryItem = state::deleteHistoryItem,
+                                onClearHistory = state::clearHistory,
+                                deepFlow = state.deepFlow,
+                                onDeepFlowChange = state::setDeepFlowEnabled,
+                            )
+                        } else {
+                            val refreshState = pagingItems.loadState.refresh
+                            BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+                                val feedLayout = rememberFeedGridLayout(maxWidth, state.feedColumns)
+                                val actions =
+                                    remember(feedLayout, subscribedIds) {
+                                        SearchResultActions(
+                                            onVideoClick = onVideoClick,
+                                            onChannelClick = onChannelClick,
+                                            onPlaylistClick = onPlaylistClick,
+                                            dismissKeyboard = state::stopTyping,
+                                            isSubscribed = { it in subscribedIds },
+                                            onSubscribeToggle = { channel ->
+                                                quickActions.toggleSubscription(channel.id, channel.name, channel.thumbnailUrl)
+                                            },
+                                        )
+                                    }
+
+                                when {
+                                    refreshState is LoadState.Loading -> {
+                                        FeedGridSkeleton(layout = feedLayout, listMode = state.isGridMode)
+                                    }
+
+                                    refreshState is LoadState.Error && pagingItems.itemCount == 0 -> {
+                                        FlowErrorState(
+                                            error = refreshState.error.localizedMessage ?: stringResource(R.string.search_failed),
+                                            onRetry = pagingItems::retry,
+                                        )
+                                    }
+
+                                    pagingItems.itemCount == 0 -> {
+                                        FlowEmptyState(
+                                            title = stringResource(uiState.filters.emptyResultsRes()),
+                                            icon = Icons.Rounded.Search,
+                                        )
+                                    }
+
+                                    else -> {
+                                        SearchResults(
+                                            pagingItems,
+                                            gridState,
+                                            feedLayout,
+                                            state.isGridMode,
+                                            actions,
+                                            showSubscribe = !isFocusModeEnabled,
+                                        )
+                                    }
+                                }
                             }
-                        },
-                    )
+                        }
+                    } else {
+                        // MUSIC TAB
+                        if (!showResults) {
+                            SearchSuggestionsPanel(
+                                query = state.query,
+                                history = musicMatchingHistory,
+                                suggestions =
+                                    if (musicUiState.suggestions.isNotEmpty()) {
+                                        musicUiState.suggestions.map { com.fedoratube.org.innertube.pages.search.SearchSuggestion(it) }
+                                    } else {
+                                        state.suggestions
+                                    },
+                                onSubmit = { text ->
+                                    state.textFieldState.setTextAndPlaceCursorAtEnd(text)
+                                    submit(text)
+                                },
+                                onHistorySelect = { item ->
+                                    state.textFieldState.setTextAndPlaceCursorAtEnd(item.query)
+                                    submit(item.query)
+                                },
+                                onFill = state.textFieldState::setTextAndPlaceCursorAtEnd,
+                                onDeleteHistoryItem = musicSearchViewModel::deleteHistoryItem,
+                                onClearHistory = musicSearchViewModel::clearHistory,
+                                deepFlow = state.deepFlow,
+                                onDeepFlowChange = state::setDeepFlowEnabled,
+                            )
+                        } else {
+                            BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+                                MusicSearchResultsView(
+                                    uiState = musicUiState,
+                                    query = state.textFieldState.text.toString().ifBlank { musicQuery },
+                                    onTrackClick = onTrackClick,
+                                    onAlbumClick = onAlbumClick,
+                                    onArtistClick = onArtistClick,
+                                    onPlaylistClick = onMusicPlaylistClick,
+                                    onApplyFilter = musicSearchViewModel::applyFilter,
+                                    onRetry = {
+                                        val q = state.textFieldState.text.toString().ifBlank { musicQuery }
+                                        val filter = musicUiState.activeFilter
+                                        if (filter == null) musicSearchViewModel.performSearch(q) else musicSearchViewModel.applyFilter(filter)
+                                    },
+                                    onLoadMore = musicSearchViewModel::loadMore,
+                                    onGetArtistTracks = musicSearchViewModel::getArtistTracks,
+                                )
+                            }
+                        }
+                    }
                 }
             }
 
-            // Swipeable Pages: Page 0 = Videos, Page 1 = Music
-            HorizontalPager(
-                state = pagerState,
+            // Floating Keyboard FAB above Bottom Navigation Bar
+            AnimatedVisibility(
+                visible = !showResults && !state.isTyping,
+                enter = fadeIn() + scaleIn(),
+                exit = fadeOut() + scaleOut(),
                 modifier =
                     Modifier
-                        .weight(1f)
-                        .fillMaxWidth(),
-            ) { page ->
-                if (page == 0) {
-                    // VIDEOS TAB
-                    if (!showResults) {
-                        SearchSuggestionsPanel(
-                            query = state.query,
-                            history = state.matchingHistory,
-                            suggestions = state.suggestions,
-                            onSubmit = { text ->
-                                state.textFieldState.setTextAndPlaceCursorAtEnd(text)
-                                submit(text)
-                            },
-                            onHistorySelect = { item ->
-                                state.textFieldState.setTextAndPlaceCursorAtEnd(item.query)
-                                submitWith(item.query, item.filters?.availableWith(state.shortsContentEnabled) ?: uiState.filters)
-                            },
-                            onFill = state.textFieldState::setTextAndPlaceCursorAtEnd,
-                            onDeleteHistoryItem = state::deleteHistoryItem,
-                            onClearHistory = state::clearHistory,
-                            deepFlow = state.deepFlow,
-                            onDeepFlowChange = state::setDeepFlowEnabled,
-                        )
-                    } else {
-                        val refreshState = pagingItems.loadState.refresh
-                        BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-                            val feedLayout = rememberFeedGridLayout(maxWidth, state.feedColumns)
-                            val actions =
-                                remember(feedLayout, subscribedIds) {
-                                    SearchResultActions(
-                                        onVideoClick = onVideoClick,
-                                        onChannelClick = onChannelClick,
-                                        onPlaylistClick = onPlaylistClick,
-                                        dismissKeyboard = state::stopTyping,
-                                        isSubscribed = { it in subscribedIds },
-                                        onSubscribeToggle = { channel ->
-                                            quickActions.toggleSubscription(channel.id, channel.name, channel.thumbnailUrl)
-                                        },
-                                    )
-                                }
-
-                            when {
-                                refreshState is LoadState.Loading -> {
-                                    FeedGridSkeleton(layout = feedLayout, listMode = state.isGridMode)
-                                }
-
-                                refreshState is LoadState.Error && pagingItems.itemCount == 0 -> {
-                                    FlowErrorState(
-                                        error = refreshState.error.localizedMessage ?: stringResource(R.string.search_failed),
-                                        onRetry = pagingItems::retry,
-                                    )
-                                }
-
-                                pagingItems.itemCount == 0 -> {
-                                    FlowEmptyState(
-                                        title = stringResource(uiState.filters.emptyResultsRes()),
-                                        icon = Icons.Rounded.Search,
-                                    )
-                                }
-
-                                else -> {
-                                    SearchResults(
-                                        pagingItems,
-                                        gridState,
-                                        feedLayout,
-                                        state.isGridMode,
-                                        actions,
-                                        showSubscribe = !isFocusModeEnabled,
-                                    )
-                                }
-                            }
-                        }
-                    }
-                } else {
-                    // MUSIC TAB
-                    if (!showResults) {
-                        SearchSuggestionsPanel(
-                            query = state.query,
-                            history = musicMatchingHistory,
-                            suggestions =
-                                if (musicUiState.suggestions.isNotEmpty()) {
-                                    musicUiState.suggestions.map { com.fedoratube.org.innertube.pages.search.SearchSuggestion(it) }
-                                } else {
-                                    state.suggestions
-                                },
-                            onSubmit = { text ->
-                                state.textFieldState.setTextAndPlaceCursorAtEnd(text)
-                                submit(text)
-                            },
-                            onHistorySelect = { item ->
-                                state.textFieldState.setTextAndPlaceCursorAtEnd(item.query)
-                                submit(item.query)
-                            },
-                            onFill = state.textFieldState::setTextAndPlaceCursorAtEnd,
-                            onDeleteHistoryItem = musicSearchViewModel::deleteHistoryItem,
-                            onClearHistory = musicSearchViewModel::clearHistory,
-                            deepFlow = state.deepFlow,
-                            onDeepFlowChange = state::setDeepFlowEnabled,
-                        )
-                    } else {
-                        BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-                            MusicSearchResultsView(
-                                uiState = musicUiState,
-                                query = state.textFieldState.text.toString().ifBlank { musicQuery },
-                                onTrackClick = onTrackClick,
-                                onAlbumClick = onAlbumClick,
-                                onArtistClick = onArtistClick,
-                                onPlaylistClick = onMusicPlaylistClick,
-                                onApplyFilter = musicSearchViewModel::applyFilter,
-                                onRetry = {
-                                    val q = state.textFieldState.text.toString().ifBlank { musicQuery }
-                                    val filter = musicUiState.activeFilter
-                                    if (filter == null) musicSearchViewModel.performSearch(q) else musicSearchViewModel.applyFilter(filter)
-                                },
-                                onLoadMore = musicSearchViewModel::loadMore,
-                                onGetArtistTracks = musicSearchViewModel::getArtistTracks,
-                            )
-                        }
-                    }
+                        .align(Alignment.BottomEnd)
+                        .padding(end = 20.dp, bottom = 20.dp),
+            ) {
+                FloatingActionButton(
+                    onClick = {
+                        state.startTyping()
+                        focusRequester.requestFocus()
+                        keyboard?.show()
+                    },
+                    shape = CircleShape,
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    elevation = FloatingActionButtonDefaults.elevation(defaultElevation = 6.dp),
+                ) {
+                    Icon(
+                        imageVector = Icons.Rounded.Keyboard,
+                        contentDescription = stringResource(R.string.search),
+                        modifier = Modifier.size(26.dp),
+                    )
                 }
             }
         }

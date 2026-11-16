@@ -4,6 +4,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import com.fedoratube.org.data.local.DEFAULT_BACKGROUND_PLAY_ENABLED
 import com.fedoratube.org.data.local.DEFAULT_SPEED_SWIPE_STEP
 import com.fedoratube.org.data.local.DoubleTapSeekZone
+import com.fedoratube.org.data.local.LYRICS_ALIGN_CENTER
 import com.fedoratube.org.data.local.PlayerOverlayPreferences
 import com.fedoratube.org.data.local.PlayerPreferences
 import com.fedoratube.org.data.local.PlayerRelatedCardStyle
@@ -103,10 +104,25 @@ class PlaybackSettingsViewModel
         val endlessRadio = preferences.musicEndlessRadioEnabled.asState(true)
         val musicVideoSwitch = preferences.musicVideoSwitch.asState(false)
         val pauseMusicWhenMuted = preferences.pauseMusicWhenMuted.asState(false)
+        val lyricsShowTranslation = preferences.lyricsShowTranslation.asState(true)
+        val lyricsShowRomanization = preferences.lyricsShowRomanization.asState(true)
+        val lyricsAutoRomanize = preferences.lyricsAutoRomanize.asState(false)
+        val lyricsKeepScreenOn = preferences.lyricsKeepScreenOn.asState(false)
+        val lyricsTextAlign = preferences.lyricsTextAlign.asState(LYRICS_ALIGN_CENTER)
         val lyricsProviders =
             combine(preferences.lyricsProviderOrder, preferences.allLyricsProviderEnabledStates()) { order, enabled ->
                 lyricsRegistry.getOrderedProviders(order).map { LyricsProviderState(it.name, enabled[it.name] ?: true) }
             }.asState(lyricsRegistry.getOrderedProviders("").map { LyricsProviderState(it.name, true) })
+
+        fun setLyricsShowTranslation(value: Boolean) = write { preferences.setLyricsShowTranslation(value) }
+
+        fun setLyricsShowRomanization(value: Boolean) = write { preferences.setLyricsShowRomanization(value) }
+
+        fun setLyricsAutoRomanize(value: Boolean) = write { preferences.setLyricsAutoRomanize(value) }
+
+        fun setLyricsKeepScreenOn(value: Boolean) = write { preferences.setLyricsKeepScreenOn(value) }
+
+        fun setLyricsTextAlign(value: String) = write { preferences.setLyricsTextAlign(value) }
 
         fun setBackgroundPlay(value: Boolean) = write { preferences.setBackgroundPlayEnabled(value) }
 

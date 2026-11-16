@@ -135,6 +135,8 @@ internal fun VideoActionRow(
                         isSubscribed = collaborators.any { it.channelId in subscribedCollaboratorIds },
                         onSubscribeClick = onCollaboratorsClick,
                         onSubscribedClick = onCollaboratorsClick,
+                        showSubscribedLabel = false,
+                        showSubscribeLabel = false,
                     )
                 } else {
                     FlowSubscribeButton(
@@ -144,6 +146,8 @@ internal fun VideoActionRow(
                         onSubscribeClick = onSubscribeClick,
                         onUnsubscribeClick = onUnsubscribeClick,
                         onNotificationChange = onNotificationChange,
+                        showSubscribedLabel = false,
+                        showSubscribeLabel = false,
                     )
                 }
             }
@@ -159,11 +163,12 @@ internal fun VideoActionRow(
             }
         }
 
-        item(key = "action_share") {
-            ActionButton(
-                icon = Icons.Outlined.Share,
-                label = stringResource(R.string.share),
-                onClick = onShareClick,
+        item(key = "action_watch_later") {
+            ActionToggle(
+                icon = if (isWatchLater) Icons.Filled.WatchLater else Icons.Outlined.WatchLater,
+                label = stringResource(R.string.watch_later),
+                checked = isWatchLater,
+                onCheckedChange = onWatchLaterClick,
             )
         }
 
@@ -176,21 +181,20 @@ internal fun VideoActionRow(
             )
         }
 
+        item(key = "action_share") {
+            ActionButton(
+                icon = Icons.Outlined.Share,
+                label = stringResource(R.string.share),
+                onClick = onShareClick,
+            )
+        }
+
         item(key = "action_save") {
             ActionToggle(
                 icon = if (isSaved) Icons.Filled.Bookmark else Icons.Outlined.BookmarkBorder,
                 label = if (isSaved) stringResource(R.string.saved) else stringResource(R.string.save),
                 checked = isSaved,
                 onCheckedChange = onSaveClick,
-            )
-        }
-
-        item(key = "action_watch_later") {
-            ActionToggle(
-                icon = if (isWatchLater) Icons.Filled.WatchLater else Icons.Outlined.WatchLater,
-                label = stringResource(R.string.watch_later),
-                checked = isWatchLater,
-                onCheckedChange = onWatchLaterClick,
             )
         }
 

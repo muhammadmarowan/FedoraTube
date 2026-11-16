@@ -1,6 +1,7 @@
 package com.fedoratube.org.ui.components.shared
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.StickyNote2
+import androidx.compose.material.icons.outlined.Subscriptions
 import androidx.compose.material.icons.rounded.Folder
 import androidx.compose.material.icons.rounded.KeyboardArrowDown
 import androidx.compose.material.icons.rounded.NotificationsActive
@@ -96,6 +98,7 @@ fun FlowSubscribeButton(
     tint: MediaArtworkTint? = null,
     onSubscribedClick: (() -> Unit)? = null,
     showSubscribedLabel: Boolean = true,
+    showSubscribeLabel: Boolean = true,
 ) {
     val haptics = LocalHapticFeedback.current
     var menuExpanded by remember { mutableStateOf(false) }
@@ -207,10 +210,22 @@ fun FlowSubscribeButton(
                 shapes = ToggleButtonShapes(CircleShape, CircleShape, CircleShape),
                 colors = subscribeColors,
                 contentPadding =
-                    if (compact) ButtonDefaults.ExtraSmallContentPadding else ToggleButtonDefaults.ContentPadding,
+                    if (compact) {
+                        if (showSubscribeLabel) ButtonDefaults.ExtraSmallContentPadding else PaddingValues(horizontal = 8.dp)
+                    } else {
+                        ToggleButtonDefaults.ContentPadding
+                    },
                 modifier = fill.heightIn(min = containerHeight),
             ) {
-                Text(text = stringResource(R.string.subscribe), maxLines = 1)
+                if (showSubscribeLabel) {
+                    Text(text = stringResource(R.string.subscribe), maxLines = 1)
+                } else {
+                    Icon(
+                        imageVector = Icons.Outlined.Subscriptions,
+                        contentDescription = stringResource(R.string.subscribe),
+                        modifier = Modifier.size(leadingIconSize),
+                    )
+                }
             }
         }
 

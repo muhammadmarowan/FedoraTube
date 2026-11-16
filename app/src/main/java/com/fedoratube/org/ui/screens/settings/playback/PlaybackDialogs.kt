@@ -16,6 +16,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.fedoratube.org.R
+import com.fedoratube.org.data.local.LYRICS_ALIGN_CENTER
+import com.fedoratube.org.data.local.LYRICS_ALIGN_LEFT
+import com.fedoratube.org.data.local.LYRICS_ALIGN_RIGHT
 import com.fedoratube.org.data.local.SPEED_SWIPE_STEPS
 import com.fedoratube.org.data.local.SpeedSwipeSide
 import com.fedoratube.org.player.stream.CaptionTrackResolver
@@ -149,6 +152,22 @@ internal fun PlaybackDialogs(
 
         PlaybackDialog.LYRICS -> {
             LyricsProvidersSheet(viewModel = viewModel, onDismiss = onDismiss)
+        }
+
+        PlaybackDialog.LYRICS_ALIGNMENT -> {
+            val align by viewModel.lyricsTextAlign.collectAsStateWithLifecycle()
+            FlowChoiceDialog(
+                title = stringResource(R.string.lyrics_alignment),
+                options =
+                    listOf(
+                        FlowChoice(LYRICS_ALIGN_LEFT, stringResource(R.string.lyrics_align_left)),
+                        FlowChoice(LYRICS_ALIGN_CENTER, stringResource(R.string.lyrics_align_center)),
+                        FlowChoice(LYRICS_ALIGN_RIGHT, stringResource(R.string.lyrics_align_right)),
+                    ),
+                selected = align,
+                onSelect = viewModel::setLyricsTextAlign,
+                onDismiss = onDismiss,
+            )
         }
     }
 }
