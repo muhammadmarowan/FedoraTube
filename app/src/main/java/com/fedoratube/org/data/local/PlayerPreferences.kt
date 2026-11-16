@@ -197,6 +197,7 @@ class PlayerPreferences(
         val SHORTS_NAVIGATION_ENABLED = booleanPreferencesKey("shorts_navigation_enabled")
         val BOTTOM_NAV_HIDE_ON_SCROLL = booleanPreferencesKey("bottom_nav_hide_on_scroll")
         val FOCUS_MODE_ENABLED = booleanPreferencesKey("focus_mode_enabled")
+        val BETA_PROGRAM_ENABLED = booleanPreferencesKey("beta_program_enabled")
         val MUSIC_NAVIGATION_ENABLED = booleanPreferencesKey("music_navigation_enabled")
         val SEARCH_NAV_TAB_ENABLED = booleanPreferencesKey("search_nav_tab_enabled")
         val CATEGORIES_NAV_TAB_ENABLED = booleanPreferencesKey("categories_nav_tab_enabled")
@@ -960,6 +961,12 @@ class PlayerPreferences(
                 preferences[Keys.FOCUS_MODE_ENABLED] ?: false
             }
 
+    val betaProgramEnabled: Flow<Boolean> =
+        context.playerPreferencesDataStore.data
+            .map { preferences ->
+                preferences[Keys.BETA_PROGRAM_ENABLED] ?: false
+            }
+
     val feedPlaybackMode: Flow<FeedPlaybackMode> =
         context.playerPreferencesDataStore.data
             .map { preferences ->
@@ -1221,6 +1228,12 @@ class PlayerPreferences(
     suspend fun setFocusModeEnabled(enabled: Boolean) {
         context.playerPreferencesDataStore.edit { preferences ->
             preferences[Keys.FOCUS_MODE_ENABLED] = enabled
+        }
+    }
+
+    suspend fun setBetaProgramEnabled(enabled: Boolean) {
+        context.playerPreferencesDataStore.edit { preferences ->
+            preferences[Keys.BETA_PROGRAM_ENABLED] = enabled
         }
     }
 

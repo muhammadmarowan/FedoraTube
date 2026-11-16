@@ -8,6 +8,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -34,15 +35,19 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Keyboard
+import androidx.compose.material.icons.rounded.MusicNote
+import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.FloatingActionButtonDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
+import com.fedoratube.org.data.local.SearchHistoryItem
+import com.fedoratube.org.ui.components.layout.LocalFlowBottomInsets
+import com.fedoratube.org.ui.components.layout.floatAboveBottomChrome
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
@@ -148,6 +153,34 @@ fun SearchScreen(
     val focusPreferences = remember(context) { com.fedoratube.org.data.local.PlayerPreferences(context) }
     val isFocusModeEnabled by focusPreferences.focusModeEnabled.collectAsState(initial = false)
 
+    val combinedHistory =
+        remember(state.matchingHistory, musicMatchingHistory) {
+            val seen = mutableSetOf<String>()
+            val list = mutableListOf<SearchHistoryItem>()
+            for (item in state.matchingHistory + musicMatchingHistory) {
+                val key = item.query.trim().lowercase()
+                if (key.isNotEmpty() && seen.add(key)) {
+                    list.add(item)
+                }
+            }
+            list
+        }
+
+    val combinedSuggestions =
+        remember(state.suggestions, musicUiState.suggestions) {
+            val musicSuggestions =
+                musicUiState.suggestions.map { com.fedoratube.org.innertube.pages.search.SearchSuggestion(it) }
+            val seen = mutableSetOf<String>()
+            val list = mutableListOf<com.fedoratube.org.innertube.pages.search.SearchSuggestion>()
+            for (sug in state.suggestions + musicSuggestions) {
+                val key = sug.text.trim().lowercase()
+                if (key.isNotEmpty() && seen.add(key)) {
+                    list.add(sug)
+                }
+            }
+            if (list.isNotEmpty()) list else state.suggestions
+        }
+
     val quickActions: QuickActionsViewModel = sharedQuickActionsViewModel()
     val subscribedIds by quickActions.subscribedChannelIds.collectAsStateWithLifecycle()
     val pagingItems = viewModel.searchResults.collectAsLazyPagingItems()
@@ -233,8 +266,8 @@ fun SearchScreen(
         }
     }
 
-    // Top Bar 56.dp + Category Tabs 42.dp = 98.dp
-    val totalTopBarHeight = 98.dp
+    // Top Bar 56.dp + Category Tabs 44.dp = 100.dp
+    val totalTopBarHeight = if (showResults) 100.dp else 56.dp
     val totalTopBarHeightPx = with(density) { totalTopBarHeight.toPx() }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
@@ -268,7 +301,7 @@ fun SearchScreen(
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
             Column(modifier = Modifier.fillMaxSize()) {
-                // Collapsible Top Bar + Category Tabs
+                // Collapsible Top Bar + Category Tabs (Category tabs shown only on results)
                 Box(
                     modifier =
                         Modifier
@@ -294,57 +327,70 @@ fun SearchScreen(
                             onSearch = submit,
                             onBack = if (showResults) resetSearch else onBack,
                             placeholder =
-                                if (pagerState.currentPage == 0) {
-                                    stringResource(R.string.search_videos_channels_placeholder)
-                                } else {
+                                if (showResults && pagerState.currentPage == 1) {
                                     stringResource(R.string.search_music_placeholder)
+                                } else {
+                                    stringResource(R.string.search_videos_channels_placeholder)
                                 },
                             focusRequester = focusRequester,
                             onFieldFocused = state::startTyping,
                             actions = null,
                         )
 
-                        SearchCategoryTabs(
-                            pagerState = pagerState,
-                            onSelectPage = { page ->
-                                coroutineScope.launch {
-                                    pagerState.animateScrollToPage(page)
-                                }
-                            },
-                        )
+                        if (showResults) {
+                            SearchCategoryTabs(
+                                pagerState = pagerState,
+                                onSelectPage = { page ->
+                                    coroutineScope.launch {
+                                        pagerState.animateScrollToPage(page)
+                                    }
+                                },
+                            )
+                        }
                     }
                 }
 
-                // Swipeable Pages: Page 0 = Videos, Page 1 = Music
-                HorizontalPager(
-                    state = pagerState,
-                    modifier =
-                        Modifier
-                            .weight(1f)
-                            .fillMaxWidth(),
-                ) { page ->
-                    if (page == 0) {
-                        // VIDEOS TAB
-                        if (!showResults) {
-                            SearchSuggestionsPanel(
-                                query = state.query,
-                                history = state.matchingHistory,
-                                suggestions = state.suggestions,
-                                onSubmit = { text ->
-                                    state.textFieldState.setTextAndPlaceCursorAtEnd(text)
-                                    submit(text)
-                                },
-                                onHistorySelect = { item ->
-                                    state.textFieldState.setTextAndPlaceCursorAtEnd(item.query)
-                                    submitWith(item.query, item.filters?.availableWith(state.shortsContentEnabled) ?: uiState.filters)
-                                },
-                                onFill = state.textFieldState::setTextAndPlaceCursorAtEnd,
-                                onDeleteHistoryItem = state::deleteHistoryItem,
-                                onClearHistory = state::clearHistory,
-                                deepFlow = state.deepFlow,
-                                onDeepFlowChange = state::setDeepFlowEnabled,
-                            )
-                        } else {
+                if (!showResults) {
+                    // Unified Search Suggestions & Combined History (Single Search Bar, No Category Tabs)
+                    SearchSuggestionsPanel(
+                        query = state.query,
+                        history = combinedHistory,
+                        suggestions = combinedSuggestions,
+                        onSubmit = { text ->
+                            state.textFieldState.setTextAndPlaceCursorAtEnd(text)
+                            submit(text)
+                        },
+                        onHistorySelect = { item ->
+                            state.textFieldState.setTextAndPlaceCursorAtEnd(item.query)
+                            submitWith(item.query, item.filters?.availableWith(state.shortsContentEnabled) ?: uiState.filters)
+                        },
+                        onFill = state.textFieldState::setTextAndPlaceCursorAtEnd,
+                        onDeleteHistoryItem = { item ->
+                            state.deleteHistoryItem(item)
+                            musicSearchViewModel.deleteHistoryItem(item)
+                        },
+                        onClearHistory = {
+                            state.clearHistory()
+                            musicSearchViewModel.clearHistory()
+                        },
+                        deepFlow = state.deepFlow,
+                        onDeepFlowChange = state::setDeepFlowEnabled,
+                        modifier =
+                            Modifier
+                                .weight(1f)
+                                .fillMaxWidth(),
+                    )
+                } else {
+                    // Swipeable Search Results Pages: Page 0 = Videos, Page 1 = Music
+                    HorizontalPager(
+                        state = pagerState,
+                        modifier =
+                            Modifier
+                                .weight(1f)
+                                .fillMaxWidth(),
+                    ) { page ->
+                        if (page == 0) {
+                            // VIDEOS RESULT
                             val refreshState = pagingItems.loadState.refresh
                             BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
                                 val feedLayout = rememberFeedGridLayout(maxWidth, state.feedColumns)
@@ -393,34 +439,8 @@ fun SearchScreen(
                                     }
                                 }
                             }
-                        }
-                    } else {
-                        // MUSIC TAB
-                        if (!showResults) {
-                            SearchSuggestionsPanel(
-                                query = state.query,
-                                history = musicMatchingHistory,
-                                suggestions =
-                                    if (musicUiState.suggestions.isNotEmpty()) {
-                                        musicUiState.suggestions.map { com.fedoratube.org.innertube.pages.search.SearchSuggestion(it) }
-                                    } else {
-                                        state.suggestions
-                                    },
-                                onSubmit = { text ->
-                                    state.textFieldState.setTextAndPlaceCursorAtEnd(text)
-                                    submit(text)
-                                },
-                                onHistorySelect = { item ->
-                                    state.textFieldState.setTextAndPlaceCursorAtEnd(item.query)
-                                    submit(item.query)
-                                },
-                                onFill = state.textFieldState::setTextAndPlaceCursorAtEnd,
-                                onDeleteHistoryItem = musicSearchViewModel::deleteHistoryItem,
-                                onClearHistory = musicSearchViewModel::clearHistory,
-                                deepFlow = state.deepFlow,
-                                onDeepFlowChange = state::setDeepFlowEnabled,
-                            )
                         } else {
+                            // MUSIC RESULT
                             BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
                                 MusicSearchResultsView(
                                     uiState = musicUiState,
@@ -444,32 +464,40 @@ fun SearchScreen(
                 }
             }
 
-            // Floating Keyboard FAB above Bottom Navigation Bar
+            // Floating Keyboard FAB above Bottom Navigation Bar (Normal Mode only)
             AnimatedVisibility(
-                visible = !showResults && !state.isTyping,
+                visible = !isFocusModeEnabled && !showResults && !state.isTyping,
                 enter = fadeIn() + scaleIn(),
                 exit = fadeOut() + scaleOut(),
                 modifier =
                     Modifier
                         .align(Alignment.BottomEnd)
+                        .floatAboveBottomChrome(LocalFlowBottomInsets.current)
                         .padding(end = 20.dp, bottom = 20.dp),
             ) {
-                FloatingActionButton(
+                Surface(
                     onClick = {
                         state.startTyping()
                         focusRequester.requestFocus()
                         keyboard?.show()
                     },
-                    shape = CircleShape,
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    shape = RoundedCornerShape(16.dp),
+                    color = MaterialTheme.colorScheme.primaryContainer,
                     contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                    elevation = FloatingActionButtonDefaults.elevation(defaultElevation = 6.dp),
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.35f)),
+                    shadowElevation = 8.dp,
+                    modifier = Modifier.size(54.dp),
                 ) {
-                    Icon(
-                        imageVector = Icons.Rounded.Keyboard,
-                        contentDescription = stringResource(R.string.search),
-                        modifier = Modifier.size(26.dp),
-                    )
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Icon(
+                            imageVector = Icons.Rounded.Keyboard,
+                            contentDescription = stringResource(R.string.search),
+                            modifier = Modifier.size(26.dp),
+                        )
+                    }
                 }
             }
         }
@@ -498,7 +526,7 @@ private fun SearchCategoryTabs(
     modifier: Modifier = Modifier,
 ) {
     val density = LocalDensity.current
-    val indicatorWidth = 52.dp
+    val indicatorWidth = 68.dp
     val indicatorWidthPx = with(density) { indicatorWidth.toPx() }
     val tabCenters = remember { mutableStateMapOf<Int, Float>() }
     var rowRootX by remember { mutableFloatStateOf(0f) }
@@ -519,7 +547,7 @@ private fun SearchCategoryTabs(
         modifier =
             modifier
                 .fillMaxWidth()
-                .height(42.dp)
+                .height(44.dp)
                 .background(MaterialTheme.colorScheme.background)
                 .onGloballyPositioned { coordinates ->
                     rowRootX = coordinates.positionInRoot().x
@@ -535,19 +563,19 @@ private fun SearchCategoryTabs(
         ) {
             val tabs =
                 listOf(
-                    0 to stringResource(R.string.tv_filter_videos),
-                    1 to stringResource(R.string.nav_music),
+                    Triple(0, stringResource(R.string.tv_filter_videos), Icons.Rounded.PlayArrow),
+                    Triple(1, stringResource(R.string.nav_music), Icons.Rounded.MusicNote),
                 )
 
-            tabs.forEachIndexed { index, (page, title) ->
+            tabs.forEachIndexed { index, (page, title, icon) ->
                 if (index > 0) {
-                    Spacer(modifier = Modifier.width(48.dp))
+                    Spacer(modifier = Modifier.width(36.dp))
                 }
                 val isSelected = pagerState.currentPage == page
                 val textColor by animateColorAsState(
                     targetValue =
                         if (isSelected) {
-                            MaterialTheme.colorScheme.onSurface
+                            MaterialTheme.colorScheme.primary
                         } else {
                             MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
                         },
@@ -555,7 +583,7 @@ private fun SearchCategoryTabs(
                     label = "searchTabTextColor",
                 )
 
-                Column(
+                Row(
                     modifier =
                         Modifier
                             .clickable(
@@ -564,18 +592,25 @@ private fun SearchCategoryTabs(
                                 onClick = { onSelectPage(page) },
                             ).semantics {
                                 role = Role.Tab
-                            }.padding(vertical = 6.dp, horizontal = 12.dp)
+                            }.padding(vertical = 8.dp, horizontal = 12.dp)
                             .onGloballyPositioned { coordinates ->
                                 val centerXInRoot = coordinates.positionInRoot().x + coordinates.size.width / 2f
                                 tabCenters[page] = centerXInRoot - rowRootX
                             },
-                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(6.dp),
                 ) {
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = null,
+                        modifier = Modifier.size(17.dp),
+                        tint = textColor,
+                    )
                     Text(
                         text = title,
                         style =
                             MaterialTheme.typography.titleMedium.copy(
-                                fontSize = 15.sp,
+                                fontSize = 14.sp,
                                 fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
                             ),
                         color = textColor,
@@ -583,6 +618,13 @@ private fun SearchCategoryTabs(
                 }
             }
         }
+
+        // Bottom divider line
+        HorizontalDivider(
+            color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.2f),
+            thickness = 0.5.dp,
+            modifier = Modifier.align(Alignment.BottomCenter),
+        )
 
         // Sliding indicator line
         if (currentCenterPx > 0f) {

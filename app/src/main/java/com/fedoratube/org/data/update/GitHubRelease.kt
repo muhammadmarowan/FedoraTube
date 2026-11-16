@@ -46,8 +46,10 @@ internal fun parseGitHubReleases(json: String): List<GitHubRelease> =
 internal fun GitHubRelease.toAppReleaseIfNewer(
     currentVersion: String,
     supportedAbis: List<String>,
+    includeBeta: Boolean = false,
 ): AppRelease? {
-    if (prerelease || draft) return null
+    if (draft) return null
+    if (!includeBeta && prerelease) return null
     if (tagName.isBlank() || !AppVersions.isNewer(tagName, currentVersion)) return null
     return AppRelease(
         version = AppVersions.normalize(tagName),

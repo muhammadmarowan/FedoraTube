@@ -48,6 +48,7 @@ internal fun SettingsDetail(
     onBack: (() -> Unit)?,
     onNavigate: (SettingsTarget) -> Unit,
     onOpenRecap: () -> Unit,
+    onOpenUpdate: () -> Unit = {},
 ) {
     when (target.destination) {
         SettingsDestination.HOME -> {
@@ -191,7 +192,7 @@ internal fun SettingsDetail(
         }
 
         SettingsDestination.ABOUT -> {
-            AboutScreen(onBack = onBack, highlight = target.highlight)
+            AboutScreen(onBack = onBack, highlight = target.highlight, onOpenUpdate = onOpenUpdate)
         }
 
         SettingsDestination.DIAGNOSTICS -> {

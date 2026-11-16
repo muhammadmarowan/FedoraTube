@@ -136,7 +136,7 @@ internal fun VideoActionRow(
                         onSubscribeClick = onCollaboratorsClick,
                         onSubscribedClick = onCollaboratorsClick,
                         showSubscribedLabel = false,
-                        showSubscribeLabel = false,
+                        showSubscribeLabel = true,
                     )
                 } else {
                     FlowSubscribeButton(
@@ -147,7 +147,7 @@ internal fun VideoActionRow(
                         onUnsubscribeClick = onUnsubscribeClick,
                         onNotificationChange = onNotificationChange,
                         showSubscribedLabel = false,
-                        showSubscribeLabel = false,
+                        showSubscribeLabel = true,
                     )
                 }
             }

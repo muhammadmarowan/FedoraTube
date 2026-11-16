@@ -3,6 +3,7 @@ package com.fedoratube.org.data.update
 import android.os.Build
 import com.fedoratube.org.BuildConfig
 import com.fedoratube.org.data.local.LocalDataManager
+import com.fedoratube.org.data.local.PlayerPreferences
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -53,6 +54,7 @@ class UpdateRepository
     constructor(
         private val client: OkHttpClient,
         private val dataManager: LocalDataManager,
+        private val playerPreferences: PlayerPreferences,
     ) {
         private val mutex = Mutex()
         private val _latest = MutableStateFlow<AppRelease?>(null)
@@ -65,7 +67,7 @@ class UpdateRepository
         val allReleases: StateFlow<List<GitHubRelease>> = _allReleases.asStateFlow()
 
         /** Asks GitHub now. Throws when the request fails, so a check the user started can say so. */
-        suspend fun fetch(): AppRelease? = mutex.withLock { fetchLocked() }
+        suspend fun fetch(forceBeta: Boolean? = null): AppRelease? = mutex.withLock { fetchLocked(forceBeta) }
 
         /**
          * For the automatic checks: fetches only once the cooldown has passed, and returns a release
@@ -95,7 +97,8 @@ class UpdateRepository
 
         suspend fun skip(version: String) = dataManager.setSkippedUpdateVersion(version)
 
-        private suspend fun fetchLocked(): AppRelease? {
+        private suspend fun fetchLocked(forceBeta: Boolean? = null): AppRelease? {
+            val isBeta = forceBeta ?: runCatching { playerPreferences.betaProgramEnabled.first() }.getOrDefault(false)
             val parsed =
                 withContext(Dispatchers.IO) {
                     val allReleasesRequest =
@@ -109,8 +112,13 @@ class UpdateRepository
                     if (allResponse != null && allResponse.isSuccessful) {
                         val body = allResponse.body.string()
                         allResponse.close()
-                        // Only stable releases reach users: prereleases, drafts and nightlies are hidden.
-                        val releases = parseGitHubReleases(body).filter(GitHubRelease::isStableRelease)
+                        val allParsed = parseGitHubReleases(body)
+                        val releases =
+                            if (isBeta) {
+                                allParsed.filter { !it.draft && !it.isNightlyRelease() }
+                            } else {
+                                allParsed.filter(GitHubRelease::isStableRelease)
+                            }
                         if (releases.isNotEmpty()) {
                             _allReleases.value = releases
                             return@withContext releases.first()
@@ -122,20 +130,31 @@ class UpdateRepository
                     val request =
                         Request
                             .Builder()
-                            .url(STABLE_RELEASE_API)
+                            .url(if (isBeta) ALL_RELEASES_API else STABLE_RELEASE_API)
                             .header("Accept", GITHUB_JSON)
                             .cacheControl(CacheControl.FORCE_NETWORK)
                             .build()
                     val response = runCatching { client.newCall(request).execute() }.getOrNull()
                     if (response != null && response.isSuccessful) {
-                        response.use { parseGitHubRelease(it.body.string()) }
+                        val body = response.body.string()
+                        response.close()
+                        if (isBeta) {
+                            parseGitHubReleases(body).firstOrNull { !it.draft && !it.isNightlyRelease() }
+                                ?: parseGitHubRelease(body)
+                        } else {
+                            parseGitHubRelease(body)
+                        }
                     } else {
                         val code = response?.code ?: "Unknown"
                         response?.close()
                         throw IOException("Update check failed: HTTP $code")
                     }
                 }
-            val release = parsed.toAppReleaseIfNewer(BuildConfig.VERSION_NAME, Build.SUPPORTED_ABIS.toList())
+            val release = parsed.toAppReleaseIfNewer(
+                BuildConfig.VERSION_NAME,
+                Build.SUPPORTED_ABIS.toList(),
+                includeBeta = isBeta,
+            )
             dataManager.setLastUpdateCheck(System.currentTimeMillis())
             _latest.value = release
             return release

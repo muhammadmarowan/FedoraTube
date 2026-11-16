@@ -5,14 +5,21 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.widget.Toast
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Description
 import androidx.compose.material.icons.outlined.Email
@@ -22,16 +29,24 @@ import androidx.compose.material.icons.outlined.History
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.Public
 import androidx.compose.material.icons.outlined.Smartphone
+import androidx.compose.material.icons.outlined.SystemUpdate
+import androidx.compose.material.icons.outlined.Verified
+import androidx.compose.material.icons.rounded.Science
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.SegmentedListItem
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -43,12 +58,19 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import com.fedoratube.org.R
+import com.fedoratube.org.data.local.PlayerPreferences
+import com.fedoratube.org.data.update.UpdateEntryPoint
 import com.fedoratube.org.ui.components.settings.SettingsPage
 import com.fedoratube.org.ui.components.settings.nav
 import com.fedoratube.org.ui.screens.settings.index.AboutIndex
+import dagger.hilt.android.EntryPointAccessors
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 private enum class AboutDialog { CHANGELOG, DEVICE, NOTICES }
 
@@ -71,9 +93,13 @@ private val AvatarSize = 48.dp
 internal fun AboutScreen(
     onBack: (() -> Unit)?,
     highlight: String?,
+    onOpenUpdate: () -> Unit = {},
 ) {
     val uriHandler = LocalUriHandler.current
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    val preferences = remember(context) { PlayerPreferences(context) }
+    val isBetaEnabled by preferences.betaProgramEnabled.collectAsState(initial = false)
     var dialog by rememberSaveable { mutableStateOf<AboutDialog?>(null) }
     val open = { url: String -> runCatching { uriHandler.openUri(url) } }
 
@@ -83,6 +109,31 @@ internal fun AboutScreen(
         highlight = highlight,
     ) {
         item("about.header") { AboutHeader() }
+        group(key = "about.beta") {
+            row("about.beta_program") { shape ->
+                BetaProgramRow(
+                    isBeta = isBetaEnabled,
+                    onToggle = { enabled ->
+                        scope.launch {
+                            preferences.setBetaProgramEnabled(enabled)
+                            if (enabled) {
+                                Toast.makeText(context, "Joined Beta Program! Checking for pre-releases...", Toast.LENGTH_SHORT).show()
+                            } else {
+                                Toast.makeText(context, "Switched to Stable channel", Toast.LENGTH_SHORT).show()
+                            }
+                            launch(Dispatchers.IO) {
+                                runCatching {
+                                    EntryPointAccessors.fromApplication(context.applicationContext, UpdateEntryPoint::class.java)
+                                        .updateRepository().fetch(forceBeta = enabled)
+                                }
+                            }
+                        }
+                    },
+                    onOpenUpdate = onOpenUpdate,
+                    shape = shape,
+                )
+            }
+        }
         group(key = "about.creator") {
             row(AboutIndex.creator.key) { shape -> CreatorRow(shape = shape, onClick = { open(CREATOR_URL) }) }
         }
@@ -200,5 +251,133 @@ private fun CreatorRow(
         trailingContent = { Icon(painterResource(R.drawable.ic_github), contentDescription = null) },
     ) {
         Text(stringResource(R.string.about_creator_name), style = MaterialTheme.typography.titleMedium)
+    }
+}
+
+@Composable
+private fun BetaProgramRow(
+    isBeta: Boolean,
+    onToggle: (Boolean) -> Unit,
+    onOpenUpdate: () -> Unit,
+    shape: Shape,
+) {
+    Surface(
+        shape = shape,
+        color = MaterialTheme.colorScheme.surfaceContainerHigh,
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(14.dp),
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(14.dp),
+                    modifier = Modifier.weight(1f),
+                ) {
+                    Box(
+                        modifier =
+                            Modifier
+                                .size(44.dp)
+                                .clip(CircleShape)
+                                .background(
+                                    if (isBeta) {
+                                        MaterialTheme.colorScheme.primaryContainer
+                                    } else {
+                                        MaterialTheme.colorScheme.surfaceContainerHighest
+                                    },
+                                ),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Icon(
+                            imageVector = if (isBeta) Icons.Rounded.Science else Icons.Outlined.Verified,
+                            contentDescription = null,
+                            tint = if (isBeta) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.size(24.dp),
+                        )
+                    }
+
+                    Column(modifier = Modifier.weight(1f)) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        ) {
+                            Text(
+                                text = "Beta Program",
+                                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                                color = MaterialTheme.colorScheme.onSurface,
+                            )
+                            Surface(
+                                shape = RoundedCornerShape(6.dp),
+                                color =
+                                    if (isBeta) {
+                                        MaterialTheme.colorScheme.primaryContainer
+                                    } else {
+                                        MaterialTheme.colorScheme.secondaryContainer
+                                    },
+                            ) {
+                                Text(
+                                    text = if (isBeta) "BETA" else "STABLE",
+                                    style =
+                                        MaterialTheme.typography.labelSmall.copy(
+                                            fontWeight = FontWeight.Bold,
+                                            fontSize = 10.sp,
+                                        ),
+                                    color =
+                                        if (isBeta) {
+                                            MaterialTheme.colorScheme.onPrimaryContainer
+                                        } else {
+                                            MaterialTheme.colorScheme.onSecondaryContainer
+                                        },
+                                    modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+                                )
+                            }
+                        }
+                        Spacer(modifier = Modifier.height(2.dp))
+                        Text(
+                            text =
+                                if (isBeta) {
+                                    "Joined · Receiving GitHub pre-release updates with newest features."
+                                } else {
+                                    "Stable Channel · Receiving official public releases only."
+                                },
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.width(8.dp))
+
+                Switch(
+                    checked = isBeta,
+                    onCheckedChange = onToggle,
+                )
+            }
+
+            OutlinedButton(
+                onClick = onOpenUpdate,
+                shape = RoundedCornerShape(12.dp),
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)),
+                modifier = Modifier.fillMaxWidth().height(40.dp),
+                contentPadding = PaddingValues(horizontal = 14.dp),
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.SystemUpdate,
+                    contentDescription = null,
+                    modifier = Modifier.size(16.dp),
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = "Check for Updates",
+                    style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
+                )
+            }
+        }
     }
 }

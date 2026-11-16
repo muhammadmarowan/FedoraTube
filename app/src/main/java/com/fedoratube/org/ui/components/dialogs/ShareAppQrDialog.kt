@@ -1,9 +1,12 @@
 package com.fedoratube.org.ui.components.dialogs
 
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.widget.Toast
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,12 +23,15 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Close
+import androidx.compose.material.icons.rounded.ContentCopy
 import androidx.compose.material.icons.rounded.Download
 import androidx.compose.material.icons.rounded.Share
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -46,6 +52,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.core.content.FileProvider
 import com.fedoratube.org.BuildConfig
@@ -185,6 +192,7 @@ fun ShareAppQrDialog(
         Surface(
             shape = RoundedCornerShape(28.dp),
             color = MaterialTheme.colorScheme.surfaceContainerHigh,
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.25f)),
             tonalElevation = 8.dp,
             modifier = Modifier.fillMaxWidth().padding(16.dp),
         ) {
@@ -193,62 +201,97 @@ fun ShareAppQrDialog(
                     Modifier
                         .fillMaxWidth()
                         .verticalScroll(rememberScrollState())
-                        .padding(horizontal = 24.dp, vertical = 24.dp),
+                        .padding(horizontal = 22.dp, vertical = 20.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                // App badge
+                // Top close bar
+                Box(
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    IconButton(
+                        onClick = onDismiss,
+                        modifier =
+                            Modifier
+                                .align(Alignment.TopEnd)
+                                .size(32.dp)
+                                .clip(CircleShape)
+                                .background(MaterialTheme.colorScheme.surfaceContainerHighest),
+                    ) {
+                        Icon(
+                            imageVector = Icons.Rounded.Close,
+                            contentDescription = stringResource(R.string.close),
+                            modifier = Modifier.size(18.dp),
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                }
+
+                // App badge with glowing container
                 Box(
                     modifier =
                         Modifier
-                            .size(56.dp)
+                            .size(62.dp)
                             .clip(CircleShape)
-                            .background(MaterialTheme.colorScheme.surfaceContainerHighest),
+                            .background(MaterialTheme.colorScheme.primaryContainer),
                     contentAlignment = Alignment.Center,
                 ) {
                     Icon(
                         painter = painterResource(R.drawable.ic_notification_logo),
                         contentDescription = null,
-                        modifier = Modifier.size(32.dp),
-                        tint = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier.size(36.dp),
+                        tint = MaterialTheme.colorScheme.primary,
                     )
                 }
-                Spacer(modifier = Modifier.height(14.dp))
+
+                Spacer(modifier = Modifier.height(12.dp))
+
                 Text(
                     text = stringResource(R.string.share_app_qr_title),
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold,
+                    style =
+                        MaterialTheme.typography.titleLarge.copy(
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 20.sp,
+                        ),
                     color = MaterialTheme.colorScheme.onSurface,
                     textAlign = TextAlign.Center,
                 )
-                Spacer(modifier = Modifier.height(6.dp))
+
+                Spacer(modifier = Modifier.height(4.dp))
+
                 Text(
-                    text = stringResource(R.string.share_app_qr_subtitle),
+                    text = "Scan this QR code with another phone to download or share APK directly",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center,
                 )
-                Spacer(modifier = Modifier.height(16.dp))
+
+                Spacer(modifier = Modifier.height(14.dp))
+
                 LatestReleasePill(tag = latestTag, resolved = resolved)
+
                 Spacer(modifier = Modifier.height(18.dp))
 
-                // QR card
-                Box(
-                    modifier =
-                        Modifier
-                            .size(236.dp)
-                            .clip(RoundedCornerShape(24.dp))
-                            .background(Color.White)
-                            .padding(14.dp),
-                    contentAlignment = Alignment.Center,
+                // QR Card with clean white rounded container and subtle elevation
+                Surface(
+                    shape = RoundedCornerShape(20.dp),
+                    color = Color.White,
+                    shadowElevation = 6.dp,
+                    modifier = Modifier.size(224.dp),
                 ) {
-                    QrCodeImage(
-                        text = downloadUrl,
-                        modifier = Modifier.fillMaxSize(),
-                    )
+                    Box(
+                        modifier = Modifier.fillMaxSize().padding(14.dp),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        QrCodeImage(
+                            text = downloadUrl,
+                            modifier = Modifier.fillMaxSize(),
+                        )
+                    }
                 }
 
-                Spacer(modifier = Modifier.height(24.dp))
-                // Full-width buttons: side by side squeezed "Quick Share" onto two lines.
+                Spacer(modifier = Modifier.height(20.dp))
+
+                // Quick Share Button
                 Button(
                     onClick = {
                         if (preparing) return@Button
@@ -264,12 +307,14 @@ fun ShareAppQrDialog(
                         }
                     },
                     enabled = !preparing,
+                    shape = RoundedCornerShape(50),
                     modifier = Modifier.fillMaxWidth().height(48.dp),
                 ) {
                     if (preparing) {
                         CircularProgressIndicator(
                             modifier = Modifier.size(18.dp),
                             strokeWidth = 2.dp,
+                            color = MaterialTheme.colorScheme.onPrimary,
                         )
                     } else {
                         Icon(Icons.Rounded.Share, contentDescription = null, modifier = Modifier.size(18.dp))
@@ -280,14 +325,29 @@ fun ShareAppQrDialog(
                             stringResource(
                                 if (preparing) R.string.share_app_qr_preparing else R.string.share_app_qr_share,
                             ),
+                        style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.SemiBold),
                     )
                 }
+
                 Spacer(modifier = Modifier.height(10.dp))
+
+                // Copy Download Link Button
                 FilledTonalButton(
-                    onClick = onDismiss,
-                    modifier = Modifier.fillMaxWidth().height(48.dp),
+                    onClick = {
+                        val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                        val clip = ClipData.newPlainText("FedoraTube Download", downloadUrl)
+                        clipboard.setPrimaryClip(clip)
+                        Toast.makeText(context, "Download link copied", Toast.LENGTH_SHORT).show()
+                    },
+                    shape = RoundedCornerShape(50),
+                    modifier = Modifier.fillMaxWidth().height(44.dp),
                 ) {
-                    Text(stringResource(R.string.close))
+                    Icon(Icons.Rounded.ContentCopy, contentDescription = null, modifier = Modifier.size(16.dp))
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "Copy Download Link",
+                        style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Medium),
+                    )
                 }
             }
         }
