@@ -7,7 +7,9 @@ import android.media.AudioManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Environment
 import android.os.PowerManager
+import java.io.File
 import android.util.Log
 import android.view.KeyEvent
 import android.widget.Toast
@@ -58,7 +60,9 @@ import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
 import com.fedoratube.org.data.local.AppFontPreferences
 import com.fedoratube.org.data.local.AppUiModePreferences
+import com.fedoratube.org.data.local.BackupRepository
 import com.fedoratube.org.data.local.LocalDataManager
+import com.fedoratube.org.data.local.PlayerPreferences
 import com.fedoratube.org.data.playlist.PlaylistImport
 import com.fedoratube.org.data.playlist.PlaylistTransfer
 import com.fedoratube.org.data.recommendation.FlowNeuroEngine
@@ -214,9 +218,43 @@ class MainActivity : ComponentActivity() {
         // synchronously and must still see it after a recreation they run inside of (#817).
         lifecyclePlaybackPreferences.observeIn(lifecycleScope)
 
-        // Initialize Neuro Engine (Recommendation System)
+        // Initialize Neuro Engine (Recommendation System), sync build beta status, and handle auto-restore
         lifecycleScope.launch(Dispatchers.IO) {
             FlowNeuroEngine.initialize(applicationContext)
+            val prefs = PlayerPreferences(applicationContext)
+            prefs.syncBuildVersionAndBetaStatus()
+
+            try {
+                val alreadyRestored = prefs.autoBackupRestored.first()
+                if (!alreadyRestored) {
+                    val downloadsBackup = File(
+                        Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
+                        "FedoraTube/FedoraTube_MasterBackup.zip"
+                    )
+                    val fallbackBackup = File(
+                        applicationContext.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS),
+                        "FedoraTube/FedoraTube_MasterBackup.zip"
+                    )
+                    val backupFile = when {
+                        downloadsBackup.exists() && downloadsBackup.length() > 0L -> downloadsBackup
+                        fallbackBackup.exists() && fallbackBackup.length() > 0L -> fallbackBackup
+                        else -> null
+                    }
+
+                    if (backupFile != null) {
+                        val repo = BackupRepository(applicationContext)
+                        val result = repo.importMasterBackupFromFile(backupFile)
+                        if (result.isSuccess) {
+                            prefs.setAutoBackupRestored(true)
+                            kotlinx.coroutines.withContext(Dispatchers.Main) {
+                                Toast.makeText(applicationContext, "Restored FedoraTube backup automatically", Toast.LENGTH_LONG).show()
+                            }
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                Log.w("MainActivity", "Auto-restore of master backup failed", e)
+            }
         }
 
         val dataManager = LocalDataManager(applicationContext)

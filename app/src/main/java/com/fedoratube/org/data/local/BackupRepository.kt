@@ -42,6 +42,9 @@ import kotlinx.serialization.SerializationException
 import java.io.BufferedInputStream
 import java.io.BufferedReader
 import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
 import java.io.InputStreamReader
 import java.io.OutputStream
 import java.io.OutputStreamWriter
@@ -1742,6 +1745,70 @@ class BackupRepository(
                 context.contentResolver.openOutputStream(uri, "wt")?.use { out ->
                     writeMasterZip(out, appDataJson, brainBytes, musicBrain, recap, favouriteArtists)
                 } ?: return@withContext Result.failure(Exception("Could not open output stream"))
+
+                Result.success(Unit)
+            } catch (e: Exception) {
+                Result.failure(e)
+            }
+        }
+
+    suspend fun exportMasterBackupToFile(
+        targetFile: File,
+        musicBrain: ByteArray? = null,
+        recap: ByteArray? = null,
+        favouriteArtists: ByteArray? = null,
+    ): Result<Unit> =
+        withContext(Dispatchers.IO) {
+            try {
+                val backupData = buildBackupData()
+                val appDataJson = gson.toJson(backupData)
+                val brainBytes = exportBrainBytes()
+
+                targetFile.parentFile?.mkdirs()
+                FileOutputStream(targetFile).use { out ->
+                    writeMasterZip(out, appDataJson, brainBytes, musicBrain, recap, favouriteArtists)
+                }
+                Result.success(Unit)
+            } catch (e: Exception) {
+                Result.failure(e)
+            }
+        }
+
+    suspend fun importMasterBackupFromFile(sourceFile: File): Result<Unit> =
+        withContext(Dispatchers.IO) {
+            try {
+                if (!sourceFile.exists()) return@withContext Result.failure(Exception("Backup file not found"))
+                var appDataJson: String? = null
+                var brainBytes: ByteArray? = null
+
+                FileInputStream(sourceFile).use { raw ->
+                    ZipInputStream(raw).use { zip ->
+                        var entry = zip.nextEntry
+                        while (entry != null) {
+                            when (entry.name) {
+                                MASTER_APP_DATA_ENTRY -> appDataJson = zip.readBytes().toString(Charsets.UTF_8)
+                                MASTER_ENGINE_ENTRY -> brainBytes = zip.readBytes()
+                            }
+                            zip.closeEntry()
+                            entry = zip.nextEntry
+                        }
+                    }
+                }
+
+                if (appDataJson == null && brainBytes == null) {
+                    return@withContext Result.failure(Exception("Invalid master backup file"))
+                }
+
+                appDataJson?.let { json ->
+                    val backupData =
+                        parseBackupJson(json)
+                            ?: return@withContext Result.failure(Exception("Invalid app data in backup"))
+                    importBackupData(backupData, restoreContentPreferences = false)
+                }
+
+                brainBytes?.let { bytes ->
+                    FlowNeuroEngine.importBrainFromStream(context, bytes.inputStream())
+                }
 
                 Result.success(Unit)
             } catch (e: Exception) {

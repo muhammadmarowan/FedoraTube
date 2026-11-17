@@ -2,6 +2,8 @@
 
 package com.fedoratube.org.ui.screens.update
 
+import android.app.DownloadManager
+import android.content.Intent
 import android.text.format.Formatter
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
@@ -33,6 +35,8 @@ import androidx.compose.material.icons.outlined.CalendarToday
 import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.outlined.Download
 import androidx.compose.material.icons.outlined.ErrorOutline
+import androidx.compose.material.icons.outlined.Folder
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material.icons.outlined.NotificationsOff
 import androidx.compose.material.icons.outlined.Refresh
@@ -40,6 +44,7 @@ import androidx.compose.material.icons.outlined.Shield
 import androidx.compose.material.icons.outlined.SyncAlt
 import androidx.compose.material.icons.outlined.SystemUpdate
 import androidx.compose.material.icons.outlined.Verified
+import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
@@ -528,6 +533,56 @@ private fun ReleaseHistoryCard(
 
 @Composable
 private fun StageNotice(stage: UpdateStage) {
+    if (stage is UpdateStage.Failed && stage.reason == UpdateFailure.INSTALL) {
+        val context = LocalContext.current
+        Surface(
+            shape = RoundedCornerShape(16.dp),
+            color = MaterialTheme.colorScheme.surfaceContainerHigh,
+            modifier = Modifier.fillMaxWidth().padding(bottom = HeaderSpacing),
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp),
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                ) {
+                    Icon(
+                        Icons.Outlined.Info,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                    )
+                    Text(
+                        text = "Clean Install Required for Downgrade",
+                        style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
+                        color = MaterialTheme.colorScheme.onSurface,
+                    )
+                }
+                Text(
+                    text = "Android prevents directly downgrading an app over an existing higher version.\n\nYour app data has been automatically exported as a Master Backup to Downloads/FedoraTube/, and the APK has been saved there.\n\nTo downgrade:\n1. Uninstall this Beta app\n2. Open your Downloads/FedoraTube folder\n3. Install the APK\n4. Open FedoraTube — your Master Backup will be automatically restored!",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+                Button(
+                    onClick = {
+                        try {
+                            context.startActivity(Intent(DownloadManager.ACTION_VIEW_DOWNLOADS).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+                        } catch (e: Exception) {
+                            Toast.makeText(context, "Check Downloads/FedoraTube folder in your files app", Toast.LENGTH_SHORT).show()
+                        }
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    Icon(Icons.Outlined.Folder, contentDescription = null, modifier = Modifier.size(18.dp))
+                    Spacer(Modifier.width(8.dp))
+                    Text("Open Downloads")
+                }
+            }
+        }
+        return
+    }
+
     val (icon, text) =
         when (stage) {
             UpdateStage.NeedsPermission -> Icons.Outlined.Shield to R.string.update_permission_notice

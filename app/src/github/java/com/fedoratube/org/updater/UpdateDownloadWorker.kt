@@ -4,7 +4,10 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ServiceInfo
+import android.media.MediaScannerConnection
 import android.os.Build
+import android.os.Environment
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.work.CoroutineWorker
@@ -15,6 +18,7 @@ import androidx.work.workDataOf
 import dagger.hilt.android.EntryPointAccessors
 import com.fedoratube.org.MainActivity
 import com.fedoratube.org.R
+import com.fedoratube.org.data.local.BackupRepository
 import com.fedoratube.org.data.update.UpdateEntryPoint
 import com.fedoratube.org.data.update.UpdateFailure
 import com.fedoratube.org.notification.NotificationHelper
@@ -62,7 +66,33 @@ class UpdateDownloadWorker(
                     return@withContext fail(UpdateFailure.CHECKSUM, part)
                 }
                 if (!isFlowPackage(part)) return@withContext fail(UpdateFailure.PACKAGE, part)
-                if (!part.renameTo(UpdateFiles.apkFile(applicationContext, version))) return@withContext fail(UpdateFailure.STORAGE, part)
+                val apkFile = UpdateFiles.apkFile(applicationContext, version)
+                if (!part.renameTo(apkFile)) return@withContext fail(UpdateFailure.STORAGE, part)
+
+                // Copy to public Downloads and create master backup for seamless downgrade/restore
+                try {
+                    val publicDir = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "FedoraTube")
+                    val fallbackDir = File(applicationContext.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), "FedoraTube")
+                    val targetDir = if (publicDir.mkdirs() || publicDir.isDirectory) publicDir else fallbackDir
+                    targetDir.mkdirs()
+
+                    val targetApk = File(targetDir, "FedoraTube-v$version.apk")
+                    apkFile.copyTo(targetApk, overwrite = true)
+
+                    val backupFile = File(targetDir, "FedoraTube_MasterBackup.zip")
+                    val backupRepo = BackupRepository(applicationContext)
+                    backupRepo.exportMasterBackupToFile(backupFile)
+
+                    MediaScannerConnection.scanFile(
+                        applicationContext,
+                        arrayOf(targetApk.absolutePath, backupFile.absolutePath),
+                        null,
+                        null,
+                    )
+                } catch (e: Exception) {
+                    Log.w("UpdateDownloadWorker", "Failed to stage APK or master backup to Downloads", e)
+                }
+
                 notifyReady()
                 Result.success()
             } catch (e: IOException) {

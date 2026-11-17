@@ -62,6 +62,7 @@ android {
         // Last.fm keys come from the CI secrets; builds without them ask the viewer for their own key.
         buildConfigField("String", "LASTFM_API_KEY", "\"${secretValue("lastfmApiKey", "lastfm.apiKey", "LASTFM_API_KEY")}\"")
         buildConfigField("String", "LASTFM_API_SECRET", "\"${secretValue("lastfmApiSecret", "lastfm.apiSecret", "LASTFM_API_SECRET")}\"")
+        buildConfigField("Boolean", "IS_PRE_RELEASE", "true")
 
         testInstrumentationRunner = "com.fedoratube.org.HiltTestRunner"
         vectorDrawables {

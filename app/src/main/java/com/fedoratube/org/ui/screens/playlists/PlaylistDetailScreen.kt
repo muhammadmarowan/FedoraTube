@@ -240,6 +240,12 @@ fun PlaylistDetailScreen(
                                 }
                             },
                             onRemove = { viewModel.removeVideo(it.id) },
+                            onVideoLongClick = { video ->
+                                if (!selectionMode && canModify) {
+                                    selectionMode = true
+                                    selectedIds = setOf(video.id)
+                                }
+                            },
                             header = header,
                         )
                     }

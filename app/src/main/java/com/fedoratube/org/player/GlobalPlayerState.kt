@@ -2,6 +2,7 @@ package com.fedoratube.org.player
 
 import android.content.Context
 import android.util.Log
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.media3.common.util.UnstableApi
 import com.fedoratube.org.data.model.Video
 import kotlinx.coroutines.CancellationException
@@ -51,6 +52,13 @@ object GlobalPlayerState {
 
     fun setShortsCommentsOpen(open: Boolean) {
         _isShortsCommentsOpen.value = open
+    }
+
+    private val _ambientFrame = MutableStateFlow<ImageBitmap?>(null)
+    val ambientFrame: StateFlow<ImageBitmap?> = _ambientFrame.asStateFlow()
+
+    fun setAmbientFrame(frame: ImageBitmap?) {
+        _ambientFrame.value = frame
     }
 
     // Delegate to EnhancedPlayerManager for player state. This is the single reactive
@@ -186,6 +194,7 @@ object GlobalPlayerState {
         EnhancedPlayerManager.getInstance().stop()
         _isExplicitBackgroundPlaybackActive.value = false
         _currentVideo.value = null
+        _ambientFrame.value = null
         _isMiniPlayerVisible.value = false
         _miniPlayerExpansionState.value = MiniPlayerExpansionState.HIDDEN
     }
@@ -197,6 +206,7 @@ object GlobalPlayerState {
         EnhancedPlayerManager.getInstance().release()
         _isExplicitBackgroundPlaybackActive.value = false
         _currentVideo.value = null
+        _ambientFrame.value = null
         _isMiniPlayerVisible.value = false
         _miniPlayerExpansionState.value = MiniPlayerExpansionState.HIDDEN
     }

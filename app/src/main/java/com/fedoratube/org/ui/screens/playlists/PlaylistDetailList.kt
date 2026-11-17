@@ -63,6 +63,7 @@ internal fun PlaylistDetailList(
     reorderState: ReorderableLazyListState,
     onVideoClick: (index: Int, video: Video) -> Unit,
     onRemove: (Video) -> Unit,
+    onVideoLongClick: ((Video) -> Unit)? = null,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(bottom = flowBottomContentPadding()),
     header: (@Composable () -> Unit)? = null,
@@ -126,6 +127,7 @@ internal fun PlaylistDetailList(
                         onRemove = { onRemove(video) },
                         onClick = { onVideoClick(index, video) },
                         thumbnailWidth = thumbnailWidth,
+                        onLongClick = if (onVideoLongClick != null) ({ onVideoLongClick(video) }) else null,
                     )
                 }
 

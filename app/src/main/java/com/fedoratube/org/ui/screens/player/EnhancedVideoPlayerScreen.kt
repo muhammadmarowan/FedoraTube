@@ -1,5 +1,6 @@
 package com.fedoratube.org.ui.screens.player
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -18,7 +19,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -97,6 +100,7 @@ internal fun EnhancedVideoPlayerScreen(
     val isInPipMode by GlobalPlayerState.isInPipMode.collectAsStateWithLifecycle()
     val playerState by EnhancedPlayerManager.getInstance().playerState.collectAsStateWithLifecycle()
     val ambientActive = prefs.ambientModeEnabled && !isFullscreenShown && !isInPipMode
+    val liveAmbientFrame by GlobalPlayerState.ambientFrame.collectAsStateWithLifecycle()
     val ambientPalette = rememberMediaPalette(video.thumbnailUrl, animated = true)
 
     Box(
@@ -107,22 +111,53 @@ internal fun EnhancedVideoPlayerScreen(
                 .background(MaterialTheme.colorScheme.background),
     ) {
         if (ambientActive) {
-            Box(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .height(750.dp)
-                        .background(
-                            Brush.verticalGradient(
-                                0.0f to ambientPalette.accent.copy(alpha = 0.45f),
-                                0.20f to ambientPalette.accent.copy(alpha = 0.32f),
-                                0.40f to ambientPalette.base.copy(alpha = 0.22f),
-                                0.65f to ambientPalette.base.copy(alpha = 0.12f),
-                                0.85f to ambientPalette.base.copy(alpha = 0.05f),
-                                1.0f to Color.Transparent,
+            val liveFrame = liveAmbientFrame
+            if (liveFrame != null) {
+                Box(
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .fillMaxHeight(0.70f),
+                ) {
+                    Image(
+                        bitmap = liveFrame,
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        filterQuality = FilterQuality.Low,
+                        modifier = Modifier.matchParentSize().graphicsLayer { this.alpha = 0.50f },
+                    )
+                    Box(
+                        modifier =
+                            Modifier
+                                .matchParentSize()
+                                .background(
+                                    Brush.verticalGradient(
+                                        0.0f to Color.Transparent,
+                                        0.25f to MaterialTheme.colorScheme.background.copy(alpha = 0.35f),
+                                        0.60f to MaterialTheme.colorScheme.background.copy(alpha = 0.75f),
+                                        0.85f to MaterialTheme.colorScheme.background.copy(alpha = 0.95f),
+                                        1.0f to MaterialTheme.colorScheme.background,
+                                    ),
+                                ),
+                    )
+                }
+            } else {
+                Box(
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .height(600.dp)
+                            .background(
+                                Brush.verticalGradient(
+                                    0.0f to ambientPalette.accent.copy(alpha = 0.35f),
+                                    0.25f to ambientPalette.accent.copy(alpha = 0.22f),
+                                    0.55f to ambientPalette.base.copy(alpha = 0.12f),
+                                    0.80f to ambientPalette.base.copy(alpha = 0.05f),
+                                    1.0f to Color.Transparent,
+                                ),
                             ),
-                        ),
-            )
+                )
+            }
         }
         val layoutMode =
             playerLayoutModeFor(

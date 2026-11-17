@@ -198,6 +198,8 @@ class PlayerPreferences(
         val BOTTOM_NAV_HIDE_ON_SCROLL = booleanPreferencesKey("bottom_nav_hide_on_scroll")
         val FOCUS_MODE_ENABLED = booleanPreferencesKey("focus_mode_enabled")
         val BETA_PROGRAM_ENABLED = booleanPreferencesKey("beta_program_enabled")
+        val LAST_VERSION_CODE = intPreferencesKey("last_version_code")
+        val AUTO_BACKUP_RESTORED = booleanPreferencesKey("auto_backup_restored")
         val MUSIC_NAVIGATION_ENABLED = booleanPreferencesKey("music_navigation_enabled")
         val SEARCH_NAV_TAB_ENABLED = booleanPreferencesKey("search_nav_tab_enabled")
         val CATEGORIES_NAV_TAB_ENABLED = booleanPreferencesKey("categories_nav_tab_enabled")
@@ -964,8 +966,29 @@ class PlayerPreferences(
     val betaProgramEnabled: Flow<Boolean> =
         context.playerPreferencesDataStore.data
             .map { preferences ->
-                preferences[Keys.BETA_PROGRAM_ENABLED] ?: true
+                preferences[Keys.BETA_PROGRAM_ENABLED] ?: com.fedoratube.org.BuildConfig.IS_PRE_RELEASE
             }
+
+    val autoBackupRestored: Flow<Boolean> =
+        context.playerPreferencesDataStore.data.map { it[Keys.AUTO_BACKUP_RESTORED] ?: false }
+
+    suspend fun setAutoBackupRestored(restored: Boolean) {
+        context.playerPreferencesDataStore.edit { it[Keys.AUTO_BACKUP_RESTORED] = restored }
+    }
+
+    suspend fun syncBuildVersionAndBetaStatus() {
+        context.playerPreferencesDataStore.edit { preferences ->
+            val lastVersion = preferences[Keys.LAST_VERSION_CODE] ?: -1
+            if (lastVersion != com.fedoratube.org.BuildConfig.VERSION_CODE) {
+                if (com.fedoratube.org.BuildConfig.IS_PRE_RELEASE) {
+                    preferences[Keys.BETA_PROGRAM_ENABLED] = true
+                }
+                preferences[Keys.LAST_VERSION_CODE] = com.fedoratube.org.BuildConfig.VERSION_CODE
+            } else if (preferences[Keys.BETA_PROGRAM_ENABLED] == null && com.fedoratube.org.BuildConfig.IS_PRE_RELEASE) {
+                preferences[Keys.BETA_PROGRAM_ENABLED] = true
+            }
+        }
+    }
 
     val feedPlaybackMode: Flow<FeedPlaybackMode> =
         context.playerPreferencesDataStore.data

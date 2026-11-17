@@ -108,7 +108,9 @@ fun PlayerCommentsPanel(
                 modifier = Modifier.padding(start = 16.dp, bottom = 6.dp),
             )
         }
-        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.2f))
+        if (showCloseButton) {
+            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.2f))
+        }
         FlowCommentsList(
             comments = comments,
             isLoading = isLoading,

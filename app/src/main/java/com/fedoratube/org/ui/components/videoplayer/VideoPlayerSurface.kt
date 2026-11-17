@@ -37,6 +37,7 @@ import androidx.media3.common.VideoSize
 import androidx.media3.ui.PlayerView
 import com.fedoratube.org.data.model.Video
 import com.fedoratube.org.player.EnhancedPlayerManager
+import com.fedoratube.org.player.GlobalPlayerState
 import com.fedoratube.org.player.PictureInPictureHelper
 import com.fedoratube.org.player.toDisplayAspectRatioOrNull
 import com.fedoratube.org.ui.components.shared.clipToCornerRadius
@@ -181,6 +182,15 @@ fun VideoPlayerSurface(
     val currentSurfaceRestoreTrigger = surfaceRestoreTrigger
 
     val ambientFrame = rememberAmbientFrame(playerView, ambientActive)
+
+    LaunchedEffect(ambientFrame.frame) {
+        GlobalPlayerState.setAmbientFrame(ambientFrame.frame)
+    }
+    DisposableEffect(Unit) {
+        onDispose {
+            GlobalPlayerState.setAmbientFrame(null)
+        }
+    }
 
     Box(modifier = modifier.fillMaxSize()) {
         if (ambientActive) {

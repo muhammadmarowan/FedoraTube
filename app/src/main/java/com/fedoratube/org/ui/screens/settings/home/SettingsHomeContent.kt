@@ -18,6 +18,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.CenterFocusStrong
 import androidx.compose.material.icons.outlined.CleaningServices
 import androidx.compose.material.icons.outlined.Email
+import androidx.compose.material.icons.outlined.Science
 import androidx.compose.material.icons.outlined.Verified
 import androidx.compose.material.icons.rounded.Science
 import androidx.compose.material3.Icon
@@ -144,9 +145,10 @@ internal fun SettingsListScope.homeContent(
             val context = LocalContext.current
             val preferences = remember(context) { PlayerPreferences(context) }
             val isBetaEnabled by preferences.betaProgramEnabled.collectAsState(initial = true)
-            BetaProgramSettingsRow(
-                isBeta = isBetaEnabled,
-                onToggle = { enabled ->
+            FlowSwitchRow(
+                title = "Beta Program",
+                checked = isBetaEnabled,
+                onCheckedChange = { enabled ->
                     if (enabled) {
                         Toast.makeText(context, "Joined Beta Program! Checking for pre-releases...", Toast.LENGTH_SHORT).show()
                     } else {
@@ -154,6 +156,13 @@ internal fun SettingsListScope.homeContent(
                     }
                     actions.onToggleBetaProgram(enabled)
                 },
+                supportingText =
+                    if (isBetaEnabled) {
+                        "Receiving pre-release builds and experimental features."
+                    } else {
+                        "Receiving official stable releases only."
+                    },
+                leadingIcon = Icons.Outlined.Science,
                 shape = shape,
             )
         }
@@ -176,112 +185,6 @@ internal fun SettingsListScope.homeContent(
                 leadingIcon = Icons.Outlined.Email,
                 showChevron = false,
                 shape = shape,
-            )
-        }
-    }
-}
-
-@Composable
-private fun BetaProgramSettingsRow(
-    isBeta: Boolean,
-    onToggle: (Boolean) -> Unit,
-    shape: Shape,
-) {
-    Surface(
-        shape = shape,
-        color = MaterialTheme.colorScheme.surfaceContainerHigh,
-        modifier = Modifier.fillMaxWidth(),
-    ) {
-        Row(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 12.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween,
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(14.dp),
-                modifier = Modifier.weight(1f),
-            ) {
-                Box(
-                    modifier =
-                        Modifier
-                            .size(40.dp)
-                            .clip(CircleShape)
-                            .background(
-                                if (isBeta) {
-                                    MaterialTheme.colorScheme.primaryContainer
-                                } else {
-                                    MaterialTheme.colorScheme.surfaceContainerHighest
-                                },
-                            ),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Icon(
-                        imageVector = if (isBeta) Icons.Rounded.Science else Icons.Outlined.Verified,
-                        contentDescription = null,
-                        tint = if (isBeta) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.size(22.dp),
-                    )
-                }
-
-                Column(modifier = Modifier.weight(1f)) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    ) {
-                        Text(
-                            text = "Beta Program",
-                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
-                            color = MaterialTheme.colorScheme.onSurface,
-                        )
-                        Surface(
-                            shape = RoundedCornerShape(6.dp),
-                            color =
-                                if (isBeta) {
-                                    MaterialTheme.colorScheme.primaryContainer
-                                } else {
-                                    MaterialTheme.colorScheme.secondaryContainer
-                                },
-                        ) {
-                            Text(
-                                text = if (isBeta) "BETA" else "STABLE",
-                                style =
-                                    MaterialTheme.typography.labelSmall.copy(
-                                        fontWeight = FontWeight.Bold,
-                                        fontSize = 10.sp,
-                                    ),
-                                color =
-                                    if (isBeta) {
-                                        MaterialTheme.colorScheme.onPrimaryContainer
-                                    } else {
-                                        MaterialTheme.colorScheme.onSecondaryContainer
-                                    },
-                                modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
-                            )
-                        }
-                    }
-                    Spacer(modifier = Modifier.height(2.dp))
-                    Text(
-                        text =
-                            if (isBeta) {
-                                "Receiving GitHub pre-release updates with newest features."
-                            } else {
-                                "Receiving official stable releases only."
-                            },
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.width(8.dp))
-
-            Switch(
-                checked = isBeta,
-                onCheckedChange = onToggle,
             )
         }
     }
