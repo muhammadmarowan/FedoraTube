@@ -63,7 +63,6 @@ internal fun PlaylistDetailList(
     reorderState: ReorderableLazyListState,
     onVideoClick: (index: Int, video: Video) -> Unit,
     onRemove: (Video) -> Unit,
-    onVideoLongClick: ((Video) -> Unit)? = null,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(bottom = flowBottomContentPadding()),
     header: (@Composable () -> Unit)? = null,
@@ -109,37 +108,22 @@ internal fun PlaylistDetailList(
                 }
             }
             itemsIndexed(items = videos, key = { _, video -> video.id }, contentType = { _, _ -> "playlist-video" }) { index, video ->
-                val rowModifier = if (mode.canReorder || mode.selectionMode) Modifier else animateMediaListItem()
-                val isWatchLaterSwipeable = mode.isWatchLater && !mode.selectionMode && !mode.canReorder
-                val rowContent = @Composable {
-                    PlaylistVideoRow(
-                        modifier = if (isWatchLaterSwipeable) Modifier else rowModifier,
-                        video = video,
-                        isSelected = video.id in mode.selectedIds,
-                        inSelectionMode = mode.selectionMode,
-                        canModify = mode.canModify,
-                        reorderModifier = if (mode.canReorder) reorderState.itemModifier(index) else Modifier,
-                        dragHandleModifier = if (mode.canReorder && !mode.selectionMode) reorderState.handleModifier(index) else Modifier,
-                        showDragHandle = mode.canReorder,
-                        showAddedDate = mode.showAddedDate,
-                        isWatchLater = mode.isWatchLater,
-                        isLikes = mode.isLikes,
-                        onRemove = { onRemove(video) },
-                        onClick = { onVideoClick(index, video) },
-                        thumbnailWidth = thumbnailWidth,
-                        onLongClick = if (onVideoLongClick != null) ({ onVideoLongClick(video) }) else null,
-                    )
-                }
-
-                if (isWatchLaterSwipeable) {
-                    WatchLaterSwipeDismissBox(
-                        onRemove = { onRemove(video) },
-                        modifier = rowModifier,
-                        content = rowContent,
-                    )
-                } else {
-                    rowContent()
-                }
+                PlaylistVideoRow(
+                    modifier = if (mode.canReorder || mode.selectionMode) Modifier else animateMediaListItem(),
+                    video = video,
+                    isSelected = video.id in mode.selectedIds,
+                    inSelectionMode = mode.selectionMode,
+                    canModify = mode.canModify,
+                    reorderModifier = if (mode.canReorder) reorderState.itemModifier(index) else Modifier,
+                    dragHandleModifier = if (mode.canReorder && !mode.selectionMode) reorderState.handleModifier(index) else Modifier,
+                    showDragHandle = mode.canReorder,
+                    showAddedDate = mode.showAddedDate,
+                    isWatchLater = mode.isWatchLater,
+                    isLikes = mode.isLikes,
+                    onRemove = { onRemove(video) },
+                    onClick = { onVideoClick(index, video) },
+                    thumbnailWidth = thumbnailWidth,
+                )
             }
             if (isLoadingMore) {
                 item(key = "playlist-loading-more", contentType = "loading") {
@@ -148,47 +132,4 @@ internal fun PlaylistDetailList(
             }
         }
     }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun WatchLaterSwipeDismissBox(
-    onRemove: () -> Unit,
-    modifier: Modifier = Modifier,
-    content: @Composable () -> Unit,
-) {
-    val dismissState = rememberSwipeToDismissBoxState(
-        confirmValueChange = { value ->
-            if (value == SwipeToDismissBoxValue.EndToStart) {
-                onRemove()
-                true
-            } else {
-                false
-            }
-        }
-    )
-
-    SwipeToDismissBox(
-        state = dismissState,
-        modifier = modifier,
-        enableDismissFromStartToEnd = false,
-        enableDismissFromEndToStart = true,
-        backgroundContent = {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.errorContainer)
-                    .padding(end = 24.dp),
-                contentAlignment = Alignment.CenterEnd,
-            ) {
-                Icon(
-                    imageVector = Icons.Outlined.Delete,
-                    contentDescription = stringResource(R.string.remove),
-                    tint = MaterialTheme.colorScheme.onErrorContainer,
-                    modifier = Modifier.size(24.dp),
-                )
-            }
-        },
-        content = { content() },
-    )
 }

@@ -68,7 +68,7 @@ class UpdateRepository
 
         /** Asks GitHub now. Throws when the request fails, so a check the user started can say so. */
         suspend fun fetch(forceBeta: Boolean? = null, forceChannelSwitch: Boolean = false): AppRelease? =
-            mutex.withLock { fetchLocked(forceBeta, forceChannelSwitch) }
+            mutex.withLock { fetchLocked() }
 
         /**
          * For the automatic checks: fetches only once the cooldown has passed, and returns a release
@@ -98,8 +98,7 @@ class UpdateRepository
 
         suspend fun skip(version: String) = dataManager.setSkippedUpdateVersion(version)
 
-        private suspend fun fetchLocked(forceBeta: Boolean? = null, forceChannelSwitch: Boolean = false): AppRelease? {
-            val isBeta = forceBeta ?: runCatching { playerPreferences.betaProgramEnabled.first() }.getOrDefault(true)
+        private suspend fun fetchLocked(): AppRelease? {
             val parsed =
                 withContext(Dispatchers.IO) {
                     val allReleasesRequest =
@@ -114,12 +113,8 @@ class UpdateRepository
                         val body = allResponse.body.string()
                         allResponse.close()
                         val allParsed = parseGitHubReleases(body)
-                        val releases =
-                            if (isBeta) {
-                                allParsed.filter { !it.draft && !it.isNightlyRelease() }
-                            } else {
-                                allParsed.filter(GitHubRelease::isStableRelease)
-                            }
+                        // Filter exclusively official stable releases; pre-releases are never served to users as updates
+                        val releases = allParsed.filter(GitHubRelease::isStableRelease)
                         if (releases.isNotEmpty()) {
                             _allReleases.value = releases
                             return@withContext releases.first()
@@ -131,7 +126,7 @@ class UpdateRepository
                     val request =
                         Request
                             .Builder()
-                            .url(if (isBeta) ALL_RELEASES_API else STABLE_RELEASE_API)
+                            .url(STABLE_RELEASE_API)
                             .header("Accept", GITHUB_JSON)
                             .cacheControl(CacheControl.FORCE_NETWORK)
                             .build()
@@ -139,12 +134,7 @@ class UpdateRepository
                     if (response != null && response.isSuccessful) {
                         val body = response.body.string()
                         response.close()
-                        if (isBeta) {
-                            parseGitHubReleases(body).firstOrNull { !it.draft && !it.isNightlyRelease() }
-                                ?: parseGitHubRelease(body)
-                        } else {
-                            parseGitHubRelease(body)
-                        }
+                        parseGitHubRelease(body)
                     } else {
                         val code = response?.code ?: "Unknown"
                         response?.close()
@@ -154,8 +144,8 @@ class UpdateRepository
             val release = parsed.toAppReleaseIfNewer(
                 BuildConfig.VERSION_NAME,
                 Build.SUPPORTED_ABIS.toList(),
-                includeBeta = isBeta,
-                forceChannelSwitch = forceChannelSwitch,
+                includeBeta = false,
+                forceChannelSwitch = false,
             )
             dataManager.setLastUpdateCheck(System.currentTimeMillis())
             _latest.value = release

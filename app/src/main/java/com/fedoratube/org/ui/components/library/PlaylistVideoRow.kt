@@ -39,7 +39,6 @@ internal fun PlaylistVideoRow(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     thumbnailWidth: Dp = MediaThumbnailDefaults.VideoWidth,
-    onLongClick: (() -> Unit)? = null,
 ) {
     var showQuickActions by remember { mutableStateOf(false) }
 
@@ -56,14 +55,7 @@ internal fun PlaylistVideoRow(
             },
         selected = isSelected,
         onClick = onClick,
-        onLongClick =
-            if (inSelectionMode) {
-                null
-            } else if (onLongClick != null) {
-                onLongClick
-            } else {
-                ({ showQuickActions = true })
-            },
+        onLongClick = if (inSelectionMode) null else ({ showQuickActions = true }),
         leading =
             when {
                 inSelectionMode -> {

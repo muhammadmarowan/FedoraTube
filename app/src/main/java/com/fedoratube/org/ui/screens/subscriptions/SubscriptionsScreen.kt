@@ -18,6 +18,7 @@ import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import com.fedoratube.org.ui.components.layout.LocalHideBottomBar
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -94,6 +95,17 @@ fun SubscriptionsScreen(
 
     var isManagingSubs by rememberSaveable { mutableStateOf(false) }
     var manageShowsMusic by rememberSaveable { mutableStateOf(false) }
+
+    val hideBottomBar = LocalHideBottomBar.current
+    LaunchedEffect(isManagingSubs) {
+        hideBottomBar.value = isManagingSubs
+    }
+    DisposableEffect(Unit) {
+        onDispose {
+            hideBottomBar.value = false
+        }
+    }
+
     LaunchedEffect(openMusicSubscriptions) {
         if (!openMusicSubscriptions) return@LaunchedEffect
         manageShowsMusic = true

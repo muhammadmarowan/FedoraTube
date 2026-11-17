@@ -45,6 +45,7 @@ import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.WatchLater
 import com.fedoratube.org.ui.components.dialogs.ShareAppQrDialog
+import com.fedoratube.org.ui.components.layout.LocalHideBottomBar
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
@@ -67,6 +68,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
@@ -212,6 +214,17 @@ fun HomeScreen(
     var subsSearchQuery by rememberSaveable { mutableStateOf("") }
     var showSortMenu by remember { mutableStateOf(false) }
     var manageShowsMusic by rememberSaveable { mutableStateOf(false) }
+
+    val hideBottomBar = LocalHideBottomBar.current
+    val managingSubsActive = isManagingSubs && pagerState.currentPage == 1
+    LaunchedEffect(managingSubsActive) {
+        hideBottomBar.value = managingSubsActive
+    }
+    DisposableEffect(Unit) {
+        onDispose {
+            hideBottomBar.value = false
+        }
+    }
 
     BackHandler(isManagingSubs) {
         isManagingSubs = false

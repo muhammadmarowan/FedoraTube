@@ -141,31 +141,6 @@ internal fun SettingsListScope.homeContent(
     }
     group(key = "home.about", header = R.string.settings_header_about) {
         page(SettingsDestination.ABOUT)
-        row("home.about.beta_program") { shape ->
-            val context = LocalContext.current
-            val preferences = remember(context) { PlayerPreferences(context) }
-            val isBetaEnabled by preferences.betaProgramEnabled.collectAsState(initial = true)
-            FlowSwitchRow(
-                title = "Beta Program",
-                checked = isBetaEnabled,
-                onCheckedChange = { enabled ->
-                    if (enabled) {
-                        Toast.makeText(context, "Joined Beta Program! Checking for pre-releases...", Toast.LENGTH_SHORT).show()
-                    } else {
-                        Toast.makeText(context, "Switched to Stable channel! Checking for stable releases...", Toast.LENGTH_SHORT).show()
-                    }
-                    actions.onToggleBetaProgram(enabled)
-                },
-                supportingText =
-                    if (isBetaEnabled) {
-                        "Receiving pre-release builds and experimental features."
-                    } else {
-                        "Receiving official stable releases only."
-                    },
-                leadingIcon = Icons.Outlined.Science,
-                shape = shape,
-            )
-        }
         if (BuildConfig.UPDATER_ENABLED) {
             nav(
                 HomeIndex.checkForUpdates,

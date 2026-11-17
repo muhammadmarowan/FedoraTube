@@ -80,7 +80,7 @@ internal fun PlaylistDetailTopBar(
             IconButton(onClick = search.onOpen) {
                 Icon(imageVector = Icons.Outlined.Search, contentDescription = stringResource(R.string.search_in_playlist))
             }
-            if (canSelect && !isWatchLater) {
+            if (canSelect) {
                 IconButton(onClick = onEnterSelection) {
                     Icon(imageVector = Icons.Default.Checklist, contentDescription = stringResource(R.string.select_videos))
                 }
