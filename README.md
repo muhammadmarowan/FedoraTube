@@ -13,28 +13,6 @@
 
 </div>
 
-## ⛶ Screenshots
-
-<div align="center">
-
-**Home** — Subscription & recommendation feed
-
-<img src="Assets/shot_home.jpg" width="280" alt="Home feed">
-
-**Music** — Trending, global charts & top artists
-
-<img src="Assets/shot_music.jpg" width="280" alt="Music hub">
-
-**Focus Mode** — Minimal search-first canvas
-
-<img src="Assets/shot_search.png" width="280" alt="Focus Mode">
-
-**Player** — Comments, actions & related videos
-
-<img src="Assets/shot_player.jpg" width="280" alt="Video player">
-
-</div>
-
 ---
 
 ## ✨ Features
@@ -55,24 +33,6 @@
 ### Player
 - **SponsorBlock** — automatically skip sponsored segments, intros, outros and subscription reminders.
 - **Background play & PiP** — audio keeps playing with the screen off or in picture-in-picture.
-- **Quality & speed control** — pick resolution, playback speed and double-tap seek behavior.
-
-### Private by design
-- **No account, no tracking** — no Google login, no analytics, no telemetry, no ads. See [privacy.md](privacy.md).
-- **On-device recommendations** — your watch habits are computed locally and never leave your phone.
-- **Backup & restore** — export and import subscriptions, history and playlists anytime.
-
-### Share with anyone
-- **Share-app QR** — always points at the newest release, prereleases included.
-- **Quick Share** — send the installed APK to a nearby phone over the system Sharesheet, no internet needed.
-
-### Smart updates
-- **What's-new notification** — update notifications preview the first lines of the changelog; expand for the rest.
-- **In-app updater** — check for, download and install updates without leaving the app.
-
-### Made for everyone
-- **30 languages** — fully translated UI, from Arabic to Vietnamese.
-- **Lightweight** — five ABI builds (universal, arm64-v8a, armeabi-v7a, x86, x86_64) so you only download what your device needs.
 
 ---
 
