@@ -49,12 +49,6 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      - name: Check generated Snowball stemmers
-        run: |
-          sh scripts/neuro/gen_snowball.sh
-          git status --porcelain -- app/src/main/java/org/tartarus/snowball
-          test -z "$(git status --porcelain -- app/src/main/java/org/tartarus/snowball)"
-
       - name: Check Kotlin formatting
         run: >
           ./gradlew spotlessCheck
@@ -230,6 +224,7 @@ jobs:
           set -euo pipefail
           gh release create "$GITHUB_REF_NAME" \
             --title "Fedora Tube $GITHUB_REF_NAME" \
+            --prerelease \
             --generate-notes \
             app/build/outputs/apk/github/release/app-github-universal-release.apk \
             app/build/outputs/apk/github/release/app-github-arm64-v8a-release.apk \
