@@ -22,7 +22,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -38,6 +37,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import com.fedoratube.org.ui.components.shared.FlowCenteredPopupDialog
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -216,11 +216,8 @@ private fun BandSheet(
     viewModel: EqualizerViewModel,
     onDismiss: () -> Unit,
 ) {
-    ModalBottomSheet(
+    FlowCenteredPopupDialog(
         onDismissRequest = onDismiss,
-        sheetState = rememberFlowSheetState(),
-        modifier = FlowModalSheetDefaults.modifier,
-        contentWindowInsets = FlowModalSheetDefaults.contentWindowInsets,
     ) {
         EqBandEditor(
             index = index,

@@ -17,6 +17,7 @@ import androidx.compose.material.icons.outlined.Bedtime
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -32,7 +33,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalWindowInfo
@@ -43,9 +43,8 @@ import androidx.compose.ui.unit.dp
 import com.fedoratube.org.R
 import com.fedoratube.org.data.local.PlayerPreferences
 import com.fedoratube.org.player.SleepTimerManager
-import com.fedoratube.org.ui.components.shared.FlowBottomSheet
+import com.fedoratube.org.ui.components.shared.FlowCenteredPopupDialog
 import com.fedoratube.org.ui.components.shared.FlowSheetHeader
-import com.fedoratube.org.ui.components.shared.rememberFlowBottomSheetState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
@@ -246,33 +245,35 @@ private fun FlowSleepTimerBottomSheet(
     body: @Composable (Modifier) -> Unit,
     actions: @Composable (Modifier) -> Unit,
 ) {
-    val sheetState = rememberFlowBottomSheetState()
-    FlowBottomSheet(
-        onDismiss = onDismiss,
-        modifier = modifier,
-        state = sheetState,
-        expandedHeight = expandedHeight,
-        maxHeight = if (expandedHeight == null) wrappedSheetMaxHeight() else null,
-        collapsedHeight = collapsedHeight,
-        dismissible = enableVerticalDismiss,
-        dismissOnOutsideTap = false,
-        shape = RectangleShape,
-        containerColor = MaterialTheme.colorScheme.surface,
-        onProgressChange = onSheetProgressChange,
-        header = { dragModifier ->
+    if (enableVerticalDismiss) {
+        FlowCenteredPopupDialog(
+            onDismissRequest = onDismiss,
+            shape = RoundedCornerShape(28.dp),
+            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+            modifier = modifier,
+        ) {
             FlowSheetHeader(
-                inSidePane = !enableVerticalDismiss,
+                inSidePane = true,
                 title = stringResource(R.string.sleep_timer),
-                onClose = { sheetState.dismiss() },
-                modifier = dragModifier,
+                onClose = onDismiss,
                 leadingIcon = Icons.Outlined.Bedtime,
                 contentPadding = PaddingValues(start = 20.dp, end = 8.dp, top = 4.dp, bottom = 8.dp),
                 closeButtonSize = null,
                 dividerAlpha = 0.18f,
+                showDragHandle = false,
             )
-        },
-    ) {
-        SleepTimerColumn(fillHeight = expandedHeight != null, body = body, actions = actions)
+            SleepTimerColumn(fillHeight = false, body = body, actions = actions)
+        }
+    } else {
+        Surface(
+            modifier = modifier.fillMaxSize(),
+            color = MaterialTheme.colorScheme.surface,
+        ) {
+            Column(modifier = Modifier.fillMaxSize()) {
+                SleepTimerPanelHeader(onDismiss = onDismiss)
+                SleepTimerColumn(fillHeight = expandedHeight != null, body = body, actions = actions)
+            }
+        }
     }
 }
 

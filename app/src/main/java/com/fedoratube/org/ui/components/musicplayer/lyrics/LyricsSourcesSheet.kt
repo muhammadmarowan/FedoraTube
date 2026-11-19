@@ -17,12 +17,13 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.CheckCircle
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -35,7 +36,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.fedoratube.org.R
 import com.fedoratube.org.data.lyrics.LyricsCandidate
-import com.fedoratube.org.ui.components.shared.rememberFlowSheetState
+import com.fedoratube.org.ui.components.shared.FlowCenteredPopupDialog
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -46,15 +47,15 @@ internal fun LyricsSourcesSheet(
     onSelect: (LyricsCandidate) -> Unit,
     onDismiss: () -> Unit,
 ) {
-    ModalBottomSheet(
+    FlowCenteredPopupDialog(
         onDismissRequest = onDismiss,
-        sheetState = rememberFlowSheetState(),
     ) {
         Column(
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 24.dp),
+                    .verticalScroll(rememberScrollState())
+                    .padding(bottom = 16.dp),
         ) {
             Text(
                 text = stringResource(R.string.lyrics_choose_source),

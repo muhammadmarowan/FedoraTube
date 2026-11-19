@@ -75,7 +75,7 @@ fun FlowSheetHeader(
     closeButtonSize: Dp? = FlowSheetHeaderDefaults.CloseButtonSize,
     dividerAlpha: Float? = FlowSheetHeaderDefaults.DividerAlpha,
     actions: @Composable RowScope.() -> Unit = {},
-    showDragHandle: Boolean = true,
+    showDragHandle: Boolean = false,
     titleMaxLines: Int = Int.MAX_VALUE,
     inSidePane: Boolean = false,
 ) {

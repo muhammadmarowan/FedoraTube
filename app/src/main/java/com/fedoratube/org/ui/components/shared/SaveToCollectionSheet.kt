@@ -15,7 +15,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.outlined.BookmarkBorder
-import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -23,7 +22,6 @@ import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
@@ -31,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
+import com.fedoratube.org.ui.components.shared.FlowCenteredPopupDialog
 
 private val SheetTitlePadding = PaddingValues(horizontal = 24.dp, vertical = 16.dp)
 private val SheetListPadding = PaddingValues(vertical = 8.dp)
@@ -62,18 +61,15 @@ fun SaveToCollectionSheet(
     val configuration = LocalConfiguration.current
     val maxHeight = configuration.screenHeightDp.dp * SHEET_MAX_HEIGHT_FRACTION
 
-    ModalBottomSheet(
+    FlowCenteredPopupDialog(
         onDismissRequest = onDismiss,
-        sheetState = rememberFlowSheetState(),
         containerColor = MaterialTheme.colorScheme.surface,
-        dragHandle = { BottomSheetDefaults.DragHandle() },
     ) {
         Column(
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .heightIn(max = maxHeight)
-                    .navigationBarsPadding(),
+                    .heightIn(max = maxHeight),
         ) {
             Text(
                 text = title,

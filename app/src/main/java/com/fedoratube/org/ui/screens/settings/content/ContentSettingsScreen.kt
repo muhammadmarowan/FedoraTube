@@ -39,6 +39,7 @@ internal fun ContentSettingsScreen(
     val hideWatchedSubs by viewModel.hideWatchedSubs.collectAsStateWithLifecycle()
     val removeWatchedWatchLater by viewModel.removeWatchedWatchLater.collectAsStateWithLifecycle()
     val notes by viewModel.notes.collectAsStateWithLifecycle()
+    val musicSection by viewModel.musicSection.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val linkHandlingLabel = rememberLinkHandlingLabel()
     var showThresholdDialog by rememberSaveable { mutableStateOf(false) }
@@ -57,10 +58,13 @@ internal fun ContentSettingsScreen(
             switch(ContentIndex.hideWatchedHome, viewModel.hideWatchedHome, viewModel::setHideWatchedHome)
         }
         group(key = "content.music", header = R.string.screen_title_music) {
-            nav(
-                DestinationIndex.entry(SettingsDestination.MUSIC_HOME),
-                onClick = { onNavigate(SettingsTarget(SettingsDestination.MUSIC_HOME)) },
-            )
+            switch(ContentIndex.musicSection, musicSection, viewModel::setMusicSection)
+            if (musicSection) {
+                nav(
+                    DestinationIndex.entry(SettingsDestination.MUSIC_HOME),
+                    onClick = { onNavigate(SettingsTarget(SettingsDestination.MUSIC_HOME)) },
+                )
+            }
         }
         group(key = "content.library", header = R.string.library) {
             nav(

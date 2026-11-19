@@ -120,6 +120,12 @@ class LibraryViewModel
                 musicDownloadManager.downloadedTracks,
             ) { videos, tracks -> videos to tracks }.shared()
 
+        internal val fullVideoPlaylists = allVideoPlaylists
+        internal val fullWatchLaterVideos = allWatchLater
+        internal val fullDownloadedVideos = videoDownloadManager.downloadedVideos.shared()
+        internal val fullDownloadedTracks = musicDownloadManager.downloadedTracks.shared()
+        internal val fullNotes = notesRepository.observeAll().shared()
+
         internal val history =
             viewHistory
                 .getRecentLibraryHistory(LIBRARY_SHELF_ITEM_LIMIT)

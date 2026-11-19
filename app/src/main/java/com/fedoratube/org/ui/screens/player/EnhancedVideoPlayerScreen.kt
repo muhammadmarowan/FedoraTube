@@ -1,5 +1,13 @@
 package com.fedoratube.org.ui.screens.player
 
+import androidx.compose.animation.core.EaseInOutCubic
+import androidx.compose.animation.core.EaseInOutSine
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -101,7 +109,23 @@ internal fun EnhancedVideoPlayerScreen(
     val playerState by EnhancedPlayerManager.getInstance().playerState.collectAsStateWithLifecycle()
     val ambientActive = prefs.ambientModeEnabled && !isFullscreenShown && !isInPipMode
     val liveAmbientFrame by GlobalPlayerState.ambientFrame.collectAsStateWithLifecycle()
-    val ambientPalette = rememberMediaPalette(video.thumbnailUrl, animated = true)
+
+    val ambientAlpha by animateFloatAsState(
+        targetValue = if (ambientActive && liveAmbientFrame != null) 0.65f else 0.0f,
+        animationSpec = tween(durationMillis = 650, easing = EaseInOutCubic),
+        label = "ambientAlpha",
+    )
+
+    val ambientGlowTransition = rememberInfiniteTransition(label = "ambientGlowPulse")
+    val pulseFactor by ambientGlowTransition.animateFloat(
+        initialValue = 0.95f,
+        targetValue = 1.05f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 2800, easing = EaseInOutSine),
+            repeatMode = RepeatMode.Reverse,
+        ),
+        label = "pulseFactor",
+    )
 
     Box(
         modifier =
@@ -110,21 +134,23 @@ internal fun EnhancedVideoPlayerScreen(
                 .graphicsLayer { this.alpha = alpha() }
                 .background(MaterialTheme.colorScheme.background),
     ) {
-        if (ambientActive) {
+        if (ambientAlpha > 0f) {
             val liveFrame = liveAmbientFrame
             if (liveFrame != null) {
                 Box(
                     modifier =
                         Modifier
                             .fillMaxWidth()
-                            .fillMaxHeight(0.70f),
+                            .fillMaxHeight(0.75f),
                 ) {
                     Image(
                         bitmap = liveFrame,
                         contentDescription = null,
                         contentScale = ContentScale.Crop,
                         filterQuality = FilterQuality.Low,
-                        modifier = Modifier.matchParentSize().graphicsLayer { this.alpha = 0.50f },
+                        modifier = Modifier.matchParentSize().graphicsLayer {
+                            this.alpha = (ambientAlpha * pulseFactor).coerceIn(0f, 0.85f)
+                        },
                     )
                     Box(
                         modifier =
@@ -133,30 +159,14 @@ internal fun EnhancedVideoPlayerScreen(
                                 .background(
                                     Brush.verticalGradient(
                                         0.0f to Color.Transparent,
-                                        0.25f to MaterialTheme.colorScheme.background.copy(alpha = 0.35f),
-                                        0.60f to MaterialTheme.colorScheme.background.copy(alpha = 0.75f),
-                                        0.85f to MaterialTheme.colorScheme.background.copy(alpha = 0.95f),
+                                        0.20f to MaterialTheme.colorScheme.background.copy(alpha = 0.25f),
+                                        0.50f to MaterialTheme.colorScheme.background.copy(alpha = 0.65f),
+                                        0.80f to MaterialTheme.colorScheme.background.copy(alpha = 0.90f),
                                         1.0f to MaterialTheme.colorScheme.background,
                                     ),
                                 ),
                     )
                 }
-            } else {
-                Box(
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .height(600.dp)
-                            .background(
-                                Brush.verticalGradient(
-                                    0.0f to ambientPalette.accent.copy(alpha = 0.35f),
-                                    0.25f to ambientPalette.accent.copy(alpha = 0.22f),
-                                    0.55f to ambientPalette.base.copy(alpha = 0.12f),
-                                    0.80f to ambientPalette.base.copy(alpha = 0.05f),
-                                    1.0f to Color.Transparent,
-                                ),
-                            ),
-                )
             }
         }
         val layoutMode =

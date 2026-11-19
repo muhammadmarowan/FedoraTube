@@ -1,3 +1,16 @@
+# Fedora Tube v1.8.0 (Prerelease)
+
+**Release date:** 2026-11-20
+**Status:** Prerelease
+
+## Highlights
+
+- **Centered Popup Dialogs**: Transformed every bottom sheet throughout the app into an elegant, centered popup dialog (Player Settings, More Options, Quick Actions, Lyrics Settings, Channel Sort By, Equalizer Bands, Collection Save/Merge, Sleep Timer, and Collaborators). Features modern rounded corners (28 dp), smooth scaling transitions, backdrop scrims, and full touch scrolling.
+- **Library Screen Category Sliding Tabs**: Redesigned the Library section beneath the Watch History carousel with Home/YouTube-style sliding category tabs (`Playlists`, `Watch Later`, `Downloads`, `Notes`) featuring an animated indicator underline and seamless horizontal paging. Vertical scrolling smoothly collapses the Watch History shelf upward, allowing category feeds to occupy the full screen.
+- **Music Section Visibility Setting**: Added a preference toggle in Content Settings and Navigation Bar settings to hide the Music section. When disabled, the Music tab is completely hidden from the bottom navigation bar and search results operate in video-only mode without music categories or filter tabs.
+- **Glitch-Free Living Ambient Mode**: Completely eliminated the startup yellow tint flash in ambient mode by removing harsh thumbnail palette fallbacks, introducing smooth 650 ms EaseInOutCubic alpha crossfades, and enabling living, breathing ambient glow animations that illuminate the player in both portrait and landscape modes.
+- **Deep Clean & Fork Optimization**: Removed legacy generation scripts, obsolete test mocks, and leftover assets from the FlowTube fork, maximizing runtime performance, trimming repository bloat, and streamlining the architecture.
+
 # Fedora Tube v1.7.9 (Prerelease)
 
 **Release date:** 2026-11-15

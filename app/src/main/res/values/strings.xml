@@ -2092,6 +2092,8 @@
     <string name="action_play_all">Play all</string>
     <string name="loading_music">Loading music...</string>
     <!-- Enhanced Music Screen -->
+    <string name="show_music_section_title">Music section</string>
+    <string name="show_music_section_subtitle">Show Music in navigation bar and search results</string>
     <string name="screen_title_music">MUSIC</string>
     <string name="screen_title_movies">DISCOVER</string>
     <string name="section_listen_again">Listen again</string>

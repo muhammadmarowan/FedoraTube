@@ -14,7 +14,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -35,6 +34,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.fedoratube.org.R
+import com.fedoratube.org.ui.components.shared.FlowCenteredPopupDialog
 import com.fedoratube.org.ui.components.shared.FlowSheetHeader
 import com.fedoratube.org.ui.components.shared.FlowSwitch
 import com.fedoratube.org.ui.components.shared.ReorderHandle
@@ -69,9 +69,8 @@ internal fun LyricsProvidersSheet(
         viewModel.setLyricsProviderOrder(providers.map { it.name })
     }
 
-    ModalBottomSheet(
+    FlowCenteredPopupDialog(
         onDismissRequest = onDismiss,
-        sheetState = rememberFlowSheetState(),
         containerColor = MaterialTheme.colorScheme.surface,
     ) {
         FlowSheetHeader(

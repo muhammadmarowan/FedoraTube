@@ -199,6 +199,7 @@ fun VideoPlayerSurface(
             val ambientAppear = remember { Animatable(0f) }
             val ambientFade = MaterialTheme.motionScheme.slowEffectsSpec<Float>()
             val ambientReady = ambientFrame.frame != null
+            LaunchedEffect(video.id) { ambientAppear.snapTo(0f) }
             LaunchedEffect(ambientReady) { if (ambientReady) ambientAppear.animateTo(1f, ambientFade) }
             VideoAmbientBackground(
                 frame = ambientFrame.frame,

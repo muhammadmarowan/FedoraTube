@@ -1,12 +1,16 @@
 package com.fedoratube.org.ui.components.videoplayer.settings
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -14,7 +18,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -23,10 +26,8 @@ import com.fedoratube.org.player.EnhancedPlayerState
 import com.fedoratube.org.player.QualityOption
 import com.fedoratube.org.ui.components.equalizer.EqQuickPanel
 import com.fedoratube.org.ui.components.layout.navigation.LocalMediaNavigator
-import com.fedoratube.org.ui.components.shared.FlowBottomSheet
+import com.fedoratube.org.ui.components.shared.FlowCenteredPopupDialog
 import com.fedoratube.org.ui.components.shared.FlowSheetHeader
-import com.fedoratube.org.ui.components.shared.defaultSheetExpandedHeight
-import com.fedoratube.org.ui.components.shared.rememberFlowBottomSheetState
 import com.fedoratube.org.ui.components.videoplayer.subtitle.SubtitleCustomizer
 import com.fedoratube.org.ui.components.videoplayer.subtitle.SubtitleStyle
 
@@ -68,7 +69,6 @@ fun SettingsMenuDialog(
     onSheetProgressChange: (Float) -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
-    val sheetState = rememberFlowBottomSheetState()
     var currentPage by remember { mutableStateOf(initialPage) }
     var subtitleStyleReturnPage by remember { mutableStateOf(PlayerSettingsPage.Subtitles) }
     // Which page the current subpage was opened from, so back from e.g. Quality returns to the
@@ -94,47 +94,20 @@ fun SettingsMenuDialog(
         }
     // A panel host swaps the panel's content in place, so a row that opens another surface must not
     // run the exit animation there: the host's onDismiss would close the panel under the new surface.
-    val leaveFor: (() -> Unit) -> Unit =
-        if (enableVerticalDismiss) {
-            { after -> sheetState.dismiss(after) }
-        } else {
-            { after -> after() }
-        }
+    val leaveFor: (() -> Unit) -> Unit = { after ->
+        onDismiss()
+        after()
+    }
 
     LaunchedEffect(initialPage) {
         currentPage = initialPage
     }
 
-    FlowBottomSheet(
-        onDismiss = onDismiss,
-        modifier = modifier,
-        state = sheetState,
-        expandedHeight = expandedHeight ?: defaultSheetExpandedHeight(),
-        collapsedHeight = collapsedHeight,
-        dismissible = enableVerticalDismiss,
-        dismissOnOutsideTap = false,
-        shape = RectangleShape,
-        containerColor = MaterialTheme.colorScheme.surface,
-        onBack = backPage?.let { page -> { currentPage = page } },
-        onProgressChange = onSheetProgressChange,
-        header = { dragModifier ->
-            FlowSheetHeader(
-                inSidePane = !enableVerticalDismiss,
-                title = currentTitle,
-                onClose = { sheetState.dismiss() },
-                modifier = dragModifier,
-                onBack = backPage?.let { page -> { currentPage = page } },
-                contentPadding = PaddingValues(start = 20.dp, end = 8.dp, top = 6.dp, bottom = 8.dp),
-                closeButtonSize = null,
-                dividerAlpha = 0.4f,
-            )
-        },
-    ) {
+    val settingsContent: @Composable () -> Unit = {
         Column(
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .weight(1f)
                     .verticalScroll(rememberScrollState())
                     .padding(vertical = SheetContentVerticalPadding),
         ) {
@@ -160,7 +133,10 @@ fun SettingsMenuDialog(
                             subpageReturnPage = PlayerSettingsPage.More
                             currentPage = page
                         },
-                        onPipClick = { sheetState.dismiss(onPipClick) },
+                        onPipClick = {
+                            onDismiss()
+                            onPipClick()
+                        },
                         onSleepTimerClick = { leaveFor(onSleepTimerClick) },
                         onLoopToggle = onLoopToggle,
                         onAutoplayToggle = onAutoplayToggle,
@@ -183,7 +159,7 @@ fun SettingsMenuDialog(
                         useGroupedQualitySelector = useGroupedQualitySelector,
                         onQualitySelected = {
                             onQualitySelected(it)
-                            sheetState.dismiss()
+                            onDismiss()
                         },
                     )
                 }
@@ -192,7 +168,7 @@ fun SettingsMenuDialog(
                     PlayerSettingsSpeedPage(
                         currentSpeed = playerState.playbackSpeed,
                         onSpeedSelected = onSpeedSelected,
-                        onSpeedSelectionFinished = { sheetState.dismiss() },
+                        onSpeedSelectionFinished = { onDismiss() },
                     )
                 }
 
@@ -202,7 +178,7 @@ fun SettingsMenuDialog(
                         currentAudioTrack = playerState.currentAudioTrack,
                         onTrackSelected = {
                             onAudioTrackSelected(it)
-                            sheetState.dismiss()
+                            onDismiss()
                         },
                     )
                 }
@@ -210,7 +186,10 @@ fun SettingsMenuDialog(
                 PlayerSettingsPage.Equalizer -> {
                     val navigator = LocalMediaNavigator.current
                     EqQuickPanel(
-                        onEdit = { sheetState.dismiss { navigator.openEqualizer() } },
+                        onEdit = {
+                            onDismiss()
+                            navigator.openEqualizer()
+                        },
                         modifier = Modifier.padding(top = 8.dp, bottom = 16.dp),
                     )
                 }
@@ -222,11 +201,11 @@ fun SettingsMenuDialog(
                         subtitlesEnabled = subtitlesEnabled,
                         onSubtitleSelected = { index ->
                             onSubtitleSelected(index)
-                            sheetState.dismiss()
+                            onDismiss()
                         },
                         onDisableSubtitles = {
                             onDisableSubtitles()
-                            sheetState.dismiss()
+                            onDismiss()
                         },
                         // Stays open: the picker's result comes back to this composition.
                         onAddSubtitleFile = onAddSubtitleFile,
@@ -244,6 +223,48 @@ fun SettingsMenuDialog(
                         currentStyle = subtitleStyle,
                         onStyleChange = onSubtitleStyleChange,
                     )
+                }
+            }
+        }
+    }
+
+    if (enableVerticalDismiss) {
+        FlowCenteredPopupDialog(
+            onDismissRequest = onDismiss,
+            shape = RoundedCornerShape(28.dp),
+            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+            modifier = modifier,
+        ) {
+            FlowSheetHeader(
+                inSidePane = true,
+                title = currentTitle,
+                onClose = onDismiss,
+                onBack = backPage?.let { page -> { currentPage = page } },
+                contentPadding = PaddingValues(start = 20.dp, end = 8.dp, top = 6.dp, bottom = 8.dp),
+                closeButtonSize = null,
+                dividerAlpha = 0.4f,
+                showDragHandle = false,
+            )
+            settingsContent()
+        }
+    } else {
+        Surface(
+            modifier = modifier.fillMaxSize(),
+            color = MaterialTheme.colorScheme.surface,
+        ) {
+            Column(modifier = Modifier.fillMaxSize()) {
+                FlowSheetHeader(
+                    inSidePane = true,
+                    title = currentTitle,
+                    onClose = onDismiss,
+                    onBack = backPage?.let { page -> { currentPage = page } },
+                    contentPadding = PaddingValues(start = 20.dp, end = 8.dp, top = 6.dp, bottom = 8.dp),
+                    closeButtonSize = null,
+                    dividerAlpha = 0.4f,
+                    showDragHandle = false,
+                )
+                Box(modifier = Modifier.weight(1f)) {
+                    settingsContent()
                 }
             }
         }

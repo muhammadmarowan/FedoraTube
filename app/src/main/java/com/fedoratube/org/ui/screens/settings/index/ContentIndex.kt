@@ -48,6 +48,14 @@ internal object ContentIndex {
             section = R.string.settings_section_home,
             destination = page,
         )
+    val musicSection =
+        SettingEntry(
+            key = "content.music.section",
+            title = R.string.show_music_section_title,
+            summary = R.string.show_music_section_subtitle,
+            section = R.string.screen_title_music,
+            destination = page,
+        )
     val subsVideos =
         SettingEntry(
             key = "content.subs.videos",

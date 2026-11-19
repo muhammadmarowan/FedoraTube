@@ -31,7 +31,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -43,6 +42,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.fedoratube.org.ui.components.shared.FlowCenteredPopupDialog
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
@@ -100,9 +100,8 @@ internal fun ChangelogSheet(onDismiss: () -> Unit) {
     val installed = remember { versionOf(BuildConfig.VERSION_NAME.substringBefore('-')) }
     var expanded by rememberSaveable { mutableStateOf<List<String>?>(null) }
 
-    ModalBottomSheet(
+    FlowCenteredPopupDialog(
         onDismissRequest = onDismiss,
-        sheetState = rememberFlowSheetState(),
         containerColor = MaterialTheme.colorScheme.surface,
     ) {
         FlowSheetHeader(

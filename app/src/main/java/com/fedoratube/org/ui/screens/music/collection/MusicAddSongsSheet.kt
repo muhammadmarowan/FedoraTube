@@ -17,9 +17,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,6 +27,7 @@ import com.fedoratube.org.R
 import com.fedoratube.org.data.music.model.MusicTrack
 import com.fedoratube.org.ui.components.music.item.MusicItemDensity
 import com.fedoratube.org.ui.components.music.item.MusicTrackItem
+import com.fedoratube.org.ui.components.shared.FlowCenteredPopupDialog
 import com.fedoratube.org.ui.components.shared.FlowSearchField
 import com.fedoratube.org.ui.components.shared.FlowSegmentedGap
 import com.fedoratube.org.ui.components.shared.flowSegmentShape
@@ -50,7 +49,7 @@ internal fun MusicAddSongsSheet(
     onPreview: (MusicTrack) -> Unit,
     onDismiss: () -> Unit,
 ) {
-    ModalBottomSheet(onDismissRequest = onDismiss, sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)) {
+    FlowCenteredPopupDialog(onDismissRequest = onDismiss) {
         Text(
             text = stringResource(R.string.ui_add_songs),
             style = MaterialTheme.typography.titleLarge,

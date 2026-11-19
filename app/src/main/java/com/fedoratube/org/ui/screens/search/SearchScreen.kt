@@ -149,7 +149,10 @@ fun SearchScreen(
 ) {
     val context = LocalContext.current
     val density = LocalDensity.current
-    val pagerState = rememberPagerState(initialPage = 0) { 2 }
+    val focusPreferences = remember(context) { com.fedoratube.org.data.local.PlayerPreferences(context) }
+    val isMusicSectionEnabled by focusPreferences.musicNavigationEnabled.collectAsState(initial = true)
+    val pageCount = if (isMusicSectionEnabled) 2 else 1
+    val pagerState = rememberPagerState(initialPage = 0) { pageCount }
     val coroutineScope = rememberCoroutineScope()
 
     val uiState by viewModel.uiState.collectAsState()
@@ -157,7 +160,6 @@ fun SearchScreen(
     val musicQuery by musicSearchViewModel.query.collectAsState()
     val musicMatchingHistory by musicSearchViewModel.matchingHistory.collectAsState()
     val state = rememberSearchState(viewModel)
-    val focusPreferences = remember(context) { com.fedoratube.org.data.local.PlayerPreferences(context) }
     val isFocusModeEnabled = isFocusMode ?: focusPreferences.focusModeEnabled.collectAsState(initial = false).value
 
     val combinedHistory =
@@ -359,7 +361,7 @@ fun SearchScreen(
                             onSearch = submit,
                             onBack = if (showResults) resetSearch else if (isFocusModeEnabled) onBack else null,
                             placeholder =
-                                if (showResults && pagerState.currentPage == 1) {
+                                if (showResults && isMusicSectionEnabled && pagerState.currentPage == 1) {
                                     stringResource(R.string.search_music_placeholder)
                                 } else {
                                     stringResource(R.string.search_videos_channels_placeholder)
@@ -369,7 +371,7 @@ fun SearchScreen(
                             actions = null,
                         )
 
-                        if (showResults) {
+                        if (showResults && isMusicSectionEnabled) {
                             SearchCategoryTabs(
                                 pagerState = pagerState,
                                 onSelectPage = { page ->

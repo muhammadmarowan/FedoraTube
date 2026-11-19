@@ -36,6 +36,9 @@ class ContentSettingsViewModel
         val channelNotes = preferences.channelNotesEnabled.asState(true)
         val videoNotes = preferences.videoNotesEnabled.asState(true)
         val shareWithoutText = preferences.shareWithoutText.asState(false)
+        val musicSection = preferences.musicNavigationEnabled.asState(true)
+
+        fun setMusicSection(value: Boolean) = write { preferences.setMusicNavigationEnabled(value) }
 
         fun setHomeFeed(value: Boolean) = write { preferences.setHomeFeedEnabled(value) }
 

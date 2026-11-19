@@ -1,0 +1,11 @@
+FEDORATUBE CHANGE LOG
+VERSION: 1.8.0
+DATE: 2026-11-20
+STATUS: PRE-RELEASE
+
+NEW FEATURES & ENHANCEMENTS
+- Centered Popup Dialogs: Replaced bottom sheets across the entire app with sleek, centered popup dialogs (Player Settings, More Options, Quick Actions, Lyrics Settings, Channel Sort, Equalizer Bands, Collections, Sleep Timer, Collaborators).
+- Redesigned Library Experience: Added YouTube-style sliding category tabs (Playlists, Watch Later, Downloads, Notes) below Watch History with smooth horizontal swiping, animated indicator underline, and nested scroll collapsing where the History shelf collapses upward on vertical scroll to reveal full-height category feeds.
+- Music Section Visibility Toggle: Added a setting in Content & Navigation settings allowing users to hide the Music section. When hidden, the Music tab is removed from the bottom navigation bar and search results show clean video results without music categories or chips.
+- Glitch-Free Animated Ambient Glow: Completely resolved the ambient mode startup yellow tint glitch and enabled smooth, continuous ambient glow animations across the player in portrait and landscape modes.
+- Codebase Deep Clean: Stripped legacy generation scripts, obsolete test mocks, and leftover assets from the upstream fork, ensuring a lightweight, fast, and maintainable codebase focused on core video playback, feeds, and music streaming.

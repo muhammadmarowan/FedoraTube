@@ -22,7 +22,6 @@ import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -34,6 +33,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.fedoratube.org.R
+import com.fedoratube.org.ui.components.shared.FlowCenteredPopupDialog
 
 private val SheetBottomPadding: Dp = 24.dp
 private val HeaderPadding = PaddingValues(horizontal = 24.dp, vertical = 16.dp)
@@ -61,9 +61,8 @@ fun MergeIntoCollectionSheet(
     onCreateNew: () -> Unit,
     onDismiss: () -> Unit,
 ) {
-    ModalBottomSheet(
+    FlowCenteredPopupDialog(
         onDismissRequest = onDismiss,
-        sheetState = rememberFlowSheetState(),
         containerColor = MaterialTheme.colorScheme.surface,
     ) {
         Column(

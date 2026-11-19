@@ -21,8 +21,6 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.ModalBottomSheetProperties
 import androidx.compose.material3.Text
 import androidx.compose.material3.TonalToggleButton
 import androidx.compose.runtime.Composable
@@ -45,6 +43,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.fedoratube.org.ui.components.shared.FlowCenteredPopupDialog
 import com.fedoratube.org.ui.components.shared.FlowModalSheetDefaults
 import com.fedoratube.org.ui.components.shared.FlowRowGroup
 import com.fedoratube.org.ui.components.shared.FlowSectionHeader
@@ -102,29 +101,21 @@ fun QuickActionsSheet(
     onBack: (() -> Unit)? = null,
     content: @Composable ColumnScope.(QuickActionsSheetController) -> Unit,
 ) {
-    val sheetState = rememberFlowSheetState(skipPartiallyExpanded = false)
-    val scope = rememberCoroutineScope()
     val latestOnDismiss by rememberUpdatedState(onDismiss)
     val controller =
-        remember(sheetState, scope) {
+        remember {
             QuickActionsSheetController(
-                hideThen = { after -> scope.launch { sheetState.hide() }.invokeOnCompletion { after() } },
+                hideThen = { after ->
+                    after()
+                    latestOnDismiss()
+                },
                 onDismiss = { latestOnDismiss() },
             )
         }
     val scrollState = remember(page) { ScrollState(initial = 0) }
-    val properties = remember(onBack == null) { ModalBottomSheetProperties(shouldDismissOnBackPress = onBack == null) }
 
-    // One lambda for the sheet's lifetime: its hosts (the music player, the shell) recompose often, and
-    // a new dismiss callback each time makes the dialog window re-apply its parameters mid-animation.
-    val dismissRequest = remember { { latestOnDismiss() } }
-
-    ModalBottomSheet(
-        onDismissRequest = dismissRequest,
-        sheetState = sheetState,
-        properties = properties,
-        modifier = FlowModalSheetDefaults.modifier,
-        contentWindowInsets = FlowModalSheetDefaults.contentWindowInsets,
+    FlowCenteredPopupDialog(
+        onDismissRequest = { latestOnDismiss() },
     ) {
         BackHandler(enabled = onBack != null) { onBack?.invoke() }
         Column(

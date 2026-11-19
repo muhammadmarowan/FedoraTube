@@ -6,6 +6,7 @@ import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.AnimationVector1D
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
+import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Box
@@ -17,6 +18,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Surface
@@ -243,19 +245,23 @@ fun FlowBottomSheet(
             }
         }
 
+    val isCenteredPopup = dismissible
     Box(
         modifier = modifier.fillMaxSize(),
-        contentAlignment = Alignment.BottomCenter,
+        contentAlignment = if (isCenteredPopup) Alignment.Center else Alignment.BottomCenter,
     ) {
         if (dismissOnOutsideTap) {
-            // Tap-only scrim: do NOT consume drags here. A full-size drag-eater would steal
-            // scrolls from the sheet's own list (sibling) and break comment scrolling.
-            // Background feed scroll is blocked instead by userScrollEnabled=false on the
-            // feed lists while a sheet is open (SubscriptionsFeedContent, ChannelContent).
             Box(
                 modifier =
                     Modifier
                         .fillMaxSize()
+                        .then(
+                            if (isCenteredPopup) {
+                                Modifier.background(Color.Black.copy(alpha = 0.50f * progress.value))
+                            } else {
+                                Modifier
+                            },
+                        )
                         .pointerInput(Unit) {
                             detectTapGestures { animateOut() }
                         },
@@ -263,18 +269,33 @@ fun FlowBottomSheet(
         }
         Surface(
             modifier =
-                Modifier
-                    .widthIn(max = BottomSheetDefaults.SheetMaxWidth)
-                    .fillMaxWidth()
-                    .then(if (expandedHeight != null) Modifier.height(expandedHeight) else Modifier)
-                    .then(if (maxHeight != null) Modifier.heightIn(max = maxHeight) else Modifier)
-                    .onSizeChanged { size -> sheetHeightPx = size.height }
-                    .graphicsLayer {
-                        translationY = dragRangePx(size.height) * (1f - progress.value)
-                    },
-            shape = shape,
+                if (isCenteredPopup) {
+                    Modifier
+                        .widthIn(min = 280.dp, max = 520.dp)
+                        .fillMaxWidth(0.92f)
+                        .then(if (expandedHeight != null) Modifier.height(expandedHeight) else Modifier)
+                        .then(if (maxHeight != null) Modifier.heightIn(max = maxHeight) else Modifier.heightIn(max = 640.dp))
+                        .onSizeChanged { size -> sheetHeightPx = size.height }
+                        .graphicsLayer {
+                            scaleX = 0.92f + 0.08f * progress.value
+                            scaleY = 0.92f + 0.08f * progress.value
+                            alpha = progress.value
+                        }
+                } else {
+                    Modifier
+                        .widthIn(max = BottomSheetDefaults.SheetMaxWidth)
+                        .fillMaxWidth()
+                        .then(if (expandedHeight != null) Modifier.height(expandedHeight) else Modifier)
+                        .then(if (maxHeight != null) Modifier.heightIn(max = maxHeight) else Modifier)
+                        .onSizeChanged { size -> sheetHeightPx = size.height }
+                        .graphicsLayer {
+                            translationY = dragRangePx(size.height) * (1f - progress.value)
+                        }
+                },
+            shape = if (isCenteredPopup) RoundedCornerShape(28.dp) else shape,
             color = containerColor,
-            tonalElevation = 0.dp,
+            tonalElevation = if (isCenteredPopup) 6.dp else 0.dp,
+            shadowElevation = if (isCenteredPopup) 10.dp else 0.dp,
         ) {
             Column(
                 modifier =
@@ -283,8 +304,8 @@ fun FlowBottomSheet(
                         .navigationBarsPadding(),
             ) {
                 if (header != null) {
-                    header(dragModifier)
-                } else {
+                    header(if (isCenteredPopup) Modifier else dragModifier)
+                } else if (!isCenteredPopup) {
                     Box(
                         modifier =
                             Modifier

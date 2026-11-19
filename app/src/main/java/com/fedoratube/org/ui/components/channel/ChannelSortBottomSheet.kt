@@ -16,14 +16,14 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Check
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,7 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.fedoratube.org.R
 import com.fedoratube.org.innertube.pages.channel.ChannelFilterGroup
-import com.fedoratube.org.ui.components.shared.FlowModalSheetDefaults
+import com.fedoratube.org.ui.components.shared.FlowCenteredPopupDialog
 import com.fedoratube.org.ui.theme.extendedColors
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -45,23 +45,19 @@ fun ChannelSortBottomSheet(
     onFilterSelected: (groupIndex: Int, optionIndex: Int) -> Unit,
     onDismissRequest: () -> Unit,
 ) {
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val dropdowns = groups.withIndex().filter { it.value.isDropdown || it.value.options.isNotEmpty() }
     if (dropdowns.isEmpty()) return
 
-    ModalBottomSheet(
+    FlowCenteredPopupDialog(
         onDismissRequest = onDismissRequest,
-        sheetState = sheetState,
-        modifier = FlowModalSheetDefaults.modifier,
-        contentWindowInsets = FlowModalSheetDefaults.contentWindowInsets,
         containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
-        shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
     ) {
         Column(
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 24.dp),
+                    .verticalScroll(rememberScrollState())
+                    .padding(bottom = 16.dp),
         ) {
             val mainTitle = dropdowns.firstNotNullOfOrNull { it.value.title } ?: stringResource(R.string.filter_sort_by)
             Text(

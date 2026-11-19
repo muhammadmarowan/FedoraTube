@@ -11,7 +11,6 @@ import androidx.compose.material.icons.filled.GraphicEq
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,6 +28,7 @@ import com.fedoratube.org.player.EnhancedMusicPlayerManager
 import com.fedoratube.org.ui.components.equalizer.EqQuickPanel
 import com.fedoratube.org.ui.components.equalizer.PanelRow
 import com.fedoratube.org.ui.components.layout.navigation.LocalMediaNavigator
+import com.fedoratube.org.ui.components.shared.FlowCenteredPopupDialog
 import com.fedoratube.org.ui.components.shared.FlowModalSheetDefaults
 import com.fedoratube.org.ui.components.shared.FlowNavRow
 import com.fedoratube.org.ui.components.shared.FlowRowGroup
@@ -57,18 +57,15 @@ fun AudioSettingsSheet(onDismiss: () -> Unit) {
     val normalizationEnabled by preferences.musicLoudnessNormalizationEnabled.collectAsState(initial = true)
     val scope = rememberCoroutineScope()
 
-    ModalBottomSheet(
+    FlowCenteredPopupDialog(
         onDismissRequest = onDismiss,
-        sheetState = rememberFlowSheetState(),
-        modifier = FlowModalSheetDefaults.modifier,
-        contentWindowInsets = FlowModalSheetDefaults.contentWindowInsets,
     ) {
         Column(
             modifier =
                 Modifier
                     .fillMaxWidth()
                     .verticalScroll(rememberScrollState())
-                    .padding(bottom = 24.dp),
+                    .padding(bottom = 16.dp),
         ) {
             FlowSheetHeader(title = stringResource(R.string.audio_settings_title), onClose = onDismiss, showDragHandle = false)
 

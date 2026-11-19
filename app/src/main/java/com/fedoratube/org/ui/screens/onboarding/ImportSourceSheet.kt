@@ -7,18 +7,17 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.FileOpen
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.fedoratube.org.data.backup.ImportKind
 import com.fedoratube.org.data.backup.ImportSource
+import com.fedoratube.org.ui.components.shared.FlowCenteredPopupDialog
 import com.fedoratube.org.ui.components.shared.FlowNavRow
 import com.fedoratube.org.ui.components.shared.FlowRowGroup
 import com.fedoratube.org.ui.components.shared.FlowSheetHeader
 import com.fedoratube.org.ui.components.shared.flowRowGroupShape
-import com.fedoratube.org.ui.components.shared.rememberFlowSheetState
 
 private val SheetBottomPadding = 16.dp
 
@@ -30,9 +29,8 @@ internal fun ImportSourceSheet(
     onImport: (ImportKind) -> Unit,
     onDismiss: () -> Unit,
 ) {
-    ModalBottomSheet(
+    FlowCenteredPopupDialog(
         onDismissRequest = onDismiss,
-        sheetState = rememberFlowSheetState(),
         containerColor = MaterialTheme.colorScheme.surface,
     ) {
         FlowSheetHeader(
