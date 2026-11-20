@@ -107,6 +107,7 @@ import com.fedoratube.org.ui.components.layout.topbar.FlowTopBar
 import com.fedoratube.org.ui.components.layout.topbar.LocalFlowGlobalActions
 import com.fedoratube.org.ui.components.library.LibrarySection
 import com.fedoratube.org.ui.components.library.MusicDownloadRow
+import com.fedoratube.org.ui.components.library.CircularSelectBadge
 import com.fedoratube.org.ui.components.library.PlaylistCreationTarget
 import com.fedoratube.org.ui.components.library.PlaylistVideoRow
 import com.fedoratube.org.ui.components.library.VideoDownloadItem
@@ -152,7 +153,7 @@ fun LibraryScreen(
     viewModel: LibraryViewModel = hiltViewModel(),
 ) {
     val coroutineScope = rememberCoroutineScope()
-    val pagerState = rememberPagerState(initialPage = 0) { 4 }
+    val pagerState = rememberPagerState(initialPage = 0) { 3 }
     var showQrDialog by rememberSaveable { mutableStateOf(false) }
 
     var historyShelfHeightPx by remember { mutableFloatStateOf(0f) }
@@ -288,10 +289,6 @@ fun LibraryScreen(
                             onPlaylistClick = { id -> onPlaylistClick(id) },
                             onMusicPlaylistClick = { id -> onMusicPlaylistClick(id) },
                         )
-                        3 -> NotesFeed(
-                            viewModel = viewModel,
-                            onNavigateToNotes = onNavigateToNotes,
-                        )
                     }
                 }
             }
@@ -317,30 +314,17 @@ private fun LibraryCategoryTabsRow(
         stringResource(R.string.downloads_title),
         stringResource(R.string.watch_later),
         stringResource(R.string.library_playlists_label),
-        stringResource(R.string.notes_title),
     )
-    val tabCenters = remember { mutableStateMapOf<Int, Float>() }
-    var rowRootX by remember { mutableFloatStateOf(0f) }
 
-    val currentCenterPx = remember(pagerState.currentPage, pagerState.currentPageOffsetFraction) {
-        val page = pagerState.currentPage
-        val fraction = pagerState.currentPageOffsetFraction
-        val c0 = tabCenters[page] ?: 0f
-        val next = (if (fraction > 0f) page + 1 else page - 1).coerceIn(0, tabs.size - 1)
-        val c1 = tabCenters[next] ?: c0
-        c0 + (c1 - c0) * kotlin.math.abs(fraction)
-    }
-
-    Box(
+    BoxWithConstraints(
         modifier =
             modifier
                 .fillMaxWidth()
                 .height(TabRowHeight)
-                .background(MaterialTheme.colorScheme.background)
-                .onGloballyPositioned { coordinates ->
-                    rowRootX = coordinates.positionInRoot().x
-                },
+                .background(MaterialTheme.colorScheme.background),
     ) {
+        val tabWidth = maxWidth / tabs.size
+        val indicatorOffset = tabWidth * (pagerState.currentPage + pagerState.currentPageOffsetFraction) + (tabWidth - IndicatorWidth) / 2
         Row(
             modifier = Modifier.fillMaxSize(),
             horizontalArrangement = Arrangement.SpaceEvenly,
@@ -367,11 +351,6 @@ private fun LibraryCategoryTabsRow(
                                 indication = null,
                             ) {
                                 onTabSelected(index)
-                            }
-                            .onGloballyPositioned { coordinates ->
-                                val tabRoot = coordinates.positionInRoot()
-                                val tabCenter = (tabRoot.x - rowRootX) + coordinates.size.width / 2f
-                                tabCenters[index] = tabCenter
                             },
                     contentAlignment = Alignment.Center,
                 ) {
@@ -387,21 +366,16 @@ private fun LibraryCategoryTabsRow(
             }
         }
 
-        if (currentCenterPx > 0f) {
-            val indWidthPx = with(LocalDensity.current) { IndicatorWidth.toPx() }
-            Box(
-                modifier =
-                    Modifier
-                        .align(Alignment.BottomStart)
-                        .offset {
-                            IntOffset((currentCenterPx - indWidthPx / 2f).roundToInt(), 0)
-                        }
-                        .width(IndicatorWidth)
-                        .height(IndicatorHeight)
-                        .clip(RoundedCornerShape(topStart = 2.dp, topEnd = 2.dp))
-                        .background(MaterialTheme.colorScheme.primary),
-            )
-        }
+        Box(
+            modifier =
+                Modifier
+                    .align(Alignment.BottomStart)
+                    .offset(x = indicatorOffset)
+                    .width(IndicatorWidth)
+                    .height(IndicatorHeight)
+                    .clip(RoundedCornerShape(topStart = 2.dp, topEnd = 2.dp))
+                    .background(MaterialTheme.colorScheme.primary),
+        )
     }
 }
 
@@ -726,163 +700,6 @@ private fun PlaylistsFeed(
     }
 }
 
-@Composable
-private fun NotesFeed(
-    viewModel: LibraryViewModel,
-    onNavigateToNotes: () -> Unit,
-) {
-    val notes by viewModel.fullNotes.collectAsStateWithLifecycle()
-    var selectionMode by rememberSaveable { mutableStateOf(false) }
-    var selectedNoteKeys by rememberSaveable { mutableStateOf(setOf<String>()) }
-
-    val exitSelection = {
-        selectionMode = false
-        selectedNoteKeys = emptySet()
-    }
-
-    BackHandler(enabled = selectionMode) { exitSelection() }
-
-    if (notes.isNullOrEmpty()) {
-        FlowEmptyState(
-            title = stringResource(R.string.notes_empty_title),
-            subtitle = stringResource(R.string.notes_empty_body),
-            icon = Icons.Outlined.StickyNote2,
-            modifier = Modifier.fillMaxSize(),
-        )
-    } else {
-        Box(modifier = Modifier.fillMaxSize()) {
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
-                verticalArrangement = Arrangement.spacedBy(10.dp),
-            ) {
-                items(notes.orEmpty(), key = { "${it.targetId}_${it.kind}" }) { note ->
-                    val isSelected = note.key in selectedNoteKeys
-                    NoteFeedItem(
-                        note = note,
-                        selected = isSelected,
-                        selectionMode = selectionMode,
-                        onClick = {
-                            if (selectionMode) {
-                                selectedNoteKeys =
-                                    if (isSelected) selectedNoteKeys - note.key
-                                    else selectedNoteKeys + note.key
-                            } else {
-                                onNavigateToNotes()
-                            }
-                        },
-                        onLongClick = {
-                            selectionMode = true
-                            selectedNoteKeys = selectedNoteKeys + note.key
-                        },
-                    )
-                }
-            }
-
-            FlowSelectionToolbar(
-                visible = selectionMode && selectedNoteKeys.isNotEmpty(),
-                summary = pluralStringResource(R.plurals.selected_count_template, selectedNoteKeys.size, selectedNoteKeys.size),
-                actions = listOf(
-                    FlowSelectionAction(Icons.Outlined.Delete, stringResource(R.string.action_delete)) {
-                        notes.orEmpty().filter { it.key in selectedNoteKeys }.forEach { viewModel.deleteNote(it) }
-                        exitSelection()
-                    }
-                ),
-                modifier = Modifier.align(Alignment.BottomCenter),
-            )
-        }
-    }
-}
-
-@OptIn(ExperimentalFoundationApi::class)
-@Composable
-private fun NoteFeedItem(
-    note: Note,
-    selected: Boolean,
-    selectionMode: Boolean,
-    onClick: () -> Unit,
-    onLongClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    val isVideo = note.kind == NoteKind.Video
-    val subject = note.subject
-    Surface(
-        shape = RoundedCornerShape(16.dp),
-        color = if (selected) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.85f),
-        border = BorderStroke(
-            1.dp,
-            if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.35f),
-        ),
-        modifier =
-            modifier
-                .fillMaxWidth()
-                .clip(RoundedCornerShape(16.dp))
-                .combinedClickable(onClick = onClick, onLongClick = onLongClick),
-    ) {
-        Column(
-            modifier = Modifier.padding(14.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp),
-        ) {
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                verticalAlignment = if (isVideo) Alignment.Top else Alignment.CenterVertically,
-            ) {
-                if (isVideo) {
-                    MediaThumbnail(
-                        videoId = note.targetId,
-                        thumbnailUrl = subject?.thumbnailUrl,
-                        width = 110.dp,
-                        durationSeconds = subject?.durationSeconds,
-                    )
-                } else {
-                    ChannelAvatarImage(
-                        url = subject?.thumbnailUrl,
-                        contentDescription = null,
-                        modifier =
-                            Modifier
-                                .size(50.dp)
-                                .clip(CircleShape),
-                    )
-                }
-                Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                    Text(
-                        text = subject?.title ?: stringResource(if (isVideo) R.string.note_unknown_video else R.string.note_channel_note),
-                        style = MaterialTheme.typography.titleSmall,
-                        fontWeight = FontWeight.Bold,
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-                    val byline = if (isVideo) subject?.channelName else stringResource(R.string.note_channel_note)
-                    if (!byline.isNullOrBlank()) {
-                        Text(
-                            text = byline,
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                        )
-                    }
-                }
-                if (selectionMode) {
-                    Checkbox(
-                        checked = selected,
-                        onCheckedChange = { onClick() },
-                    )
-                }
-            }
-            if (note.text.isNotBlank()) {
-                Text(
-                    text = note.text,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    maxLines = 3,
-                    overflow = TextOverflow.Ellipsis,
-                )
-            }
-        }
-    }
-}
-
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun DownloadedMusicCard(
@@ -905,12 +722,12 @@ private fun DownloadedMusicCard(
     ) {
         Surface(
             modifier = Modifier.size(artworkSize),
-            shape = RoundedCornerShape(12.dp),
+            shape = RoundedCornerShape(14.dp),
             color = MaterialTheme.colorScheme.surfaceVariant,
-            tonalElevation = 2.dp,
+            tonalElevation = 0.dp,
             border = BorderStroke(
-                0.75.dp,
-                if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.35f),
+                if (selected) 2.dp else 1.dp,
+                if (selected) MaterialTheme.colorScheme.primary else Color.White.copy(alpha = 0.15f),
             ),
         ) {
             Box {
@@ -921,22 +738,21 @@ private fun DownloadedMusicCard(
                     contentScale = ContentScale.Crop,
                 )
 
-                if (selectionMode) {
+                if (selected) {
                     Box(
                         modifier = Modifier
+                            .fillMaxSize()
+                            .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.25f)),
+                    )
+                }
+
+                if (selectionMode) {
+                    CircularSelectBadge(
+                        selected = selected,
+                        modifier = Modifier
                             .align(Alignment.TopEnd)
-                            .padding(4.dp)
-                            .background(
-                                MaterialTheme.colorScheme.surface.copy(alpha = 0.8f),
-                                CircleShape,
-                            ),
-                    ) {
-                        Checkbox(
-                            checked = selected,
-                            onCheckedChange = { onClick() },
-                            modifier = Modifier.size(28.dp),
-                        )
-                    }
+                            .padding(6.dp),
+                    )
                 }
             }
         }

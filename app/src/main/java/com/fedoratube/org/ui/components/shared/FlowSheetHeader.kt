@@ -123,13 +123,15 @@ fun FlowSheetHeader(
                 )
             }
             Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = title,
-                    style = titleStyle,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    maxLines = titleMaxLines,
-                    overflow = TextOverflow.Ellipsis,
-                )
+                if (title.isNotBlank()) {
+                    Text(
+                        text = title,
+                        style = titleStyle,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        maxLines = titleMaxLines,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                }
                 if (subtitle != null) {
                     Text(
                         text = subtitle,

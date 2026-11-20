@@ -1,8 +1,5 @@
 package com.fedoratube.org.ui.components.shared
 
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -11,14 +8,11 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.ContentCopy
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -73,7 +67,6 @@ fun FlowDescriptionBottomSheet(
 ) {
     val uriHandler = LocalUriHandler.current
     val navigator = LocalMediaNavigator.current
-    val context = LocalContext.current
     val sheetState = rememberFlowBottomSheetState()
     val openLink: (String) -> Unit = { url ->
         if (navigator.openYouTubeUrl(url)) sheetState.dismiss() else runCatching { uriHandler.openUri(url) }
@@ -121,37 +114,16 @@ fun FlowDescriptionBottomSheet(
         dismissible = enableVerticalDismiss,
         dismissOnOutsideTap = dismissOnOutsideTap,
         shape = RectangleShape,
-        containerColor = MaterialTheme.colorScheme.surface,
+        containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.90f),
         onProgressChange = onSheetProgressChange,
         header = { dragModifier ->
             FlowSheetHeader(
                 inSidePane = !enableVerticalDismiss,
-                title = stringResource(R.string.description),
+                title = "",
                 onClose = { sheetState.dismiss() },
                 modifier = dragModifier,
-                titleStyle =
-                    MaterialTheme.typography.titleLarge.copy(
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold,
-                    ),
-                actions = {
-                    IconButton(
-                        onClick = {
-                            val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                            val clip = ClipData.newPlainText("description", descriptionText.text)
-                            clipboard.setPrimaryClip(clip)
-                            android.widget.Toast
-                                .makeText(
-                                    context,
-                                    context.getString(R.string.description_copied),
-                                    android.widget.Toast.LENGTH_SHORT,
-                                ).show()
-                        },
-                        modifier = Modifier.size(40.dp),
-                    ) {
-                        Icon(Icons.Outlined.ContentCopy, contentDescription = stringResource(R.string.copy_description))
-                    }
-                },
+                showDragHandle = true,
+                dividerAlpha = null,
             )
         },
     ) {

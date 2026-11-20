@@ -1,5 +1,6 @@
 package com.fedoratube.org.ui.components.shared
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -30,7 +31,7 @@ fun FlowCenteredPopupDialog(
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
     shape: Shape = RoundedCornerShape(28.dp),
-    containerColor: Color = MaterialTheme.colorScheme.surfaceContainerHigh,
+    containerColor: Color = MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.82f),
     maxHeight: Dp? = null,
     maxWidth: Dp = 480.dp,
     properties: DialogProperties = DialogProperties(
@@ -53,8 +54,9 @@ fun FlowCenteredPopupDialog(
                 .heightIn(max = effectiveMaxHeight),
             shape = shape,
             color = containerColor,
-            tonalElevation = 6.dp,
-            shadowElevation = 10.dp,
+            tonalElevation = 0.dp,
+            shadowElevation = 16.dp,
+            border = BorderStroke(1.dp, Color.White.copy(alpha = 0.15f)),
         ) {
             Column(
                 modifier = Modifier

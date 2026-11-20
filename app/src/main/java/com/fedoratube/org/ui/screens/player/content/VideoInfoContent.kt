@@ -193,8 +193,8 @@ internal fun VideoInfoContent(
         onWatchLaterClick = {
             viewModel.toggleWatchLater(dialogVideo)
         },
-        onNoteClick = { showNoteEditor = true }.takeIf { videoNotesEnabled },
-        hasNote = !videoNote.isNullOrBlank(),
+        onNoteClick = null,
+        hasNote = false,
         onCopyLinkClick = {
             val url = youtubeWatchUrl(video.id)
             val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
@@ -225,17 +225,6 @@ internal fun VideoInfoContent(
             totalText = commentsUiState.totalText,
             showPreviewText = showCommentsPreview,
             onClick = { screenState.open(PlayerSheet.Comments()) },
-        )
-    }
-
-    if (showNoteEditor && videoNotesEnabled) {
-        val insertPositionMs = remember { EnhancedPlayerManager.getInstance().getCurrentPosition().takeUnless { video.isLive } }
-        FlowNoteEditorDialog(
-            initialText = videoNote.orEmpty(),
-            title = stringResource(R.string.note_video_title),
-            onSave = { text -> viewModel.saveVideoNote(video.id, text) },
-            onDismiss = { showNoteEditor = false },
-            insertPositionMs = insertPositionMs,
         )
     }
 }

@@ -1,6 +1,8 @@
 package com.fedoratube.org.ui.components.library
 
 import android.text.format.Formatter
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.RowScope
@@ -8,9 +10,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.outlined.Close
@@ -21,6 +26,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.MaterialTheme
@@ -32,6 +38,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
@@ -76,6 +84,35 @@ internal fun downloadSupportingLine(
         sizeBytes.takeIf { it > 0L }?.let { Formatter.formatShortFileSize(context, it) },
         downloadedAt.takeIf { it > 0L }?.let { formatYouTubeRelativeTime(it) },
     ).joinToString(" $separator ")
+}
+
+@Composable
+internal fun CircularSelectBadge(
+    selected: Boolean,
+    modifier: Modifier = Modifier,
+) {
+    Box(
+        modifier =
+            modifier
+                .size(24.dp)
+                .clip(CircleShape)
+                .background(if (selected) MaterialTheme.colorScheme.primary else Color.Black.copy(alpha = 0.45f))
+                .border(
+                    1.5.dp,
+                    if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+                    CircleShape,
+                ),
+        contentAlignment = Alignment.Center,
+    ) {
+        if (selected) {
+            Icon(
+                imageVector = Icons.Filled.Check,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onPrimary,
+                modifier = Modifier.size(15.dp),
+            )
+        }
+    }
 }
 
 /** A finished video download as a row, or as a card in a grid. Long press opens its menu. */
@@ -124,7 +161,7 @@ internal fun VideoDownloadItem(
             selected = selected,
             onClick = onClick,
             onLongClick = effectiveLongClick,
-            leading = if (selectionMode) ({ Checkbox(checked = selected, onCheckedChange = { onClick() }) }) else null,
+            leading = if (selectionMode) ({ CircularSelectBadge(selected = selected) }) else null,
         ) {
             MediaThumbnail(
                 videoId = video.video.id,
@@ -167,7 +204,7 @@ internal fun MusicDownloadRow(
         selected = selected,
         onClick = onClick,
         onLongClick = if (selectionMode) null else (onLongClick ?: { musicMenus.openSong(downloadedTrack.track) }),
-        leading = if (selectionMode) ({ Checkbox(checked = selected, onCheckedChange = { onClick() }) }) else null,
+        leading = if (selectionMode) ({ CircularSelectBadge(selected = selected) }) else null,
         subtitleLeading =
             if (downloadedTrack.track.isExplicit == true) {
                 { ExplicitBadge(modifier = Modifier.padding(end = 4.dp)) }

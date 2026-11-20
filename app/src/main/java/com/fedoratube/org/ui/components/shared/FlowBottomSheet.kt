@@ -6,6 +6,7 @@ import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.AnimationVector1D
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Box
@@ -133,7 +134,7 @@ fun FlowBottomSheet(
     dismissible: Boolean = true,
     dismissOnOutsideTap: Boolean = true,
     shape: Shape = BottomSheetDefaults.ExpandedShape,
-    containerColor: Color = BottomSheetDefaults.ContainerColor,
+    containerColor: Color = BottomSheetDefaults.ContainerColor.copy(alpha = 0.90f),
     onBack: (() -> Unit)? = null,
     onProgressChange: (Float) -> Unit = {},
     onVisibleHeightChange: (Float) -> Unit = {},
@@ -275,6 +276,7 @@ fun FlowBottomSheet(
             shape = shape,
             color = containerColor,
             tonalElevation = 0.dp,
+            border = BorderStroke(1.dp, Color.White.copy(alpha = 0.12f)),
         ) {
             Column(
                 modifier =

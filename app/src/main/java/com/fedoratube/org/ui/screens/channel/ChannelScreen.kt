@@ -175,8 +175,8 @@ fun ChannelScreen(
                     tabStates = tabStates,
                     onFilterSelected = viewModel::selectTabFilter,
                     subscribedChannelIds = subscribedChannelIds,
-                    channelNote = channelNote.takeIf { notesEnabled },
-                    onEditNote = { showNoteEditor = true }.takeIf { notesEnabled },
+                    channelNote = null,
+                    onEditNote = null,
                     onSubscribeChannel = viewModel::setChannelSubscription,
                     onVideoClick = onVideoClick,
                     onChannelClick = onChannelClick,
@@ -262,15 +262,6 @@ fun ChannelScreen(
                 showCreateGroupDialog = true
             },
             onDismiss = { showGroupSheet = false },
-        )
-    }
-
-    if (showNoteEditor && notesEnabled) {
-        FlowNoteEditorDialog(
-            initialText = channelNote.orEmpty(),
-            title = stringResource(R.string.note_channel_title),
-            onSave = viewModel::saveChannelNote,
-            onDismiss = { showNoteEditor = false },
         )
     }
 

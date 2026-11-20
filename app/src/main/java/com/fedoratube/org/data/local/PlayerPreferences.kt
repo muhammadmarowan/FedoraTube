@@ -929,7 +929,7 @@ class PlayerPreferences(
     // hides both without clearing either of their own settings.
     val notesEnabled: Flow<Boolean> =
         context.playerPreferencesDataStore.data
-            .map { preferences -> preferences[Keys.NOTES_ENABLED] ?: true }
+            .map { preferences -> preferences[Keys.NOTES_ENABLED] ?: false }
 
     suspend fun setNotesEnabled(enabled: Boolean) {
         context.playerPreferencesDataStore.edit { preferences -> preferences[Keys.NOTES_ENABLED] = enabled }

@@ -60,7 +60,7 @@ internal fun PlaylistVideoRow(
         leading =
             when {
                 inSelectionMode -> {
-                    { Checkbox(checked = isSelected, onCheckedChange = null) }
+                    { CircularSelectBadge(selected = isSelected) }
                 }
 
                 showDragHandle -> {

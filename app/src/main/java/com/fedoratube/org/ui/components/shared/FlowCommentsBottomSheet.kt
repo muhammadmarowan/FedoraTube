@@ -93,7 +93,7 @@ fun FlowCommentsBottomSheet(
         collapsedHeight = collapsedHeight,
         dismissOnOutsideTap = dismissOnOutsideTap,
         shape = shape,
-        containerColor = MaterialTheme.colorScheme.surface,
+        containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.90f),
         onProgressChange = onSheetProgressChange,
         externalProgress = externalProgress,
         animationSpec = animationSpec,

@@ -4,8 +4,8 @@ import com.fedoratube.org.innertube.pages.channel.ChannelHeader
 import com.fedoratube.org.innertube.pages.channel.ChannelTabDescriptor
 import com.fedoratube.org.innertube.pages.channel.ChannelTabKind
 
-/** Store is a shop the app does not implement; Shorts are removed app-wide. Search was an in-channel magnifier and it is removed entirely now too. */
-private val HIDDEN_TABS = setOf(ChannelTabKind.Search, ChannelTabKind.Store, ChannelTabKind.Shorts)
+/** Store is a shop the app does not implement; Shorts and Home are removed channel-wide. Search was an in-channel magnifier and it is removed entirely now too. */
+private val HIDDEN_TABS = setOf(ChannelTabKind.Search, ChannelTabKind.Store, ChannelTabKind.Shorts, ChannelTabKind.Home)
 
 /** Posts are gone app-wide; deep links to a (channel/posts) URL still resolve to the channel Home tab. */
 

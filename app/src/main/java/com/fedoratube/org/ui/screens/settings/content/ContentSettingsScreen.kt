@@ -92,11 +92,6 @@ internal fun ContentSettingsScreen(
                 }
             }
         }
-        group(key = "content.notes", header = R.string.content_settings_notes_title) {
-            switch(ContentIndex.notes, viewModel.notes, viewModel::setNotes)
-            switch(ContentIndex.channelNotes, viewModel.channelNotes, viewModel::setChannelNotes, enabled = notes)
-            switch(ContentIndex.videoNotes, viewModel.videoNotes, viewModel::setVideoNotes, enabled = notes)
-        }
         group(key = "content.sharing", header = R.string.settings_section_sharing) {
             switch(ContentIndex.shareWithoutText, viewModel.shareWithoutText, viewModel::setShareWithoutText)
         }

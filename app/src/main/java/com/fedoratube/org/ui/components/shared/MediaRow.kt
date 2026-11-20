@@ -2,6 +2,7 @@ package com.fedoratube.org.ui.components.shared
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
@@ -39,6 +40,7 @@ object MediaRowDefaults {
     const val SELECTION_ALPHA = 0.24f
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MediaRow(
     title: String,
@@ -74,9 +76,10 @@ fun MediaRow(
                 .fillMaxWidth()
                 .background(background)
                 .then(
-                    if (onClick != null) {
-                        Modifier.clickable(
-                            onClick = onClick,
+                    if (onClick != null || onLongClick != null) {
+                        Modifier.combinedClickable(
+                            onClick = onClick ?: {},
+                            onLongClick = onLongClick,
                             role = Role.Button,
                         )
                     } else {

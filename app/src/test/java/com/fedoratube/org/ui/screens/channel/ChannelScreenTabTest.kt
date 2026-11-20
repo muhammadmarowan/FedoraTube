@@ -46,7 +46,6 @@ class ChannelScreenTabTest {
 
         assertEquals(
             listOf(
-                ChannelTabKind.Home,
                 ChannelTabKind.Videos,
                 ChannelTabKind.Shorts,
                 ChannelTabKind.Live,

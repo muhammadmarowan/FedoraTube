@@ -166,8 +166,8 @@ internal fun PlayerDescriptionSheetHost(
         chapterCount = uiState.chapters.size,
         onChaptersClick = onChaptersClick,
         onTranscriptClick = onTranscriptClick?.takeIf { hasTranscriptTrack },
-        note = videoNote.takeIf { videoNotesEnabled },
-        onEditNote = { showNoteEditor = true }.takeIf { videoNotesEnabled },
+        note = null,
+        onEditNote = null,
         onChannelClick = onChannelClick,
         artworkUrl = video.thumbnailUrl,
         onSeekMs = { EnhancedPlayerManager.getInstance().seekTo(it) },
@@ -178,17 +178,6 @@ internal fun PlayerDescriptionSheetHost(
         onDismiss = onDismiss,
         modifier = if (asSidePanel) Modifier.fillMaxSize() else Modifier,
     )
-
-    if (showNoteEditor && videoNotesEnabled) {
-        val insertPositionMs = remember { EnhancedPlayerManager.getInstance().getCurrentPosition().takeUnless { video.isLive } }
-        FlowNoteEditorDialog(
-            initialText = videoNote.orEmpty(),
-            title = stringResource(R.string.note_video_title),
-            onSave = { text -> viewModel.saveVideoNote(video.id, text) },
-            onDismiss = { showNoteEditor = false },
-            insertPositionMs = insertPositionMs,
-        )
-    }
 }
 
 @Composable

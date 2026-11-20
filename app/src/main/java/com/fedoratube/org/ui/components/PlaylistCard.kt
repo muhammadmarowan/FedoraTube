@@ -48,6 +48,7 @@ import coil3.compose.AsyncImage
 import com.fedoratube.org.R
 import com.fedoratube.org.data.model.Playlist
 import com.fedoratube.org.data.model.PlaylistInfo
+import com.fedoratube.org.ui.components.library.CircularSelectBadge
 import com.fedoratube.org.ui.components.shared.MediaTextBadge
 import com.fedoratube.org.ui.components.shared.thumbnailUrlOrNull
 import com.fedoratube.org.utils.ThumbnailUrlResolver
@@ -209,9 +210,8 @@ private fun PlaylistCardContent(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         if (selectionMode) {
-            Checkbox(
-                checked = selected,
-                onCheckedChange = { onClick() },
+            CircularSelectBadge(
+                selected = selected,
             )
         }
 
