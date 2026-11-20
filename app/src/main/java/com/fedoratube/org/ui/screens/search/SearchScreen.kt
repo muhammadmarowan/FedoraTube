@@ -359,27 +359,11 @@ fun SearchScreen(
                             textFieldState = state.textFieldState,
                             onSearch = submit,
                             onBack = if (showResults) resetSearch else if (isFocusModeEnabled) onBack else null,
-                            placeholder =
-                                if (showResults && isMusicSectionEnabled && pagerState.currentPage == 1) {
-                                    stringResource(R.string.search_music_placeholder)
-                                } else {
-                                    stringResource(R.string.search_videos_channels_placeholder)
-                                },
+                            placeholder = stringResource(R.string.search_videos_channels_placeholder),
                             focusRequester = focusRequester,
                             onFieldFocused = state::startTyping,
                             actions = null,
                         )
-
-                        if (showResults && isMusicSectionEnabled) {
-                            SearchCategoryTabs(
-                                pagerState = pagerState,
-                                onSelectPage = { page ->
-                                    coroutineScope.launch {
-                                        pagerState.animateScrollToPage(page)
-                                    }
-                                },
-                            )
-                        }
                     }
                 }
 
@@ -540,135 +524,6 @@ fun SearchScreen(
             },
             onDismiss = { showFilters = false },
         )
-    }
-}
-
-/**
- * Centered category switcher with smooth underline indicator tracking HorizontalPager swipe position.
- */
-@Composable
-private fun SearchCategoryTabs(
-    pagerState: PagerState,
-    onSelectPage: (Int) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    val density = LocalDensity.current
-    val indicatorWidth = 68.dp
-    val indicatorWidthPx = with(density) { indicatorWidth.toPx() }
-    val tabCenters = remember { mutableStateMapOf<Int, Float>() }
-    var rowRootX by remember { mutableFloatStateOf(0f) }
-
-    val currentCenterPx =
-        run {
-            val c0 = tabCenters[0] ?: 0f
-            val c1 = tabCenters[1] ?: 0f
-            if (c0 > 0f && c1 > 0f) {
-                val progress = (pagerState.currentPage + pagerState.currentPageOffsetFraction).coerceIn(0f, 1f)
-                c0 + (c1 - c0) * progress
-            } else {
-                tabCenters[pagerState.currentPage] ?: 0f
-            }
-        }
-
-    Box(
-        modifier =
-            modifier
-                .fillMaxWidth()
-                .height(44.dp)
-                .background(MaterialTheme.colorScheme.background)
-                .onGloballyPositioned { coordinates ->
-                    rowRootX = coordinates.positionInRoot().x
-                },
-    ) {
-        Row(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            val tabs =
-                listOf(
-                    Triple(0, stringResource(R.string.tv_filter_videos), Icons.Rounded.PlayArrow),
-                    Triple(1, stringResource(R.string.nav_music), Icons.Rounded.MusicNote),
-                )
-
-            tabs.forEachIndexed { index, (page, title, icon) ->
-                if (index > 0) {
-                    Spacer(modifier = Modifier.width(36.dp))
-                }
-                val isSelected = pagerState.currentPage == page
-                val textColor by animateColorAsState(
-                    targetValue =
-                        if (isSelected) {
-                            MaterialTheme.colorScheme.primary
-                        } else {
-                            MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
-                        },
-                    animationSpec = tween(150),
-                    label = "searchTabTextColor",
-                )
-
-                Row(
-                    modifier =
-                        Modifier
-                            .clickable(
-                                interactionSource = remember { MutableInteractionSource() },
-                                indication = null,
-                                onClick = { onSelectPage(page) },
-                            ).semantics {
-                                role = Role.Tab
-                            }.padding(vertical = 8.dp, horizontal = 12.dp)
-                            .onGloballyPositioned { coordinates ->
-                                val centerXInRoot = coordinates.positionInRoot().x + coordinates.size.width / 2f
-                                tabCenters[page] = centerXInRoot - rowRootX
-                            },
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(6.dp),
-                ) {
-                    Icon(
-                        imageVector = icon,
-                        contentDescription = null,
-                        modifier = Modifier.size(17.dp),
-                        tint = textColor,
-                    )
-                    Text(
-                        text = title,
-                        style =
-                            MaterialTheme.typography.titleMedium.copy(
-                                fontSize = 14.sp,
-                                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
-                            ),
-                        color = textColor,
-                    )
-                }
-            }
-        }
-
-        // Bottom divider line
-        HorizontalDivider(
-            color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.2f),
-            thickness = 0.5.dp,
-            modifier = Modifier.align(Alignment.BottomCenter),
-        )
-
-        // Sliding indicator line
-        if (currentCenterPx > 0f) {
-            val leftOffsetPx = (currentCenterPx - indicatorWidthPx / 2f).coerceAtLeast(0f)
-            Box(
-                modifier =
-                    Modifier
-                        .align(Alignment.BottomStart)
-                        .offset { IntOffset(leftOffsetPx.roundToInt(), 0) }
-                        .width(indicatorWidth)
-                        .height(3.dp)
-                        .background(
-                            color = MaterialTheme.colorScheme.primary,
-                            shape = RoundedCornerShape(1.5.dp),
-                        ),
-            )
-        }
     }
 }
 
