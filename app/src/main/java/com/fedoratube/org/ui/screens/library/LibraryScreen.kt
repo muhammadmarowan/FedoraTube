@@ -67,6 +67,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
@@ -92,8 +93,6 @@ import com.fedoratube.org.data.model.PlaylistInfo
 import com.fedoratube.org.data.model.Video
 import com.fedoratube.org.data.music.DownloadedTrack
 import com.fedoratube.org.data.music.model.MusicTrack
-import com.fedoratube.org.data.notes.Note
-import com.fedoratube.org.data.notes.NoteKind
 import com.fedoratube.org.data.stats.RecapPeriod
 import com.fedoratube.org.data.video.DownloadedVideo
 import com.fedoratube.org.ui.OnTabReselected
