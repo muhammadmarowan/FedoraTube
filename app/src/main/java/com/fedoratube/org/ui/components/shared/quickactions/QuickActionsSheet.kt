@@ -140,8 +140,8 @@ fun QuickActionsSheet(
 fun QuickActionsHeader(
     title: String,
     subtitle: String?,
-    artwork: @Composable () -> Unit,
     onClose: (() -> Unit)? = null,
+    artwork: @Composable () -> Unit,
 ) {
     Row(
         modifier =

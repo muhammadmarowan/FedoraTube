@@ -59,6 +59,7 @@ enum class PlaylistCardLayout {
     SHELF,
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun PlaylistCard(
     playlist: PlaylistInfo,
@@ -67,6 +68,10 @@ fun PlaylistCard(
     layout: PlaylistCardLayout = PlaylistCardLayout.LIST,
     modifier: Modifier = Modifier,
     useInternalPadding: Boolean = true,
+    isMusic: Boolean = false,
+    selected: Boolean = false,
+    selectionMode: Boolean = false,
+    onLongClick: (() -> Unit)? = null,
 ) {
     PlaylistCardContent(
         title = playlist.name,
@@ -74,10 +79,14 @@ fun PlaylistCard(
         thumbnailUrl = playlist.thumbnailUrl,
         videoCount = playlist.videoCount,
         onClick = onClick,
+        onLongClick = onLongClick,
         onDeleteClick = onDeleteClick,
         layout = layout,
         modifier = modifier,
         useInternalPadding = useInternalPadding,
+        isMusic = isMusic,
+        selected = selected,
+        selectionMode = selectionMode,
     )
 }
 
