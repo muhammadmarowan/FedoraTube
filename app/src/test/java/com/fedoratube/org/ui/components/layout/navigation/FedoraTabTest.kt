@@ -43,7 +43,7 @@ class FedoraTabTest {
             )
 
         assertEquals(
-            listOf(FlowTab.Library, FlowTab.Music, FlowTab.Home),
+            listOf(FlowTab.Library, FlowTab.Home),
             tabs,
         )
     }
@@ -59,7 +59,6 @@ class FedoraTabTest {
         assertEquals(
             listOf(
                 FlowTab.Home,
-                FlowTab.Music,
                 FlowTab.Library,
                 FlowTab.Search,
                 FlowTab.Explore,

@@ -100,13 +100,15 @@ internal fun HomeChipRow(
 
     val currentCenterPx =
         if (pagerState != null && state.chips.size >= 2) {
-            val key0 = state.chips.getOrNull(0)?.key ?: ""
-            val key1 = state.chips.getOrNull(1)?.key ?: ""
-            val c0 = tabCenters[key0] ?: 0f
-            val c1 = tabCenters[key1] ?: 0f
-            if (c0 > 0f && c1 > 0f) {
-                val pageProgress = (pagerState.currentPage + pagerState.currentPageOffsetFraction).coerceIn(0f, 1f)
-                c0 + (c1 - c0) * pageProgress
+            val page = pagerState.currentPage
+            val offset = pagerState.currentPageOffsetFraction
+            val fromKey = state.chips.getOrNull(page)?.key ?: ""
+            val toPage = if (offset > 0f) page + 1 else if (offset < 0f) page - 1 else page
+            val toKey = state.chips.getOrNull(toPage)?.key ?: fromKey
+            val cFrom = tabCenters[fromKey] ?: 0f
+            val cTo = tabCenters[toKey] ?: cFrom
+            if (cFrom > 0f && cTo > 0f) {
+                cFrom + (cTo - cFrom) * kotlin.math.abs(offset)
             } else {
                 tabCenters[selectedKey] ?: 0f
             }
@@ -232,6 +234,7 @@ private fun HomeChip.label(): String =
     when (this) {
         HomeChip.All -> stringResource(R.string.home_chip_all)
         HomeChip.Subscriptions -> "Subs"
+        HomeChip.Music -> "Music"
         is HomeChip.Interest -> interest.category?.let(::themeLabel)?.let { stringResource(it) } ?: interest.label
         HomeChip.NewToYou -> stringResource(R.string.home_chip_new_to_you)
         HomeChip.RecentlyUploaded -> stringResource(R.string.home_chip_recently_uploaded)

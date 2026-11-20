@@ -39,7 +39,7 @@ internal fun visibleChips(
     hasMixSeeds: Boolean,
     hasWatched: Boolean,
     selected: String,
-): List<HomeChip> = listOf(HomeChip.All, HomeChip.Subscriptions)
+): List<HomeChip> = listOf(HomeChip.All, HomeChip.Subscriptions, HomeChip.Music)
 
 private val CategorySearchVariants =
     mapOf(

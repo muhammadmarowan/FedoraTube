@@ -134,7 +134,7 @@ fun FlowBottomSheet(
     dismissible: Boolean = true,
     dismissOnOutsideTap: Boolean = true,
     shape: Shape = BottomSheetDefaults.ExpandedShape,
-    containerColor: Color = BottomSheetDefaults.ContainerColor.copy(alpha = 0.90f),
+    containerColor: Color = BottomSheetDefaults.ContainerColor,
     onBack: (() -> Unit)? = null,
     onProgressChange: (Float) -> Unit = {},
     onVisibleHeightChange: (Float) -> Unit = {},

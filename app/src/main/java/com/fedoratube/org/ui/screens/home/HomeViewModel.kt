@@ -28,6 +28,7 @@ import com.fedoratube.org.data.recommendation.NeuroScoring
 import com.fedoratube.org.data.recommendation.RankTrace
 import com.fedoratube.org.data.recommendation.UserBrain
 import com.fedoratube.org.data.repository.YouTubeRepository
+import com.fedoratube.org.innertube.YouTube
 import com.fedoratube.org.data.repository.needsChannelMetadata
 import com.fedoratube.org.data.subscriptions.HomeSubscriptionUploads
 import com.fedoratube.org.innertube.pages.renderer.FeedItemOwner
@@ -163,6 +164,106 @@ class HomeViewModel
                     initialValue = _uiState.value.withUniqueLazyContent(),
                 )
 
+        private val _musicUiState = MutableStateFlow(HomeUiState(isLoading = true))
+        val musicUiState: StateFlow<HomeUiState> =
+            _musicUiState
+                .map(HomeUiState::withUniqueLazyContent)
+                .stateIn(
+                    scope = viewModelScope,
+                    started = SharingStarted.WhileSubscribed(UI_STATE_SUBSCRIPTION_TIMEOUT_MS),
+                    initialValue = _musicUiState.value.withUniqueLazyContent(),
+                )
+        private var musicContinuation: String? = null
+        private var musicJob: Job? = null
+
+        fun loadMusicFeed(force: Boolean = false) {
+            if (musicJob?.isActive == true && !force) return
+            if (!force && _musicUiState.value.videos.isNotEmpty()) return
+            musicJob?.cancel()
+            musicJob = viewModelScope.launch(PerformanceDispatcher.networkIO) {
+                _musicUiState.update { it.copy(isLoading = it.videos.isEmpty(), isRefreshing = force, error = null) }
+                try {
+                    val region = runCatching { playerPreferences.trendingRegion.first() }.getOrDefault("US")
+                    val chartResult = runCatching { YouTube.musicVideoChart(region) }.getOrNull()?.getOrNull()
+                    val chartVideos = chartResult?.entries.orEmpty()
+
+                    val (searchVideos, continuation) = runCatching {
+                        repository.searchVideos("trending music songs")
+                    }.getOrElse { emptyList<Video>() to null }
+
+                    val combined = (chartVideos + searchVideos)
+                        .distinctBy { it.id }
+                        .filter { !it.isShort }
+                        .map { it.copy(isMusic = true) }
+
+                    musicContinuation = continuation
+
+                    if (combined.isNotEmpty()) {
+                        val enriched = runCatching { repository.enrichVideosWithAvatars(combined) }.getOrDefault(combined)
+                        _musicUiState.update {
+                            it.copy(
+                                videos = enriched,
+                                isLoading = false,
+                                isRefreshing = false,
+                                error = null,
+                                hasMorePages = musicContinuation != null,
+                            )
+                        }
+                    } else {
+                        _musicUiState.update {
+                            it.copy(
+                                isLoading = false,
+                                isRefreshing = false,
+                                error = "Failed to load music",
+                            )
+                        }
+                    }
+                } catch (e: Exception) {
+                    _musicUiState.update {
+                        it.copy(
+                            isLoading = false,
+                            isRefreshing = false,
+                            error = e.message ?: "Failed to load music",
+                        )
+                    }
+                }
+            }
+        }
+
+        fun refreshMusicFeed() {
+            loadMusicFeed(force = true)
+        }
+
+        fun loadMoreMusicFeed() {
+            val cont = musicContinuation ?: return
+            if (_musicUiState.value.isLoadingMore) return
+            viewModelScope.launch(PerformanceDispatcher.networkIO) {
+                _musicUiState.update { it.copy(isLoadingMore = true, loadMoreFailed = false) }
+                try {
+                    val (nextVideos, nextCont) = repository.searchVideos("trending music songs", continuation = cont)
+                    musicContinuation = nextCont
+                    val enriched = runCatching { repository.enrichVideosWithAvatars(nextVideos) }.getOrDefault(nextVideos)
+                    _musicUiState.update { state ->
+                        val merged = (state.videos + enriched)
+                            .distinctBy { it.id }
+                            .filter { !it.isShort }
+                            .map { it.copy(isMusic = true) }
+                        state.copy(
+                            videos = merged,
+                            isLoadingMore = false,
+                            hasMorePages = nextCont != null,
+                        )
+                    }
+                } catch (e: Exception) {
+                    _musicUiState.update { it.copy(isLoadingMore = false, loadMoreFailed = true) }
+                }
+            }
+        }
+
+        fun retryMusicLoadMore() {
+            loadMoreMusicFeed()
+        }
+
         private var isInitialized = false
         private val homePrefetchQueue =
             FeedPrefetchQueue(
@@ -239,6 +340,7 @@ class HomeViewModel
                 hydratePersistentHomeFeed()
                 loadFlowFeed(forceRefresh = true)
             }
+            loadMusicFeed()
         }
 
         fun initialize(context: Context) {

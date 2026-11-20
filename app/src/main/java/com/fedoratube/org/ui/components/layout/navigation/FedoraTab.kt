@@ -62,7 +62,7 @@ fun FlowTab.icon(selected: Boolean): ImageVector =
 
 data class NavigationVisibility(
     val home: Boolean = true,
-    val music: Boolean = true,
+    val music: Boolean = false,
     val search: Boolean = true,
     val categories: Boolean = false,
 )
@@ -70,7 +70,7 @@ data class NavigationVisibility(
 /**
  * The bottom-bar tabs, in the user's order. Library cannot be hidden: every root
  * destination carries Notifications and Settings in its top bar, so one must always exist.
- * Downloads lives in the Library section, YouTube-style. Music lives in the bottom navigation bar.
+ * Downloads lives in the Library section, YouTube-style.
  */
 fun visibleFlowTabs(
     order: List<Int>,
@@ -80,7 +80,6 @@ fun visibleFlowTabs(
         buildSet {
             if (visibility.home) add(FlowTab.Home)
             if (visibility.search) add(FlowTab.Search)
-            if (visibility.music) add(FlowTab.Music)
             add(FlowTab.Library)
             if (visibility.categories) add(FlowTab.Explore)
         }

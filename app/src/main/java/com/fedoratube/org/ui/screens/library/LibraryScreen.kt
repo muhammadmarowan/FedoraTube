@@ -274,7 +274,6 @@ fun LibraryScreen(
                         0 -> DownloadsFeed(
                             viewModel = viewModel,
                             onDownloadedVideoClick = onDownloadedVideoClick,
-                            onDownloadedMusicClick = onDownloadedMusicClick,
                         )
                         1 -> WatchLaterFeed(
                             viewModel = viewModel,
@@ -379,27 +378,23 @@ private fun LibraryCategoryTabsRow(
 private fun DownloadsFeed(
     viewModel: LibraryViewModel,
     onDownloadedVideoClick: (List<DownloadedVideo>, Int) -> Unit,
-    onDownloadedMusicClick: (List<DownloadedTrack>, Int) -> Unit,
+    onDownloadedMusicClick: (List<DownloadedTrack>, Int) -> Unit = { _, _ -> },
 ) {
     val downloadedVideos by viewModel.fullDownloadedVideos.collectAsStateWithLifecycle()
-    val downloadedTracks by viewModel.fullDownloadedTracks.collectAsStateWithLifecycle()
     val isFocusMode by viewModel.isFocusModeEnabled.collectAsStateWithLifecycle()
     val hasVideos = !downloadedVideos.isNullOrEmpty()
-    val hasTracks = !downloadedTracks.isNullOrEmpty()
 
     var selectionMode by rememberSaveable { mutableStateOf(false) }
     var selectedVideoIds by rememberSaveable { mutableStateOf(setOf<String>()) }
-    var selectedTrackIds by rememberSaveable { mutableStateOf(setOf<String>()) }
 
     val exitSelection = {
         selectionMode = false
         selectedVideoIds = emptySet()
-        selectedTrackIds = emptySet()
     }
 
     BackHandler(enabled = selectionMode) { exitSelection() }
 
-    if (!hasVideos && !hasTracks) {
+    if (!hasVideos) {
         FlowEmptyState(
             title = stringResource(R.string.downloads_title),
             subtitle = stringResource(R.string.library_empty_body),
@@ -413,89 +408,45 @@ private fun DownloadsFeed(
                 contentPadding = PaddingValues(horizontal = 12.dp, vertical = if (isFocusMode) 4.dp else 8.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                // 1. Downloaded Music Section: placed on top, side-by-side horizontally
-                if (hasTracks) {
-                    if (!isFocusMode) {
-                        item(key = "header_music") {
-                            FlowSectionHeader(
-                                text = stringResource(R.string.screen_title_music),
-                            )
-                        }
-                    }
-                    item(key = "row_music") {
-                        LazyRow(
-                            horizontalArrangement = Arrangement.spacedBy(12.dp),
-                            contentPadding = PaddingValues(horizontal = 4.dp, vertical = 4.dp),
-                        ) {
-                            items(downloadedTracks.orEmpty(), key = { it.track.videoId }) { track ->
-                                val isSelected = track.track.videoId in selectedTrackIds
-                                DownloadedMusicCard(
-                                    track = track,
-                                    selected = isSelected,
-                                    selectionMode = selectionMode,
-                                    onClick = {
-                                        if (selectionMode) {
-                                            selectedTrackIds =
-                                                if (isSelected) selectedTrackIds - track.track.videoId
-                                                else selectedTrackIds + track.track.videoId
-                                        } else {
-                                            val idx = downloadedTracks.orEmpty().indexOf(track)
-                                            onDownloadedMusicClick(downloadedTracks.orEmpty(), if (idx >= 0) idx else 0)
-                                        }
-                                    },
-                                    onLongClick = {
-                                        selectionMode = true
-                                        selectedTrackIds = selectedTrackIds + track.track.videoId
-                                    },
-                                )
-                            }
-                        }
-                    }
-                }
-
-                // 2. Downloaded Videos Section: placed below music
-                if (hasVideos) {
-                    if (!isFocusMode) {
-                        item(key = "header_videos") {
-                            FlowSectionHeader(
-                                text = stringResource(R.string.tab_videos),
-                            )
-                        }
-                    }
-                    itemsIndexed(downloadedVideos.orEmpty(), key = { _, v -> "v_${v.video.id}" }) { index, video ->
-                        val isSelected = video.video.id in selectedVideoIds
-                        VideoDownloadItem(
-                            video = video,
-                            asCard = false,
-                            selectionMode = selectionMode,
-                            selected = isSelected,
-                            onClick = {
-                                if (selectionMode) {
-                                    selectedVideoIds =
-                                        if (isSelected) selectedVideoIds - video.video.id
-                                        else selectedVideoIds + video.video.id
-                                } else {
-                                    onDownloadedVideoClick(downloadedVideos.orEmpty(), index)
-                                }
-                            },
-                            onLongClick = {
-                                selectionMode = true
-                                selectedVideoIds = selectedVideoIds + video.video.id
-                            },
-                            onDeleteClick = { viewModel.deleteDownloadedVideo(video.video.id) },
+                if (!isFocusMode) {
+                    item(key = "header_videos") {
+                        FlowSectionHeader(
+                            text = stringResource(R.string.tab_videos),
                         )
                     }
                 }
+                itemsIndexed(downloadedVideos.orEmpty(), key = { _, v -> "v_${v.video.id}" }) { index, video ->
+                    val isSelected = video.video.id in selectedVideoIds
+                    VideoDownloadItem(
+                        video = video,
+                        asCard = false,
+                        selectionMode = selectionMode,
+                        selected = isSelected,
+                        onClick = {
+                            if (selectionMode) {
+                                selectedVideoIds =
+                                    if (isSelected) selectedVideoIds - video.video.id
+                                    else selectedVideoIds + video.video.id
+                            } else {
+                                onDownloadedVideoClick(downloadedVideos.orEmpty(), index)
+                            }
+                        },
+                        onLongClick = {
+                            selectionMode = true
+                            selectedVideoIds = selectedVideoIds + video.video.id
+                        },
+                        onDeleteClick = { viewModel.deleteDownloadedVideo(video.video.id) },
+                    )
+                }
             }
 
-            val totalSelected = selectedVideoIds.size + selectedTrackIds.size
+            val totalSelected = selectedVideoIds.size
             FlowSelectionToolbar(
                 visible = selectionMode && totalSelected > 0,
                 summary = pluralStringResource(R.plurals.selected_count_template, totalSelected, totalSelected),
                 actions = listOf(
                     FlowSelectionAction(Icons.Outlined.Delete, stringResource(R.string.action_delete)) {
                         selectedVideoIds.forEach { viewModel.deleteDownloadedVideo(it) }
-                        selectedTrackIds.forEach { viewModel.deleteDownloadedMusic(it) }
                         exitSelection()
                     }
                 ),
@@ -606,23 +557,12 @@ private fun PlaylistsFeed(
         ) {
             // Playlist creation system below playlist category tabs
             item(key = "create_playlists_row") {
-                Row(
+                FlowGlassButton(
+                    icon = Icons.Outlined.VideoLibrary,
+                    label = stringResource(R.string.create_new_playlist),
+                    onClick = { creationTarget = PlaylistCreationTarget.Video },
                     modifier = Modifier.fillMaxWidth().padding(bottom = 4.dp),
-                    horizontalArrangement = Arrangement.spacedBy(10.dp),
-                ) {
-                    FlowGlassButton(
-                        icon = Icons.Outlined.VideoLibrary,
-                        label = stringResource(R.string.create_new_playlist),
-                        onClick = { creationTarget = PlaylistCreationTarget.Video },
-                        modifier = Modifier.weight(1f),
-                    )
-                    FlowGlassButton(
-                        icon = Icons.Outlined.MusicNote,
-                        label = stringResource(R.string.new_playlist_button),
-                        onClick = { creationTarget = PlaylistCreationTarget.Music },
-                        modifier = Modifier.weight(1f),
-                    )
-                }
+                )
             }
 
             if (playlists.isNullOrEmpty()) {
@@ -696,87 +636,6 @@ private fun PlaylistsFeed(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
-@Composable
-private fun DownloadedMusicCard(
-    track: DownloadedTrack,
-    selected: Boolean,
-    selectionMode: Boolean,
-    onClick: () -> Unit,
-    onLongClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    val artworkSize = 120.dp
-    Column(
-        modifier =
-            modifier
-                .width(artworkSize)
-                .clip(RoundedCornerShape(14.dp))
-                .combinedClickable(onClick = onClick, onLongClick = onLongClick)
-                .padding(vertical = 4.dp),
-        verticalArrangement = Arrangement.spacedBy(6.dp),
-    ) {
-        Surface(
-            modifier = Modifier.size(artworkSize),
-            shape = RoundedCornerShape(14.dp),
-            color = MaterialTheme.colorScheme.surfaceVariant,
-            tonalElevation = 0.dp,
-            border = BorderStroke(
-                if (selected) 2.dp else 1.dp,
-                if (selected) MaterialTheme.colorScheme.primary else Color.White.copy(alpha = 0.15f),
-            ),
-        ) {
-            Box {
-                AsyncImage(
-                    model = track.track.thumbnailUrl,
-                    contentDescription = null,
-                    modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.Crop,
-                )
-
-                if (selected) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.25f)),
-                    )
-                }
-
-                if (selectionMode) {
-                    CircularSelectBadge(
-                        selected = selected,
-                        modifier = Modifier
-                            .align(Alignment.TopEnd)
-                            .padding(6.dp),
-                    )
-                }
-            }
-        }
-
-        Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-            Text(
-                text = track.track.title,
-                style = MaterialTheme.typography.bodyMedium,
-                fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.onSurface,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                if (track.track.isExplicit == true) {
-                    ExplicitBadge(modifier = Modifier.padding(end = 4.dp))
-                }
-                Text(
-                    text = track.track.artist,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-            }
-        }
-    }
-}
 
 /**
  * Modern iOS liquid glass-style action button with subtle translucent backdrop and outline border.

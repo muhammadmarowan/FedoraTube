@@ -36,14 +36,14 @@ class HomeChipPoliciesTest {
     fun `chips keep a fixed order and hide what has nothing to show`() {
         val chips = visibleChips(listOf(claude), emptyKeys = setOf("live"), hasMixSeeds = false, hasWatched = true, selected = "all")
 
-        assertThat(chips.map { it.key }).containsExactly("all", "interest:claude", "new", "recent", "watched").inOrder()
+        assertThat(chips.map { it.key }).containsExactly("all", "subs", "music").inOrder()
     }
 
     @Test
     fun `the selected chip stays visible even when it came back empty`() {
-        val chips = visibleChips(emptyList(), emptyKeys = setOf("live"), hasMixSeeds = false, hasWatched = false, selected = "live")
+        val chips = visibleChips(emptyList(), emptyKeys = setOf("live"), hasMixSeeds = false, hasWatched = false, selected = "music")
 
-        assertThat(chips.map { it.key }).contains("live")
+        assertThat(chips.map { it.key }).contains("music")
     }
 
     @Test

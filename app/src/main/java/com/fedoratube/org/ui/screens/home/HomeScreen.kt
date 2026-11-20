@@ -208,7 +208,7 @@ fun HomeScreen(
         }
     }
 
-    val pagerState = rememberPagerState(initialPage = 0, pageCount = { 2 })
+    val pagerState = rememberPagerState(initialPage = 0, pageCount = { 3 })
 
     var isManagingSubs by rememberSaveable { mutableStateOf(false) }
     var subsSearchQuery by rememberSaveable { mutableStateOf("") }
@@ -232,7 +232,13 @@ fun HomeScreen(
     }
 
     LaunchedEffect(pagerState.currentPage) {
-        val targetKey = if (pagerState.currentPage == 0) HomeChip.All.key else HomeChip.Subscriptions.key
+        val targetKey =
+            when (pagerState.currentPage) {
+                0 -> HomeChip.All.key
+                1 -> HomeChip.Subscriptions.key
+                2 -> HomeChip.Music.key
+                else -> HomeChip.All.key
+            }
         if (chipsState.selected != targetKey) {
             viewModel.selectChip(targetKey)
         }
@@ -242,16 +248,27 @@ fun HomeScreen(
             isManagingSubs = false
             subsSearchQuery = ""
         }
+        if (pagerState.currentPage == 2) {
+            viewModel.loadMusicFeed()
+        }
     }
 
     LaunchedEffect(chipsState.selected) {
-        val targetPage = if (chipsState.selected == HomeChip.Subscriptions.key) 1 else 0
+        val targetPage =
+            when (chipsState.selected) {
+                HomeChip.All.key -> 0
+                HomeChip.Subscriptions.key -> 1
+                HomeChip.Music.key -> 2
+                else -> 0
+            }
         if (pagerState.currentPage != targetPage && !pagerState.isScrollInProgress) {
             pagerState.animateScrollToPage(targetPage)
         }
     }
 
     val gridState = rememberLazyGridState()
+    val musicGridState = rememberLazyGridState()
+    val musicUiState by viewModel.musicUiState.collectAsStateWithLifecycle()
     var homeFirstScrollFixed by rememberSaveable { mutableStateOf(false) }
     LaunchedEffect(uiState.videos.isNotEmpty()) {
         if (uiState.videos.isNotEmpty() && !homeFirstScrollFixed) {
@@ -311,6 +328,29 @@ fun HomeScreen(
             .collect { viewModel.recordImpressions(it) }
     }
 
+    val musicVideoIndexById =
+        remember(musicUiState.videos) {
+            buildMap(musicUiState.videos.size) {
+                musicUiState.videos.forEachIndexed { index, video -> put(video.id, index) }
+            }
+        }
+    LaunchedEffect(musicGridState, musicVideoIndexById) {
+        snapshotFlow {
+            var lastVisibleVideoIndex = -1
+            val items = musicGridState.layoutInfo.visibleItemsInfo
+            for (i in items.indices) {
+                val index = musicVideoIndexById[items[i].key as? String] ?: continue
+                if (index > lastVisibleVideoIndex) lastVisibleVideoIndex = index
+            }
+            lastVisibleVideoIndex
+        }.distinctUntilChanged()
+            .collect { lastVisibleIndex ->
+                if (lastVisibleIndex >= 0 && lastVisibleIndex >= musicUiState.videos.size - 6) {
+                    viewModel.loadMoreMusicFeed()
+                }
+            }
+    }
+
     LaunchedEffect(refreshHomeOnReselect) {
         TabScrollEventBus.scrollToTopEvents
             .filter { it == "home" }
@@ -322,12 +362,19 @@ fun HomeScreen(
                     } else if (refreshHomeOnReselect) {
                         viewModel.refreshFeed()
                     }
-                } else {
+                } else if (pagerState.currentPage == 1) {
                     val atTop = subGridState.firstVisibleItemIndex == 0 && subGridState.firstVisibleItemScrollOffset == 0
                     if (!atTop) {
                         subGridState.animateScrollToItem(0)
                     } else {
                         subsViewModel.refreshFeed()
+                    }
+                } else {
+                    val atTop = musicGridState.firstVisibleItemIndex == 0 && musicGridState.firstVisibleItemScrollOffset == 0
+                    if (!atTop) {
+                        musicGridState.animateScrollToItem(0)
+                    } else {
+                        viewModel.refreshMusicFeed()
                     }
                 }
             }
@@ -627,6 +674,47 @@ fun HomeScreen(
                                     onDismissFailedChannels = subsViewModel::dismissFailedChannels,
                                     modifier = Modifier.fillMaxSize(),
                                 )
+                            }
+                        }
+
+                        2 -> {
+                            BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+                                val feedLayout = rememberFeedGridLayout(maxWidth, HomeFeedColumns.ONE)
+
+                                when {
+                                    musicUiState.isLoading && musicUiState.videos.isEmpty() -> {
+                                        FeedGridSkeleton(
+                                            layout = feedLayout,
+                                            listMode = false,
+                                            stackedInset = false,
+                                            placeholderCount = SKELETON_CARD_COUNT,
+                                            compactRowSpacing = 16.dp,
+                                        )
+                                    }
+
+                                    musicUiState.error != null && musicUiState.videos.isEmpty() -> {
+                                        FlowErrorState(
+                                            error = musicUiState.error ?: stringResource(R.string.error_occurred),
+                                            onRetry = { viewModel.refreshMusicFeed() },
+                                        )
+                                    }
+
+                                    else -> {
+                                        HomeFeedGrid(
+                                            uiState = musicUiState,
+                                            feedLayout = feedLayout,
+                                            isListView = false,
+                                            gridState = musicGridState,
+                                            onVideoClick = onVideoClick,
+                                            onEnrichChannelMetadata = viewModel::enrichChannelMetadataIfMissing,
+                                            onContinueWatchingClick = { entry -> onVideoClick(entry.toResumeVideo()) },
+                                            onContinueWatchingRemove = viewModel::removeContinueWatchingEntry,
+                                            onRefresh = { viewModel.refreshMusicFeed() },
+                                            onRetryLoadMore = { viewModel.retryMusicLoadMore() },
+                                            footerMinVideos = 0,
+                                        )
+                                    }
+                                }
                             }
                         }
                     }

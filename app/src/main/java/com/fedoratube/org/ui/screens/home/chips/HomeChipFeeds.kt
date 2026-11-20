@@ -133,7 +133,7 @@ class HomeChipFeeds
             val chip = chipFor(key) ?: HomeChip.All
             savedState[SELECTED_KEY] = chip.key
             loadJob?.cancel()
-            if (chip == HomeChip.All || chip == HomeChip.Subscriptions) {
+            if (chip == HomeChip.All || chip == HomeChip.Subscriptions || chip == HomeChip.Music) {
                 chipsState.update { it.copy(selected = chip.key, feed = null, isRefreshing = false) }
                 publishChips()
                 return
@@ -148,7 +148,7 @@ class HomeChipFeeds
         /** Pull to refresh on a chip refreshes that chip alone. */
         fun refreshSelected() {
             val chip = chipFor(chipsState.value.selected) ?: return
-            if (chip == HomeChip.All || chip == HomeChip.Subscriptions) return
+            if (chip == HomeChip.All || chip == HomeChip.Subscriptions || chip == HomeChip.Music) return
             cache.evict(chip)
             chipsState.update { it.copy(isRefreshing = true) }
             load(chip, force = true)
@@ -217,7 +217,7 @@ class HomeChipFeeds
 
         private suspend fun fetch(chip: HomeChip): ChipFeed =
             when (chip) {
-                HomeChip.All, HomeChip.Subscriptions -> ChipFeed.Empty
+                HomeChip.All, HomeChip.Subscriptions, HomeChip.Music -> ChipFeed.Empty
                 is HomeChip.Interest -> videos(interestVideos(chip.interest))
                 HomeChip.NewToYou -> videos(newToYou())
                 HomeChip.RecentlyUploaded -> videos(recentlyUploaded())

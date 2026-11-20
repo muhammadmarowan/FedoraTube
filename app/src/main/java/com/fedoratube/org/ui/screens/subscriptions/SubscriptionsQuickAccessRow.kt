@@ -37,28 +37,10 @@ internal fun SubscriptionsQuickAccessRow(
     onChannelClick: (Channel) -> Unit,
     onChannelLongClick: ((Channel) -> Unit)? = null,
     onViewAllClick: () -> Unit,
-    onMusicClick: () -> Unit,
+    onMusicClick: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier) {
-        if (channels.any { it.isMusic }) {
-            Row(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = RowHorizontalPadding),
-                horizontalArrangement = Arrangement.End,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                SubscriptionMusicPill(
-                    contentPadding = PaddingValues(horizontal = 10.dp, vertical = 6.dp),
-                    iconSize = 14.dp,
-                    textStyle = MaterialTheme.typography.labelMedium,
-                    onClick = onMusicClick,
-                )
-            }
-        }
-
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.Top,

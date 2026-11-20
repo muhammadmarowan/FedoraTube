@@ -114,7 +114,7 @@ fun FlowDescriptionBottomSheet(
         dismissible = enableVerticalDismiss,
         dismissOnOutsideTap = dismissOnOutsideTap,
         shape = RectangleShape,
-        containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.90f),
+        containerColor = MaterialTheme.colorScheme.surface,
         onProgressChange = onSheetProgressChange,
         header = { dragModifier ->
             FlowSheetHeader(
