@@ -213,7 +213,6 @@ fun HomeScreen(
     var isManagingSubs by rememberSaveable { mutableStateOf(false) }
     var subsSearchQuery by rememberSaveable { mutableStateOf("") }
     var showSortMenu by remember { mutableStateOf(false) }
-    var manageShowsMusic by rememberSaveable { mutableStateOf(false) }
 
     val hideBottomBar = LocalHideBottomBar.current
     val managingSubsActive = isManagingSubs && pagerState.currentPage == 1
@@ -522,10 +521,28 @@ fun HomeScreen(
                                 },
                                 onReselect = { key ->
                                     coroutineScope.launch {
-                                        if (key == HomeChip.All.key) {
-                                            gridState.animateScrollToItem(0)
-                                        } else {
-                                            subGridState.animateScrollToItem(0)
+                                        when (key) {
+                                            HomeChip.All.key -> {
+                                                if (gridState.firstVisibleItemIndex == 0) {
+                                                    viewModel.refreshFeed()
+                                                } else {
+                                                    gridState.animateScrollToItem(0)
+                                                }
+                                            }
+                                            HomeChip.Subscriptions.key -> {
+                                                if (subGridState.firstVisibleItemIndex == 0) {
+                                                    subsViewModel.refreshFeed()
+                                                } else {
+                                                    subGridState.animateScrollToItem(0)
+                                                }
+                                            }
+                                            HomeChip.Music.key -> {
+                                                if (musicGridState.firstVisibleItemIndex == 0) {
+                                                    viewModel.refreshMusicFeed()
+                                                } else {
+                                                    musicGridState.animateScrollToItem(0)
+                                                }
+                                            }
                                         }
                                     }
                                 },
@@ -539,7 +556,6 @@ fun HomeScreen(
         if (isFocusModeEnabled) {
             FocusModeContent(
                 onSearchClick = onSearchClick,
-                onMusicClick = onNavigateToMusic,
                 onNavigateToSettings = onNavigateToSettings,
                 onNavigateToDownloads = onNavigateToDownloads,
                 onNavigateToWatchLater = onNavigateToWatchLater,
@@ -625,8 +641,6 @@ fun HomeScreen(
                                     onChannelClick = onChannelClick,
                                     onNotificationChange = subsViewModel::updateNotificationState,
                                     onShortsExcludeChange = subsViewModel::setShortsChannelExcluded,
-                                    showsMusic = manageShowsMusic,
-                                    onShowsMusicChange = { manageShowsMusic = it },
                                     onUnsubscribe = { channel ->
                                         coroutineScope.launch {
                                             unsubscribeWithUndo(
@@ -642,7 +656,13 @@ fun HomeScreen(
                                     modifier = Modifier.fillMaxSize(),
                                 )
                             } else if (subUiState.subscribedChannels.isEmpty() && !subUiState.isLoading) {
-                                SubscriptionsEmptyState(modifier = Modifier.fillMaxSize())
+                                FlowPullToRefreshBox(
+                                    isRefreshing = subUiState.isLoading,
+                                    onRefresh = subsViewModel::refreshFeed,
+                                    modifier = Modifier.fillMaxSize(),
+                                ) {
+                                    SubscriptionsEmptyState(modifier = Modifier.fillMaxSize())
+                                }
                             } else if (subUiState.subscribedChannels.isEmpty() && subUiState.isLoading) {
                                 BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
                                     val feedLayout = rememberFeedGridLayout(maxWidth, HomeFeedColumns.ONE)
@@ -669,7 +689,6 @@ fun HomeScreen(
                                     },
                                     onChannelLongClick = onChannelClick,
                                     onViewAllClick = { isManagingSubs = true },
-                                    onMusicSubscriptionsClick = onNavigateToMusic,
                                     onRetryFailedChannels = subsViewModel::retryFailedChannels,
                                     onDismissFailedChannels = subsViewModel::dismissFailedChannels,
                                     modifier = Modifier.fillMaxSize(),
@@ -678,41 +697,48 @@ fun HomeScreen(
                         }
 
                         2 -> {
-                            BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-                                val feedLayout = rememberFeedGridLayout(maxWidth, HomeFeedColumns.ONE)
+                            ResettableHomePullToRefreshBox(
+                                resetKey = musicUiState.isLoading && musicUiState.videos.isEmpty(),
+                                isRefreshing = musicUiState.isRefreshing,
+                                onRefresh = { viewModel.refreshMusicFeed() },
+                                modifier = Modifier.fillMaxSize(),
+                            ) {
+                                BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+                                    val feedLayout = rememberFeedGridLayout(maxWidth, HomeFeedColumns.ONE)
 
-                                when {
-                                    musicUiState.isLoading && musicUiState.videos.isEmpty() -> {
-                                        FeedGridSkeleton(
-                                            layout = feedLayout,
-                                            listMode = false,
-                                            stackedInset = false,
-                                            placeholderCount = SKELETON_CARD_COUNT,
-                                            compactRowSpacing = 16.dp,
-                                        )
-                                    }
+                                    when {
+                                        musicUiState.isLoading && musicUiState.videos.isEmpty() -> {
+                                            FeedGridSkeleton(
+                                                layout = feedLayout,
+                                                listMode = false,
+                                                stackedInset = false,
+                                                placeholderCount = SKELETON_CARD_COUNT,
+                                                compactRowSpacing = 16.dp,
+                                            )
+                                        }
 
-                                    musicUiState.error != null && musicUiState.videos.isEmpty() -> {
-                                        FlowErrorState(
-                                            error = musicUiState.error ?: stringResource(R.string.error_occurred),
-                                            onRetry = { viewModel.refreshMusicFeed() },
-                                        )
-                                    }
+                                        musicUiState.error != null && musicUiState.videos.isEmpty() -> {
+                                            FlowErrorState(
+                                                error = musicUiState.error ?: stringResource(R.string.error_occurred),
+                                                onRetry = { viewModel.refreshMusicFeed() },
+                                            )
+                                        }
 
-                                    else -> {
-                                        HomeFeedGrid(
-                                            uiState = musicUiState,
-                                            feedLayout = feedLayout,
-                                            isListView = false,
-                                            gridState = musicGridState,
-                                            onVideoClick = onVideoClick,
-                                            onEnrichChannelMetadata = viewModel::enrichChannelMetadataIfMissing,
-                                            onContinueWatchingClick = { entry -> onVideoClick(entry.toResumeVideo()) },
-                                            onContinueWatchingRemove = viewModel::removeContinueWatchingEntry,
-                                            onRefresh = { viewModel.refreshMusicFeed() },
-                                            onRetryLoadMore = { viewModel.retryMusicLoadMore() },
-                                            footerMinVideos = 0,
-                                        )
+                                        else -> {
+                                            HomeFeedGrid(
+                                                uiState = musicUiState,
+                                                feedLayout = feedLayout,
+                                                isListView = false,
+                                                gridState = musicGridState,
+                                                onVideoClick = onVideoClick,
+                                                onEnrichChannelMetadata = viewModel::enrichChannelMetadataIfMissing,
+                                                onContinueWatchingClick = { entry -> onVideoClick(entry.toResumeVideo()) },
+                                                onContinueWatchingRemove = viewModel::removeContinueWatchingEntry,
+                                                onRefresh = { viewModel.refreshMusicFeed() },
+                                                onRetryLoadMore = { viewModel.retryMusicLoadMore() },
+                                                footerMinVideos = 0,
+                                            )
+                                        }
                                     }
                                 }
                             }
@@ -727,7 +753,6 @@ fun HomeScreen(
 @Composable
 private fun FocusModeContent(
     onSearchClick: () -> Unit,
-    onMusicClick: () -> Unit,
     onNavigateToSettings: () -> Unit,
     onNavigateToDownloads: () -> Unit,
     onNavigateToWatchLater: () -> Unit,
@@ -765,7 +790,7 @@ private fun FocusModeContent(
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxSize().padding(start = 20.dp, end = 8.dp),
+                    modifier = Modifier.fillMaxSize().padding(start = 20.dp, end = 20.dp),
                 ) {
                     Icon(
                         imageVector = Icons.Outlined.Search,
@@ -782,21 +807,6 @@ private fun FocusModeContent(
                         overflow = TextOverflow.Ellipsis,
                         modifier = Modifier.weight(1f),
                     )
-                    FilledTonalIconButton(
-                        onClick = onMusicClick,
-                        modifier = Modifier.size(40.dp),
-                        colors =
-                            IconButtonDefaults.filledTonalIconButtonColors(
-                                containerColor = MaterialTheme.colorScheme.surfaceVariant,
-                                contentColor = MaterialTheme.colorScheme.primary,
-                            ),
-                    ) {
-                        Icon(
-                            imageVector = Icons.Outlined.MusicNote,
-                            contentDescription = stringResource(R.string.nav_music_shortcut),
-                            modifier = Modifier.size(22.dp),
-                        )
-                    }
                 }
             }
 

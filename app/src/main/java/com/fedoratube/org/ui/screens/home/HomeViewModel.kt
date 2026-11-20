@@ -184,19 +184,48 @@ class HomeViewModel
                 _musicUiState.update { it.copy(isLoading = it.videos.isEmpty(), isRefreshing = force, error = null) }
                 try {
                     val region = runCatching { playerPreferences.trendingRegion.first() }.getOrDefault("US")
+
+                    // 1. User watched music from history
+                    val history = runCatching { viewHistory.getRecentVideoHistory(100, includeShorts = false) }.getOrDefault(emptyList())
+                    val musicHistory = history.filter { it.isMusic || isMusicTitle(it.title) }
+                    val resumeMusic = musicHistory.take(6).map { it.toResumeVideo().copy(isMusic = true) }
+                    val topArtists = musicHistory.map { it.channelName }.filter { it.isNotBlank() }.distinct().take(3)
+                    val artistSongs = topArtists.flatMap { artist ->
+                        runCatching { repository.searchVideos("$artist songs").first.take(4) }.getOrDefault(emptyList())
+                    }
+
+                    // 2. Region trending charts & regional trending songs
                     val chartResult = runCatching { YouTube.musicVideoChart(region) }.getOrNull()?.getOrNull()
                     val chartVideos = chartResult?.entries.orEmpty()
+                    val regionalTrending = runCatching { repository.searchVideos("trending songs $region").first.take(8) }.getOrDefault(emptyList())
 
+                    // 3. New release songs
+                    val newReleases = runCatching { repository.searchVideos("new release songs official video 2026").first.take(8) }.getOrDefault(emptyList())
+
+                    // 4. Trending music songs with continuation
                     val (searchVideos, continuation) = runCatching {
                         repository.searchVideos("trending music songs")
                     }.getOrElse { emptyList<Video>() to null }
+                    musicContinuation = continuation
 
-                    val combined = (chartVideos + searchVideos)
+                    // 5. Interweave and apply exclusions (blocked channels)
+                    val exclusions = feedExclusions()
+                    val interleaved = interleaveMusicLists(
+                        listOf(
+                            resumeMusic,
+                            newReleases,
+                            chartVideos,
+                            artistSongs,
+                            regionalTrending,
+                            searchVideos,
+                        )
+                    )
+
+                    val combined = interleaved
                         .distinctBy { it.id }
                         .filter { !it.isShort }
+                        .filterNot { exclusions.hides(it) }
                         .map { it.copy(isMusic = true) }
-
-                    musicContinuation = continuation
 
                     if (combined.isNotEmpty()) {
                         val enriched = runCatching { repository.enrichVideosWithAvatars(combined) }.getOrDefault(combined)
@@ -242,7 +271,9 @@ class HomeViewModel
                 try {
                     val (nextVideos, nextCont) = repository.searchVideos("trending music songs", continuation = cont)
                     musicContinuation = nextCont
-                    val enriched = runCatching { repository.enrichVideosWithAvatars(nextVideos) }.getOrDefault(nextVideos)
+                    val exclusions = feedExclusions()
+                    val filtered = nextVideos.filterNot { exclusions.hides(it) }
+                    val enriched = runCatching { repository.enrichVideosWithAvatars(filtered) }.getOrDefault(filtered)
                     _musicUiState.update { state ->
                         val merged = (state.videos + enriched)
                             .distinctBy { it.id }
@@ -604,6 +635,11 @@ class HomeViewModel
                 state.copy(
                     videos = state.videos.filter { it.id != videoId && it.channelId != channelId },
                     shorts = state.shorts.filter { it.id != videoId && it.channelId != channelId },
+                )
+            }
+            _musicUiState.update { state ->
+                state.copy(
+                    videos = state.videos.filter { it.id != videoId && it.channelId != channelId },
                 )
             }
 
@@ -1976,3 +2012,27 @@ class HomeViewModel
             if (neighbourChannelIds.isNotEmpty()) viewModelScope.launch { neighbourChannels.noteShown(neighbourChannelIds) }
         }
     }
+
+private fun isMusicTitle(title: String): Boolean {
+    val lower = title.lowercase()
+    return lower.contains("song") || lower.contains("music") || lower.contains("official video") ||
+        lower.contains("official audio") || lower.contains("lyrics") || lower.contains("remix") ||
+        lower.contains("ft.") || lower.contains("feat.") || lower.contains("soundtrack") ||
+        lower.contains("ost") || lower.contains("album")
+}
+
+private fun <T> interleaveMusicLists(lists: List<List<T>>): List<T> {
+    val result = mutableListOf<T>()
+    val iterators = lists.map { it.iterator() }
+    var hasMore = true
+    while (hasMore) {
+        hasMore = false
+        for (it in iterators) {
+            if (it.hasNext()) {
+                result.add(it.next())
+                hasMore = true
+            }
+        }
+    }
+    return result
+}

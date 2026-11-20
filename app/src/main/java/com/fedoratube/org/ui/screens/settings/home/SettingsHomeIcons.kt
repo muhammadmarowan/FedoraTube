@@ -39,7 +39,6 @@ internal fun destinationIcon(destination: SettingsDestination): ImageVector =
         SettingsDestination.APPEARANCE -> Icons.Outlined.Palette
         SettingsDestination.LANGUAGE_REGION -> Icons.Outlined.Language
         SettingsDestination.PLAYBACK -> Icons.Outlined.PlayCircle
-        SettingsDestination.MUSIC_PLAYER -> Icons.Outlined.MusicNote
         SettingsDestination.QUALITY -> Icons.Outlined.HighQuality
         SettingsDestination.CONTENT -> Icons.Outlined.ViewAgenda
         SettingsDestination.TOPICS -> Icons.Outlined.FilterAlt

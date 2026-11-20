@@ -254,6 +254,21 @@ class SearchPagingSourceTest {
     }
 
     @Test
+    fun `a channel result matching blocked channel name is dropped`() {
+        val channel =
+            SearchResultItem.ChannelResult(
+                com.fedoratube.org.data.model.Channel(id = "UCany", name = "Blocked Creator", thumbnailUrl = "", subscriberCount = 0L),
+            )
+
+        val visible =
+            listOf(channel).withoutHidden(
+                FeedExclusions(blockedChannelNames = setOf("Blocked Creator")),
+            )
+
+        assertThat(visible).isEmpty()
+    }
+
+    @Test
     fun `without a watch filter a page is still one request`() =
         runTest {
             val loader = RecordingLoader(listOf(SearchFixture.ALL_SAM_SULEK))

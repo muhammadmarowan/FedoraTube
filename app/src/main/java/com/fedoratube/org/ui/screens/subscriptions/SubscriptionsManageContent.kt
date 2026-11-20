@@ -69,73 +69,18 @@ internal fun SubscriptionsManageContent(
     showsMusic: Boolean = false,
     onShowsMusicChange: (Boolean) -> Unit = {},
 ) {
-    val selectedTabIndex = if (showsMusic) 1 else 0
-
-    val activeList =
-        remember(channels, selectedTabIndex) {
-            if (selectedTabIndex == 0) {
-                channels.filterNot { it.isMusic }
-            } else {
-                channels.filter { it.isMusic }
-            }
-        }
-
     val filteredChannels =
-        remember(activeList, searchQuery) {
+        remember(channels, searchQuery) {
             if (searchQuery.isBlank()) {
-                activeList
+                channels
             } else {
-                activeList.filter { it.name.contains(searchQuery, ignoreCase = true) }
+                channels.filter { it.name.contains(searchQuery, ignoreCase = true) }
             }
         }
-
-    val swipeThreshold = with(LocalDensity.current) { 64.dp.toPx() }
-    var dragOffsetX by remember { mutableStateOf(0f) }
 
     Column(
-        modifier =
-            modifier
-                .fillMaxSize()
-                // Swipe left/right switches the Video <-> Music subscription list, like the tabs above.
-                // Vertical scrolling stays with the LazyColumn below.
-                .pointerInput(selectedTabIndex) {
-                    detectHorizontalDragGestures(
-                        onDragEnd = {
-                            when {
-                                dragOffsetX <= -swipeThreshold -> onShowsMusicChange(true)
-                                dragOffsetX >= swipeThreshold -> onShowsMusicChange(false)
-                            }
-                            dragOffsetX = 0f
-                        },
-                        onDragCancel = { dragOffsetX = 0f },
-                    ) { _, amount ->
-                        dragOffsetX += amount
-                    }
-                },
+        modifier = modifier.fillMaxSize(),
     ) {
-        FlowConnectedToggleGroup(
-            options =
-                listOf(
-                    FlowToggleOption(
-                        value = 0,
-                        label = stringResource(R.string.subscriptions_video_section_title),
-                        icon = Icons.Default.OndemandVideo,
-                    ),
-                    FlowToggleOption(
-                        value = 1,
-                        label = stringResource(R.string.subscriptions_music_section_title),
-                        icon = Icons.Default.MusicNote,
-                    ),
-                ),
-            selected = selectedTabIndex,
-            onSelected = { onShowsMusicChange(it == 1) },
-            modifier =
-                Modifier.padding(
-                    horizontal = ContentHorizontalPadding,
-                    vertical = SelectorVerticalPadding,
-                ),
-        )
-
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             contentPadding =

@@ -150,8 +150,7 @@ fun SearchScreen(
     val context = LocalContext.current
     val density = LocalDensity.current
     val focusPreferences = remember(context) { com.fedoratube.org.data.local.PlayerPreferences(context) }
-    val isMusicSectionEnabled by focusPreferences.musicNavigationEnabled.collectAsState(initial = true)
-    val pageCount = if (isMusicSectionEnabled) 2 else 1
+    val pageCount = 1
     val pagerState = rememberPagerState(initialPage = 0) { pageCount }
     val coroutineScope = rememberCoroutineScope()
 
@@ -483,27 +482,6 @@ fun SearchScreen(
                                             )
                                         }
                                     }
-                                }
-                            } else {
-                                // MUSIC RESULT
-                                BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-                                    MusicSearchResultsView(
-                                        uiState = musicUiState,
-                                        query = state.textFieldState.text.toString().ifBlank { musicQuery },
-                                        onTrackClick = onTrackClick,
-                                        onAlbumClick = onAlbumClick,
-                                        onArtistClick = onArtistClick,
-                                        onPlaylistClick = onMusicPlaylistClick,
-                                        onApplyFilter = musicSearchViewModel::applyFilter,
-                                        showFilterChips = false,
-                                        onRetry = {
-                                            val q = state.textFieldState.text.toString().ifBlank { musicQuery }
-                                            val filter = musicUiState.activeFilter
-                                            if (filter == null) musicSearchViewModel.performSearch(q) else musicSearchViewModel.applyFilter(filter)
-                                        },
-                                        onLoadMore = musicSearchViewModel::loadMore,
-                                        onGetArtistTracks = musicSearchViewModel::getArtistTracks,
-                                    )
                                 }
                             }
                         }

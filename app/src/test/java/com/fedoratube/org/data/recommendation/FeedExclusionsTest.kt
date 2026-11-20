@@ -79,14 +79,23 @@ class FeedExclusionsTest {
         assertThat(base.hidingChannels(emptySet())).isSameInstanceAs(base)
     }
 
+    @Test
+    fun `blocked channel name hides video and channel`() {
+        val exclusions = FeedExclusions(blockedChannelNames = setOf("Bad Channel"))
+        assertThat(exclusions.hides(video("v1", "UC1", channelName = "Bad Channel"))).isTrue()
+        assertThat(exclusions.hidesChannel("UC1", "Bad Channel")).isTrue()
+        assertThat(exclusions.hides(video("v2", "UC2", channelName = "Good Channel"))).isFalse()
+    }
+
     private fun video(
         id: String,
         channelId: String,
         title: String = "title-$id",
+        channelName: String = channelId,
     ) = Video(
         id = id,
         title = title,
-        channelName = channelId,
+        channelName = channelName,
         channelId = channelId,
         thumbnailUrl = "",
         duration = 600,

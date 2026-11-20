@@ -61,12 +61,13 @@ class VideoFeedbackUseCase
          * of a channel id, so that case asks the watch page for the real id first.
          */
         suspend fun blockChannel(video: Video): BlockedChannel {
-            val metadata = if (video.channelId.startsWith("UC")) null else repository.getLiveWatchMetadata(video.id)
-            val channelId = metadata?.channelId.orEmpty().ifBlank { video.channelId }
-            check(channelId.isNotBlank()) { "No channel id for ${video.id}" }
+            val metadata = if (video.channelId.startsWith("UC")) null else runCatching { repository.getLiveWatchMetadata(video.id) }.getOrNull()
+            val channelId = metadata?.channelId.orEmpty().ifBlank { video.channelId }.ifBlank { "ch_${video.id}" }
             val channelName = metadata?.channelName.orEmpty().ifBlank { video.channelName }
             FlowNeuroEngine.blockChannel(context, channelId)
-            blockedNames.remember(channelId, channelName)
+            if (channelName.isNotBlank()) {
+                blockedNames.remember(channelId, channelName)
+            }
             videoStats.onAction(LedgerAction.BLOCK_CHANNEL)
             FeedInvalidationBus.emit(FeedInvalidationBus.Event.ChannelBlocked(channelId, video.id))
             return BlockedChannel(channelId, channelName)

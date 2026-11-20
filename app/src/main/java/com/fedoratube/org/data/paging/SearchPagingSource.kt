@@ -141,7 +141,7 @@ internal fun List<SearchResultItem>.withoutHidden(exclusions: FeedExclusions): L
             }
 
             is SearchResultItem.ChannelResult -> {
-                item.takeUnless { exclusions.hidesChannel(it.channel.id) }
+                item.takeUnless { exclusions.hidesChannel(it.channel.id, it.channel.name) }
             }
 
             is SearchResultItem.PlaylistResult -> {

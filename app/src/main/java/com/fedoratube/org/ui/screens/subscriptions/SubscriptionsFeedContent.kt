@@ -62,7 +62,7 @@ internal fun SubscriptionsFeedContent(
     onChannelClick: (Channel) -> Unit,
     onChannelLongClick: ((Channel) -> Unit)? = null,
     onViewAllClick: () -> Unit,
-    onMusicSubscriptionsClick: () -> Unit,
+    onMusicSubscriptionsClick: () -> Unit = {},
     onRetryFailedChannels: () -> Unit = {},
     onDismissFailedChannels: () -> Unit = {},
     onGroupSelected: (String?) -> Unit = {},

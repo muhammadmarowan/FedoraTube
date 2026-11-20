@@ -16,7 +16,6 @@ import com.fedoratube.org.ui.screens.settings.appearance.theme.ThemeScreen
 import com.fedoratube.org.ui.screens.settings.backup.BackupScreen
 import com.fedoratube.org.ui.screens.settings.content.ContentSettingsScreen
 import com.fedoratube.org.ui.screens.settings.content.LibrarySettingsScreen
-import com.fedoratube.org.ui.screens.settings.content.MusicHomeSettingsScreen
 import com.fedoratube.org.ui.screens.settings.diagnostics.DiagnosticsScreen
 import com.fedoratube.org.ui.screens.settings.downloads.DownloadSettingsScreen
 import com.fedoratube.org.ui.screens.settings.history.HistorySettingsScreen
@@ -25,7 +24,6 @@ import com.fedoratube.org.ui.screens.settings.localmedia.LocalMediaSettingsScree
 import com.fedoratube.org.ui.screens.settings.network.NetworkSettingsScreen
 import com.fedoratube.org.ui.screens.settings.notifications.NotificationSettingsScreen
 import com.fedoratube.org.ui.screens.settings.playback.BufferSettingsScreen
-import com.fedoratube.org.ui.screens.settings.playback.MusicPlayerSettingsScreen
 import com.fedoratube.org.ui.screens.settings.playback.PlaybackSettingsScreen
 import com.fedoratube.org.ui.screens.settings.quality.QualitySettingsScreen
 import com.fedoratube.org.ui.screens.settings.region.LanguageRegionScreen
@@ -104,7 +102,7 @@ internal fun SettingsDetail(
         }
 
         SettingsDestination.MUSIC_HOME -> {
-            MusicHomeSettingsScreen(onBack = onBack, highlight = target.highlight)
+            ContentSettingsScreen(onBack = onBack, highlight = target.highlight, onNavigate = onNavigate)
         }
 
         SettingsDestination.LIBRARY -> {
@@ -128,7 +126,7 @@ internal fun SettingsDetail(
         }
 
         SettingsDestination.MUSIC_PLAYER -> {
-            MusicPlayerSettingsScreen(onBack = onBack, highlight = target.highlight, onNavigate = onNavigate)
+            PlaybackSettingsScreen(onBack = onBack, highlight = target.highlight, onNavigate = onNavigate)
         }
 
         SettingsDestination.BUFFER -> {

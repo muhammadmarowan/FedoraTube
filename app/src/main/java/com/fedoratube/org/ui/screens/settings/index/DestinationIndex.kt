@@ -33,7 +33,6 @@ internal object DestinationIndex {
         SettingsDestination.PLAYER_APPEARANCE,
         SettingsDestination.WIDGETS,
         SettingsDestination.CONTENT,
-        SettingsDestination.MUSIC_HOME,
         SettingsDestination.LIBRARY,
         SettingsDestination.DOWNLOADS,
         SettingsDestination.LOCAL_MEDIA,

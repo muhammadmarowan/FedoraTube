@@ -11,6 +11,7 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import com.fedoratube.org.data.engagement.FeedInvalidationBus
 import com.fedoratube.org.data.local.PlayerPreferences
 import com.fedoratube.org.data.local.SearchFilter
 import com.fedoratube.org.data.local.SearchHistoryRepository
@@ -71,6 +72,16 @@ class SearchViewModel
         )
 
         private val _searchKey = MutableStateFlow<SearchKey?>(null)
+
+        init {
+            viewModelScope.launch {
+                FeedInvalidationBus.events.collect { event ->
+                    if (event is FeedInvalidationBus.Event.ChannelBlocked || event is FeedInvalidationBus.Event.NotInterested) {
+                        _searchKey.value = _searchKey.value?.copy()
+                    }
+                }
+            }
+        }
 
         val searchResults: Flow<PagingData<SearchResultItem>> =
             _searchKey

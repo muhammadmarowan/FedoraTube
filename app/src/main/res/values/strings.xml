@@ -1363,10 +1363,10 @@
     <string name="section_algorithm">Your feed</string>
     <string name="section_options">Options</string>
     <!-- Channel blocking -->
-    <string name="dont_show_channel">Don’t show this channel</string>
-    <string name="dont_show_channel_desc">Remove from your recommendations</string>
+    <string name="dont_show_channel">Block channel</string>
+    <string name="dont_show_channel_desc">Never show in feeds or search</string>
     <string name="channel_metadata_unavailable">Channel information is unavailable</string>
-    <string name="channel_blocked_toast">%1$s won’t appear in your feed</string>
+    <string name="channel_blocked_toast">%1$s has been blocked</string>
     <!-- Misc -->
     <string name="btn_save">Save</string>
     <string name="btn_cancel">Cancel</string>

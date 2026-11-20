@@ -94,7 +94,6 @@ fun SubscriptionsScreen(
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
     var isManagingSubs by rememberSaveable { mutableStateOf(false) }
-    var manageShowsMusic by rememberSaveable { mutableStateOf(false) }
 
     val hideBottomBar = LocalHideBottomBar.current
     LaunchedEffect(isManagingSubs) {
@@ -108,7 +107,6 @@ fun SubscriptionsScreen(
 
     LaunchedEffect(openMusicSubscriptions) {
         if (!openMusicSubscriptions) return@LaunchedEffect
-        manageShowsMusic = true
         isManagingSubs = true
         onMusicSubscriptionsOpened()
     }
@@ -272,8 +270,6 @@ fun SubscriptionsScreen(
                         onChannelClick = onChannelClick,
                         onNotificationChange = viewModel::updateNotificationState,
                         onShortsExcludeChange = viewModel::setShortsChannelExcluded,
-                        showsMusic = manageShowsMusic,
-                        onShowsMusicChange = { manageShowsMusic = it },
                         onUnsubscribe = { channel ->
                             scope.launch {
                                 unsubscribeWithUndo(
@@ -304,11 +300,6 @@ fun SubscriptionsScreen(
                         },
                         onChannelLongClick = onChannelClick,
                         onViewAllClick = {
-                            manageShowsMusic = false
-                            isManagingSubs = true
-                        },
-                        onMusicSubscriptionsClick = {
-                            manageShowsMusic = true
                             isManagingSubs = true
                         },
                         onRetryFailedChannels = viewModel::retryFailedChannels,

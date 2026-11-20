@@ -1892,10 +1892,14 @@ class FedoraEngine internal constructor(
         val matchers by lazy {
             NeuroScoring.buildBlockedMatchers(brain.blockedTopics, NeuroTopicCatalog.TOPIC_CATEGORIES, tokenizer::keyOf)
         }
+        val knownNames = runCatching {
+            BlockedChannelNameStore(appContext).names().values.toSet()
+        }.getOrDefault(emptySet())
         return FeedExclusions(
             suppressedVideoIds = brain.suppressedVideoIds.keys,
             blockedChannelIds = brain.blockedChannels,
             suppressedChannelIds = brain.suppressedChannels.filterValues { it > channelCutoff }.keys,
+            blockedChannelNames = knownNames,
             blockedText = { title, channelName ->
                 brain.blockedTopics.isNotEmpty() &&
                     NeuroScoring.isBlockedByText(title, channelName, matchers, tokenizer::keyOf)
