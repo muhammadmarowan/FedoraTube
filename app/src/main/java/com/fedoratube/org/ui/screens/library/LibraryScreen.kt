@@ -43,7 +43,6 @@ import androidx.compose.material.icons.outlined.MusicNote
 import androidx.compose.material.icons.outlined.PlaylistPlay
 import androidx.compose.material.icons.outlined.QrCode2
 import androidx.compose.material.icons.outlined.Settings
-import androidx.compose.material.icons.outlined.StickyNote2
 import androidx.compose.material.icons.outlined.VideoLibrary
 import androidx.compose.material.icons.outlined.WatchLater
 import androidx.compose.material3.Checkbox
@@ -110,7 +109,6 @@ import com.fedoratube.org.ui.components.library.CircularSelectBadge
 import com.fedoratube.org.ui.components.library.PlaylistCreationTarget
 import com.fedoratube.org.ui.components.library.PlaylistVideoRow
 import com.fedoratube.org.ui.components.library.VideoDownloadItem
-import com.fedoratube.org.ui.components.shared.ChannelAvatarImage
 import com.fedoratube.org.ui.components.shared.CollectionEditDialog
 import com.fedoratube.org.ui.components.shared.ExplicitBadge
 import com.fedoratube.org.ui.components.shared.FlowEmptyState
@@ -118,7 +116,6 @@ import com.fedoratube.org.ui.components.shared.FlowSectionHeader
 import com.fedoratube.org.ui.components.shared.FlowSelectionAction
 import com.fedoratube.org.ui.components.shared.FlowSelectionToolbar
 import com.fedoratube.org.ui.components.shared.MediaKind
-import com.fedoratube.org.ui.components.shared.MediaThumbnail
 import com.fedoratube.org.ui.components.stats.RecapEntryCard
 import kotlin.math.roundToInt
 import kotlinx.coroutines.launch
@@ -821,5 +818,3 @@ private fun FlowGlassButton(
         }
     }
 }
-
-private val Note.key: String get() = kind.idFor(targetId)
