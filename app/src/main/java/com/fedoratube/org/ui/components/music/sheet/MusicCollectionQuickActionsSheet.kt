@@ -61,7 +61,11 @@ fun MusicCollectionQuickActionsSheet(
             sheet.close()
         }
 
-        QuickActionsHeader(title = item.title, subtitle = item.subtitle) {
+        QuickActionsHeader(
+            title = item.title,
+            subtitle = item.subtitle,
+            onClose = sheet::close,
+        ) {
             ArtworkThumbnail(
                 thumbnailUrl = item.thumbnailUrl,
                 size = QuickActionsDefaults.SquareArtworkSize,

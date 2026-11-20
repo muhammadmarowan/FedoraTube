@@ -1,7 +1,9 @@
 package com.fedoratube.org.ui.components
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,6 +21,8 @@ import androidx.compose.material.icons.automirrored.filled.PlaylistPlay
 import androidx.compose.material.icons.automirrored.outlined.PlaylistPlay
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.rounded.MusicNote
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -77,6 +81,7 @@ fun PlaylistCard(
     )
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun PlaylistCard(
     playlist: Playlist,
@@ -84,6 +89,10 @@ fun PlaylistCard(
     layout: PlaylistCardLayout = PlaylistCardLayout.LIST,
     modifier: Modifier = Modifier,
     useInternalPadding: Boolean = true,
+    isMusic: Boolean = false,
+    selected: Boolean = false,
+    selectionMode: Boolean = false,
+    onLongClick: (() -> Unit)? = null,
 ) {
     PlaylistCardContent(
         title = playlist.name,
@@ -91,7 +100,11 @@ fun PlaylistCard(
         thumbnailUrl = playlist.thumbnailUrl,
         videoCount = playlist.videoCount,
         isCourse = playlist.isCourse,
+        isMusic = isMusic,
+        selected = selected,
+        selectionMode = selectionMode,
         onClick = onClick,
+        onLongClick = onLongClick,
         onDeleteClick = null,
         layout = layout,
         modifier = modifier,
@@ -99,6 +112,7 @@ fun PlaylistCard(
     )
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun PlaylistCardContent(
     title: String,
@@ -111,6 +125,10 @@ private fun PlaylistCardContent(
     modifier: Modifier,
     useInternalPadding: Boolean,
     isCourse: Boolean = false,
+    isMusic: Boolean = false,
+    selected: Boolean = false,
+    selectionMode: Boolean = false,
+    onLongClick: (() -> Unit)? = null,
 ) {
     val metadata =
         pluralStringResource(
@@ -124,7 +142,13 @@ private fun PlaylistCardContent(
             modifier =
                 Modifier
                     .then(modifier)
-                    .clickable(onClick = onClick)
+                    .then(
+                        if (onLongClick != null) {
+                            Modifier.combinedClickable(onClick = onClick, onLongClick = onLongClick)
+                        } else {
+                            Modifier.clickable(onClick = onClick)
+                        }
+                    )
                     .padding(vertical = 4.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
@@ -142,9 +166,10 @@ private fun PlaylistCardContent(
                     metadata = metadata,
                     description = "",
                     compact = true,
+                    isMusic = isMusic,
                     modifier = Modifier.weight(1f),
                 )
-                if (onDeleteClick != null) {
+                if (onDeleteClick != null && !selectionMode) {
                     PlaylistCardMenu(onOpen = onClick, onDelete = onDeleteClick)
                 }
             }
@@ -156,7 +181,13 @@ private fun PlaylistCardContent(
         modifier =
             modifier
                 .fillMaxWidth()
-                .clickable(onClick = onClick)
+                .then(
+                    if (onLongClick != null) {
+                        Modifier.combinedClickable(onClick = onClick, onLongClick = onLongClick)
+                    } else {
+                        Modifier.clickable(onClick = onClick)
+                    }
+                )
                 .padding(vertical = 4.dp)
                 .then(
                     if (useInternalPadding) {
@@ -168,6 +199,13 @@ private fun PlaylistCardContent(
         horizontalArrangement = Arrangement.spacedBy(14.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
+        if (selectionMode) {
+            Checkbox(
+                checked = selected,
+                onCheckedChange = { onClick() },
+            )
+        }
+
         LayeredPlaylistArtwork(
             thumbnailUrl = thumbnailUrl,
             videoCount = videoCount,
@@ -182,10 +220,11 @@ private fun PlaylistCardContent(
             metadata = metadata,
             description = description,
             compact = false,
+            isMusic = isMusic,
             modifier = Modifier.weight(1f),
         )
 
-        if (onDeleteClick != null) {
+        if (onDeleteClick != null && !selectionMode) {
             PlaylistCardMenu(onOpen = onClick, onDelete = onDeleteClick)
         }
     }
@@ -328,25 +367,39 @@ private fun PlaylistCardText(
     metadata: String,
     description: String,
     compact: Boolean,
+    isMusic: Boolean = false,
     modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
-        Text(
-            text = title,
-            style =
-                if (compact) {
-                    MaterialTheme.typography.bodyMedium
-                } else {
-                    MaterialTheme.typography.bodyLarge
-                },
-            fontWeight = FontWeight.SemiBold,
-            color = MaterialTheme.colorScheme.onSurface,
-            maxLines = if (compact) 1 else 2,
-            overflow = TextOverflow.Ellipsis,
-        )
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(5.dp),
+        ) {
+            if (isMusic) {
+                Icon(
+                    imageVector = Icons.Rounded.MusicNote,
+                    contentDescription = null,
+                    modifier = Modifier.size(16.dp),
+                    tint = MaterialTheme.colorScheme.primary,
+                )
+            }
+            Text(
+                text = title,
+                style =
+                    if (compact) {
+                        MaterialTheme.typography.bodyMedium
+                    } else {
+                        MaterialTheme.typography.bodyLarge
+                    },
+                fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colorScheme.onSurface,
+                maxLines = if (compact) 1 else 2,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
         Text(
             text = metadata,
             style =

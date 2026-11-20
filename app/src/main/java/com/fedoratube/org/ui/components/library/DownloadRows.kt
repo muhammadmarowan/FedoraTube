@@ -87,19 +87,20 @@ internal fun VideoDownloadItem(
     selected: Boolean,
     onClick: () -> Unit,
     onDeleteClick: () -> Unit,
+    onLongClick: (() -> Unit)? = null,
     modifier: Modifier = Modifier,
     rowThumbnailWidth: Dp = MediaThumbnailDefaults.VideoWidth,
 ) {
     var showMenu by remember { mutableStateOf(false) }
     val supporting = downloadSupportingLine(video.quality, video.fileSize, video.downloadedAt)
-    val onLongClick = if (selectionMode) null else ({ showMenu = true })
+    val effectiveLongClick = if (selectionMode) null else (onLongClick ?: { showMenu = true })
     if (asCard) {
         LibraryVideoCard(
             title = video.video.title,
             subtitle = video.video.channelName,
             supporting = supporting,
             onClick = onClick,
-            onLongClick = onLongClick,
+            onLongClick = effectiveLongClick,
             selected = selected,
             modifier = modifier,
         ) {
@@ -122,7 +123,7 @@ internal fun VideoDownloadItem(
             supportingColor = MaterialTheme.colorScheme.onSurfaceVariant,
             selected = selected,
             onClick = onClick,
-            onLongClick = onLongClick,
+            onLongClick = effectiveLongClick,
             leading = if (selectionMode) ({ Checkbox(checked = selected, onCheckedChange = { onClick() }) }) else null,
         ) {
             MediaThumbnail(
@@ -152,6 +153,7 @@ internal fun MusicDownloadRow(
     selectionMode: Boolean,
     selected: Boolean,
     onClick: () -> Unit,
+    onLongClick: (() -> Unit)? = null,
     modifier: Modifier = Modifier,
 ) {
     val musicMenus = LocalMusicMenus.current
@@ -164,7 +166,7 @@ internal fun MusicDownloadRow(
         titleMaxLines = 1,
         selected = selected,
         onClick = onClick,
-        onLongClick = if (selectionMode) null else ({ musicMenus.openSong(downloadedTrack.track) }),
+        onLongClick = if (selectionMode) null else (onLongClick ?: { musicMenus.openSong(downloadedTrack.track) }),
         leading = if (selectionMode) ({ Checkbox(checked = selected, onCheckedChange = { onClick() }) }) else null,
         subtitleLeading =
             if (downloadedTrack.track.isExplicit == true) {

@@ -37,6 +37,7 @@ internal fun PlaylistVideoRow(
     onRemove: () -> Unit,
     isLikes: Boolean = false,
     onClick: () -> Unit,
+    onLongClick: (() -> Unit)? = null,
     modifier: Modifier = Modifier,
     thumbnailWidth: Dp = MediaThumbnailDefaults.VideoWidth,
 ) {
@@ -55,7 +56,7 @@ internal fun PlaylistVideoRow(
             },
         selected = isSelected,
         onClick = onClick,
-        onLongClick = if (inSelectionMode) null else ({ showQuickActions = true }),
+        onLongClick = if (inSelectionMode) null else (onLongClick ?: { showQuickActions = true }),
         leading =
             when {
                 inSelectionMode -> {

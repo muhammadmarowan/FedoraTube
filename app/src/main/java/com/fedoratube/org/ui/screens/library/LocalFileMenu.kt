@@ -80,6 +80,7 @@ internal fun LocalFileMenu(
                 listOf(item.folderName, Formatter.formatShortFileSize(context, item.sizeBytes))
                     .filter(String::isNotBlank)
                     .joinToString(" ${stringResource(R.string.metadata_separator)} "),
+            onClose = sheet::close,
         ) {
             if (item.isVideo) {
                 LocalVideoThumbnail(item, isNew = false, modifier = Modifier, width = QuickActionsDefaults.VideoArtworkWidth)

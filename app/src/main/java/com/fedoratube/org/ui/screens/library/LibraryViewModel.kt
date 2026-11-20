@@ -8,6 +8,7 @@ import com.fedoratube.org.data.local.PlayerPreferences
 import com.fedoratube.org.data.local.PlaylistRepository
 import com.fedoratube.org.data.local.ViewHistory
 import com.fedoratube.org.data.model.toVideo
+import com.fedoratube.org.data.notes.Note
 import com.fedoratube.org.data.notes.NotesRepository
 import com.fedoratube.org.data.playlist.sortedFor
 import com.fedoratube.org.data.feed.ShortsContentFilter
@@ -61,15 +62,15 @@ internal data class LibraryCounts(
 class LibraryViewModel
     @Inject
     constructor(
-        playlistRepository: PlaylistRepository,
+        private val playlistRepository: PlaylistRepository,
         likedVideosRepository: LikedVideosRepository,
         viewHistory: ViewHistory,
-        videoDownloadManager: VideoDownloadManager,
-        musicDownloadManager: MusicDownloadManager,
+        private val videoDownloadManager: VideoDownloadManager,
+        private val musicDownloadManager: MusicDownloadManager,
         shortsContentFilter: ShortsContentFilter,
         playerPreferences: PlayerPreferences,
         private val recapReadiness: RecapReadiness,
-        notesRepository: NotesRepository,
+        private val notesRepository: NotesRepository,
     ) : ViewModel() {
         private val sharing = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5_000L)
 
@@ -120,7 +121,15 @@ class LibraryViewModel
                 musicDownloadManager.downloadedTracks,
             ) { videos, tracks -> videos to tracks }.shared()
 
+        internal val combinedPlaylists =
+            combine(allVideoPlaylists, allMusicPlaylists) { videoList, musicList ->
+                val v = (videoList.orEmpty()).map { it to false }
+                val m = (musicList.orEmpty()).map { it to true }
+                (v + m).sortedByDescending { it.first.createdAt }
+            }.shared()
+
         internal val fullVideoPlaylists = allVideoPlaylists
+        internal val fullMusicPlaylists = allMusicPlaylists
         internal val fullWatchLaterVideos = allWatchLater
         internal val fullDownloadedVideos = videoDownloadManager.downloadedVideos.shared()
         internal val fullDownloadedTracks = musicDownloadManager.downloadedTracks.shared()
@@ -182,6 +191,10 @@ class LibraryViewModel
             playerPreferences.separatePlaylistKinds
                 .stateIn(viewModelScope, sharing, false)
 
+        internal val isFocusModeEnabled: StateFlow<Boolean> =
+            playerPreferences.focusModeEnabled
+                .stateIn(viewModelScope, sharing, false)
+
         /** Null until the stored choice is read, so a hidden section never shows for a frame. */
         internal val hiddenSections: StateFlow<Set<LibrarySection>?> =
             playerPreferences.hiddenLibrarySections
@@ -240,6 +253,50 @@ class LibraryViewModel
             combine(counts, activeDownloadCount, ::libraryIsEmpty)
                 .distinctUntilChanged()
                 .stateIn(viewModelScope, sharing, false)
+
+        fun createVideoPlaylist(name: String, description: String) {
+            viewModelScope.launch {
+                playlistRepository.createPlaylist(
+                    playlistId = System.currentTimeMillis().toString(),
+                    name = name,
+                    description = description,
+                    isPrivate = true,
+                    isMusic = false,
+                )
+            }
+        }
+
+        fun createMusicPlaylist(name: String, description: String) {
+            viewModelScope.launch {
+                playlistRepository.createPlaylist(
+                    playlistId = java.util.UUID.randomUUID().toString(),
+                    name = name,
+                    description = description,
+                    isPrivate = true,
+                    isMusic = true,
+                )
+            }
+        }
+
+        fun deletePlaylist(playlistId: String) {
+            viewModelScope.launch { playlistRepository.deletePlaylist(playlistId) }
+        }
+
+        fun removeFromWatchLater(videoId: String) {
+            viewModelScope.launch { playlistRepository.removeFromWatchLater(videoId) }
+        }
+
+        fun deleteDownloadedVideo(videoId: String) {
+            viewModelScope.launch { videoDownloadManager.deleteDownload(videoId) }
+        }
+
+        fun deleteDownloadedMusic(videoId: String) {
+            viewModelScope.launch { musicDownloadManager.deleteDownload(videoId) }
+        }
+
+        fun deleteNote(note: Note) {
+            viewModelScope.launch { notesRepository.delete(note.kind, note.targetId) }
+        }
     }
 
 /**
